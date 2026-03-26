@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog Admin · EspaiFest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --co: oklch(68% .22 38);
+  --cp: oklch(66% .24 355);
+  --ct: oklch(73% .14 190);
+  --bg: oklch(12% .01 260);
+  --s1: oklch(17% .01 260);
+  --s2: oklch(22% .015 260);
+  --s3: oklch(28% .015 260);
+  --tx: oklch(95% .005 260);
+  --tx2: oklch(70% .01 260);
+  --tx3: oklch(50% .01 260);
+  --br: oklch(30% .01 260);
+  --rad: 12px;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--tx);
+  min-height: 100vh;
+  font-size: 15px;
+}
+
+/* ── LOGIN ── */
+#login-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+.login-box {
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: 20px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+.login-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--co);
+  margin-bottom: 6px;
+}
+.login-sub {
+  color: var(--tx3);
+  font-size: .85rem;
+  margin-bottom: 36px;
+}
+.login-box input {
+  width: 100%;
+  background: var(--s2);
+  border: 1px solid var(--br);
+  border-radius: var(--rad);
+  color: var(--tx);
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: .95rem;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color .2s;
+}
+.login-box input:focus { border-color: var(--co); }
+.btn-login {
+  width: 100%;
+  background: var(--co);
+  color: #fff;
+  border: none;
+  border-radius: var(--rad);
+  padding: 13px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: opacity .2s;
+}
+.btn-login:hover { opacity: .88; }
+.login-err {
+  color: var(--cp);
+  font-size: .85rem;
+  margin-top: 12px;
+  min-height: 20px;
+}
+
+/* ── APP ── */
+#app { display: none; min-height: 100vh; }
+
+/* ── HEADER ── */
+.hdr {
+  background: var(--s1);
+  border-bottom: 1px solid var(--br);
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.hdr-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--co);
+}
+.hdr-logo span { color: var(--tx2); font-weight: 400; font-size: .85rem; margin-left: 8px; }
+.hdr-right { display: flex; align-items: center; gap: 12px; }
+.hdr-user { color: var(--tx3); font-size: .82rem; }
+.btn-logout {
+  background: var(--s2);
+  border: 1px solid var(--br);
+  border-radius: 8px;
+  color: var(--tx2);
+  padding: 6px 14px;
+  font-family: inherit;
+  font-size: .82rem;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-logout:hover { background: var(--s3); }
+
+/* ── MAIN LAYOUT ── */
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* ── SCREEN SWITCHER ── */
+#screen-list, #screen-editor { }
+#screen-editor { display: none; }
+
+/* ── LIST HEADER ── */
+.list-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.page-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+.btn-new {
+  background: var(--co);
+  color: #fff;
+  border: none;
+  border-radius: var(--rad);
+  padding: 10px 20px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: .9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity .2s;
+}
+.btn-new:hover { opacity: .88; }
+
+/* ── POSTS LIST ── */
+.posts-list { display: flex; flex-direction: column; gap: 12px; }
+.post-item {
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: var(--rad);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: border-color .2s;
+}
+.post-item:hover { border-color: var(--co); }
+.post-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--s2);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tx3);
+  font-size: 1.4rem;
+  overflow: hidden;
+}
+.post-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.post-info { flex: 1; min-width: 0; }
+.post-title {
+  font-weight: 600;
+  font-size: .95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.post-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.post-cat {
+  font-size: .75rem;
+  padding: 2px 10px;
+  border-radius: 99px;
+  background: var(--s2);
+  color: var(--tx2);
+}
+.post-date { font-size: .75rem; color: var(--tx3); }
+.badge {
+  font-size: .72rem;
+  padding: 2px 10px;
+  border-radius: 99px;
+  font-weight: 600;
+}
+.badge-pub { background: oklch(35% .12 150); color: oklch(80% .15 150); }
+.badge-bor { background: var(--s2); color: var(--tx3); }
+.post-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.btn-icon {
+  background: var(--s2);
+  border: 1px solid var(--br);
+  border-radius: 8px;
+  color: var(--tx2);
+  padding: 7px 14px;
+  font-family: inherit;
+  font-size: .82rem;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-icon:hover { background: var(--s3); color: var(--tx); }
+.btn-del:hover { background: oklch(20% .08 10); color: var(--cp); border-color: var(--cp); }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--tx3);
+}
+.empty-state div { font-size: 2.5rem; margin-bottom: 12px; }
+.loading-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--tx3);
+}
+
+/* ── EDITOR ── */
+.editor-hdr {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.btn-back {
+  background: var(--s2);
+  border: 1px solid var(--br);
+  border-radius: 8px;
+  color: var(--tx2);
+  padding: 8px 14px;
+  font-family: inherit;
+  font-size: .85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background .2s;
+}
+.btn-back:hover { background: var(--s3); }
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media(max-width:768px){
+  .editor-grid { grid-template-columns: 1fr; }
+}
+
+.editor-main { display: flex; flex-direction: column; gap: 16px; }
+.editor-side { display: flex; flex-direction: column; gap: 16px; }
+
+.field-group { display: flex; flex-direction: column; gap: 6px; }
+.field-label {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--tx2);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.field-input, .field-select, .field-textarea {
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: var(--rad);
+  color: var(--tx);
+  padding: 11px 14px;
+  font-family: inherit;
+  font-size: .95rem;
+  outline: none;
+  width: 100%;
+  transition: border-color .2s;
+}
+.field-input:focus, .field-select:focus, .field-textarea:focus {
+  border-color: var(--co);
+}
+.field-select { cursor: pointer; }
+.field-select option { background: var(--s2); }
+.field-textarea { resize: vertical; min-height: 80px; }
+.field-hint { font-size: .78rem; color: var(--tx3); }
+
+/* ── RICH EDITOR ── */
+.rich-wrap {
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: var(--rad);
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.rich-wrap:focus-within { border-color: var(--co); }
+.rich-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--br);
+  background: var(--s2);
+}
+.tb-btn {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--tx2);
+  padding: 4px 9px;
+  font-family: inherit;
+  font-size: .82rem;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  line-height: 1.4;
+}
+.tb-btn:hover { background: var(--s3); color: var(--tx); }
+.tb-btn.active { background: var(--co); color: #fff; border-color: var(--co); }
+.tb-sep { width: 1px; background: var(--br); margin: 2px 4px; }
+.rich-editor {
+  min-height: 240px;
+  padding: 16px;
+  outline: none;
+  line-height: 1.65;
+  color: var(--tx);
+}
+.rich-editor:empty::before {
+  content: attr(data-placeholder);
+  color: var(--tx3);
+  pointer-events: none;
+}
+.rich-editor h2 { font-family: 'Syne',sans-serif; font-size: 1.3rem; margin: 12px 0 6px; }
+.rich-editor h3 { font-family: 'Syne',sans-serif; font-size: 1.1rem; margin: 10px 0 4px; }
+.rich-editor ul, .rich-editor ol { padding-left: 20px; margin: 6px 0; }
+.rich-editor a { color: var(--co); }
+
+/* ── IMAGEN URL ── */
+.img-preview {
+  width: 100%;
+  height: 160px;
+  background: var(--s2);
+  border-radius: var(--rad);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tx3);
+  font-size: .85rem;
+  margin-top: 8px;
+  border: 1px dashed var(--br);
+  flex-direction: column;
+  gap: 6px;
+}
+.img-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.img-preview-icon { font-size: 1.8rem; }
+
+/* ── SIDE CARD ── */
+.side-card {
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: var(--rad);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.side-card-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: .95rem;
+  margin-bottom: 2px;
+}
+
+/* ── BUTTONS ── */
+.btn-pub {
+  background: var(--co);
+  color: #fff;
+  border: none;
+  border-radius: var(--rad);
+  padding: 12px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: .95rem;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity .2s;
+}
+.btn-pub:hover { opacity: .88; }
+.btn-draft {
+  background: var(--s2);
+  border: 1px solid var(--br);
+  color: var(--tx2);
+  border-radius: var(--rad);
+  padding: 11px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: .9rem;
+  cursor: pointer;
+  width: 100%;
+  transition: background .2s;
+}
+.btn-draft:hover { background: var(--s3); }
+.saving-indicator {
+  text-align: center;
+  font-size: .8rem;
+  color: var(--tx3);
+  min-height: 18px;
+}
+
+/* ── MODAL CONFIRMACIÓN ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: oklch(0% 0 0 / .7);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+.modal-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.modal-title { font-family: 'Syne',sans-serif; font-weight: 800; font-size: 1.2rem; margin-bottom: 8px; }
+.modal-sub { color: var(--tx3); font-size: .9rem; margin-bottom: 24px; }
+.modal-btns { display: flex; gap: 10px; }
+.modal-btns button { flex: 1; padding: 11px; border-radius: var(--rad); font-family: inherit; font-weight: 600; font-size: .9rem; cursor: pointer; border: none; }
+.btn-cancel-modal { background: var(--s2); color: var(--tx2); }
+.btn-cancel-modal:hover { background: var(--s3); }
+.btn-confirm-del { background: var(--cp); color: #fff; }
+.btn-confirm-del:hover { opacity: .88; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: 99px;
+  padding: 10px 24px;
+  font-size: .88rem;
+  color: var(--tx);
+  z-index: 300;
+  transition: transform .3s ease;
+  white-space: nowrap;
+  box-shadow: 0 8px 32px oklch(0% 0 0 / .4);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">EspaiFest</div>
+    <div class="login-sub">Panel de administración del blog</div>
+    <input type="email" id="l-email" placeholder="tu@email.com" autocomplete="email">
+    <input type="password" id="l-pass" placeholder="Contraseña" autocomplete="current-password">
+    <button class="btn-login" onclick="doLogin()">Entrar</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app">
+
+  <!-- Header -->
+  <header class="hdr">
+    <div class="hdr-logo">EspaiFest <span>Blog Admin</span></div>
+    <div class="hdr-right">
+      <span class="hdr-user" id="hdr-email"></span>
+      <button class="btn-logout" onclick="doLogout()">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <div class="main">
+
+    <!-- PANTALLA: LISTA -->
+    <div id="screen-list">
+      <div class="list-hdr">
+        <h1 class="page-title">Posts del blog</h1>
+        <button class="btn-new" onclick="openEditor(null)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nuevo post
+        </button>
+      </div>
+      <div class="posts-list" id="posts-list">
+        <div class="loading-state">Cargando posts…</div>
+      </div>
+    </div>
+
+    <!-- PANTALLA: EDITOR -->
+    <div id="screen-editor">
+      <div class="editor-hdr">
+        <button class="btn-back" onclick="backToList()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Volver
+        </button>
+        <h1 class="page-title" id="editor-title-hdr">Nuevo post</h1>
+      </div>
+
+      <div class="editor-grid">
+
+        <!-- Columna principal -->
+        <div class="editor-main">
+
+          <div class="field-group">
+            <label class="field-label">Título del post *</label>
+            <input type="text" class="field-input" id="e-titulo" placeholder="Escribe el título aquí…">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Extracto <span style="color:var(--tx3);font-weight:400;text-transform:none">(resumen corto que aparece en la web)</span></label>
+            <textarea class="field-textarea" id="e-extracto" placeholder="Una o dos frases que resuman el post…" rows="2"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Contenido</label>
+            <div class="rich-wrap">
+              <div class="rich-toolbar">
+                <button class="tb-btn" onclick="fmt('bold')" title="Negrita"><strong>N</strong></button>
+                <button class="tb-btn" onclick="fmt('italic')" title="Cursiva"><em>C</em></button>
+                <div class="tb-sep"></div>
+                <button class="tb-btn" onclick="fmtBlock('h2')" title="Título H2">H2</button>
+                <button class="tb-btn" onclick="fmtBlock('h3')" title="Título H3">H3</button>
+                <div class="tb-sep"></div>
+                <button class="tb-btn" onclick="fmt('insertUnorderedList')" title="Lista">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/></svg>
+                </button>
+                <div class="tb-sep"></div>
+                <button class="tb-btn" onclick="insertLink()" title="Enlace">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+                </button>
+              </div>
+              <div class="rich-editor" id="e-contenido" contenteditable="true" data-placeholder="Escribe aquí el contenido del post…"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Columna lateral -->
+        <div class="editor-side">
+
+          <!-- Publicar -->
+          <div class="side-card">
+            <div class="side-card-title">Publicación</div>
+            <div class="field-group">
+              <label class="field-label">Estado</label>
+              <select class="field-select" id="e-estado">
+                <option value="borrador">📝 Borrador (solo tú lo ves)</option>
+                <option value="publicado">✅ Publicado (aparece en la web)</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Categoría</label>
+              <select class="field-select" id="e-cat">
+                <option value="fiestas-infantiles">🎈 Fiestas infantiles</option>
+                <option value="adultos">🥂 Fiestas adultos</option>
+                <option value="business">💼 Business</option>
+                <option value="manualidades">✂️ Manualidades</option>
+                <option value="consejos">💡 Consejos</option>
+              </select>
+            </div>
+            <button class="btn-pub" onclick="savePost('publicado')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:6px"><polyline points="20 6 9 17 4 12"/></svg>
+              Publicar en la web
+            </button>
+            <button class="btn-draft" onclick="savePost('borrador')">Guardar borrador</button>
+            <div class="saving-indicator" id="saving-msg"></div>
+          </div>
+
+          <!-- Imagen -->
+          <div class="side-card">
+            <div class="side-card-title">Imagen de portada</div>
+            <div class="field-group">
+              <label class="field-label">URL de la imagen</label>
+              <input type="url" class="field-input" id="e-img" placeholder="https://drive.google.com/file/d/…/view" oninput="previewImg(this.value)">
+              <span class="field-hint">Pega el enlace de Google Drive (botón derecho → Obtener enlace → Cualquiera con el enlace). Se convierte automáticamente. Asegúrate de que el archivo es público ("Cualquiera con el enlace") ✓</span>
+            </div>
+            <div class="img-preview" id="img-preview">
+              <div class="img-preview-icon">🖼️</div>
+              <span>La preview aparecerá aquí</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /screen-editor -->
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- Modal eliminar -->
+<div class="modal-overlay" id="del-modal">
+  <div class="modal-box">
+    <div class="modal-icon">🗑️</div>
+    <div class="modal-title">¿Eliminar este post?</div>
+    <div class="modal-sub">Esta acción no se puede deshacer.</div>
+    <div class="modal-btns">
+      <button class="btn-cancel-modal" onclick="closeDelModal()">Cancelar</button>
+      <button class="btn-confirm-del" onclick="confirmDelete()">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc,
+         query, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const fbConfig = {
+  apiKey: "AIzaSyAGhtCNHbKDnb4rcwQiq8qFMdgaayd73Wg",
+  authDomain: "reservify-espaifest.firebaseapp.com",
+  projectId: "reservify-espaifest",
+  storageBucket: "reservify-espaifest.firebasestorage.app",
+  messagingSenderId: "991446001833",
+  appId: "1:991446001833:web:bc3b5d197ff13b5163a1b8"
+};
+
+const app  = getApps().length ? getApps()[0] : initializeApp(fbConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// ── Estado ──────────────────────────────────────────────
+let currentUser   = null;
+let editingPostId = null; // null = nuevo post
+let pendingDelId  = null;
+let allPosts      = [];
+
+// ── Auth ─────────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+  if (user) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('hdr-email').textContent = user.email;
+    loadPosts();
+  } else {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+  }
+});
+
+window.doLogin = async function() {
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  const errEl = document.getElementById('login-err');
+  errEl.textContent = '';
+  if (!email || !pass) { errEl.textContent = 'Rellena email y contraseña'; return; }
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) {
+    errEl.textContent = 'Email o contraseña incorrectos';
+  }
+};
+
+window.doLogout = async function() {
+  await signOut(auth);
+};
+
+// ── Cargar posts ──────────────────────────────────────────
+async function loadPosts() {
+  const container = document.getElementById('posts-list');
+  container.innerHTML = '<div class="loading-state">Cargando posts…</div>';
+  try {
+    const snap = await getDocs(collection(db, 'blog_posts'));
+    // Ordenar por createdAt desc en cliente — evita índice compuesto en Firestore
+    const allDocs = snap.docs.slice().sort((a, b) => {
+      const ta = a.data().createdAt?.toMillis?.() || 0;
+      const tb = b.data().createdAt?.toMillis?.() || 0;
+      return tb - ta;
+    });
+    allPosts = allDocs.map(d => ({ id: d.id, ...d.data() }));
+    renderPostsList();
+  } catch(e) {
+    container.innerHTML = `<div class="loading-state" style="color:var(--cp)">Error al cargar. Verifica los permisos de Firestore.</div>`;
+  }
+}
+
+function renderPostsList() {
+  const container = document.getElementById('posts-list');
+  if (!allPosts.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div>✍️</div>
+        <p>Todavía no hay posts. ¡Crea el primero!</p>
+      </div>`;
+    return;
+  }
+  container.innerHTML = allPosts.map(p => {
+    const date = p.createdAt?.toDate().toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}) || '—';
+    const badge = p.estado === 'publicado'
+      ? '<span class="badge badge-pub">✅ Publicado</span>'
+      : '<span class="badge badge-bor">📝 Borrador</span>';
+    const thumb = p.imagenURL
+      ? `<div class="post-thumb"><img src="${p.imagenURL}" alt="" onerror="this.parentElement.innerHTML='🖼️'"></div>`
+      : `<div class="post-thumb">📝</div>`;
+    const catMap = {
+      'fiestas-infantiles':'Fiestas infantiles','adultos':'Adultos',
+      'business':'Business','manualidades':'Manualidades','consejos':'Consejos'
+    };
+    return `
+      <div class="post-item">
+        ${thumb}
+        <div class="post-info">
+          <div class="post-title">${p.titulo || 'Sin título'}</div>
+          <div class="post-meta">
+            ${badge}
+            <span class="post-cat">${catMap[p.categoria] || p.categoria || '—'}</span>
+            <span class="post-date">${date}</span>
+          </div>
+        </div>
+        <div class="post-actions">
+          <button class="btn-icon" onclick="openEditor('${p.id}')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Editar
+          </button>
+          <button class="btn-icon btn-del" onclick="openDelModal('${p.id}')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+            Eliminar
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── Editor ────────────────────────────────────────────────
+window.openEditor = function(postId) {
+  editingPostId = postId;
+  document.getElementById('screen-list').style.display = 'none';
+  document.getElementById('screen-editor').style.display = 'block';
+
+  if (postId) {
+    // Editar existente
+    document.getElementById('editor-title-hdr').textContent = 'Editar post';
+    const p = allPosts.find(x => x.id === postId);
+    if (p) {
+      document.getElementById('e-titulo').value    = p.titulo    || '';
+      document.getElementById('e-extracto').value  = p.extracto  || '';
+      document.getElementById('e-contenido').innerHTML = p.contenido || '';
+      document.getElementById('e-estado').value    = p.estado    || 'borrador';
+      document.getElementById('e-cat').value       = p.categoria || 'fiestas-infantiles';
+      document.getElementById('e-img').value       = p.imagenURL || '';
+      previewImg(p.imagenURL || '');
+    }
+  } else {
+    // Nuevo post — resetear campos
+    document.getElementById('editor-title-hdr').textContent = 'Nuevo post';
+    document.getElementById('e-titulo').value    = '';
+    document.getElementById('e-extracto').value  = '';
+    document.getElementById('e-contenido').innerHTML = '';
+    document.getElementById('e-estado').value    = 'borrador';
+    document.getElementById('e-cat').value       = 'fiestas-infantiles';
+    document.getElementById('e-img').value       = '';
+    previewImg('');
+  }
+  document.getElementById('saving-msg').textContent = '';
+};
+
+window.backToList = function() {
+  document.getElementById('screen-editor').style.display = 'none';
+  document.getElementById('screen-list').style.display = 'block';
+};
+
+// ── Guardar post ──────────────────────────────────────────
+window.savePost = async function(estadoOverride) {
+  const titulo    = document.getElementById('e-titulo').value.trim();
+  const extracto  = document.getElementById('e-extracto').value.trim();
+  const contenido = document.getElementById('e-contenido').innerHTML.trim();
+  const estado    = estadoOverride || document.getElementById('e-estado').value;
+  const categoria = document.getElementById('e-cat').value;
+  const imagenURL = normalizeDriveURL(document.getElementById('e-img').value.trim());
+
+  if (!titulo) { showToast('El título es obligatorio'); return; }
+
+  const msgEl = document.getElementById('saving-msg');
+  msgEl.textContent = 'Guardando…';
+
+  // Slug simple desde el título
+  const slug = titulo.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9\s-]/g,'')
+    .trim().replace(/\s+/g,'-');
+
+  const data = { titulo, extracto, contenido, estado, categoria, imagenURL, slug, updatedAt: serverTimestamp() };
+
+  try {
+    if (editingPostId) {
+      await updateDoc(doc(db, 'blog_posts', editingPostId), data);
+      // Actualizar local
+      const idx = allPosts.findIndex(p => p.id === editingPostId);
+      if (idx !== -1) allPosts[idx] = { ...allPosts[idx], ...data };
+    } else {
+      data.createdAt = serverTimestamp();
+      const ref = await addDoc(collection(db, 'blog_posts'), data);
+      allPosts.unshift({ id: ref.id, ...data });
+      editingPostId = ref.id; // ahora estamos editando el que acabamos de crear
+    }
+
+    msgEl.textContent = estado === 'publicado' ? '✅ Publicado en la web' : '💾 Borrador guardado';
+    document.getElementById('editor-title-hdr').textContent = 'Editar post';
+    showToast(estado === 'publicado' ? '✅ Post publicado' : '💾 Borrador guardado');
+    setTimeout(() => { msgEl.textContent = ''; }, 3000);
+  } catch(e) {
+    msgEl.textContent = '';
+    showToast('Error al guardar. Inténtalo de nuevo.');
+    console.error(e);
+  }
+};
+
+// ── Eliminar ──────────────────────────────────────────────
+window.openDelModal = function(id) {
+  pendingDelId = id;
+  document.getElementById('del-modal').classList.add('open');
+};
+window.closeDelModal = function() {
+  pendingDelId = null;
+  document.getElementById('del-modal').classList.remove('open');
+};
+window.confirmDelete = async function() {
+  if (!pendingDelId) return;
+  try {
+    await deleteDoc(doc(db, 'blog_posts', pendingDelId));
+    allPosts = allPosts.filter(p => p.id !== pendingDelId);
+    renderPostsList();
+    showToast('Post eliminado');
+  } catch(e) {
+    showToast('Error al eliminar');
+  }
+  closeDelModal();
+};
+
+
+// ── Convertir URL Google Drive a URL directa ─────────────
+function normalizeDriveURL(url) {
+  if (!url) return '';
+  // Extraer ID de cualquier formato de Google Drive
+  // Formato: https://drive.google.com/file/d/ID/view?...
+  const m = url.match(/drive\.google\.com\/file\/d\/([^/\?]+)/);
+  if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1200`;
+  // Formato: https://drive.google.com/open?id=ID
+  const m2 = url.match(/drive\.google\.com\/open\?id=([^&]+)/);
+  if (m2) return `https://drive.google.com/thumbnail?id=${m2[1]}&sz=w1200`;
+  // Formato /uc?export=view&id=ID — convertir a thumbnail también
+  const m3 = url.match(/[?&]id=([^&]+)/);
+  if (url.includes('drive.google.com') && m3) return `https://drive.google.com/thumbnail?id=${m3[1]}&sz=w1200`;
+  // Cualquier otra URL — devolver tal cual
+  return url;
+}
+
+// ── Preview imagen ────────────────────────────────────────
+window.previewImg = function(rawUrl) {
+  const el = document.getElementById('img-preview');
+  if (!rawUrl) {
+    el.innerHTML = '<div class="img-preview-icon">🖼️</div><span>La preview aparecerá aquí</span>';
+    return;
+  }
+  const url = normalizeDriveURL(rawUrl);
+  // Si se normalizó una URL de Drive, actualizar el campo con la URL directa
+  if (url !== rawUrl) {
+    const inp = document.getElementById('e-img');
+    if (inp) inp.value = url;
+  }
+  el.innerHTML = `<img src="${url}" alt="Preview" onerror="this.parentElement.innerHTML='<div class=\\'img-preview-icon\\'>❌</div><span>URL no válida o sin acceso público</span>'">`;
+};
+
+// ── Rich editor ───────────────────────────────────────────
+window.fmt = function(cmd) { document.execCommand(cmd, false, null); };
+window.fmtBlock = function(tag) { document.execCommand('formatBlock', false, tag); };
+window.insertLink = function() {
+  const url = prompt('URL del enlace:');
+  if (url) document.execCommand('createLink', false, url);
+};
+
+// Intro en el editor no crea <div>, crea <p>
+document.getElementById('e-contenido').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    document.execCommand('insertParagraph');
+  }
+});
+
+// ── Toast ─────────────────────────────────────────────────
+let _tt;
+window.showToast = function(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => t.classList.remove('show'), 2800);
+};
+
+// ── Enter en login ────────────────────────────────────────
+document.getElementById('l-pass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') window.doLogin();
+});
+</script>
+</body>
+</html>
