@@ -100,13 +100,27 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9997;o
 @keyframes pdot{0%,100%{transform:scale(1)}50%{transform:scale(1.4);opacity:.6}}
 
 /* ═══ NAV ════════════════════════════════════════ */
-nav{position:fixed;top:0;left:0;right:0;z-index:800;height:68px;padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease-s);}
+nav{position:fixed;top:0;left:0;right:0;z-index:800;height:90px;padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease-s);}
 nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--bd);box-shadow:0 2px 24px oklch(0% 0 0/.25);}
 [data-theme="light"] nav.up{background:oklch(99% .003 260/.9);}
-.n-logo{display:flex;align-items:center;gap:10px;}
-.n-logo img{height:42px;width:auto;transition:transform .3s;}
+
+/* --- NUEVA LOGICA DE LOGO GRANDE Y DINÁMICO --- */
+.n-logo{display:flex;align-items:center;}
+.n-logo img {
+  height: 70px; /* Tamaño mucho más grande */
+  width: auto;
+  transition: transform .3s;
+  content: url('https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png'); /* Logo blanco por defecto */
+}
+
+/* CAMBIO A LOGO NEGRO CUANDO EL TEMA ES LIGHT */
+[data-theme="light"] .n-logo img {
+  content: url('https://i.ibb.co/p9z8mfx/Espai-Fest-Negre.png');
+}
+
 .n-logo img:hover{transform:scale(1.04);}
-.n-logo-txt{font:800 1.1rem var(--fd);letter-spacing:-.5px;background:linear-gradient(135deg,oklch(100% 0 0),oklch(80% 0 0));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+/* ---------------------------------------------- */
+
 .n-links{display:flex;align-items:center;gap:3px;}
 .n-links a{padding:7px 13px;border-radius:40px;font-size:.875rem;font-weight:500;color:var(--tx2);transition:all .2s;}
 .n-links a:hover{color:var(--tx);background:var(--glass);}
@@ -117,7 +131,6 @@ nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%
 .theme-btn:hover{color:var(--tx);border-color:var(--co);}
 .n-cta{background:var(--co)!important;color:#fff!important;padding:9px 20px!important;font-weight:700!important;box-shadow:0 3px 16px oklch(68% .22 38/.4);transition:all .25s var(--ease-b)!important;}
 .n-cta:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 7px 24px oklch(68% .22 38/.5)!important;}
-
 /* ═══ HERO ════════════════════════════════════════ */
 .hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:68px;overflow:hidden;position:relative;}
 .h-side{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:clamp(2rem,4vw,3.5rem);min-height:calc(100vh - 68px);cursor:pointer;}
