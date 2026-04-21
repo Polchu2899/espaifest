@@ -1241,19 +1241,47 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 </section>
 
 <!-- ══ FIDELIZACIÓN ═══════════════════════════════ -->
+<style>
+  #fidelizacion { background-color: #0b0d11 !important; padding: 80px 0; color: #fff; }
+  .fid-card { background: #000; border-radius: 20px; padding: 40px; position: relative; border: 1px solid #333; box-shadow: 0 0 20px rgba(255,0,255,0.1); }
+  .fid-card::before { content: ''; position: absolute; top: 0; left: 20px; right: 20px; height: 3px; background: linear-gradient(90deg, #ff00ff, #ffff00); }
+  .fid-item { background: #121418; border-radius: 12px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border: 1px solid #222; }
+  .fid-disc { font-family: monospace; font-size: 20px; font-weight: bold; color: #00ffff; }
+</style>
+
 <section id="fidelizacion">
   <div class="container">
-    <div class="tc" data-a="up">
-      <div class="eyebrow ew-p" style="justify-content:center"><div class="ew-dot"></div><span data-es="Programa de fidelización" data-ca="Programa de fidelització">Programa de fidelización</span></div>
-      <h2 class="sec-h2" data-es="Cuanto más vienes, más ahorras" data-blur="top" data-blur="top" data-ca="Com més véns, més estalvies">Cuanto más vienes, más ahorras</h2>
-      <p class="sec-lead" data-es="EspaiFest premia a sus clientes habituales con descuentos y ventajas exclusivas. Acumula visitas y sube de nivel." data-ca="EspaiFest premia els seus clients habituals amb descomptes i avantatges exclusives.">EspaiFest premia a sus clientes habituales con descuentos y ventajas exclusivas.</p>
+    <div class="tc" style="margin-bottom: 40px;">
+      <div class="eyebrow ew-p" style="justify-content:center"><div class="ew-dot"></div><span>Programa de fidelización</span></div>
+      <p style="opacity: 0.7; margin-top: 10px;">EspaiFest premia a sus clientes habituales con ventajas exclusivas.</p>
     </div>
-    <div class="fid-grid">
-      <div class="fid-card" data-a="right">
-        <div class="fid-logo-area">
-  <img src="https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png" alt="Tarjeta fidelización EspaiFest" style="filter:brightness(1.2); width: 250px; height: auto; margin: 0 auto; display: block;">
-</div>
-        <a href="#reservas" class="btn btn-primary" data-es="Empezar a acumular" data-ca="Començar a acumular">Empezar a acumular <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+
+    <div class="split" style="align-items: center; gap: 50px;">
+      <div class="fid-card">
+        <img src="https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png" style="width: 150px; display: block; margin: 0 auto 30px;">
+        <div class="fid-item">
+          <div style="display:flex; align-items:center; gap:12px;"><span>🏅</span><div><b>Básico</b><br><small style="opacity:0.6">1-4 reservas</small></div></div>
+          <div class="fid-disc" style="color:#666">-</div>
+        </div>
+        <div class="fid-item">
+          <div style="display:flex; align-items:center; gap:12px;"><span>🥈</span><div><b>Plata</b><br><small style="opacity:0.6">5-9 reservas</small></div></div>
+          <div class="fid-disc">5%</div>
+        </div>
+        <div class="fid-item">
+          <div style="display:flex; align-items:center; gap:12px;"><span>🥇</span><div><b>Oro</b><br><small style="opacity:0.6">10+ reservas</small></div></div>
+          <div class="fid-disc" style="color:#ffeb3b">10%</div>
+        </div>
+      </div>
+
+      <div>
+        <h2 style="font-size: 32px; margin-bottom: 20px;">Tu tarjeta EspaiFest</h2>
+        <p style="opacity: 0.8; margin-bottom: 30px;">Cada vez que celebras con nosotros sumas una reserva. A partir de la quinta ya disfrutas de descuento.</p>
+        <ul style="list-style:none; padding:0; margin-bottom:30px;">
+          <li style="margin-bottom:10px;">✅ Descuento automático</li>
+          <li style="margin-bottom:10px;">✅ Sorpresas en tu cumple</li>
+          <li style="margin-bottom:10px;">✅ Acceso prioritario</li>
+        </ul>
+        <a href="#reservas" class="btn btn-fest" style="background:#ff5722; border:none;">Empezar a acumular</a>
       </div>
     </div>
   </div>
