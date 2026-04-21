@@ -502,13 +502,84 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- MODAL RESERVA -->
 <div class="mov" id="modal-res">
-  <div class="modal">
-    <div class="mtitle">Nueva reserva</div><div class="msub">Reserva telefónica o presencial</div>
-    <div class="fg"><label class="fl">Nombre del cliente</label><input type="text" class="fi" id="r-nombre" placeholder="Ej: Família García"></div>
-    <div class="fr2"><div class="fg"><label class="fl">Teléfono</label><input type="text" class="fi" id="r-tel" placeholder="6XX XXX XXX"></div><div class="fg"><label class="fl">Servicio</label><select class="fsi" id="r-servicio"><option>Fiesta infantil</option><option>Fiesta adultos</option><option>Business</option><option>Taller</option></select></div></div>
-    <div class="fr2"><div class="fg"><label class="fl">Fecha</label><input type="date" class="fi" id="r-fecha"></div><div class="fg"><label class="fl">Franja horaria</label><select class="fsi" id="r-horario"><option>09:00–13:00</option><option>10:00–14:00</option><option>16:00–20:00</option><option>17:00–21:00</option><option>18:00–22:00</option></select></div></div>
-    <div class="fr2"><div class="fg"><label class="fl">Método de pago</label><select class="fsi" id="r-pago"><option>Bizum</option><option>Transferencia</option><option>Efectivo</option></select></div><div class="fg"><label class="fl">Importe (€)</label><input type="number" class="fi" id="r-importe" value="85"></div></div>
-    <div class="mfoot"><button class="btn bg" onclick="closeModal('res')">Cancelar</button><button class="btn bp" onclick="saveReserva()">Guardar reserva</button></div>
+  <div class="modal" style="max-width:640px;max-height:90vh;overflow-y:auto;">
+    <div class="mtitle">Nueva reserva</div><div class="msub">Reserva telefónica, presencial o por WhatsApp</div>
+
+    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:4px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Datos del cliente</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="r-nombre" placeholder="Nombre"></div>
+      <div class="fg"><label class="fl">Apellidos *</label><input type="text" class="fi" id="r-apellidos" placeholder="Apellidos"></div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">DNI / NIE</label><input type="text" class="fi" id="r-dni" placeholder="12345678A"></div>
+      <div class="fg"><label class="fl">Fecha nacimiento</label><input type="date" class="fi" id="r-fnac"></div>
+    </div>
+    <div class="fg"><label class="fl">Dirección</label><input type="text" class="fi" id="r-dir" placeholder="Calle y número"></div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Localidad</label><input type="text" class="fi" id="r-loc" placeholder="Ciudad"></div>
+      <div class="fg"><label class="fl">Código postal</label><input type="text" class="fi" id="r-cp" placeholder="08XXX" maxlength="5"></div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Teléfono *</label><input type="text" class="fi" id="r-tel" placeholder="6XX XXX XXX"></div>
+      <div class="fg"><label class="fl">Email</label><input type="text" class="fi" id="r-email" placeholder="cliente@email.com"></div>
+    </div>
+
+    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:14px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Detalles de la reserva</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Tipo de evento *</label>
+        <select class="fsi" id="r-servicio">
+          <option>Fiesta infantil</option><option>Fiesta adultos</option>
+          <option>Reunión familiar</option><option>Cumpleaños adultos</option>
+          <option>Baby shower</option><option>Despedida de soltera</option>
+          <option>Reunión empresa</option><option>Clases / Taller</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Personas</label>
+        <select class="fsi" id="r-personas">
+          <option>Hasta 10 personas</option>
+          <option>De 10 a 20 personas (inc. niñ@s)</option>
+          <option>De 20 a 30 personas (inc. niñ@s)</option>
+          <option>De 30 a 40 personas (inc. niñ@s)</option>
+          <option>De 40 a 50 personas (inc. niñ@s)</option>
+        </select>
+      </div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Fecha *</label><input type="date" class="fi" id="r-fecha"></div>
+      <div class="fg"><label class="fl">Franja horaria</label>
+        <select class="fsi" id="r-horario">
+          <option value="Mañana (10:00-14:00) — 85€">Mañana (10:00-14:00) — 85 €</option>
+          <option value="Mañana (11:00-15:00) — 85€">Mañana (11:00-15:00) — 85 €</option>
+          <option value="Tarde (16:30-20:30) — 85€">Tarde (16:30-20:30) — 85 €</option>
+          <option value="Todo el día (10:00-20:00) — 130€">Todo el día (10:00-20:00) — 130 €</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:14px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Extras y pago</div>
+    <div class="fg"><label class="fl">Extras seleccionados</label><input type="text" class="fi" id="r-extras" placeholder="Ej: Menú mini, Bandeja Dulce..."></div>
+    <div class="fg"><label class="fl">Hora extra</label>
+      <select class="fsi" id="r-horaext">
+        <option value="Sin horas extra">Sin horas extra</option>
+        <option value="+1h antes (10 €)">+1h antes (10 €)</option>
+        <option value="+1h después (10 €)">+1h después (10 €)</option>
+      </select>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Método de pago</label>
+        <select class="fsi" id="r-pago">
+          <option>Transferencia bancaria</option><option>Bizum</option><option>Efectivo</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Importe total (€)</label><input type="number" class="fi" id="r-importe" value="85"></div>
+    </div>
+    <div class="fg"><label class="fl">Señal cobrada (€)</label><input type="number" class="fi" id="r-senal" value="0"></div>
+    <div class="fg"><label class="fl">Notas / Comentarios</label><textarea class="fi" id="r-notas" placeholder="Observaciones, necesidades especiales..." style="min-height:60px;resize:vertical;"></textarea></div>
+
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeModal('res')">Cancelar</button>
+      <button class="btn bp" onclick="saveReserva()">Guardar reserva</button>
+    </div>
   </div>
 </div>
 
@@ -537,19 +608,35 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- Modal detalle reserva -->
 <div class="det-modal" id="det-modal" style="display:none" onclick="if(event.target===this)closeDet()">
-  <div class="det-box">
+  <div class="det-box" style="max-height:90vh;overflow-y:auto;">
     <button class="det-close" onclick="closeDet()">×</button>
     <div class="det-title" id="det-nombre">—</div>
     <div class="det-sub" id="det-sub">—</div>
     <div class="det-grid">
-      <div class="det-field"><div class="det-label">Fecha</div><div class="det-value" id="det-fecha">—</div></div>
-      <div class="det-field"><div class="det-label">Franja horaria</div><div class="det-value" id="det-horario">—</div></div>
-      <div class="det-field"><div class="det-label">Servicio</div><div class="det-value" id="det-servicio">—</div></div>
-      <div class="det-field"><div class="det-label">Estado</div><div class="det-value" id="det-estado">—</div></div>
+      <!-- Datos personales -->
+      <div class="det-field full" style="grid-column:1/-1;font:700 .65rem var(--t2);text-transform:uppercase;letter-spacing:.08em;padding-bottom:4px;border-bottom:1px solid var(--b2);margin-bottom:4px;">Datos personales</div>
+      <div class="det-field"><div class="det-label">Nombre completo</div><div class="det-value" id="det-nombre-completo">—</div></div>
+      <div class="det-field"><div class="det-label">DNI / NIE</div><div class="det-value" id="det-dni">—</div></div>
+      <div class="det-field"><div class="det-label">Fecha nacimiento</div><div class="det-value" id="det-fnac">—</div></div>
+      <div class="det-field"><div class="det-label">Dirección</div><div class="det-value" id="det-dir">—</div></div>
+      <div class="det-field"><div class="det-label">Localidad / CP</div><div class="det-value" id="det-loc">—</div></div>
       <div class="det-field"><div class="det-label">Teléfono</div><div class="det-value" id="det-tel">—</div></div>
       <div class="det-field"><div class="det-label">Email</div><div class="det-value" id="det-email">—</div></div>
+      <!-- Reserva -->
+      <div class="det-field full" style="grid-column:1/-1;font:700 .65rem var(--t2);text-transform:uppercase;letter-spacing:.08em;padding-bottom:4px;border-bottom:1px solid var(--b2);margin-bottom:4px;margin-top:8px;">Detalles de la reserva</div>
+      <div class="det-field"><div class="det-label">Fecha</div><div class="det-value" id="det-fecha">—</div></div>
+      <div class="det-field"><div class="det-label">Franja horaria</div><div class="det-value" id="det-horario">—</div></div>
+      <div class="det-field"><div class="det-label">Tipo de evento</div><div class="det-value" id="det-servicio">—</div></div>
+      <div class="det-field"><div class="det-label">Personas</div><div class="det-value" id="det-personas">—</div></div>
+      <div class="det-field"><div class="det-label">Hora extra</div><div class="det-value" id="det-horaext">—</div></div>
+      <div class="det-field"><div class="det-label">Estado</div><div class="det-value" id="det-estado">—</div></div>
+      <!-- Extras y pago -->
+      <div class="det-field full" style="grid-column:1/-1;font:700 .65rem var(--t2);text-transform:uppercase;letter-spacing:.08em;padding-bottom:4px;border-bottom:1px solid var(--b2);margin-bottom:4px;margin-top:8px;">Extras y pago</div>
+      <div class="det-field full"><div class="det-label">Extras seleccionados</div><div class="det-value" id="det-extras" style="white-space:pre-wrap">—</div></div>
       <div class="det-field"><div class="det-label">Método pago</div><div class="det-value" id="det-pago">—</div></div>
-      <div class="det-field"><div class="det-label">Importe</div><div class="det-value" id="det-importe">—</div></div>
+      <div class="det-field"><div class="det-label">Importe total</div><div class="det-value" id="det-importe" style="font-size:1.1rem;font-weight:800;color:var(--teal)">—</div></div>
+      <div class="det-field"><div class="det-label">Señal cobrada (50%)</div><div class="det-value" id="det-senal" style="color:var(--green);font-weight:700">—</div></div>
+      <div class="det-field"><div class="det-label">Origen</div><div class="det-value" id="det-origen">—</div></div>
       <div class="det-field full"><div class="det-label">Notas del cliente</div><div class="det-value" id="det-notas" style="white-space:pre-wrap">—</div></div>
     </div>
     <div class="det-actions" id="det-actions"></div>
@@ -712,24 +799,99 @@ window.filterReservas = () => {
   renderReservas(filtered);
 };
 
+// ── ALTA AUTOMÁTICA DE CLIENTE ────────────────────────────────
+async function upsertCliente(data) {
+  try {
+    const tel = (data.telefono||'').replace(/\s/g,'');
+    if(!tel) return;
+    const snap = await getDocs(query(collection(db,'clientes'), where('telefono','==',tel)));
+    if(snap.empty) {
+      // Cliente nuevo — crear
+      await addDoc(collection(db,'clientes'), {
+        nombre:     data.nombre     || '',
+        apellidos:  data.apellidos  || '',
+        dni:        data.dni        || '',
+        fechaNac:   data.fechaNac   || '',
+        direccion:  data.direccion  || '',
+        localidad:  data.localidad  || '',
+        cp:         data.cp         || '',
+        telefono:   tel,
+        email:      data.email      || '',
+        reservas:   1,
+        createdAt:  serverTimestamp()
+      });
+    } else {
+      // Cliente existente — sumar reserva y actualizar datos
+      const clienteDoc = snap.docs[0];
+      const reservasActual = clienteDoc.data().reservas || 0;
+      await updateDoc(doc(db,'clientes',clienteDoc.id), {
+        nombre:    data.nombre    || clienteDoc.data().nombre,
+        apellidos: data.apellidos || clienteDoc.data().apellidos,
+        email:     data.email     || clienteDoc.data().email,
+        reservas:  reservasActual + 1,
+        updatedAt: serverTimestamp()
+      });
+    }
+  } catch(e) { console.warn('upsertCliente error:', e); }
+}
+
 window.saveReserva = async () => {
+  const nombre    = document.getElementById('r-nombre').value.trim();
+  const apellidos = document.getElementById('r-apellidos').value.trim();
+  const dni       = document.getElementById('r-dni').value.trim();
+  const fnac      = document.getElementById('r-fnac').value || '';
+  const dir       = document.getElementById('r-dir').value.trim();
+  const loc       = document.getElementById('r-loc').value.trim();
+  const cp        = document.getElementById('r-cp').value.trim();
+  const tel       = document.getElementById('r-tel').value.trim();
+  const email     = document.getElementById('r-email').value.trim();
+  const servicio  = document.getElementById('r-servicio').value;
+  const personas  = document.getElementById('r-personas').value;
+  const fecha     = document.getElementById('r-fecha').value;
+  const horario   = document.getElementById('r-horario').value;
+  const horaext   = document.getElementById('r-horaext').value;
+  const extras    = document.getElementById('r-extras').value.trim();
+  const pago      = document.getElementById('r-pago').value;
+  const importe   = parseFloat(document.getElementById('r-importe').value) || 85;
+  const senal     = parseFloat(document.getElementById('r-senal').value) || 0;
+  const notas     = document.getElementById('r-notas').value.trim();
+
+  if(!nombre || !fecha) { showToast('Rellena al menos nombre y fecha'); return; }
+
   const data = {
-    nombre: document.getElementById('r-nombre').value,
-    telefono: document.getElementById('r-tel').value,
-    servicio: document.getElementById('r-servicio').value,
-    fecha: document.getElementById('r-fecha').value,
-    horario: document.getElementById('r-horario').value,
-    metodoPago: document.getElementById('r-pago').value,
-    importe: parseFloat(document.getElementById('r-importe').value) || 85,
+    nombre: `${nombre} ${apellidos}`.trim(),
+    apellidos, dni, fechaNac: fnac,
+    direccion: dir, localidad: loc, cp,
+    telefono: tel, email,
+    servicio, personas,
+    fecha, horario, horaExtra: horaext,
+    extras: extras || 'Ninguno',
+    metodoPago: pago,
+    importe, senal,
+    notas: notas || '',
+    origen: 'panel',
     estado: 'Pendiente',
     createdAt: serverTimestamp()
   };
-  if (!data.nombre || !data.fecha) { showToast('Rellena nombre y fecha'); return; }
+
   await addDoc(collection(db,'reservas'), data);
+  await upsertCliente({ nombre, apellidos, dni, fechaNac: fnac, direccion: dir, localidad: loc, cp, telefono: tel, email });
+
   closeModal('res');
-  showToast('Reserva guardada en Firebase');
+  showToast('Reserva y cliente guardados ✓');
   loadReservas();
-  ['r-nombre','r-tel'].forEach(id => document.getElementById(id).value='');
+  loadClientes();
+
+  // Limpiar campos
+  ['r-nombre','r-apellidos','r-dni','r-dir','r-loc','r-cp','r-tel','r-email','r-extras','r-notas'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  const fnacEl = document.getElementById('r-fnac');
+  if(fnacEl) fnacEl.value = '';
+  const senalEl = document.getElementById('r-senal');
+  if(senalEl) senalEl.value = '0';
+  document.getElementById('r-importe').value = '85';
 };
 
 const FRANJAS_MANANA = ['09:00–13:00','10:00–14:00'];
@@ -758,20 +920,32 @@ window.openDet = function(id) {
   const r = allReservas.find(x => x.id === id);
   if (!r) return;
   const horario = getHorario(r);
-  document.getElementById('det-nombre').textContent  = r.nombre || '—';
-  document.getElementById('det-sub').textContent     = `Reserva · ${r.origen === 'web' ? 'Solicitud web' : 'Creada en panel'}`;
-  document.getElementById('det-fecha').textContent   = r.fecha || '—';
-  document.getElementById('det-horario').textContent = horario || 'Sin especificar';
-  document.getElementById('det-servicio').textContent= r.servicio || '—';
-  document.getElementById('det-estado').innerHTML    = estadoBadge(r.estado);
-  document.getElementById('det-tel').textContent     = r.telefono || '—';
-  document.getElementById('det-email').textContent   = r.email || '—';
-  document.getElementById('det-pago').textContent    = r.metodoPago || 'Sin especificar';
-  document.getElementById('det-importe').textContent = fmtMoney(r.importe || 85);
-  // Limpiar notas (quitar la línea de franja si ya se muestra arriba)
-  const notasLimpias = (r.notas || '').split('\n').filter(l => !l.startsWith('Franja horaria:')).join('\n').trim();
-  document.getElementById('det-notas').textContent   = notasLimpias || '—';
-  // Botones de acción según estado
+  const nombreCompleto = r.nombre || '—';
+
+  document.getElementById('det-nombre').textContent        = nombreCompleto;
+  document.getElementById('det-sub').textContent           = `Reserva · ${r.origen === 'web' ? 'Solicitud web' : 'Creada en panel'}`;
+  document.getElementById('det-nombre-completo').textContent = nombreCompleto;
+  document.getElementById('det-dni').textContent           = r.dni || '—';
+  document.getElementById('det-fnac').textContent          = r.fechaNac || r.fechaNacimiento || '—';
+  const dir = [r.direccion, r.cp && r.localidad ? `${r.cp} ${r.localidad}` : (r.localidad||r.cp||'')].filter(Boolean).join(', ');
+  document.getElementById('det-dir').textContent           = dir || '—';
+  document.getElementById('det-loc').textContent           = [r.localidad, r.cp].filter(Boolean).join(' · ') || '—';
+  document.getElementById('det-tel').textContent           = r.telefono || '—';
+  document.getElementById('det-email').textContent         = r.email || '—';
+  document.getElementById('det-fecha').textContent         = r.fecha || '—';
+  document.getElementById('det-horario').textContent       = horario || r.horario || '—';
+  document.getElementById('det-servicio').textContent      = r.servicio || '—';
+  document.getElementById('det-personas').textContent      = r.personas || '—';
+  document.getElementById('det-horaext').textContent       = r.horaExtra || r.horaext || '—';
+  document.getElementById('det-estado').innerHTML          = estadoBadge(r.estado);
+  document.getElementById('det-extras').textContent        = r.extras || '—';
+  document.getElementById('det-pago').textContent          = r.metodoPago || '—';
+  document.getElementById('det-importe').textContent       = fmtMoney(r.importe || 85);
+  document.getElementById('det-senal').textContent         = r.senal ? fmtMoney(r.senal) : (r.senal50 ? fmtMoney(r.senal50) : '—');
+  document.getElementById('det-origen').innerHTML          = r.origen === 'web'
+    ? '<span class="badge bg-t">Web</span>' : '<span class="badge bg-x">Panel</span>';
+  document.getElementById('det-notas').textContent         = r.notas || r.comentarios || '—';
+
   const estado = (r.estado||'').toLowerCase();
   document.getElementById('det-actions').innerHTML = `
     ${estado !== 'confirmada' ? `<button class="btn bp" onclick="confirmarDesdeModal('${id}')">✓ Confirmar</button>` : ''}
