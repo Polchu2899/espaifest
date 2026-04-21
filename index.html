@@ -1242,128 +1242,116 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
 <!-- ══ FIDELIZACIÓN ═══════════════════════════════ -->
 <style>
+  /* --- CONFIGURACIÓN DE COLORES (Cambia aquí lo que quieras) --- */
   :root {
-    /* Si quieres la web NEGRA: */
-    --fidelidad-bg: #0b0d11;      /* Fondo de la sección */
-    --fidelidad-card: #000000;    /* Fondo de la tarjeta */
-    --fidelidad-item: #121418;    /* Fondo de las filas (un poco más claro que la tarjeta) */
-    --fidelidad-text: #ffffff;    /* Color del texto */
-    --fidelidad-border: #333333;  /* Color de los bordes */
-
-    /* Si quisieras la web BLANCA, solo tendrías que activar estos valores:
-    --fidelidad-bg: #ffffff;
-    --fidelidad-card: #f9f9f9;
-    --fidelidad-item: #ffffff;
-    --fidelidad-text: #1a1a1a;
-    --fidelidad-border: #dddddd;
+    /* MODO OSCURO (Activo ahora) */
+    --fide-bg: #0b0d11;      /* Fondo de la sección */
+    --fide-card: #000000;    /* Fondo de la tarjeta */
+    --fide-text: #ffffff;    /* Color de la letra */
+    --fide-item: #1a1d23;    /* Fondo de las filas de niveles */
+    
+    /* MODO CLARO (Para cambiar a blanco, sustituye los valores de arriba por estos:
+    --fide-bg: #ffffff;
+    --fide-card: #f5f5f5;
+    --fide-text: #1a1a1a;
+    --fide-item: #ffffff;
     */
   }
 
-  /* 2. ESTILOS DE LA SECCIÓN */
-  #fidelizacion { 
-    background-color: var(--fidelidad-bg) !important; 
-    padding: 80px 0; 
-    color: var(--fidelidad-text) !important;
-    transition: all 0.3s ease;
+  /* --- DISEÑO DE LA SECCIÓN --- */
+  #fidelizacion {
+    background-color: var(--fide-bg); /* Sin !important para que sea flexible */
+    color: var(--fide-text);
+    padding: 80px 0;
+    transition: background-color 0.3s ease;
   }
 
-  .fid-card { 
-    background: var(--fidelidad-card) !important; 
-    border-radius: 20px; 
-    padding: 40px; 
-    position: relative; 
-    border: 1px solid var(--fidelidad-border); 
-    box-shadow: 0 0 20px rgba(255,0,255,0.1); 
+  .fid-card {
+    background-color: var(--fide-card);
+    border-radius: 20px;
+    padding: 40px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+    max-width: 500px;
+    margin: 0 auto;
   }
 
-  /* Línea neón superior siempre fija */
-  .fid-card::before { 
-    content: ''; 
-    position: absolute; 
-    top: 0; 
-    left: 20px; 
-    right: 20px; 
-    height: 3px; 
-    background: linear-gradient(90deg, #ff00ff, #ffff00); 
+  /* La línea de colores neón superior */
+  .fid-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 20px; right: 20px; height: 3px;
+    background: linear-gradient(90deg, #ff00ff, #ffff00);
   }
 
-  .fid-item { 
-    background: var(--fidelidad-item) !important; 
-    border-radius: 12px; 
-    padding: 15px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-    margin-bottom: 10px; 
-    border: 1px solid var(--fidelidad-border);
-    color: var(--fidelidad-text) !important;
+  .fid-item {
+    background-color: var(--fide-item);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
   }
 
-  .fid-disc { 
-    font-family: 'Space Mono', monospace; 
-    font-size: 20px; 
-    font-weight: bold; 
-    color: #00ffff; /* El cian resalta tanto en blanco como en negro */
+  .fid-disc {
+    font-weight: bold;
+    font-size: 20px;
+    color: #00ffff;
   }
-
-  .fid-item b { color: var(--fidelidad-text); }
-  .fid-item small { color: var(--fidelidad-text); opacity: 0.6; }
 </style>
 
 <section id="fidelizacion">
   <div class="container">
-    <div class="tc" style="margin-bottom: 40px;">
-      <div class="eyebrow ew-p" style="justify-content:center">
-        <div class="ew-dot"></div>
-        <span style="color: var(--fidelidad-text);">Programa de fidelización</span>
-      </div>
-      <p style="opacity: 0.7; margin-top: 10px; color: var(--fidelidad-text);">EspaiFest premia a sus clientes habituales con ventajas exclusivas.</p>
-    </div>
-
     <div class="split" style="align-items: center; gap: 50px;">
       
       <div class="fid-card">
         <img src="https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png" 
-             alt="EspaiFest Logo" 
-             style="width: 150px; display: block; margin: 0 auto 30px; filter: drop-shadow(0px 0px 2px rgba(255,255,255,0.2));">
+             alt="Logo EspaiFest" 
+             style="width: 150px; display: block; margin: 0 auto 30px auto;">
         
-        <div class="fid-item">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <span>🏅</span>
-            <div><b>Básico</b><br><small>1-4 reservas</small></div>
+        <div class="fid-levels">
+          <div class="fid-item">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span>🏅</span>
+              <div><b>Básico</b><br><small style="opacity:0.6">1-4 reservas</small></div>
+            </div>
+            <div style="color: #666;">-</div>
           </div>
-          <div class="fid-disc" style="color:#888">-</div>
-        </div>
+          
+          <div class="fid-item">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span>🥈</span>
+              <div><b>Plata</b><br><small style="opacity:0.6">5-9 reservas</small></div>
+            </div>
+            <div class="fid-disc">5%</div>
+          </div>
 
-        <div class="fid-item">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <span>🥈</span>
-            <div><b>Plata</b><br><small>5-9 reservas</small></div>
+          <div class="fid-item">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span>🥇</span>
+              <div><b>Oro</b><br><small style="opacity:0.6">10+ reservas</small></div>
+            </div>
+            <div class="fid-disc" style="color:#ffeb3b">10%</div>
           </div>
-          <div class="fid-disc">5%</div>
-        </div>
-
-        <div class="fid-item">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <span>🥇</span>
-            <div><b>Oro</b><br><small>10+ reservas</small></div>
-          </div>
-          <div class="fid-disc" style="color:#ffeb3b">10%</div>
         </div>
       </div>
 
-      <div>
-        <h2 style="font-size: 32px; margin-bottom: 20px; color: var(--fidelidad-text);">Tu tarjeta EspaiFest</h2>
-        <p style="opacity: 0.8; margin-bottom: 30px; color: var(--fidelidad-text);">Cada vez que celebras con nosotros sumas una reserva. A partir de la quinta ya disfrutas de descuento.</p>
-        <ul style="list-style:none; padding:0; margin-bottom:30px; color: var(--fidelidad-text);">
-          <li style="margin-bottom:12px;">✅ Descuento automático</li>
-          <li style="margin-bottom:12px;">✅ Sorpresas en tu cumple</li>
-          <li style="margin-bottom:12px;">✅ Acceso prioritario</li>
-        </ul>
-        <a href="#reservas" class="btn btn-fest" style="background:#ff5722; border:none; color: white !important; padding: 15px 30px; border-radius: 30px; text-decoration: none; display: inline-block; font-weight: bold;">
-          Empezar a acumular
+      <div class="fid-info">
+        <h2 style="font-size: 32px; margin-bottom: 20px;">Tu tarjeta EspaiFest</h2>
+        <p style="opacity: 0.8; margin-bottom: 30px; line-height: 1.6;">
+          Cada vez que celebras con nosotros sumas una reserva. <br>
+          A partir de la quinta ya disfrutas de descuento. <br>
+          Automático, sin necesidad de descargar apps.
+        </p>
+        <a href="#reservas" 
+           style="background: #ff5722; color: white; padding: 15px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; display: inline-block;">
+           Empezar a acumular
         </a>
       </div>
+
     </div>
   </div>
 </section>
