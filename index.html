@@ -12,9 +12,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400..800&family=DM+Sans:ital,opsz,wght@0,9..40,300..700&display=swap" rel="stylesheet">
 <script>
-  // ── BREVO CONFIG ─────────────────────────────────────────────
+  // ── BREVO CONFIG (via Cloudflare Worker — sin API key en el código) ──
   const _BREVO = {
-    apiKey:      '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',
+    workerUrl:   'https://espaifest-brevo.lucasyleodigital.workers.dev',
     tplCliente:  1,   // ID plantilla Confirmacion-Cliente
     tplLaura:    3,   // ID plantilla Aviso-Laura
     emailLaura:  'laurarmarin81@gmail.com',
@@ -24,13 +24,9 @@
 
   async function brevoSend(templateId, toEmail, toName, params) {
     try {
-      const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+      const res = await fetch(_BREVO.workerUrl, {
         method: 'POST',
-        headers: {
-          'accept':       'application/json',
-          'api-key':      _BREVO.apiKey,
-          'content-type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           templateId: templateId,
           to: [{ email: toEmail, name: toName }],
@@ -38,9 +34,9 @@
           params: params
         })
       });
-      if(!res.ok) { const e = await res.json(); console.warn('Brevo error:', e); return false; }
+      if(!res.ok) { const e = await res.json(); console.warn('Brevo Worker error:', e); return false; }
       return true;
-    } catch(err) { console.warn('Brevo fetch error:', err); return false; }
+    } catch(err) { console.warn('Brevo Worker fetch error:', err); return false; }
   }
 </script>
 <style>
@@ -100,14 +96,14 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9997;o
 @keyframes pdot{0%,100%{transform:scale(1)}50%{transform:scale(1.4);opacity:.6}}
 
 /* ═══ NAV ════════════════════════════════════════ */
-nav{position:fixed;top:0;left:0;right:0;z-index:800;height:140px;padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease-s);}
+nav{position:fixed;top:0;left:0;right:0;z-index:800;height:104px;padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease-s);}
 nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--bd);box-shadow:0 2px 24px oklch(0% 0 0/.25);}
 [data-theme="light"] nav.up{background:oklch(99% .003 260/.9);}
 
 /* --- LOGO GIGANTE Y DINÁMICO --- */
 .n-logo{display:flex;align-items:center;}
 .n-logo img {
-  height: 120px; /* Aquí hemos subido de 70px a 120px */
+  height: 90px;
   width: auto;
   transition: transform .3s;
   content: url('https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png');
@@ -131,7 +127,7 @@ nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%
 .n-cta{background:var(--co)!important;color:#fff!important;padding:9px 20px!important;font-weight:700!important;box-shadow:0 3px 16px oklch(68% .22 38/.4);transition:all .25s var(--ease-b)!important;}
 .n-cta:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 7px 24px oklch(68% .22 38/.5)!important;}
 /* ═══ HERO ════════════════════════════════════════ */
-.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:68px;overflow:hidden;position:relative;}
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:104px;overflow:hidden;position:relative;}
 .h-side{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:clamp(2rem,4vw,3.5rem);min-height:calc(100vh - 68px);cursor:pointer;}
 .h-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .9s var(--ease-s);will-change:transform;}
 .h-side:hover .h-bg{transform:scale(1.05);}
@@ -353,7 +349,8 @@ section{padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem);}
 .fid-card{background:var(--s0);border:1px solid var(--bd);border-radius:22px;padding:32px;position:relative;overflow:hidden;}
 .fid-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cp),var(--co),var(--cy));}
 .fid-logo-area{text-align:center;margin-bottom:24px;}
-.fid-logo-area img{height:60px;margin:0 auto;}
+.fid-logo-area img{height:160px;width:auto;max-width:360px;margin:0 auto;display:block;transition:opacity .3s;content:url('https://i.ibb.co/45PMbq8/Dise-o-sin-t-tulo-1.png');}
+[data-theme="light"] .fid-logo-area img{content:url('https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png');height:160px;width:auto;max-width:360px;}
 .fid-levels{display:flex;flex-direction:column;gap:12px;}
 .fid-level{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:14px;background:var(--s1);border:1px solid var(--bd);transition:all .2s;}
 .fid-level:hover{border-color:oklch(68% .22 38/.3);background:var(--s2);}
@@ -363,7 +360,7 @@ section{padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem);}
 .fb-silver svg{stroke:oklch(75% 0 0);}.fb-gold svg{stroke:var(--cy);}
 .fid-name{font:700 .9rem var(--fb);margin-bottom:2px;}
 .fid-desc{font-size:.78rem;color:var(--tx2);}
-.fid-discount{margin-left:auto;font:800 1.1rem var(--fd);color:var(--ct);}
+.fid-meta{flex:1;}.fid-discount{margin-left:auto;font:800 1.1rem var(--fd);color:var(--ct);}
 .fid-info h3{font:800 1.6rem var(--fd);margin-bottom:12px;}
 .fid-info p{font-size:.9rem;color:var(--tx2);line-height:1.7;margin-bottom:20px;}
 .fid-perks{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
@@ -480,17 +477,6 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 .t-dot{width:5px;height:5px;border-radius:50%;background:var(--co);flex-shrink:0;}
 @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-/* ══ SECTION BACKGROUNDS ═══════════════════════════════ */
-#fiestas::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
-  background-image:radial-gradient(oklch(68% .22 38/.04) 1px,transparent 1px);
-  background-size:28px 28px;}
-#fiestas .container{position:relative;z-index:1;}
-#business::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
-  background-image:linear-gradient(oklch(73% .14 190/.03) 1px,transparent 1px),
-    linear-gradient(90deg,oklch(73% .14 190/.03) 1px,transparent 1px);
-  background-size:40px 40px;}
-#business .container{position:relative;z-index:1;}
-
 /* ══ GRADIENT TEXT SHIFT ════════════════════════════════ */
 .grd{background-size:200% 200%!important;animation:gshift 5s ease infinite;}
 @keyframes gshift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
@@ -594,22 +580,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   to { opacity:1; filter:blur(0px); transform:translateY(0); }
 }
 
-/* ══ SECTION BACKGROUNDS ════════════════════════════════ */
-#fiestas { position:relative; }
-#fiestas::before { content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
-  background-image:radial-gradient(oklch(68% .22 38/.04) 1px,transparent 1px);
-  background-size:28px 28px; }
-#fiestas .container { position:relative; z-index:1; }
-#business { position:relative; }
-#business::before { content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
-  background-image:linear-gradient(oklch(73% .14 190/.04) 1px,transparent 1px),
-    linear-gradient(90deg,oklch(73% .14 190/.04) 1px,transparent 1px);
-  background-size:40px 40px; }
-#business .container { position:relative; z-index:1; }
-
-
-/* ══ HERO TEXT ANIMATIONS (replace old static) ══════════ */
-.h-title { animation: none !important; }
+/* ══ HERO TITLE SPAN ANIMATIONS ══════════════════════════ */
 .h-title > span {
   display: inline-block;
   opacity: 0;
@@ -617,105 +588,20 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   transform: translateY(-20px);
   animation: blur-in .75s cubic-bezier(.25,.46,.45,.94) forwards;
 }
-.h-fest .h-title > span:nth-child(1) { animation-delay: 0.15s; }
-.h-fest .h-title > span:nth-child(2) { animation-delay: 0.35s; }
-.h-fest .h-title > span.grd         { animation-delay: 0.35s; }
-.h-biz  .h-title > span:nth-child(1) { animation-delay: 0.3s; }
-.h-biz  .h-title > span:nth-child(2) { animation-delay: 0.5s; }
-.h-biz  .h-title > span.grd          { animation-delay: 0.5s; }
-
-.h-desc {
-  opacity: 0;
-  filter: blur(8px);
-  transform: translateY(12px);
-  animation: blur-in-up .7s cubic-bezier(.25,.46,.45,.94) .65s forwards;
-}
-.h-biz .h-desc { animation-delay: .8s; }
-
-@keyframes blur-in-up {
-  to { opacity:1; filter:blur(0); transform:translateY(0); }
-}
-
-.h-eyebrow {
-  opacity: 0;
-  animation: fade-right .6s ease .1s forwards;
-}
-.h-biz .h-eyebrow { animation-delay: .25s; }
-@keyframes fade-right {
-  from { opacity:0; transform:translateX(-16px); }
-  to   { opacity:1; transform:none; }
-}
-
-.h-btns {
-  opacity: 0;
-  animation: fade-up-late .6s ease .9s forwards;
-}
-.h-biz .h-btns { animation-delay: 1.05s; }
-@keyframes fade-up-late {
-  from { opacity:0; transform:translateY(14px); }
-  to   { opacity:1; transform:none; }
-}
-
-
-/* ══ SCROLL ANIMATIONS ══════════════════════════════════ */
-[data-a]            { opacity:1; transform:none; }
-.js-ready [data-a]  { opacity:0; transition:opacity .75s ease,transform .75s ease; }
-.js-ready [data-a="up"]    { transform:translateY(36px); }
-.js-ready [data-a="left"]  { transform:translateX(36px); }
-.js-ready [data-a="right"] { transform:translateX(-36px); }
-.js-ready [data-a="zoom"]  { transform:scale(.9); }
-.js-ready [data-a].vis     { opacity:1; transform:none; }
-
-/* ══ BLUR TEXT — React Bits ══════════════════════════════ */
-.blur-word {
-  display: inline-block;
-  opacity: 0;
-  filter: blur(14px);
-  transform: translateY(-20px);
-  animation: blurWordIn .7s cubic-bezier(.25,.46,.45,.94) forwards;
-}
-.blur-word.from-bottom { transform: translateY(20px); }
-@keyframes blurWordIn {
-  to { opacity:1; filter:blur(0px); transform:translateY(0); }
-}
-
-/* ══ HERO TEXT — CSS animation en spans ═════════════════ */
-.h-title > span {
-  display: inline-block;
-  opacity: 0;
-  filter: blur(14px);
-  transform: translateY(-22px);
-  animation: blurWordIn .75s cubic-bezier(.25,.46,.45,.94) forwards;
-}
 .h-fest .h-title > span:nth-child(1) { animation-delay:.15s; }
 .h-fest .h-title > span:nth-child(2),
 .h-fest .h-title > span.grd          { animation-delay:.35s; }
 .h-biz  .h-title > span:nth-child(1) { animation-delay:.3s; }
 .h-biz  .h-title > span:nth-child(2),
 .h-biz  .h-title > span.grd          { animation-delay:.5s; }
-.h-desc {
-  opacity:0; filter:blur(8px); transform:translateY(12px);
-  animation: blurWordIn .7s cubic-bezier(.25,.46,.45,.94) .65s forwards;
-}
+.h-desc { opacity:0;filter:blur(8px);transform:translateY(12px);animation:blur-in .7s cubic-bezier(.25,.46,.45,.94) .65s forwards; }
 .h-biz .h-desc { animation-delay:.8s; }
-.h-eyebrow {
-  opacity:0;
-  animation: heroEyebrow .6s ease .1s forwards;
-}
+.h-eyebrow { opacity:0;animation:eyebrowIn .6s ease .1s forwards; }
 .h-biz .h-eyebrow { animation-delay:.25s; }
-@keyframes heroEyebrow {
-  from { opacity:0; transform:translateX(-16px); }
-  to   { opacity:1; transform:none; }
-}
-.h-btns {
-  opacity:0;
-  animation: heroBtns .6s ease .9s forwards;
-}
+@keyframes eyebrowIn { from{opacity:0;transform:translateX(-16px)} to{opacity:1;transform:none} }
+.h-btns { opacity:0;animation:btnsIn .6s ease .9s forwards; }
 .h-biz .h-btns { animation-delay:1.05s; }
-@keyframes heroBtns {
-  from { opacity:0; transform:translateY(14px); }
-  to   { opacity:1; transform:none; }
-}
+@keyframes btnsIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
 
 /* ══ PROGRESS BAR ════════════════════════════════════════ */
 #prog { position:fixed;top:0;left:0;height:3px;z-index:9990;width:0%;
@@ -852,22 +738,6 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
 <canvas id="confeti-canvas" aria-hidden="true"></canvas>
-
-</head>
-<body>
-<div id="prog" aria-hidden="true"></div>
-<button id="stt" aria-label="Volver arriba">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
-</button>
-<canvas id="confeti-canvas" aria-hidden="true"></canvas>
-
-<canvas id="confeti-canvas" aria-hidden="true"></canvas>
-
-<div id="prog" aria-hidden="true"></div>
-<button id="stt" aria-label="Volver arriba">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
-</button>
-
 
 <a href="#main" class="skip">Saltar al contenido</a>
 
@@ -1135,7 +1005,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <div class="container">
     <div class="tc" data-a="up">
       <div class="eyebrow ew-y" style="justify-content:center"><div class="ew-dot"></div><span data-es="Galería del local" data-ca="Galeria del local">Galería del local</span></div>
-      <h2 class="sec-h2" data-es="Así es EspaiFest" data-blur="top" data-blur="top" data-ca="Així és EspaiFest">Así es EspaiFest</h2>
+      <h2 class="sec-h2" data-es="Así es EspaiFest" data-blur="top" data-ca="Així és EspaiFest">Así es EspaiFest</h2>
       <p class="sec-lead" data-es="115m² diseñados para que cada celebración sea perfecta. El espacio favorito de Martorell desde hace 10 años." data-ca="115m² dissenyats perquè cada celebració sigui perfecta.">115m² diseñados para que cada celebración sea perfecta.</p>
     </div>
     <div class="gal" data-a="up">
@@ -1189,7 +1059,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <div class="container">
     <div class="tc" data-a="up">
       <div class="eyebrow ew-b" style="justify-content:center"><div class="ew-dot"></div><span data-es="Precios transparentes" data-ca="Preus transparents">Precios transparentes</span></div>
-      <h2 class="sec-h2" data-es="Sin letra pequeña" data-blur="top" data-blur="top" data-ca="Sense lletra petita">Sin letra pequeña</h2>
+      <h2 class="sec-h2" data-es="Sin letra pequeña" data-blur="top" data-ca="Sense lletra petita">Sin letra pequeña</h2>
       <p class="sec-lead" data-es="Un precio claro por 4 horas de espacio privado exclusivo. Todo lo que necesitas incluido desde el primer momento." data-ca="Un preu clar per 4 hores d'espai privat exclusiu. Tot inclòs des del primer moment.">Un precio claro por 4 horas de espacio privado exclusivo. Todo incluido.</p>
     </div>
     <div class="price-grid">
@@ -1240,118 +1110,63 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   </div>
 </section>
 
-<!-- ══ FIDELIZACIÓN ═══════════════════════════════ -->
-<style>
-  /* --- CONFIGURACIÓN DE COLORES (Cambia aquí lo que quieras) --- */
-  :root {
-    /* MODO OSCURO (Activo ahora) */
-    --fide-bg: #0b0d11;      /* Fondo de la sección */
-    --fide-card: #000000;    /* Fondo de la tarjeta */
-    --fide-text: #ffffff;    /* Color de la letra */
-    --fide-item: #1a1d23;    /* Fondo de las filas de niveles */
-    
-    /* MODO CLARO (Para cambiar a blanco, sustituye los valores de arriba por estos:
-    --fide-bg: #ffffff;
-    --fide-card: #f5f5f5;
-    --fide-text: #1a1a1a;
-    --fide-item: #ffffff;
-    */
-  }
-
-  /* --- DISEÑO DE LA SECCIÓN --- */
-  #fidelizacion {
-    background-color: var(--fide-bg); /* Sin !important para que sea flexible */
-    color: var(--fide-text);
-    padding: 80px 0;
-    transition: background-color 0.3s ease;
-  }
-
-  .fid-card {
-    background-color: var(--fide-card);
-    border-radius: 20px;
-    padding: 40px;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.1);
-    max-width: 500px;
-    margin: 0 auto;
-  }
-
-  /* La línea de colores neón superior */
-  .fid-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 20px; right: 20px; height: 3px;
-    background: linear-gradient(90deg, #ff00ff, #ffff00);
-  }
-
-  .fid-item {
-    background-color: var(--fide-item);
-    border-radius: 12px;
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    border: 1px solid rgba(255,255,255,0.05);
-  }
-
-  .fid-disc {
-    font-weight: bold;
-    font-size: 20px;
-    color: #00ffff;
-  }
-</style>
-
+<!-- ══ FIDELIZACIÓN ════════════════════════════════════ -->
 <section id="fidelizacion">
   <div class="container">
-    <div class="split" style="align-items: center; gap: 50px;">
-      
+    <div class="tc" data-a="up">
+      <div class="eyebrow ew-p" style="justify-content:center"><div class="ew-dot"></div><span data-es="Programa de fidelización" data-ca="Programa de fidelització">Programa de fidelización</span></div>
+      <h2 class="sec-h2" data-es="Cuanto más vienes, más ahorras" data-blur="top" data-ca="Com més véns, més estalvies">Cuanto más vienes, más ahorras</h2>
+      <p class="sec-lead" data-es="EspaiFest premia a sus clientes habituales con descuentos y ventajas exclusivas." data-ca="EspaiFest premia els seus clients habituals amb descomptes i avantatges exclusives.">EspaiFest premia a sus clientes habituales con descuentos y ventajas exclusivas.</p>
+    </div>
+    <div class="fid-grid" data-a="up">
       <div class="fid-card">
-        <img src="https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png" 
-             alt="Logo EspaiFest" 
-             style="width: 150px; display: block; margin: 0 auto 30px auto;">
-        
+        <div class="fid-logo-area">
+          <img src="https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png" alt="Logo EspaiFest">
+        </div>
         <div class="fid-levels">
-          <div class="fid-item">
-            <div style="display:flex; align-items:center; gap:12px;">
-              <span>🏅</span>
-              <div><b>Básico</b><br><small style="opacity:0.6">1-4 reservas</small></div>
+          <div class="fid-level">
+            <div class="fid-badge fb-basic">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15l-2 5L7 9l11 4-5 2z"/></svg>
             </div>
-            <div style="color: #666;">-</div>
+            <div class="fid-meta">
+              <div class="fid-name" data-es="Básico" data-ca="Bàsic">Básico</div>
+              <div class="fid-desc" data-es="1–4 reservas · Sin descuento" data-ca="1–4 reserves · Sense descompte">1–4 reservas · Sin descuento</div>
+            </div>
+            <div class="fid-discount" style="color:var(--tx3)">—</div>
           </div>
-          
-          <div class="fid-item">
-            <div style="display:flex; align-items:center; gap:12px;">
-              <span>🥈</span>
-              <div><b>Plata</b><br><small style="opacity:0.6">5-9 reservas</small></div>
+          <div class="fid-level">
+            <div class="fid-badge fb-silver">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="oklch(75% 0 0)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
             </div>
-            <div class="fid-disc">5%</div>
+            <div class="fid-meta">
+              <div class="fid-name" data-es="Plata" data-ca="Plata">Plata</div>
+              <div class="fid-desc" data-es="5–9 reservas" data-ca="5–9 reserves">5–9 reservas</div>
+            </div>
+            <div class="fid-discount">5%</div>
           </div>
-
-          <div class="fid-item">
-            <div style="display:flex; align-items:center; gap:12px;">
-              <span>🥇</span>
-              <div><b>Oro</b><br><small style="opacity:0.6">10+ reservas</small></div>
+          <div class="fid-level">
+            <div class="fid-badge fb-gold">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="oklch(87% .19 90)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
             </div>
-            <div class="fid-disc" style="color:#ffeb3b">10%</div>
+            <div class="fid-meta">
+              <div class="fid-name" data-es="Oro" data-ca="Or">Oro</div>
+              <div class="fid-desc" data-es="10+ reservas" data-ca="10+ reserves">10+ reservas</div>
+            </div>
+            <div class="fid-discount" style="color:var(--cy)">10%</div>
           </div>
         </div>
       </div>
-
       <div class="fid-info">
-        <h2 style="font-size: 32px; margin-bottom: 20px;">Tu tarjeta EspaiFest</h2>
-        <p style="opacity: 0.8; margin-bottom: 30px; line-height: 1.6;">
-          Cada vez que celebras con nosotros sumas una reserva. <br>
-          A partir de la quinta ya disfrutas de descuento. <br>
-          Automático, sin necesidad de descargar apps.
-        </p>
-        <a href="#reservas" 
-           style="background: #ff5722; color: white; padding: 15px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; display: inline-block;">
-           Empezar a acumular
-        </a>
+        <h3 data-es="Tu tarjeta EspaiFest" data-ca="La teva targeta EspaiFest">Tu tarjeta EspaiFest</h3>
+        <p data-es="Cada vez que celebras con nosotros sumas una reserva. A partir de la quinta ya disfrutas de descuento. Automático, sin apps." data-ca="Cada cop que celebres amb nosaltres sumates una reserva. A partir de la cinquena ja gaudeixes de descompte. Automàtic, sense apps.">Cada vez que celebras con nosotros sumas una reserva. A partir de la quinta ya disfrutas de descuento. Automático, sin apps.</p>
+        <div class="fid-perks">
+          <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Descuento automático en tu próxima reserva" data-ca="Descompte automàtic a la teva propera reserva">Descuento automático en tu próxima reserva</span></div>
+          <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Sorpresas en tu cumpleaños" data-ca="Sorpreses al teu aniversari">Sorpresas en tu cumpleaños</span></div>
+          <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Acceso prioritario en fechas especiales" data-ca="Accés prioritari en dates especials">Acceso prioritario en fechas especiales</span></div>
+          <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Notificaciones de últimas horas disponibles" data-ca="Notificacions d'últimes hores disponibles">Notificaciones de últimas horas disponibles</span></div>
+        </div>
+        <a href="#reservas" class="btn btn-primary" data-es="Empezar a acumular" data-ca="Començar a acumular">Empezar a acumular <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       </div>
-
     </div>
   </div>
 </section>
@@ -1362,7 +1177,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <div class="res-grid">
       <div data-a="right">
         <div class="eyebrow ew-f"><div class="ew-dot"></div><span data-es="Reservar ahora" data-ca="Reservar ara">Reservar ahora</span></div>
-        <h2 class="sec-h2" data-es="Fácil, rápido y sin esperas" data-blur="top" data-blur="top" data-ca="Fàcil, ràpid i sense esperes">Fácil, rápido y sin esperas</h2>
+        <h2 class="sec-h2" data-es="Fácil, rápido y sin esperas" data-blur="top" data-ca="Fàcil, ràpid i sense esperes">Fácil, rápido y sin esperas</h2>
         <p class="sec-lead" data-es="Rellena el formulario y confirmamos disponibilidad en menos de 24 horas. También puedes reservar directamente en nuestro sistema online." data-ca="Omple el formulari i confirmem disponibilitat en menys de 24 hores.">Rellena el formulario y confirmamos disponibilidad en menos de 24 horas.</p>
         <div class="res-perks">
           <div class="res-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Confirmación en menos de 24 horas" data-ca="Confirmació en menys de 24 hores">Confirmación en menos de 24 horas</span></div>
@@ -1372,7 +1187,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
         </div>
         <div class="res-contact">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> <strong>C/ Francesc Macià, 37 · 08760 Martorell</strong><br>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.07 8.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72A12.84 12.84 0 007.7 4.53a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14h0v2.92z"/></svg> <a href="tel:+34674379709">674 379 709</a> · <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> <a href="/cdn-cgi/l/email-protection#8fe6e1e9e0cfeafcffeee6e9eafcfba1ece0e2"><span class="__cf_email__" data-cfemail="771e19111837120407161e111204035914181a">[email&#160;protected]</span></a><br>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.07 8.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72A12.84 12.84 0 007.7 4.53a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14h0v2.92z"/></svg> <a href="tel:+34674379709">674 379 709</a> · <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> <a href="mailto:info@espaifest.com">info@espaifest.com</a><br>
           <span style="color:var(--tx3);font-size:.78rem" data-es="Atención 10h – 20h todos los días" data-ca="Atenció 10h – 20h tots els dies">Atención 10h – 20h todos los días</span>
         </div>
 
@@ -1382,7 +1197,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
           <div class="rf-title" data-es="Solicitar disponibilidad" data-ca="Sol·licitar disponibilitat">Solicitar disponibilidad</div>
           <div class="rf-sub" data-es="Te confirmamos en menos de 24 horas" data-ca="Et confirmem en menys de 24 hores">Te confirmamos en menos de 24 horas</div>
           <!-- Paso 1: datos personales -->
-          <div style="font:700 .68rem var(--fb);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bd);" data-es="Paso 1 · Datos personales" data-ca="Pas 1 · Dades personals">Paso 1 · Datos personales</div>
+          <div style="font:700 .72rem var(--fb);text-transform:uppercase;letter-spacing:.12em;color:var(--co);margin-bottom:14px;padding:10px 14px;background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:10px;display:flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:50%;background:var(--co);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0">1</span><span data-es="Datos personales" data-ca="Dades personals">Datos personales</span></div>
           <div class="fr2">
             <div class="fg"><label class="fl" data-es="Nombre *" data-ca="Nom *">Nombre *</label><input type="text" class="fi" id="r-n" placeholder="Tu nombre" required></div>
             <div class="fg"><label class="fl" data-es="Apellidos *" data-ca="Cognoms *">Apellidos *</label><input type="text" class="fi" id="r-apellidos" placeholder="Tus apellidos" required></div>
@@ -1402,7 +1217,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
           </div>
 
           <!-- Paso 2: evento -->
-          <div style="font:700 .68rem var(--fb);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bd);margin-top:6px;" data-es="Paso 2 · Tu evento" data-ca="Pas 2 · El teu esdeveniment">Paso 2 · Tu evento</div>
+          <div style="font:700 .72rem var(--fb);text-transform:uppercase;letter-spacing:.12em;color:var(--co);margin-bottom:14px;padding:10px 14px;background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:10px;display:flex;align-items:center;gap:8px;margin-top:10px;"><span style="width:20px;height:20px;border-radius:50%;background:var(--co);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0">2</span><span data-es="Tu evento" data-ca="El teu esdeveniment">Tu evento</span></div>
           <div class="fr2">
             <div class="fg"><label class="fl" data-es="Tipo de evento *" data-ca="Tipus d'esdeveniment *">Tipo de evento *</label>
               <select class="fsel" id="r-tipo" required>
@@ -1441,8 +1256,8 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
           <div class="fg"><label class="fl" data-es="Cuéntanos más" data-ca="Explica'ns més">Cuéntanos más</label><textarea class="fta" id="r-no" placeholder="Número de personas, necesidades especiales, decoración..."></textarea></div>
 
           <!-- Paso 3: extras — colapsado por defecto -->
-          <div style="font:700 .68rem var(--fb);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:0;padding-bottom:8px;border-bottom:1px solid var(--bd);margin-top:6px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="toggleExtras(this)" id="extras-toggle">
-            <span data-es="Paso 3 · Extras opcionales" data-ca="Pas 3 · Extres opcionals">Paso 3 · Extras opcionales</span>
+          <div style="font:700 .72rem var(--fb);text-transform:uppercase;letter-spacing:.12em;color:var(--ct);margin-bottom:0;padding:10px 14px;background:oklch(73% .14 190/.08);border:1px solid oklch(73% .14 190/.25);border-radius:10px;margin-top:10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="toggleExtras(this)" id="extras-toggle">
+            <span style="display:flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:50%;background:var(--ct);color:#000;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0">3</span><span data-es="Extras opcionales" data-ca="Extres opcionals">Extras opcionales</span></span>
             <span id="extras-arrow" style="transition:transform .3s;display:inline-block;">▾</span>
           </div>
           <div id="extras-panel" style="display:none;margin-top:14px;">
@@ -1454,11 +1269,6 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Mix Picoteo infantil" data-precio="12" style="accent-color:var(--co);margin-right:7px;">Mix Picoteo (infantil)</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">12,00 €</span></label>
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Bebidas Junior" data-precio="10" style="accent-color:var(--co);margin-right:7px;">Bebidas Junior</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">10,00 €</span></label>
             </div>
-            <!-- Menú Pica-Pica -->
-            <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;">Catering · Menú Pica-Pica</div>
-            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
-              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Menú Pica-Pica (L a V)" data-precio="0" style="accent-color:var(--co);margin-right:7px;">Menú Pica-Pica (L a V)</span><span style="color:var(--tx3);font-size:.78rem;font-style:italic;">A consultar</span></label>
-            </div>
             <!-- Snacks Adultos -->
             <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;" data-es="Catering · Snacks Adultos" data-ca="Càtering · Snacks Adults">Catering · Snacks Adultos</div>
             <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
@@ -1467,27 +1277,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Mix Picoteo adulto" data-precio="12" style="accent-color:var(--co);margin-right:7px;">Mix Picoteo (adulto)</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">12,00 €</span></label>
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Bebidas FRÍAS Adultos" data-precio="18" style="accent-color:var(--co);margin-right:7px;">Bebidas FRÍAS Adultos</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">18,00 €</span></label>
             </div>
-            <!-- Cápsulas café -->
-            <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;" data-es="Catering · Cápsulas de café" data-ca="Càtering · Càpsules de cafè">Catering · Cápsulas de café</div>
-            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
-              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Cápsula Ristretto" data-precio="0.50" style="accent-color:var(--co);margin-right:7px;">Tipo Ristretto</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">0,50 €</span></label>
-              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Cápsula Fortissio lungo" data-precio="0.50" style="accent-color:var(--co);margin-right:7px;">Tipo Fortissio lungo</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">0,50 €</span></label>
-              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Cápsula Descaffeinato" data-precio="0.50" style="accent-color:var(--co);margin-right:7px;">Tipo Descaffeinato Ris.</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">0,50 €</span></label>
-            </div>
-            <!-- Repostería -->
-            <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;" data-es="Repostería" data-ca="Rebosteria">Repostería</div>
-            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
-              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Pastel / Tarta" data-precio="0" style="accent-color:var(--co);margin-right:7px;">Pastel / Tarta</span><span style="color:var(--tx3);font-size:.78rem;font-style:italic;">A consultar</span></label>
-              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Galleta Fondant Personalizada" data-precio="2.30" style="accent-color:var(--co);margin-right:7px;">Galleta Fondant Pers.</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">2,30 €</span></label>
-            </div>
-            <!-- Animación infantil -->
-            <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;" data-es="Animación para peques" data-ca="Animació per als petits">Animación para peques</div>
-            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
-              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Alquiler disfraz Personaje" data-precio="60" style="accent-color:var(--co);margin-right:7px;">Alquiler disfraz Personaje</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">60,00 €</span></label>
-            </div>
             <!-- Limpieza -->
             <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;">Limpieza</div>
-            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px;">
+            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Limpieza mañana-mediodía" data-precio="30" style="accent-color:var(--co);margin-right:7px;">Limpieza mañana-mediodía</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">30,00 €</span></label>
             </div>
             <!-- Horas extra -->
@@ -1497,9 +1289,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="radio" name="r-horaext" value="ninguna|0" checked style="accent-color:var(--co);margin-right:7px;">Sin horas extra</span><span style="color:var(--tx3);font-size:.8rem;">—</span></label>
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="radio" name="r-horaext" value="despues|10" style="accent-color:var(--co);margin-right:7px;">+ 1h después</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">10,00 €</span></label>
             </div>
-          </div>
-
-          <!-- Total en tiempo real -->
+            <!-- Total en tiempo real -->
           <div id="resumen-total" style="background:oklch(68% .22 38/.08);border:1.5px solid oklch(68% .22 38/.25);border-radius:14px;padding:16px 18px;margin-bottom:14px;display:none;">
             <div style="font:700 .68rem var(--fb);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:10px;" data-es="Resumen del presupuesto" data-ca="Resum del pressupost">Resumen del presupuesto</div>
             <div id="rt-lineas" style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;font-size:.83rem;color:var(--tx2);"></div>
@@ -1606,7 +1396,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <div class="ft-col">
       <h4 data-es="Contacto" data-ca="Contacte">Contacto</h4>
       <a href="tel:+34674379709">674 379 709</a>
-      <a href="/cdn-cgi/l/email-protection#e68f888089a6839596878f80839592c885898b"><span class="__cf_email__" data-cfemail="b2dbdcd4ddf2d7c1c2d3dbd4d7c1c69cd1dddf">[email&#160;protected]</span></a>
+      <a href="mailto:info@espaifest.com">info@espaifest.com</a>
       <a href="https://maps.google.com/?q=C/+Francesc+Macia+37+Martorell" target="_blank" rel="noopener">C/ Francesc Macià, 37</a>
       <a style="color:var(--tx3);cursor:default">08760 Martorell, Barcelona</a>
     </div>
@@ -2004,13 +1794,7 @@ async function enviarReserva() {
   const servicioLabel = _TIPO_MAP[tipo] || tipo;
 
   // ── Calcular precio sala ─────────────────────────────────────
-  const precioSalaMap = {
-    'Mañana (10:00-14:00) — 85€': 85,
-    'Mañana (11:00-15:00) — 85€': 85,
-    'Tarde (16:30-20:30) — 85€':  85,
-    'Todo el día (10:00-20:00) — 130€': 130
-  };
-  const precioSala = precioSalaMap[hor] || 85;
+  const precioSala = _PRECIO_HORARIO[hor] || 85;
 
   // ── Extras seleccionados ─────────────────────────────────────
   const extObjs = Array.from(document.querySelectorAll('.r-ext:checked')).map(cb => ({
@@ -2058,7 +1842,7 @@ async function enviarReserva() {
 
   // ── Construir parámetros email LAURA ─────────────────────────
   const paramsLaura = {
-    to_email:      'laurarmarin81@gmail.com',
+    to_email:      _BREVO.emailLaura,
     cliente_nombre:`${n} ${ap}`,
     cliente_dni:   dni,
     cliente_fnac:  fnac ? fmtFecha(fnac) : '—',
