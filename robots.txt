@@ -1,6 +1,11 @@
+# EspaiFest — robots.txt
+# https://espaifest.com/
+
 User-agent: *
 Allow: /
-Disallow: /wp-admin/
-Disallow: /wp-includes/
 
+# Bloquear archivos de sistema que no deben indexarse
+Disallow: /404.html
+
+# Sitemap
 Sitemap: https://espaifest.com/sitemap.xml
