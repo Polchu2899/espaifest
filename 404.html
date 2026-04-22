@@ -1,12 +1,66 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=https://espaifest.com/">
-    <link rel="canonical" href="https://espaifest.com/" />
-    <title>Redireccionando...</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EspaiFest — Redirigiendo…</title>
+<script>
+// Tabla de redirecciones de URLs antiguas de WordPress a secciones de la SPA
+const REDIRECTS = {
+  'fiestas-infantiles-espaifest-martorell': '#fiestas',
+  'fiestas-infantiles': '#fiestas',
+  'fiesta-ninos': '#fiestas',
+  'fiestas-ninos': '#fiestas',
+  'animacion-infantil': '#fiestas',
+  'encuentros-familiares-amigos': '#adultos',
+  'eventos-especiales': '#adultos',
+  'animacion-adultos-espaifest-martorell': '#adultos',
+  'business-espaifest-martorell': '#business',
+  'fotos-business-espaifest-martorell': '#business',
+  'local-reuniones-empresas-baix-llobregat': '#business',
+  'catering': '#reservas',
+  'equipamientos': '#business',
+  'tarjeta-invitacion-martorell': '#fidelizacion',
+  'tarjeta_fidelizacion': '#fidelizacion',
+  'precios_martorell': '#precios',
+  'precios_martorell_1': '#precios',
+  'precios': '#precios',
+  'promociones': '#precios',
+  'last-minute': '#precios',
+  'la-sala': '#galeria',
+  'galeria-local-fiestas-martorell': '#galeria',
+  'reservar-local-fiesta-martorell': '#reservas',
+  'solicitud-para-modificar-reserva': '#reservas',
+  'contacto-alquiler-local-martorell': '#reservas',
+  'blog': '#blog',
+  'preguntas-frecuentes': '#reservas',
+  'noticias-martorell': '#blog',
+  'local-para-fiestas-baix-llobregat': '#fiestas',
+  'local-fiestas-baix-llobregat': '#fiestas',
+  'alquilar-local-graduaciones-baix-llobregat': '#adultos',
+  'aviso-legal': 'aviso-legal.html',
+  'condiciones-de-uso': 'condiciones.html',
+  'politica-de-privacidad-y-cookies': 'privacidad.html',
+  'politica-de-cookies': 'cookies.html',
+};
+
+(function(){
+  // Obtener el path actual sin la barra inicial
+  var path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+  var target = REDIRECTS[path];
+  if(target){
+    if(target.startsWith('#')){
+      window.location.replace('/' + target);
+    } else {
+      window.location.replace('/' + target);
+    }
+  } else {
+    // URL no mapeada → home
+    window.location.replace('/');
+  }
+})();
+</script>
+<meta http-equiv="refresh" content="0;url=/">
 </head>
-<body>
-    <p>Redireccionando a la nueva web de EspaiFest...</p>
-</body>
+<body></body>
 </html>
