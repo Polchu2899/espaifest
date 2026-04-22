@@ -1165,6 +1165,10 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             <div class="cf-grupo-label" data-es="Tarde" data-ca="Tarda">Tarde</div>
             <div class="cf-slots" id="cf-tarde"></div>
           </div>
+          <div class="cf-grupo">
+            <div class="cf-grupo-label" data-es="Todo el día" data-ca="Tot el dia">Todo el día</div>
+            <div class="cf-slots" id="cf-diacomp"></div>
+          </div>
         </div>
       <div class="cal-legend">
         <span><span class="leg-dot" style="background:var(--ct)"></span><span data-es="Disponible" data-ca="Disponible">Disponible</span></span>
@@ -1425,10 +1429,10 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             <div class="fg"><label class="fl" data-es="Franja horaria *" data-ca="Franja horària *">Franja horaria *</label>
               <select class="fsel" id="r-horario" required>
                 <option value="">Selecciona...</option>
-                <option value="Mañana (10:00-14:00) — 85€">Mañana (10:00-14:00) — 85 €</option>
-                <option value="Mañana (11:00-15:00) — 85€">Mañana (11:00-15:00) — 85 €</option>
-                <option value="Tarde (16:30-20:30) — 85€">Tarde (16:30-20:30) — 85 €</option>
-                <option value="Todo el día (10:00-20:00) — 130€">Todo el día (10:00-20:00) — 130 €</option>
+                <option value="Mañana (10:00-14:00) — 85€">🌅 Mañana (10:00–14:00) — 85 €</option>
+                <option value="Mañana (11:00-15:00) — 85€">🌅 Mañana (11:00–15:00) — 85 €</option>
+                <option value="Tarde (16:30-20:30) — 85€">🌇 Tarde (16:30–20:30) — 85 €</option>
+                <option value="Todo el día (10:00-20:00) — 130€">☀️ Todo el día (10:00–20:00) — 130 €</option>
               </select>
             </div>
           </div>
@@ -1779,8 +1783,9 @@ function toggleTheme() {
 let calYear=null, calMonth=null, calSelected=null, calSelectedSlot=null;
 let CAL_DATA = {}; // { '2026-05-10': { mananaOcupada: true, tardeOcupada: false } }
 
-const SLOTS_MANANA = ['09:00–13:00','10:00–14:00'];
-const SLOTS_TARDE  = ['16:00–20:00','17:00–21:00','18:00–22:00'];
+const SLOTS_MANANA  = ['10:00–14:00','11:00–15:00'];
+const SLOTS_TARDE   = ['16:30–20:30'];
+const SLOTS_DIACOMP = ['10:00–20:00'];
 
 // Se llama desde el módulo Firebase con los datos de calendario_publico
 function updateCalOccupied(data) {
@@ -1789,44 +1794,81 @@ function updateCalOccupied(data) {
 }
 
 function renderFranjas(ds) {
-  const franjas = document.getElementById('cal-franjas');
-  const elM = document.getElementById('cf-manana');
-  const elT = document.getElementById('cf-tarde');
-  if (!franjas || !elM || !elT) return;
+  const franjas  = document.getElementById('cal-franjas');
+  const elM      = document.getElementById('cf-manana');
+  const elT      = document.getElementById('cf-tarde');
+  const elD      = document.getElementById('cf-diacomp');
+  if (!franjas || !elM || !elT || !elD) return;
 
-  const info = CAL_DATA[ds] || {};
-  const mañanaOcupada = info.mananaOcupada || false;
-  const tardeOcupada  = info.tardeOcupada  || false;
+  const info          = CAL_DATA[ds] || {};
+  const mañanaOcupada = info.mananaOcupada  || false;
+  const tardeOcupada  = info.tardeOcupada   || false;
+  const diaOcupado    = info.diaOcupado     || (mañanaOcupada && tardeOcupada);
+  // Todo el día solo disponible si ambas franjas están libres
+  const diaDisponible = !mañanaOcupada && !tardeOcupada && !diaOcupado;
 
   elM.innerHTML = SLOTS_MANANA.map(s => {
-    const occ = mañanaOcupada ? 'ocupado' : '';
-    const sel = calSelectedSlot === s ? 'selected' : '';
-    const click = !mañanaOcupada ? `onclick="selectSlot('${s}')"` : '';
+    const occ   = (mañanaOcupada || diaOcupado) ? 'ocupado' : '';
+    const sel   = calSelectedSlot === s ? 'selected' : '';
+    const click = (!mañanaOcupada && !diaOcupado) ? `onclick="selectSlot('${s}','manana')"` : '';
     return `<div class="cf-slot ${occ} ${sel}" ${click}>${s}</div>`;
   }).join('');
 
   elT.innerHTML = SLOTS_TARDE.map(s => {
-    const occ = tardeOcupada ? 'ocupado' : '';
-    const sel = calSelectedSlot === s ? 'selected' : '';
-    const click = !tardeOcupada ? `onclick="selectSlot('${s}')"` : '';
+    const occ   = (tardeOcupada || diaOcupado) ? 'ocupado' : '';
+    const sel   = calSelectedSlot === s ? 'selected' : '';
+    const click = (!tardeOcupada && !diaOcupado) ? `onclick="selectSlot('${s}','tarde')"` : '';
     return `<div class="cf-slot ${occ} ${sel}" ${click}>${s}</div>`;
+  }).join('');
+
+  elD.innerHTML = SLOTS_DIACOMP.map(s => {
+    const occ   = !diaDisponible ? 'ocupado' : '';
+    const sel   = calSelectedSlot === s ? 'selected' : '';
+    const click = diaDisponible ? `onclick="selectSlot('${s}','diacomp')"` : '';
+    return `<div class="cf-slot ${occ} ${sel}" ${click}>${s} · 130€</div>`;
   }).join('');
 
   franjas.classList.add('visible');
 }
 
-function selectSlot(slot) {
+function selectSlot(slot, grupo) {
   calSelectedSlot = slot;
   renderFranjas(calSelected);
-  // Rellenar fecha y franja en el formulario
+
+  // Mapear slot del calendario → valor exacto del <select> del formulario
+  const SLOT_MAP = {
+    '10:00–14:00': 'Mañana (10:00-14:00) — 85€',
+    '11:00–15:00': 'Mañana (11:00-15:00) — 85€',
+    '16:30–20:30': 'Tarde (16:30-20:30) — 85€',
+    '10:00–20:00': 'Todo el día (10:00-20:00) — 130€'
+  };
+
+  // Rellenar fecha en el formulario
   const fiEl = document.getElementById('r-f');
   if (fiEl && calSelected) fiEl.value = calSelected;
+
+  // Seleccionar la opción correcta en el <select> de franja horaria
+  const selEl = document.getElementById('r-horario');
+  if (selEl) {
+    const targetVal = SLOT_MAP[slot];
+    if (targetVal) {
+      Array.from(selEl.options).forEach(opt => {
+        opt.selected = opt.value === targetVal;
+      });
+      selEl.dispatchEvent(new Event('change'));
+    }
+  }
+
+  // Nota en el textarea
   const noEl = document.getElementById('r-no');
   if (noEl) {
     const baseNote = noEl.value.replace(/^Franja horaria: .+\n?/,'');
     noEl.value = 'Franja horaria: ' + slot + (baseNote ? '\n' + baseNote : '');
   }
-  showToast('Franja seleccionada: ' + slot + ' — Rellena el formulario y envía');
+
+  const label = grupo === 'diacomp' ? slot + ' (Todo el día · 130€)' : slot;
+  showToast('Franja seleccionada: ' + label + ' — Rellena el formulario ↓');
+
   // Scroll suave al formulario
   setTimeout(() => {
     document.getElementById('reservas')?.scrollIntoView({behavior:'smooth', block:'start'});
