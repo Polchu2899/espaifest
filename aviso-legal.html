@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Aviso Legal — EspaiFest Martorell</title>
+  <meta name="description" content="Información legal obligatoria sobre el titular del sitio web EspaiFest y las condiciones de uso.">
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap">
+  <style>
+/* ═══════════════════════════════════════════════════
+   DESIGN SYSTEM — EspaiFest 2026
+═══════════════════════════════════════════════════ */
+:root {
+  --co: oklch(68% .22 38);
+  --cp: oklch(66% .24 355);
+  --ct: oklch(73% .14 190);
+  --cy: oklch(87% .19 90);
+  --bg: oklch(8% .01 260);
+  --s1: oklch(12% .012 260);
+  --s2: oklch(16% .014 260);
+  --tx1: oklch(97% .005 260);
+  --tx2: oklch(75% .01 260);
+  --tx3: oklch(52% .01 260);
+  --bd: oklch(22% .015 260/.6);
+  --fd: 'Syne', sans-serif;
+  --fb: 'DM Sans', sans-serif;
+  --ease-s: cubic-bezier(.25,.46,.45,.94);
+  --r: 16px;
+}
+[data-theme="light"] {
+  --bg: oklch(97% .003 260);
+  --s1: oklch(92% .006 260);
+  --s2: oklch(86% .008 260);
+  --tx1: oklch(12% .01 260);
+  --tx2: oklch(35% .01 260);
+  --tx3: oklch(55% .01 260);
+  --bd: oklch(75% .01 260/.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:var(--fb);background:var(--bg);color:var(--tx1);line-height:1.65;transition:background .3s,color .3s;min-height:100vh;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:800;height:100px;padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;background:oklch(8% .01 260/.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--bd);}
+[data-theme="light"] nav{background:oklch(97% .003 260/.92);}
+.n-logo img{height:80px;width:auto;content:url('https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png');}
+[data-theme="light"] .n-logo img{content:url('https://i.ibb.co/p9z8mfx/Espai-Fest-Negre.png');}
+
+/* BOTÓN */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:50px;font-family:var(--fd);font-weight:700;font-size:.9rem;text-decoration:none;border:none;cursor:pointer;transition:all .25s var(--ease-s);}
+.btn-primary{background:var(--co);color:#fff;}
+.btn-primary:hover{filter:brightness(1.12);transform:translateY(-1px);}
+
+/* HERO LEGAL */
+.legal-hero{padding:140px clamp(1rem,4vw,3rem) clamp(2rem,5vw,3.5rem);text-align:center;border-bottom:1px solid var(--bd);background:linear-gradient(to bottom,var(--s1),var(--bg));}
+.legal-hero .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--fd);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--co);margin-bottom:16px;}
+.legal-hero .eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--co);}
+.legal-hero h1{font-family:var(--fd);font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.1;margin-bottom:16px;}
+.legal-hero p{color:var(--tx2);font-size:.95rem;max-width:560px;margin:0 auto;}
+
+/* CONTENIDO LEGAL */
+.legal-body{max-width:860px;margin:0 auto;padding:clamp(2rem,5vw,4rem) clamp(1rem,4vw,3rem);}
+.legal-toc{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:24px 28px;margin-bottom:40px;}
+.legal-toc h3{font-family:var(--fd);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:12px;}
+.legal-toc ol{padding-left:20px;display:flex;flex-direction:column;gap:6px;}
+.legal-toc ol a{color:var(--co);text-decoration:none;font-size:.88rem;}
+.legal-toc ol a:hover{text-decoration:underline;}
+.legal-section{margin-bottom:40px;padding-bottom:40px;border-bottom:1px solid var(--bd);}
+.legal-section:last-child{border-bottom:none;}
+.legal-section h2{font-family:var(--fd);font-size:1.25rem;font-weight:800;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--co);display:inline-block;}
+.legal-section h3{font-family:var(--fd);font-size:1rem;font-weight:700;color:var(--tx2);margin:18px 0 8px;}
+.legal-section p{color:var(--tx2);margin-bottom:12px;font-size:.93rem;line-height:1.75;}
+.legal-section ul,.legal-section ol{padding-left:20px;display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.legal-section li{color:var(--tx2);font-size:.93rem;line-height:1.7;}
+.legal-section strong{color:var(--tx1);}
+.legal-section a{color:var(--co);}
+.data-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem;}
+.data-table th{background:var(--s2);color:var(--tx1);font-family:var(--fd);font-weight:700;padding:10px 14px;text-align:left;border:1px solid var(--bd);}
+.data-table td{padding:10px 14px;border:1px solid var(--bd);color:var(--tx2);vertical-align:top;}
+.data-table tr:hover td{background:var(--s1);}
+.info-box{background:var(--s1);border:1px solid var(--bd);border-left:3px solid var(--co);border-radius:0 var(--r) var(--r) 0;padding:16px 20px;margin:16px 0;}
+.info-box p{margin:0;font-size:.88rem;}
+
+/* FOOTER */
+footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,6vw,4rem) clamp(1rem,4vw,3rem) clamp(1.2rem,3vw,2rem);}
+.ft-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:clamp(16px,3vw,40px);margin-bottom:clamp(1.5rem,4vw,3rem);}
+.ft-logo img{height:80px;width:auto;}
+[data-theme="light"] .ft-logo img{content:url('https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png');}
+.ft-col h4{font-family:var(--fd);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:14px;}
+.ft-col a,.ft-col span{display:block;color:var(--tx2);text-decoration:none;font-size:.87rem;margin-bottom:8px;transition:color .2s;}
+.ft-col a:hover{color:var(--co);}
+.ft-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--bd);flex-wrap:wrap;gap:12px;}
+.ft-copy{font-size:.8rem;color:var(--tx3);}
+.ft-legal-links{display:flex;gap:20px;flex-wrap:wrap;}
+.ft-legal-links a{font-size:.78rem;color:var(--tx3);text-decoration:none;transition:color .2s;}
+.ft-legal-links a:hover{color:var(--co);}
+
+/* COOKIES BANNER */
+#cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:9000;background:var(--s1);border-top:1px solid var(--bd);padding:20px clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;box-shadow:0 -8px 32px oklch(0% 0 0/.3);transform:translateY(0);transition:transform .4s var(--ease-s);}
+#cookie-banner.hidden{transform:translateY(110%);}
+.ck-text{font-size:.86rem;color:var(--tx2);max-width:680px;line-height:1.6;}
+.ck-text a{color:var(--co);text-decoration:underline;}
+.ck-btns{display:flex;gap:10px;flex-shrink:0;}
+.ck-btn-accept{background:var(--co);color:#fff;border:none;border-radius:50px;padding:10px 22px;font-family:var(--fd);font-weight:700;font-size:.85rem;cursor:pointer;transition:filter .2s;}
+.ck-btn-accept:hover{filter:brightness(1.12);}
+.ck-btn-reject{background:transparent;color:var(--tx2);border:1px solid var(--bd);border-radius:50px;padding:10px 22px;font-family:var(--fd);font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;}
+.ck-btn-reject:hover{border-color:var(--tx2);color:var(--tx1);}
+
+@media(max-width:768px){
+  .ft-grid{grid-template-columns:1fr 1fr;}
+  #cookie-banner{flex-direction:column;align-items:flex-start;}
+}
+@media(max-width:480px){
+  .ft-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+  <!-- ── CABECERA COMPARTIDA ── -->
+  <nav id="nav" role="navigation" aria-label="Menú principal">
+    <a class="n-logo" href="index.html" aria-label="EspaiFest inicio">
+      <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest Logo">
+    </a>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="index.html#reservas" class="btn btn-primary" style="font-size:.85rem;padding:10px 20px;" data-es="Reservar ahora" data-ca="Reservar ara">Reservar ahora</a>
+      <button onclick="toggleTheme()" id="theme-btn" aria-label="Cambiar tema" style="background:var(--s2);border:1px solid var(--bd);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx1);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="legal-hero">
+    <div class="eyebrow">Información legal</div>
+    <h1>Aviso Legal</h1>
+    <p>Información legal obligatoria sobre el titular del sitio web EspaiFest y las condiciones de uso.</p>
+  </div>
+
+  <!-- CONTENIDO -->
+  <main class="legal-body">
+
+    <div class="legal-toc">
+      <h3>Índice</h3>
+      <ol>
+        <li><a href="#al-intro">Información general</a></li>
+        <li><a href="#al-obligaciones">Obligaciones de clientes y usuarios</a></li>
+        <li><a href="#al-utilizacion">Utilización del portal</a></li>
+        <li><a href="#al-responsabilidad">Exclusión de responsabilidad</a></li>
+        <li><a href="#al-propiedad">Propiedad intelectual e industrial</a></li>
+        <li><a href="#al-proteccion">Protección de datos</a></li>
+        <li><a href="#al-comerciales">Comunicaciones comerciales</a></li>
+        <li><a href="#al-ley">Ley aplicable y fuero</a></li>
+      </ol>
+    </div>
+
+    <div class="legal-section" id="al-intro">
+      <h2>1. Información general</h2>
+      <p>En cumplimiento de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio Electrónico, se indican los datos de información general de este sitio web:</p>
+      <div class="info-box">
+        <p><strong>Titular:</strong> Laura Ribó Marín (EspaiFest)<br>
+        <strong>Dirección:</strong> C/ Francesc Macià, 37, Local 12 – Martorell (08760) – Barcelona<br>
+        <strong>Teléfono:</strong> 674 379 709<br>
+        <strong>Email:</strong> <a href="mailto:info@espaifest.com">info@espaifest.com</a><br>
+        <strong>NIF:</strong> 44024942K<br>
+        <strong>Web:</strong> www.espaifest.com</p>
+      </div>
+    </div>
+
+    <div class="legal-section" id="al-obligaciones">
+      <h2>2. Obligaciones de clientes y usuarios</h2>
+      <p>Por la mera utilización del Portal, los usuarios expresan la aceptación sin reservas de las Condiciones Generales, las cuales podrán ser modificadas por la empresa en cualquier momento. Queda prohibido el acceso y uso del portal a los menores de edad sin el consentimiento expreso de sus padres.</p>
+      <h3>El cliente se compromete a:</h3>
+      <ul>
+        <li>Facilitar información veraz sobre los datos solicitados en los formularios y mantenerlos actualizados.</li>
+        <li>Utilizar la información recibida para fines estrictamente propios.</li>
+        <li>No distribuir ni reproducir dicha información.</li>
+        <li>No introducir, almacenar o difundir virus, código malicioso o cualquier dispositivo que cause daños en el sitio web.</li>
+        <li>No realizar actividades publicitarias o de explotación comercial a través del sitio web.</li>
+        <li>No utilizar identidades falsas ni suplantar la identidad de otros usuarios.</li>
+        <li>No destruir, alterar o inutilizar los datos, informaciones o programas de EspaiFest.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section" id="al-utilizacion">
+      <h2>3. Utilización del portal</h2>
+      <p>Sin previa autorización expresa, los usuarios se abstendrán de obtener cualquier tipo de contenido —textos, gráficos, imágenes, fotografías, vídeos, software— por medios distintos de los puestos a su disposición o de los que se empleen habitualmente en Internet.</p>
+    </div>
+
+    <div class="legal-section" id="al-responsabilidad">
+      <h2>4. Exclusión de responsabilidad</h2>
+      <p>La empresa no es responsable, directa ni subsidiariamente, de ningún contenido, información u opinión que tenga su origen en el usuario o cualquier tercero y que se difunda a través de este Portal.</p>
+      <p>EspaiFest no garantiza la fiabilidad, disponibilidad o continuidad de los servicios, aunque intentará facilitar ayuda técnica y restablecer cualquier interrupción de forma inmediata.</p>
+      <p>EspaiFest no se hace responsable de los posibles fallos del software o hardware del cliente ocasionados por virus u otro malware.</p>
+    </div>
+
+    <div class="legal-section" id="al-propiedad">
+      <h2>5. Propiedad intelectual e industrial</h2>
+      <p>Laura Ribó Marín es titular de todos los derechos de autor, propiedad intelectual e industrial y cuantos otros derechos guardan relación con los contenidos del sitio web www.espaifest.com. No se permite la reproducción, publicación o uso no estrictamente privado de los contenidos sin consentimiento previo y por escrito.</p>
+      <p>Queda prohibido el uso contrario a la legislación sobre propiedad intelectual, en particular:</p>
+      <ul>
+        <li>Cualquier utilización contraria a las leyes españolas o que infrinja derechos de terceros.</li>
+        <li>La publicación o transmisión de contenidos violentos, obscenos, abusivos, ilegales, racistas, xenófobos o difamatorios.</li>
+        <li>La recogida o utilización de datos personales de otros usuarios sin su consentimiento expreso.</li>
+        <li>El uso del servidor de correo del dominio para el envío de correo masivo no deseado.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section" id="al-proteccion">
+      <h2>6. Protección de datos</h2>
+      <p>En cumplimiento del Reglamento (UE) 2016/679 (RGPD), los datos personales facilitados a través de los formularios del sitio web quedarán incorporados a los ficheros de Laura Ribó Marín con el fin de prestar y ofrecer los servicios contratados.</p>
+      <p>El usuario puede ejercer los derechos de acceso, rectificación, cancelación y oposición mediante email a <a href="mailto:info@espaifest.com">info@espaifest.com</a> o en la dirección C/ Francesc Macià, 37 Local 12, 08760 Martorell (Barcelona). Los datos facilitados no serán cedidos a terceros en ningún caso.</p>
+    </div>
+
+    <div class="legal-section" id="al-comerciales">
+      <h2>7. Comunicaciones comerciales</h2>
+      <p>En aplicación de la LSSI, Laura Ribó Marín no enviará comunicaciones publicitarias por correo electrónico u otro medio equivalente que no hubieran sido solicitadas o expresamente autorizadas por los destinatarios.</p>
+      <p>En el caso de usuarios con los que exista una relación contractual previa, EspaiFest sí podrá enviar comunicaciones comerciales referentes a productos o servicios similares a los contratados inicialmente. El usuario puede solicitar la baja en cualquier momento a través de los canales de Atención al Cliente.</p>
+    </div>
+
+    <div class="legal-section" id="al-ley">
+      <h2>8. Ley aplicable y fuero</h2>
+      <p>Estas condiciones se someten a la legislación española. Para cualquier controversia derivada de la aplicación de los servicios o interpretación de las condiciones, la empresa y los usuarios se someten, con renuncia expresa a su fuero propio, a los Juzgados y Tribunales de Barcelona.</p>
+    </div>
+
+  </main>
+
+  <footer role="contentinfo">
+    <div class="ft-grid">
+      <div>
+        <div class="ft-logo">
+          <img src="https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png" alt="EspaiFest" style="height:100px;width:auto;">
+        </div>
+      </div>
+      <div class="ft-col">
+        <h4>Servicios</h4>
+        <a href="index.html#fiestas">Fiestas infantiles</a>
+        <a href="index.html#adultos">Fiestas adultos</a>
+        <a href="index.html#business">Business</a>
+        <a href="index.html#reservas">Reservar</a>
+      </div>
+      <div class="ft-col">
+        <h4>Legal</h4>
+        <a href="aviso-legal.html">Aviso legal</a>
+        <a href="privacidad.html">Política de privacidad</a>
+        <a href="cookies.html">Política de cookies</a>
+        <a href="condiciones.html">Condiciones de uso</a>
+      </div>
+      <div class="ft-col">
+        <h4>Contacto</h4>
+        <a href="tel:+34674379709">674 379 709</a>
+        <a href="mailto:info@espaifest.com">info@espaifest.com</a>
+        <a href="https://maps.google.com/?q=C/+Francesc+Macia+37+Martorell" target="_blank" rel="noopener">C/ Francesc Macià, 37</a>
+        <span style="color:var(--tx3);font-size:.82rem;">08760 Martorell, Barcelona</span>
+      </div>
+    </div>
+    <div class="ft-bottom">
+      <div class="ft-copy">© 2026 EspaiFest · Todos los derechos reservados</div>
+      <div class="ft-legal-links">
+        <a href="aviso-legal.html">Aviso legal</a>
+        <a href="privacidad.html">Privacidad</a>
+        <a href="cookies.html">Cookies</a>
+        <a href="condiciones.html">Condiciones</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- BANNER COOKIES -->
+  <div id="cookie-banner" role="dialog" aria-label="Aviso de cookies">
+    <p class="ck-text">
+      Usamos cookies técnicas y de análisis para mejorar tu experiencia. Al continuar navegando aceptas su uso.
+      <a href="cookies.html">Más información</a>
+    </p>
+    <div class="ck-btns">
+      <button id="ck-reject" class="ck-btn-reject">Rechazar</button>
+      <button id="ck-accept" class="ck-btn-accept">Aceptar cookies</button>
+    </div>
+  </div>
+
+<script>
+function toggleTheme(){
+  const t=document.documentElement;
+  const cur=t.getAttribute('data-theme')||'dark';
+  const next=cur==='dark'?'light':'dark';
+  t.setAttribute('data-theme',next);
+  localStorage.setItem('ef-theme',next);
+}
+(function(){
+  const saved=localStorage.getItem('ef-theme')||'dark';
+  document.documentElement.setAttribute('data-theme',saved);
+})();
+
+// Cookie banner
+(function(){
+  const accepted=localStorage.getItem('ef-cookies');
+  const banner=document.getElementById('cookie-banner');
+  if(!banner) return;
+  if(accepted){banner.classList.add('hidden');return;}
+  document.getElementById('ck-accept').addEventListener('click',function(){
+    localStorage.setItem('ef-cookies','accepted');
+    banner.classList.add('hidden');
+  });
+  document.getElementById('ck-reject').addEventListener('click',function(){
+    localStorage.setItem('ef-cookies','rejected');
+    banner.classList.add('hidden');
+  });
+})();
+</script>
+</body>
+</html>

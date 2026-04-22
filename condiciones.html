@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Condiciones de Uso — EspaiFest Martorell</title>
+  <meta name="description" content="Condiciones generales de contratación y normas de uso de EspaiFest — sala de eventos en Martorell.">
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap">
+  <style>
+/* ═══════════════════════════════════════════════════
+   DESIGN SYSTEM — EspaiFest 2026
+═══════════════════════════════════════════════════ */
+:root {
+  --co: oklch(68% .22 38);
+  --cp: oklch(66% .24 355);
+  --ct: oklch(73% .14 190);
+  --cy: oklch(87% .19 90);
+  --bg: oklch(8% .01 260);
+  --s1: oklch(12% .012 260);
+  --s2: oklch(16% .014 260);
+  --tx1: oklch(97% .005 260);
+  --tx2: oklch(75% .01 260);
+  --tx3: oklch(52% .01 260);
+  --bd: oklch(22% .015 260/.6);
+  --fd: 'Syne', sans-serif;
+  --fb: 'DM Sans', sans-serif;
+  --ease-s: cubic-bezier(.25,.46,.45,.94);
+  --r: 16px;
+}
+[data-theme="light"] {
+  --bg: oklch(97% .003 260);
+  --s1: oklch(92% .006 260);
+  --s2: oklch(86% .008 260);
+  --tx1: oklch(12% .01 260);
+  --tx2: oklch(35% .01 260);
+  --tx3: oklch(55% .01 260);
+  --bd: oklch(75% .01 260/.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:var(--fb);background:var(--bg);color:var(--tx1);line-height:1.65;transition:background .3s,color .3s;min-height:100vh;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:800;height:100px;padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;background:oklch(8% .01 260/.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--bd);}
+[data-theme="light"] nav{background:oklch(97% .003 260/.92);}
+.n-logo img{height:80px;width:auto;content:url('https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png');}
+[data-theme="light"] .n-logo img{content:url('https://i.ibb.co/p9z8mfx/Espai-Fest-Negre.png');}
+
+/* BOTÓN */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:50px;font-family:var(--fd);font-weight:700;font-size:.9rem;text-decoration:none;border:none;cursor:pointer;transition:all .25s var(--ease-s);}
+.btn-primary{background:var(--co);color:#fff;}
+.btn-primary:hover{filter:brightness(1.12);transform:translateY(-1px);}
+
+/* HERO LEGAL */
+.legal-hero{padding:140px clamp(1rem,4vw,3rem) clamp(2rem,5vw,3.5rem);text-align:center;border-bottom:1px solid var(--bd);background:linear-gradient(to bottom,var(--s1),var(--bg));}
+.legal-hero .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--fd);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--co);margin-bottom:16px;}
+.legal-hero .eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--co);}
+.legal-hero h1{font-family:var(--fd);font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.1;margin-bottom:16px;}
+.legal-hero p{color:var(--tx2);font-size:.95rem;max-width:560px;margin:0 auto;}
+
+/* CONTENIDO LEGAL */
+.legal-body{max-width:860px;margin:0 auto;padding:clamp(2rem,5vw,4rem) clamp(1rem,4vw,3rem);}
+.legal-toc{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:24px 28px;margin-bottom:40px;}
+.legal-toc h3{font-family:var(--fd);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:12px;}
+.legal-toc ol{padding-left:20px;display:flex;flex-direction:column;gap:6px;}
+.legal-toc ol a{color:var(--co);text-decoration:none;font-size:.88rem;}
+.legal-toc ol a:hover{text-decoration:underline;}
+.legal-section{margin-bottom:40px;padding-bottom:40px;border-bottom:1px solid var(--bd);}
+.legal-section:last-child{border-bottom:none;}
+.legal-section h2{font-family:var(--fd);font-size:1.25rem;font-weight:800;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--co);display:inline-block;}
+.legal-section h3{font-family:var(--fd);font-size:1rem;font-weight:700;color:var(--tx2);margin:18px 0 8px;}
+.legal-section p{color:var(--tx2);margin-bottom:12px;font-size:.93rem;line-height:1.75;}
+.legal-section ul,.legal-section ol{padding-left:20px;display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.legal-section li{color:var(--tx2);font-size:.93rem;line-height:1.7;}
+.legal-section strong{color:var(--tx1);}
+.legal-section a{color:var(--co);}
+.data-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem;}
+.data-table th{background:var(--s2);color:var(--tx1);font-family:var(--fd);font-weight:700;padding:10px 14px;text-align:left;border:1px solid var(--bd);}
+.data-table td{padding:10px 14px;border:1px solid var(--bd);color:var(--tx2);vertical-align:top;}
+.data-table tr:hover td{background:var(--s1);}
+.info-box{background:var(--s1);border:1px solid var(--bd);border-left:3px solid var(--co);border-radius:0 var(--r) var(--r) 0;padding:16px 20px;margin:16px 0;}
+.info-box p{margin:0;font-size:.88rem;}
+
+/* FOOTER */
+footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,6vw,4rem) clamp(1rem,4vw,3rem) clamp(1.2rem,3vw,2rem);}
+.ft-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:clamp(16px,3vw,40px);margin-bottom:clamp(1.5rem,4vw,3rem);}
+.ft-logo img{height:80px;width:auto;}
+[data-theme="light"] .ft-logo img{content:url('https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png');}
+.ft-col h4{font-family:var(--fd);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:14px;}
+.ft-col a,.ft-col span{display:block;color:var(--tx2);text-decoration:none;font-size:.87rem;margin-bottom:8px;transition:color .2s;}
+.ft-col a:hover{color:var(--co);}
+.ft-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--bd);flex-wrap:wrap;gap:12px;}
+.ft-copy{font-size:.8rem;color:var(--tx3);}
+.ft-legal-links{display:flex;gap:20px;flex-wrap:wrap;}
+.ft-legal-links a{font-size:.78rem;color:var(--tx3);text-decoration:none;transition:color .2s;}
+.ft-legal-links a:hover{color:var(--co);}
+
+/* COOKIES BANNER */
+#cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:9000;background:var(--s1);border-top:1px solid var(--bd);padding:20px clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;box-shadow:0 -8px 32px oklch(0% 0 0/.3);transform:translateY(0);transition:transform .4s var(--ease-s);}
+#cookie-banner.hidden{transform:translateY(110%);}
+.ck-text{font-size:.86rem;color:var(--tx2);max-width:680px;line-height:1.6;}
+.ck-text a{color:var(--co);text-decoration:underline;}
+.ck-btns{display:flex;gap:10px;flex-shrink:0;}
+.ck-btn-accept{background:var(--co);color:#fff;border:none;border-radius:50px;padding:10px 22px;font-family:var(--fd);font-weight:700;font-size:.85rem;cursor:pointer;transition:filter .2s;}
+.ck-btn-accept:hover{filter:brightness(1.12);}
+.ck-btn-reject{background:transparent;color:var(--tx2);border:1px solid var(--bd);border-radius:50px;padding:10px 22px;font-family:var(--fd);font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;}
+.ck-btn-reject:hover{border-color:var(--tx2);color:var(--tx1);}
+
+@media(max-width:768px){
+  .ft-grid{grid-template-columns:1fr 1fr;}
+  #cookie-banner{flex-direction:column;align-items:flex-start;}
+}
+@media(max-width:480px){
+  .ft-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+  <!-- ── CABECERA COMPARTIDA ── -->
+  <nav id="nav" role="navigation" aria-label="Menú principal">
+    <a class="n-logo" href="index.html" aria-label="EspaiFest inicio">
+      <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest Logo">
+    </a>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="index.html#reservas" class="btn btn-primary" style="font-size:.85rem;padding:10px 20px;" data-es="Reservar ahora" data-ca="Reservar ara">Reservar ahora</a>
+      <button onclick="toggleTheme()" id="theme-btn" aria-label="Cambiar tema" style="background:var(--s2);border:1px solid var(--bd);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx1);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="legal-hero">
+    <div class="eyebrow">Condiciones generales</div>
+    <h1>Condiciones de Uso</h1>
+    <p>Condiciones generales de contratación y normas de uso de EspaiFest — sala de eventos en Martorell.</p>
+  </div>
+
+  <!-- CONTENIDO -->
+  <main class="legal-body">
+
+    <div class="legal-toc">
+      <h3>Índice</h3>
+      <ol>
+        <li><a href="#cu-intro">Introducción</a></li>
+        <li><a href="#cu-reserva">Proceso de reserva</a></li>
+        <li><a href="#cu-estados">Estados de la reserva</a></li>
+        <li><a href="#cu-modificacion">Modificación y cancelación</a></li>
+        <li><a href="#cu-precios">Precios</a></li>
+        <li><a href="#cu-normas">Normas de uso de la sala</a></li>
+        <li><a href="#cu-prohibiciones">Prohibiciones</a></li>
+        <li><a href="#cu-promociones">Condiciones de promociones</a></li>
+        <li><a href="#cu-modificacion-cg">Modificación de condiciones</a></li>
+      </ol>
+    </div>
+
+    <div class="legal-section" id="cu-intro">
+      <h2>1. Introducción</h2>
+      <p>Las presentes Condiciones Generales regulan la contratación de todos los servicios del sitio web <strong>EspaiFest</strong>, propiedad de Laura Ribó Marín, con domicilio social en Martorell, C/ Francesc Macià, 37, 08760, NIF 44024942K, teléfono 674 379 709, para todos los usuarios que accedan y utilicen los servicios de www.espaifest.com.</p>
+      <p>La utilización de estos servicios supondrá la aceptación plena y sin reservas de todas y cada una de las Condiciones Generales aquí recogidas. EspaiFest se reserva el derecho de modificarlas sin previo aviso, así como de suspender temporalmente la prestación del servicio por mantenimiento.</p>
+    </div>
+
+    <div class="legal-section" id="cu-reserva">
+      <h2>2. Proceso de reserva</h2>
+      <p>El servicio de reserva tiene por finalidad el alquiler de la sala que EspaiFest dispone en Martorell. Existen dos formas de realizarlo:</p>
+      <h3>2.1 Online</h3>
+      <p>Siguiendo los pasos del formulario web. Al finalizar, el cliente recibirá un email de pre-reserva con el número de reserva y los datos para el pago. Una vez comprobado el abono, se enviará el email de confirmación definitivo.</p>
+      <div class="info-box">
+        <p><strong>Cuenta bancaria (Sabadell):</strong> ES91 0081 2706 1300 0878 5692</p>
+      </div>
+      <h3>2.2 Por teléfono o email</h3>
+      <p>Llamando al <a href="tel:+34674379709">674 379 709</a> o escribiendo a <a href="mailto:info@espaifest.com">info@espaifest.com</a>. En el mismo día se recibirá respuesta sobre disponibilidad. El email debe incluir: nombre y apellidos, teléfono, población, email, día y hora solicitados, tipo de celebración y extras necesarios.</p>
+      <p><strong>Importante:</strong> La paga y señal debe abonarse en un plazo máximo de <strong>5 días hábiles</strong> desde la reserva. Pasado ese plazo, la reserva quedará automáticamente anulada.</p>
+    </div>
+
+    <div class="legal-section" id="cu-estados">
+      <h2>3. Estados de la reserva</h2>
+      <h3>Confirmada</h3>
+      <p>La reserva queda confirmada una vez EspaiFest verifica el abono de la paga y señal y envía el email de confirmación.</p>
+      <h3>Cancelada</h3>
+      <p>Si el cliente no se presenta a la hora convenida o lo hace con más de 15 minutos de retraso <strong>sin avisar previamente</strong>, la reserva se considerará cancelada y se cobrará el importe ya pagado como gastos de cancelación. Los servicios extras contratados (catering, animación) tampoco serán reembolsados.</p>
+      <h3>Anulada por EspaiFest</h3>
+      <p>Si EspaiFest, por causas ajenas, no pudiera facilitar la sala, ofrecerá al cliente el reembolso total o el cambio a otro día en las mismas condiciones. Si la nueva fecha es de importe superior, el cliente abonará la diferencia; si es inferior, EspaiFest la devolverá.</p>
+      <h3>Extras</h3>
+      <p>Los extras (catering, repostería, animación, horas extra) pueden seleccionarse al reservar o solicitarse posteriormente con un mínimo de <strong>10 días antes</strong> para catering y <strong>20 días antes</strong> para pastel o animación.</p>
+      <h3>Fianza</h3>
+      <p>El 50% abonado queda retenido como fianza. El cliente debe acudir con el total del importe y abonarlo en <strong>metálico exacto</strong> a la firma del contrato. Al finalizar el evento, si no hay desperfectos, la fianza se devuelve.</p>
+    </div>
+
+    <div class="legal-section" id="cu-modificacion">
+      <h2>4. Modificación y cancelación</h2>
+      <p>Si el cliente avisa con más de <strong>20 días naturales</strong> de antelación (30 para días especiales), podrá cambiar la fecha sujeto a disponibilidad. Con menos antelación, se aplicará una penalización:</p>
+      <table class="data-table">
+        <thead><tr><th>Día del evento a modificar</th><th>Penalización</th></tr></thead>
+        <tbody>
+          <tr><td>Lunes a Jueves o todo el día</td><td>15 € de la paga y señal</td></tr>
+          <tr><td>Viernes, Sábado, Domingo y Festivos</td><td>30% de la paga y señal</td></tr>
+          <tr><td>Días Especiales</td><td>100% de la paga y señal</td></tr>
+        </tbody>
+      </table>
+      <p>El cliente tiene un plazo máximo de <strong>1 año</strong> desde la fecha original del evento para fijar una nueva reserva. Solo se puede cancelar una vez. La nueva reserva no podrá volver a cancelarse.</p>
+      <h3>Días especiales</h3>
+      <p>Son días especiales: <strong>1 de enero, 6 de enero, Viernes de Carnaval, Lunes de Pascua, 23 de junio, 31 de octubre, 24, 25, 26 y 31 de diciembre.</strong></p>
+    </div>
+
+    <div class="legal-section" id="cu-precios">
+      <h2>5. Precios</h2>
+      <p>Los precios publicados en la web son válidos hasta que no sean modificados. EspaiFest se reserva el derecho de modificar tarifas sin previo aviso. Durante el proceso de reserva, los precios se indicarán debidamente. Todos los precios incluyen el IVA vigente.</p>
+    </div>
+
+    <div class="legal-section" id="cu-normas">
+      <h2>6. Normas de uso de la sala</h2>
+      <p>EspaiFest se reserva el derecho a entrar en la sala durante el evento para verificar el cumplimiento de las normas. En caso de incumplimiento, podrá dar por finalizado el evento y exigir la evacuación inmediata. El cliente se compromete a:</p>
+      <ul>
+        <li>Dejar la sala limpia y ordenada como se entregó (incluyendo los juguetes).</li>
+        <li>Limpiar restos de comida o bebida del suelo y mobiliario.</li>
+        <li>Tirar la basura en los contenedores facilitados.</li>
+        <li>Utilizar mantel en las mesas (excepto en eventos Business).</li>
+        <li>No romper ni deteriorar el mobiliario o decoración.</li>
+        <li>Dejar la nevera y el congelador vacíos y limpios.</li>
+        <li>Acompañar a los niños al servicio en todo momento.</li>
+        <li>Que los parques infantiles sean usados según las edades: zona Baby (0-3 años) y parque de 2 plantas (3-10 años).</li>
+        <li>Mantener las puertas cerradas para evitar que el sonido salga al exterior.</li>
+        <li>Entregar la llave al encargado de EspaiFest al finalizar.</li>
+        <li>Garantizar que haya un adulto mayor de 25 años durante toda la fiesta.</li>
+        <li>Respetar el descanso de los vecinos.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section" id="cu-prohibiciones">
+      <h2>7. Prohibiciones</h2>
+      <p>Está totalmente prohibido:</p>
+      <ul>
+        <li>Tirar confeti dentro o en la entrada de la sala.</li>
+        <li>Pegar adhesivos en las paredes.</li>
+        <li>Entrar a los parques infantiles con zapatos o con alimentos, bebidas o juguetes.</li>
+        <li>Subir o saltar sobre los sofás o puffs.</li>
+        <li>Golpear la TV o la pantalla del proyector.</li>
+        <li>Subir al futbolín, moverlo o colocar comida/bebida sobre él.</li>
+        <li>Consumir bebida o comida fuera del local.</li>
+        <li>Fumar o consumir sustancias estupefacientes o psicotrópicas en la sala.</li>
+        <li>La entrada de animales de compañía, bicicletas, patinetes o balones de cuero.</li>
+        <li>La entrada de armas, artefactos pirotécnicos, material explosivo o inflamable.</li>
+        <li>Utilizar equipos de sonido distintos al facilitado o acordado con EspaiFest.</li>
+      </ul>
+      <div class="info-box">
+        <p>En el momento del pago, se tomarán los datos de la tarjeta de crédito para, en su caso, hacer efectivo el cobro de cualquier desperfecto producido en la sala por el cliente o sus invitados. Antes de realizar cualquier cargo, se informará al cliente del coste de los daños.</p>
+      </div>
+    </div>
+
+    <div class="legal-section" id="cu-promociones">
+      <h2>8. Condiciones de promociones</h2>
+      <ul>
+        <li>Todas las promociones se aplican sobre el precio base de la sala, nunca sobre los extras contratados.</li>
+        <li>Las promociones <strong>nunca</strong> son acumulables y <strong>no</strong> son válidas para días especiales, festivos o vísperas de festivos.</li>
+        <li>Las promociones no son canjeables por su valor en metálico.</li>
+        <li>Se aplican las mismas condiciones de cancelación que cualquier reserva sin promoción.</li>
+        <li>Las promociones deben solicitarse al realizar la reserva; nunca de forma retroactiva.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section" id="cu-modificacion-cg">
+      <h2>9. Modificación de las condiciones</h2>
+      <p>EspaiFest se reserva el derecho de modificar las presentes Condiciones Generales, informando a los clientes a través del Portal. También se reserva el derecho de suspender temporalmente el acceso al sitio web para efectuar mejoras en el servicio.</p>
+    </div>
+
+  </main>
+
+  <footer role="contentinfo">
+    <div class="ft-grid">
+      <div>
+        <div class="ft-logo">
+          <img src="https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png" alt="EspaiFest" style="height:100px;width:auto;">
+        </div>
+      </div>
+      <div class="ft-col">
+        <h4>Servicios</h4>
+        <a href="index.html#fiestas">Fiestas infantiles</a>
+        <a href="index.html#adultos">Fiestas adultos</a>
+        <a href="index.html#business">Business</a>
+        <a href="index.html#reservas">Reservar</a>
+      </div>
+      <div class="ft-col">
+        <h4>Legal</h4>
+        <a href="aviso-legal.html">Aviso legal</a>
+        <a href="privacidad.html">Política de privacidad</a>
+        <a href="cookies.html">Política de cookies</a>
+        <a href="condiciones.html">Condiciones de uso</a>
+      </div>
+      <div class="ft-col">
+        <h4>Contacto</h4>
+        <a href="tel:+34674379709">674 379 709</a>
+        <a href="mailto:info@espaifest.com">info@espaifest.com</a>
+        <a href="https://maps.google.com/?q=C/+Francesc+Macia+37+Martorell" target="_blank" rel="noopener">C/ Francesc Macià, 37</a>
+        <span style="color:var(--tx3);font-size:.82rem;">08760 Martorell, Barcelona</span>
+      </div>
+    </div>
+    <div class="ft-bottom">
+      <div class="ft-copy">© 2026 EspaiFest · Todos los derechos reservados</div>
+      <div class="ft-legal-links">
+        <a href="aviso-legal.html">Aviso legal</a>
+        <a href="privacidad.html">Privacidad</a>
+        <a href="cookies.html">Cookies</a>
+        <a href="condiciones.html">Condiciones</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- BANNER COOKIES -->
+  <div id="cookie-banner" role="dialog" aria-label="Aviso de cookies">
+    <p class="ck-text">
+      Usamos cookies técnicas y de análisis para mejorar tu experiencia. Al continuar navegando aceptas su uso.
+      <a href="cookies.html">Más información</a>
+    </p>
+    <div class="ck-btns">
+      <button id="ck-reject" class="ck-btn-reject">Rechazar</button>
+      <button id="ck-accept" class="ck-btn-accept">Aceptar cookies</button>
+    </div>
+  </div>
+
+<script>
+function toggleTheme(){
+  const t=document.documentElement;
+  const cur=t.getAttribute('data-theme')||'dark';
+  const next=cur==='dark'?'light':'dark';
+  t.setAttribute('data-theme',next);
+  localStorage.setItem('ef-theme',next);
+}
+(function(){
+  const saved=localStorage.getItem('ef-theme')||'dark';
+  document.documentElement.setAttribute('data-theme',saved);
+})();
+
+// Cookie banner
+(function(){
+  const accepted=localStorage.getItem('ef-cookies');
+  const banner=document.getElementById('cookie-banner');
+  if(!banner) return;
+  if(accepted){banner.classList.add('hidden');return;}
+  document.getElementById('ck-accept').addEventListener('click',function(){
+    localStorage.setItem('ef-cookies','accepted');
+    banner.classList.add('hidden');
+  });
+  document.getElementById('ck-reject').addEventListener('click',function(){
+    localStorage.setItem('ef-cookies','rejected');
+    banner.classList.add('hidden');
+  });
+})();
+</script>
+</body>
+</html>
