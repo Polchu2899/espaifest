@@ -730,6 +730,22 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 .cf-slot.ocupado:hover{border-color:var(--bd);color:var(--tx3);}
 .cal-day.partial{background:oklch(87% .19 90/.08);}
 .dot-partial{width:6px;height:6px;border-radius:50%;background:oklch(87% .19 90);}
+
+/* ══ COOKIE BANNER ══════════════════════════════════════ */
+#cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:9000;background:var(--s1);border-top:1px solid var(--bd);padding:18px clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;box-shadow:0 -8px 32px oklch(0% 0 0/.35);transform:translateY(0);transition:transform .4s cubic-bezier(.25,.46,.45,.94);}
+#cookie-banner.ck-hidden{transform:translateY(110%);}
+.ck-text{font-size:.86rem;color:var(--tx2);max-width:680px;line-height:1.6;}
+.ck-text a{color:var(--co);text-decoration:underline;}
+.ck-btns{display:flex;gap:10px;flex-shrink:0;}
+.ck-btn-accept{background:var(--co);color:#fff;border:none;border-radius:50px;padding:10px 22px;font-family:var(--fd);font-weight:700;font-size:.85rem;cursor:pointer;transition:filter .2s;}
+.ck-btn-accept:hover{filter:brightness(1.12);}
+.ck-btn-reject{background:transparent;color:var(--tx2);border:1px solid var(--bd);border-radius:50px;padding:10px 22px;font-family:var(--fd);font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;}
+.ck-btn-reject:hover{border-color:var(--tx2);color:var(--tx1);}
+.ft-legal-links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px;}
+.ft-legal-links a{font-size:.78rem;color:var(--tx3);text-decoration:none;transition:color .2s;}
+.ft-legal-links a:hover{color:var(--co);}
+@media(max-width:600px){#cookie-banner{flex-direction:column;align-items:flex-start;}}
+
 </style>
 </head>
 <body>
@@ -1390,8 +1406,15 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
       <a href="#galeria" data-es="Galería" data-ca="Galeria">Galería</a>
       <a href="#fidelizacion" data-es="Fidelización" data-ca="Fidelització">Fidelización</a>
       <a href="#calendario" data-es="Calendario" data-ca="Calendari">Calendario</a>
-    <a href="#blog" data-es="Blog" data-ca="Blog">Blog</a>
+      <a href="#blog" data-es="Blog" data-ca="Blog">Blog</a>
       <a href="#reservas" data-es="Reservar" data-ca="Reservar">Reservar</a>
+    </div>
+    <div class="ft-col">
+      <h4 data-es="Legal" data-ca="Legal">Legal</h4>
+      <a href="aviso-legal.html" data-es="Aviso legal" data-ca="Avís legal">Aviso legal</a>
+      <a href="privacidad.html" data-es="Privacidad" data-ca="Privacitat">Privacidad</a>
+      <a href="cookies.html" data-es="Cookies" data-ca="Cookies">Cookies</a>
+      <a href="condiciones.html" data-es="Condiciones de uso" data-ca="Condicions d'ús">Condiciones de uso</a>
     </div>
     <div class="ft-col">
       <h4 data-es="Contacto" data-ca="Contacte">Contacto</h4>
@@ -1403,6 +1426,12 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   </div>
   <div class="ft-bottom">
     <div class="ft-copy" data-es="© 2026 EspaiFest · Todos los derechos reservados" data-ca="© 2026 EspaiFest · Tots els drets reservats">© 2026 EspaiFest · Todos los derechos reservados</div>
+    <div class="ft-legal-links">
+      <a href="aviso-legal.html">Aviso legal</a>
+      <a href="privacidad.html">Privacidad</a>
+      <a href="cookies.html">Cookies</a>
+      <a href="condiciones.html">Condiciones</a>
+    </div>
     <div class="ft-pal">
       <div class="fp" style="background:var(--co)"></div>
       <div class="fp" style="background:var(--cp)"></div>
@@ -1411,6 +1440,19 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     </div>
   </div>
 </footer>
+
+
+<!-- ══ BANNER COOKIES ══════════════════════════════════ -->
+<div id="cookie-banner" role="dialog" aria-label="Aviso de cookies" aria-live="polite">
+  <p class="ck-text">
+    Usamos cookies técnicas para el funcionamiento del sitio (preferencias de idioma y tema) y de análisis para mejorar la experiencia.
+    <a href="cookies.html">Más información</a>
+  </p>
+  <div class="ck-btns">
+    <button id="ck-reject" class="ck-btn-reject">Rechazar</button>
+    <button id="ck-accept" class="ck-btn-accept">Aceptar cookies</button>
+  </div>
+</div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -2145,6 +2187,23 @@ async function loadFechasOcupadas() {
 // Cargar al iniciar
 loadBlogPosts();
 loadFechasOcupadas();
+
+
+  // ── COOKIE BANNER ────────────────────────────────────
+  (function(){
+    const saved = localStorage.getItem('ef-cookies');
+    const banner = document.getElementById('cookie-banner');
+    if(!banner) return;
+    if(saved){ banner.classList.add('ck-hidden'); return; }
+    document.getElementById('ck-accept').addEventListener('click', function(){
+      localStorage.setItem('ef-cookies','accepted');
+      banner.classList.add('ck-hidden');
+    });
+    document.getElementById('ck-reject').addEventListener('click', function(){
+      localStorage.setItem('ef-cookies','rejected');
+      banner.classList.add('ck-hidden');
+    });
+  })();
 
 </script>
 </body>
