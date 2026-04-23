@@ -182,7 +182,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .cs{font-weight:600;}
 .cm{color:var(--t2);}
 .cx{font-family:'DM Mono',monospace;font-size:12px;}
-.rc{grid-template-columns:1.6fr .9fr 1.1fr .7fr 1fr .8fr;gap:12px;}
+.rc{grid-template-columns:1.4fr .85fr 1fr .65fr .9fr .85fr .75fr;gap:10px;}
 .pc{grid-template-columns:.7fr 1.4fr .8fr 1fr 1fr .9fr;gap:12px;}
 .cc{grid-template-columns:1.6fr 1fr .8fr .9fr 1fr .8fr;gap:12px;}
 .sc{grid-template-columns:1.6fr 1fr 1fr .8fr .8fr;gap:12px;}
@@ -282,6 +282,32 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .fr2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid var(--b1);}
 
+/* PAGO STATUS */
+.pago-status{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.pago-pill{flex:1;min-width:120px;border-radius:10px;padding:12px 14px;text-align:center;border:2px solid transparent;cursor:pointer;transition:all .15s;}
+.pago-pill.sel-cobrado{background:rgba(16,185,129,.12);border-color:var(--green);}
+.pago-pill.sel-pendiente{background:rgba(245,158,11,.12);border-color:var(--amber);}
+.pago-pill.sel-parcial{background:rgba(15,212,196,.1);border-color:var(--teal);}
+.pago-pill:not(.sel-cobrado):not(.sel-pendiente):not(.sel-parcial){background:var(--s3);border-color:var(--b2);}
+.pp-ico{font-size:18px;margin-bottom:4px;}
+.pp-lbl{font-size:12px;font-weight:700;}
+
+/* IMPORT CSV */
+.csv-drop{border:2px dashed var(--b3);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:16px;}
+.csv-drop:hover,.csv-drop.over{border-color:var(--teal);background:rgba(15,212,196,.04);}
+.csv-drop svg{width:32px;height:32px;stroke:var(--t3);fill:none;stroke-width:1.5;margin-bottom:10px;}
+.csv-drop p{font-size:13px;color:var(--t2);}
+.csv-preview{max-height:220px;overflow-y:auto;border:1px solid var(--b2);border-radius:8px;margin-bottom:14px;}
+.csv-row{display:flex;gap:8px;padding:7px 12px;border-bottom:1px solid var(--b1);font-size:12px;align-items:center;}
+.csv-row:last-child{border-bottom:none;}
+.csv-head{background:var(--s3);font-weight:700;color:var(--t2);font-size:10px;text-transform:uppercase;letter-spacing:.06em;}
+.csv-ok{color:var(--green);font-size:10px;margin-left:auto;white-space:nowrap;}
+.csv-dup{color:var(--amber);font-size:10px;margin-left:auto;white-space:nowrap;}
+.import-stats{display:flex;gap:12px;margin-bottom:14px;}
+.ist{flex:1;background:var(--s3);border-radius:8px;padding:10px;text-align:center;}
+.ist-n{font-size:20px;font-weight:800;font-family:'DM Mono',monospace;}
+.ist-l{font-size:11px;color:var(--t2);margin-top:2px;}
+
 /* TOAST */
 .toast{position:fixed;bottom:28px;right:28px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--rxs);padding:12px 18px;font-size:13px;font-weight:500;color:var(--tx);display:flex;align-items:center;gap:8px;z-index:2000;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.5);}
 .toast.show{transform:translateY(0);opacity:1;}
@@ -313,7 +339,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <symbol id="i-trending" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
   <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
-  <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></symbol>
+      <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></symbol>
+  <symbol id="i-import" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
 </svg>
 
 <!-- LOGIN -->
@@ -356,6 +383,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="ni" onclick="showPanel('fidelizacion',this)"><span class="ni-ico"><svg><use href="#i-star"/></svg></span>Fidelización</div>
       <div class="ng" style="margin-top:8px">Ajustes</div>
       <div class="ni" onclick="showPanel('configuracion',this)"><span class="ni-ico"><svg><use href="#i-gear"/></svg></span>Mi negocio</div>
+      <div class="ni" onclick="showPanel('migracion',this)"><span class="ni-ico"><svg><use href="#i-import"/></svg></span>Migración histórica<span class="stag">XLS</span></div>
       <div class="ng" style="margin-top:8px;opacity:.35">Próximamente</div>
       <div class="ni dim"><span class="ni-ico"><svg><use href="#i-trending"/></svg></span>Informes<span class="stag">pronto</span></div>
     </nav>
@@ -420,7 +448,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <button class="btn bp sm" style="margin-left:auto" onclick="openModal('res')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nueva reserva</button>
         </div>
         <div class="card">
-          <div class="thead rc"><span>Cliente</span><span>Fecha</span><span>Servicio</span><span>Origen</span><span>Estado</span><span style="text-align:right">Acciones</span></div>
+          <div class="thead rc"><span>Cliente</span><span>Fecha</span><span>Servicio</span><span>Origen</span><span>Estado</span><span>Pago</span><span style="text-align:right">Acciones</span></div>
           <div id="reservas-list"><div class="loading"><div class="spinner"></div>Cargando reservas...</div></div>
         </div>
       </div>
@@ -443,7 +471,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <div class="fbar">
           <div class="swrap"><div class="sico"><svg><use href="#i-search"/></svg></div><input type="text" class="sinp" placeholder="Buscar cliente..."></div>
           <button class="btn bg sm" style="margin-left:auto" onclick="exportClientes()"><svg width="13" height="13" stroke="currentColor"><use href="#i-up"/></svg>CSV</button>
-          <button class="btn bp sm" onclick="showToast('Nuevo cliente próximamente')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nuevo</button>
+          <button class="btn bg sm" onclick="openModal('importcsv')"><svg width="13" height="13" stroke="currentColor"><use href="#i-up"/></svg>Importar</button>
+          <button class="btn bp sm" onclick="openModal('nuevo-cli')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nuevo</button>
         </div>
         <div class="card">
           <div class="thead cc"><span>Cliente</span><span>Teléfono</span><span>Reservas</span><span>Fidelización</span><span>Última visita</span><span style="text-align:right">Acciones</span></div>
@@ -474,14 +503,96 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div class="kcard"><div class="ktop"><div class="kico ki-g"><svg stroke="var(--green)"><use href="#i-tag"/></svg></div></div><div class="kval" id="f-desc">—</div><div class="klbl">Descuentos / mes</div></div>
         </div>
         <div class="card">
-          <div class="chead"><div><div class="ctitle">Niveles del programa</div></div><button class="btn bg sm" onclick="showToast('Editar niveles próximamente')"><svg width="13" height="13" stroke="currentColor"><use href="#i-edit"/></svg>Editar</button></div>
+          <div class="chead"><div><div class="ctitle">Niveles del programa</div></div><button class="btn bg sm" onclick="openModal('edit-niveles')"><svg width="13" height="13" stroke="currentColor"><use href="#i-edit"/></svg>Editar</button></div>
           <div class="trow" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px"><div><span class="badge bg-x">Básico</span></div><div class="c cm">1–4 reservas</div><div class="c cm">Sin descuento</div><div class="c cx" id="f-basico">—</div></div>
           <div class="trow" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px"><div><span class="badge bg-a">Plata</span></div><div class="c cm">5–9 reservas</div><div class="c" style="color:var(--green);font-weight:600">5% descuento</div><div class="c cx" id="f-plata">—</div></div>
           <div class="trow" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px"><div><span class="badge bg-p">Oro</span></div><div class="c cm">10+ reservas</div><div class="c" style="color:var(--green);font-weight:600">10% descuento</div><div class="c cx" id="f-orot">—</div></div>
         </div>
       </div>
 
-      <!-- CONFIGURACIÓN -->
+      <!-- MIGRACIÓN HISTÓRICA -->
+      <div class="panel" id="panel-migracion">
+        <div class="hero" style="margin-bottom:20px">
+          <div>
+            <h2>Migración histórica Bookly → Reservify</h2>
+            <p>Importa el XLS exportado del sistema anterior. Usa la referencia EF_XXXX como clave — no crea duplicados.</p>
+          </div>
+        </div>
+
+        <!-- STATS PREVIAS -->
+        <div class="kgrid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+          <div class="kcard"><div class="kval" id="mig-total" style="color:var(--teal)">—</div><div class="klbl">Filas en XLS</div></div>
+          <div class="kcard"><div class="kval" id="mig-nuevas" style="color:var(--green)">—</div><div class="klbl">Reservas nuevas</div></div>
+          <div class="kcard"><div class="kval" id="mig-duplic" style="color:var(--amber)">—</div><div class="klbl">Ya existentes</div></div>
+          <div class="kcard"><div class="kval" id="mig-clientes" style="color:var(--purple)">—</div><div class="klbl">Clientes únicos</div></div>
+        </div>
+
+        <div class="card">
+          <div class="chead">
+            <div><div class="ctitle">Archivo XLS / XML</div><div class="csub">Exportación de Bookly con todas las reservas</div></div>
+          </div>
+          <div style="padding:24px">
+            <div class="csv-drop" id="xls-drop" onclick="document.getElementById('xls-file').click()">
+              <svg viewBox="0 0 24 24" style="margin:0 auto 10px;width:36px;height:36px;stroke:var(--t3);fill:none;stroke-width:1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              <p><strong>Haz clic o arrastra el XLS aquí</strong></p>
+              <p style="font-size:11px;color:var(--t3);margin-top:4px">Formato: exportación Bookly (.xls / SpreadsheetML XML)</p>
+            </div>
+            <input type="file" id="xls-file" accept=".xls,.xlsx,.xml" style="display:none" onchange="parseXlsBookly(this.files[0])">
+
+            <div id="xls-preview-area" style="display:none">
+              <div class="import-stats" style="margin-bottom:16px">
+                <div class="ist"><div class="ist-n" id="xp-total" style="color:var(--teal)">0</div><div class="ist-l">Reservas leídas</div></div>
+                <div class="ist"><div class="ist-n" id="xp-nuevas" style="color:var(--green)">0</div><div class="ist-l">Nuevas</div></div>
+                <div class="ist"><div class="ist-n" id="xp-duplic" style="color:var(--amber)">0</div><div class="ist-l">Ya importadas</div></div>
+                <div class="ist"><div class="ist-n" id="xp-clientes" style="color:var(--purple)">0</div><div class="ist-l">Clientes únicos</div></div>
+              </div>
+
+              <!-- Preview tabla -->
+              <div class="csv-preview" id="xls-preview" style="max-height:280px"></div>
+
+              <!-- Opciones -->
+              <div style="display:flex;gap:16px;align-items:center;margin:16px 0;padding:14px;background:var(--s3);border-radius:10px;border:1px solid var(--b2)">
+                <div style="flex:1">
+                  <div style="font-size:12px;font-weight:700;margin-bottom:4px">Filtrar por fecha</div>
+                  <div style="font-size:11px;color:var(--t3)">Importar solo reservas a partir de esta fecha (útil para actualización incremental)</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <label style="font-size:12px;color:var(--t2)">Desde:</label>
+                  <input type="date" class="fi" id="xls-desde" style="width:160px;padding:7px 10px;font-size:12px" onchange="filtrarXls()">
+                  <button class="btn bg sm" onclick="document.getElementById('xls-desde').value='';filtrarXls()">Todo</button>
+                </div>
+              </div>
+
+              <!-- Progress -->
+              <div id="xls-progress" style="display:none;margin-bottom:14px">
+                <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:6px">
+                  <span id="xls-prog-txt">Importando...</span>
+                  <span id="xls-prog-pct">0%</span>
+                </div>
+                <div style="height:6px;background:var(--s3);border-radius:4px;overflow:hidden">
+                  <div id="xls-prog-bar" style="height:100%;width:0%;background:var(--grad);border-radius:4px;transition:width .3s"></div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:10px">
+                <button class="btn bg" onclick="resetXlsModal()">Cancelar</button>
+                <button class="btn bp" id="btn-xls-import" onclick="importarBookly()">
+                  <svg width="13" height="13" stroke="currentColor"><use href="#i-import"/></svg>
+                  Importar a Firebase
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOG de importaciones previas -->
+        <div class="card" style="margin-top:18px">
+          <div class="chead"><div><div class="ctitle">Historial de importaciones</div><div class="csub">Registros de migraciones realizadas</div></div></div>
+          <div id="mig-log"><div class="empty">Sin importaciones registradas todavía.</div></div>
+        </div>
+      </div>
+
+
       <div class="panel" id="panel-configuracion">
         <div class="g2">
           <div class="card"><div class="chead"><div><div class="ctitle">Datos del negocio</div></div><button class="btn bg sm" onclick="showToast('Editar próximamente')"><svg width="13" height="13" stroke="currentColor"><use href="#i-edit"/></svg>Editar</button></div>
@@ -635,11 +746,142 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="det-field full"><div class="det-label">Extras seleccionados</div><div class="det-value" id="det-extras" style="white-space:pre-wrap">—</div></div>
       <div class="det-field"><div class="det-label">Método pago</div><div class="det-value" id="det-pago">—</div></div>
       <div class="det-field"><div class="det-label">Importe total</div><div class="det-value" id="det-importe" style="font-size:1.1rem;font-weight:800;color:var(--teal)">—</div></div>
-      <div class="det-field"><div class="det-label">Señal cobrada (50%)</div><div class="det-value" id="det-senal" style="color:var(--green);font-weight:700">—</div></div>
+      <div class="det-field"><div class="det-label">Señal cobrada</div><div class="det-value" id="det-senal" style="color:var(--green);font-weight:700">—</div></div>
+      <div class="det-field"><div class="det-label">Pendiente de pago</div><div class="det-value" id="det-pendiente" style="color:var(--amber);font-weight:700">—</div></div>
+      <div class="det-field"><div class="det-label">Estado pago</div><div class="det-value" id="det-estadopago">—</div></div>
       <div class="det-field"><div class="det-label">Origen</div><div class="det-value" id="det-origen">—</div></div>
       <div class="det-field full"><div class="det-label">Notas del cliente</div><div class="det-value" id="det-notas" style="white-space:pre-wrap">—</div></div>
     </div>
     <div class="det-actions" id="det-actions"></div>
+  </div>
+</div>
+
+<!-- MODAL NUEVO CLIENTE -->
+<div class="mov" id="modal-nuevo-cli">
+  <div class="modal" style="max-width:600px;max-height:90vh;overflow-y:auto;">
+    <div class="mtitle">Nuevo cliente</div><div class="msub">Alta manual de cliente en la base de datos</div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Datos personales</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="nc-nombre" placeholder="Nombre"></div>
+      <div class="fg"><label class="fl">Apellidos *</label><input type="text" class="fi" id="nc-apellidos" placeholder="Apellidos"></div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">DNI / NIE</label><input type="text" class="fi" id="nc-dni" placeholder="12345678A"></div>
+      <div class="fg"><label class="fl">Fecha nacimiento</label><input type="date" class="fi" id="nc-fnac"></div>
+    </div>
+    <div class="fg"><label class="fl">Dirección</label><input type="text" class="fi" id="nc-dir" placeholder="Calle y número"></div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Localidad</label><input type="text" class="fi" id="nc-loc" placeholder="Ciudad"></div>
+      <div class="fg"><label class="fl">Código postal</label><input type="text" class="fi" id="nc-cp" placeholder="08XXX" maxlength="5"></div>
+    </div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Contacto</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Teléfono *</label><input type="text" class="fi" id="nc-tel" placeholder="6XX XXX XXX"></div>
+      <div class="fg"><label class="fl">Email</label><input type="text" class="fi" id="nc-email" placeholder="cliente@email.com"></div>
+    </div>
+    <div class="fg"><label class="fl">Notas</label><textarea class="fi" id="nc-notas" placeholder="Observaciones..." style="min-height:56px;resize:vertical"></textarea></div>
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeModal('nuevo-cli')">Cancelar</button>
+      <button class="btn bp" onclick="saveNuevoCliente()">Guardar cliente</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL IMPORTAR CSV -->
+<div class="mov" id="modal-importcsv">
+  <div class="modal" style="max-width:640px;max-height:92vh;overflow-y:auto;">
+    <div class="mtitle">Importar clientes CSV</div>
+    <div class="msub">Sube el archivo CSV con los clientes de Laura. No se duplicarán clientes con el mismo teléfono.</div>
+    <div class="csv-drop" id="csv-drop" onclick="document.getElementById('csv-file').click()">
+      <svg viewBox="0 0 24 24" style="margin:0 auto 10px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      <p><strong>Haz clic para seleccionar</strong> o arrastra el CSV aquí</p>
+      <p style="font-size:11px;color:var(--t3);margin-top:4px">Acepta .csv con cualquier separador (coma o punto y coma)</p>
+    </div>
+    <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="parseCsv(this.files[0])">
+    <div id="csv-preview-area" style="display:none">
+      <div class="import-stats">
+        <div class="ist"><div class="ist-n" id="csv-total" style="color:var(--teal)">0</div><div class="ist-l">Filas leídas</div></div>
+        <div class="ist"><div class="ist-n" id="csv-nuevos" style="color:var(--green)">0</div><div class="ist-l">Clientes nuevos</div></div>
+        <div class="ist"><div class="ist-n" id="csv-dups" style="color:var(--amber)">0</div><div class="ist-l">Posibles duplicados</div></div>
+      </div>
+      <div class="csv-preview" id="csv-preview"></div>
+      <p style="font-size:11px;color:var(--t3);margin-bottom:14px">Los duplicados (mismo teléfono) se actualizarán con los datos del CSV si tienen más información.</p>
+    </div>
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeModal('importcsv');resetCsvModal()">Cancelar</button>
+      <button class="btn bp" id="btn-import-confirm" style="display:none" onclick="importarClientes()">Importar clientes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR NIVELES FIDELIZACIÓN -->
+<div class="mov" id="modal-edit-niveles">
+  <div class="modal" style="max-width:480px">
+    <div class="mtitle">Editar niveles de fidelización</div>
+    <div class="msub">Define los umbrales y descuentos de cada nivel</div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--b2);">
+      <span class="badge bg-x">Básico</span>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Reservas mínimas</label><input type="number" class="fi" id="niv-bas-min" value="1"></div>
+      <div class="fg"><label class="fl">Descuento (%)</label><input type="number" class="fi" id="niv-bas-desc" value="0"></div>
+    </div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--b2);">
+      <span class="badge bg-a">Plata</span>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Reservas mínimas</label><input type="number" class="fi" id="niv-pla-min" value="5"></div>
+      <div class="fg"><label class="fl">Descuento (%)</label><input type="number" class="fi" id="niv-pla-desc" value="5"></div>
+    </div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--b2);">
+      <span class="badge bg-p">Oro</span>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Reservas mínimas</label><input type="number" class="fi" id="niv-oro-min" value="10"></div>
+      <div class="fg"><label class="fl">Descuento (%)</label><input type="number" class="fi" id="niv-oro-desc" value="10"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeModal('edit-niveles')">Cancelar</button>
+      <button class="btn bp" onclick="saveNiveles()">Guardar niveles</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL REGISTRAR PAGO -->
+<div class="mov" id="modal-pago">
+  <div class="modal" style="max-width:440px">
+    <div class="mtitle">Registrar pago</div>
+    <div class="msub" id="mpago-sub">—</div>
+    <input type="hidden" id="mpago-id">
+    <div class="fg">
+      <label class="fl">Estado del pago</label>
+      <div class="pago-status">
+        <div class="pago-pill" id="pp-cobrado" onclick="selectPagoStatus('cobrado')">
+          <div class="pp-ico">✅</div><div class="pp-lbl" style="color:var(--green)">Cobrado</div>
+        </div>
+        <div class="pago-pill" id="pp-parcial" onclick="selectPagoStatus('parcial')">
+          <div class="pp-ico">🔶</div><div class="pp-lbl" style="color:var(--teal)">Señal cobrada</div>
+        </div>
+        <div class="pago-pill" id="pp-pendiente" onclick="selectPagoStatus('pendiente')">
+          <div class="pp-ico">⏳</div><div class="pp-lbl" style="color:var(--amber)">Pendiente</div>
+        </div>
+      </div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Importe total (€)</label><input type="number" class="fi" id="mpago-total" readonly style="opacity:.6"></div>
+      <div class="fg"><label class="fl">Cobrado hasta ahora (€)</label><input type="number" class="fi" id="mpago-cobrado" value="0" oninput="calcPendiente()"></div>
+    </div>
+    <div class="fg"><label class="fl">Pendiente (€)</label><input type="number" class="fi" id="mpago-pendiente" readonly style="opacity:.6;color:var(--amber)"></div>
+    <div class="fg"><label class="fl">Método de pago</label>
+      <select class="fsi" id="mpago-metodo">
+        <option>Transferencia bancaria</option><option>Bizum</option><option>Efectivo</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">Notas de pago</label><textarea class="fi" id="mpago-notas" placeholder="Referencia transferencia, fecha..." style="min-height:52px;resize:vertical"></textarea></div>
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeModal('pago')">Cancelar</button>
+      <button class="btn bp" onclick="guardarPago()">Guardar pago</button>
+    </div>
   </div>
 </div>
 
@@ -756,6 +998,14 @@ function renderReservas(list) {
     const notasIcon = r.notas
       ? `<span style="margin-left:4px;color:var(--amber);font-size:10px;cursor:default"${notasTip} title="${r.notas.replace(/"/g,'&quot;')}">📝</span>`
       : '';
+    const pagoBadge = r => {
+      const ep = r.estadoPago || '';
+      if(ep === 'cobrado') return '<span class="badge bg-g">Cobrado</span>';
+      if(ep === 'parcial')  return '<span class="badge bg-t">Señal</span>';
+      const pend = (r.importe||0) - (r.cobrado||r.senal||0);
+      if(pend > 0) return '<span class="badge bg-a">Pendiente</span>';
+      return '<span class="badge bg-x">—</span>';
+    };
     return `
     <div class="trow rc" onclick="openDet('${r.id}')">
       <div><div class="c cs">${r.nombre||'—'}${notasIcon}</div><div class="cx cm" style="font-size:11px;color:var(--t3)">${subInfo}</div></div>
@@ -763,6 +1013,7 @@ function renderReservas(list) {
       <div><span class="badge bg-t">${r.servicio||'—'}</span></div>
       <div>${origenBadge}</div>
       <div>${estadoBadge(r.estado)}</div>
+      <div>${pagoBadge(r)}</div>
       <div class="ras" onclick="event.stopPropagation()">
         <button class="rab" onclick="confirmarReserva('${r.id}')" title="Confirmar"><svg><use href="#i-check"/></svg></button>
         <button class="rab rab-cancel" onclick="cancelarReserva('${r.id}')" title="Cancelar"><svg><use href="#i-ban"/></svg></button>
@@ -941,7 +1192,16 @@ window.openDet = function(id) {
   document.getElementById('det-extras').textContent        = r.extras || '—';
   document.getElementById('det-pago').textContent          = r.metodoPago || '—';
   document.getElementById('det-importe').textContent       = fmtMoney(r.importe || 85);
-  document.getElementById('det-senal').textContent         = r.senal ? fmtMoney(r.senal) : (r.senal50 ? fmtMoney(r.senal50) : '—');
+  document.getElementById('det-senal').textContent    = r.senal ? fmtMoney(r.senal) : (r.senal50 ? fmtMoney(r.senal50) : (r.cobrado ? fmtMoney(r.cobrado) : '—'));
+  const cobrado = r.cobrado || r.senal || r.senal50 || 0;
+  const pendiente = Math.max(0, (r.importe||0) - cobrado);
+  document.getElementById('det-pendiente').textContent = pendiente > 0 ? fmtMoney(pendiente) : '—';
+  const ep = r.estadoPago || '';
+  let epHtml = '<span class="badge bg-x">Sin registrar</span>';
+  if(ep === 'cobrado') epHtml = '<span class="badge bg-g">Cobrado íntegro</span>';
+  else if(ep === 'parcial') epHtml = '<span class="badge bg-t">Señal cobrada</span>';
+  else if(ep === 'pendiente') epHtml = '<span class="badge bg-a">Pendiente</span>';
+  document.getElementById('det-estadopago').innerHTML = epHtml;
   document.getElementById('det-origen').innerHTML          = r.origen === 'web'
     ? '<span class="badge bg-t">Web</span>' : '<span class="badge bg-x">Panel</span>';
   document.getElementById('det-notas').textContent         = r.notas || r.comentarios || '—';
@@ -949,6 +1209,7 @@ window.openDet = function(id) {
   const estado = (r.estado||'').toLowerCase();
   document.getElementById('det-actions').innerHTML = `
     ${estado !== 'confirmada' ? `<button class="btn bp" onclick="confirmarDesdeModal('${id}')">✓ Confirmar</button>` : ''}
+    <button class="btn bt" onclick="abrirModalPago('${id}')">💳 Registrar pago</button>
     ${estado !== 'cancelada'  ? `<button class="btn bg" onclick="cancelarDesdeModal('${id}')" style="background:var(--rbg);color:var(--red);border-color:rgba(244,63,94,.3)">Cancelar</button>` : ''}
     <button class="btn bg" onclick="closeDet()">Cerrar</button>
   `;
@@ -1240,7 +1501,7 @@ function updateDashboard() {
 }
 
 // ── UTILS ─────────────────────────────────────────────────────
-const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],promociones:['Promociones'],fidelizacion:['Fidelización'],configuracion:['Configuración']};
+const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],promociones:['Promociones'],fidelizacion:['Fidelización'],configuracion:['Configuración'],migracion:['Migración histórica']};
 
 window.showPanel = (id,el) => {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -1274,6 +1535,587 @@ window.exportData = () => {
   a.download = 'reservas-espaifest.csv';
   a.click();
   showToast('CSV exportado');
+};
+
+// ── MODAL PAGO ────────────────────────────────────────────────
+let _pagoStatus = '';
+
+window.abrirModalPago = function(id) {
+  const r = allReservas.find(x => x.id === id);
+  if(!r) return;
+  document.getElementById('mpago-id').value = id;
+  document.getElementById('mpago-sub').textContent = `${r.nombre} · ${r.fecha} · ${fmtMoney(r.importe)}`;
+  document.getElementById('mpago-total').value = r.importe || 0;
+  const cobrado = r.cobrado || r.senal || 0;
+  document.getElementById('mpago-cobrado').value = cobrado;
+  document.getElementById('mpago-pendiente').value = Math.max(0,(r.importe||0)-cobrado).toFixed(2);
+  if(r.metodoPago) document.getElementById('mpago-metodo').value = r.metodoPago;
+  selectPagoStatus(r.estadoPago || (cobrado >= (r.importe||0) && cobrado > 0 ? 'cobrado' : cobrado > 0 ? 'parcial' : 'pendiente'));
+  closeDet();
+  openModal('pago');
+};
+
+window.selectPagoStatus = function(s) {
+  _pagoStatus = s;
+  ['cobrado','parcial','pendiente'].forEach(k => {
+    document.getElementById('pp-'+k).className = 'pago-pill' + (k===s?' sel-'+k:'');
+  });
+};
+
+window.calcPendiente = function() {
+  const total   = parseFloat(document.getElementById('mpago-total').value) || 0;
+  const cobrado = parseFloat(document.getElementById('mpago-cobrado').value) || 0;
+  document.getElementById('mpago-pendiente').value = Math.max(0, total-cobrado).toFixed(2);
+  if(cobrado >= total && cobrado > 0) selectPagoStatus('cobrado');
+  else if(cobrado > 0) selectPagoStatus('parcial');
+  else selectPagoStatus('pendiente');
+};
+
+window.guardarPago = async function() {
+  const id      = document.getElementById('mpago-id').value;
+  const cobrado = parseFloat(document.getElementById('mpago-cobrado').value) || 0;
+  const total   = parseFloat(document.getElementById('mpago-total').value)   || 0;
+  const metodo  = document.getElementById('mpago-metodo').value;
+  const notas   = document.getElementById('mpago-notas').value.trim();
+  const estado  = _pagoStatus || (cobrado >= total ? 'cobrado' : cobrado > 0 ? 'parcial' : 'pendiente');
+  await updateDoc(doc(db,'reservas',id), {
+    cobrado, estadoPago: estado,
+    metodoPago: metodo,
+    notasPago: notas || '',
+    updatedAt: serverTimestamp()
+  });
+  closeModal('pago');
+  showToast('Pago registrado ✓');
+  loadReservas();
+};
+
+// ── NUEVO CLIENTE MANUAL ──────────────────────────────────────
+window.saveNuevoCliente = async function() {
+  const nombre    = document.getElementById('nc-nombre').value.trim();
+  const apellidos = document.getElementById('nc-apellidos').value.trim();
+  const tel       = document.getElementById('nc-tel').value.trim().replace(/\s/g,'');
+  if(!nombre || !tel) { showToast('Rellena nombre y teléfono'); return; }
+  // Verificar duplicado
+  const snap = await getDocs(query(collection(db,'clientes'), where('telefono','==',tel)));
+  if(!snap.empty) { showToast('Ya existe un cliente con ese teléfono'); return; }
+  await addDoc(collection(db,'clientes'), {
+    nombre, apellidos,
+    dni:      document.getElementById('nc-dni').value.trim(),
+    fechaNac: document.getElementById('nc-fnac').value || '',
+    direccion:document.getElementById('nc-dir').value.trim(),
+    localidad:document.getElementById('nc-loc').value.trim(),
+    cp:       document.getElementById('nc-cp').value.trim(),
+    telefono: tel,
+    email:    document.getElementById('nc-email').value.trim(),
+    notas:    document.getElementById('nc-notas').value.trim(),
+    reservas: 0,
+    createdAt: serverTimestamp()
+  });
+  closeModal('nuevo-cli');
+  showToast('Cliente guardado ✓');
+  ['nc-nombre','nc-apellidos','nc-dni','nc-dir','nc-loc','nc-cp','nc-tel','nc-email','nc-notas'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('nc-fnac').value='';
+  loadClientes();
+};
+
+// ── IMPORTAR CSV ──────────────────────────────────────────────
+let csvData = [];
+
+// Drag & drop
+(function(){
+  const drop = document.getElementById('csv-drop');
+  drop.addEventListener('dragover', e=>{ e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', ()=>drop.classList.remove('over'));
+  drop.addEventListener('drop', e=>{ e.preventDefault(); drop.classList.remove('over'); if(e.dataTransfer.files[0]) parseCsv(e.dataTransfer.files[0]); });
+})();
+
+window.parseCsv = function(file) {
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const text = e.target.result;
+    // Detectar separador
+    const sep = text.indexOf(';') > text.indexOf(',') || (text.split(';')[0].split(';').length > text.split(',')[0].split(',').length) ? ';' : ',';
+    const lines = text.split(/\r?\n/).filter(l=>l.trim());
+    if(lines.length < 2){ showToast('CSV vacío o sin datos'); return; }
+    const headers = lines[0].split(sep).map(h=>h.trim().toLowerCase().replace(/[^a-záéíóúüñ0-9]/gi,''));
+    // Mapeo flexible de columnas
+    const col = (keys) => { for(const k of keys){ const i=headers.findIndex(h=>h.includes(k)); if(i!==-1) return i; } return -1; };
+    const iNombre   = col(['nombre','name']);
+    const iApellido = col(['apellido','surname','cognoms']);
+    const iTel      = col(['tel','movil','phone','mob']);
+    const iEmail    = col(['email','correo','mail']);
+    const iDni      = col(['dni','nie','nif','doc']);
+    const iDir      = col(['direcci','address','carrer','calle']);
+    const iLoc      = col(['localidad','ciudad','poblacio','municipio']);
+    const iCp       = col(['cp','postal','zip']);
+    const iFnac     = col(['nacimiento','birthday','naix']);
+    csvData = lines.slice(1).filter(l=>l.trim()).map(line => {
+      const cols = line.split(sep).map(c=>c.trim().replace(/^"|"$/g,''));
+      const get  = i => i!==-1 ? (cols[i]||'') : '';
+      return {
+        nombre:    get(iNombre),
+        apellidos: get(iApellido),
+        telefono:  get(iTel).replace(/\s/g,''),
+        email:     get(iEmail),
+        dni:       get(iDni),
+        direccion: get(iDir),
+        localidad: get(iLoc),
+        cp:        get(iCp),
+        fechaNac:  get(iFnac),
+      };
+    }).filter(r=>r.nombre||r.telefono);
+    // Detectar duplicados respecto a clientes actuales
+    const tefsActuales = new Set(allClientes.map(c=>(c.telefono||'').replace(/\s/g,'')));
+    const nuevos = csvData.filter(r=>r.telefono && !tefsActuales.has(r.telefono));
+    const dups   = csvData.filter(r=>r.telefono && tefsActuales.has(r.telefono));
+    document.getElementById('csv-total').textContent   = csvData.length;
+    document.getElementById('csv-nuevos').textContent  = nuevos.length;
+    document.getElementById('csv-dups').textContent    = dups.length;
+    // Preview (max 8 filas)
+    const preview = document.getElementById('csv-preview');
+    preview.innerHTML = `<div class="csv-row csv-head"><span style="flex:2">Nombre</span><span style="flex:1.5">Teléfono</span><span style="flex:2">Email</span><span style="margin-left:auto">Estado</span></div>` +
+      csvData.slice(0,8).map(r=>{
+        const isDup = r.telefono && tefsActuales.has(r.telefono);
+        return `<div class="csv-row"><span style="flex:2">${r.nombre} ${r.apellidos}</span><span style="flex:1.5;font-family:'DM Mono',monospace;font-size:11px">${r.telefono||'—'}</span><span style="flex:2;color:var(--t3);font-size:11px">${r.email||'—'}</span><span class="${isDup?'csv-dup':'csv-ok'}">${isDup?'Actualizar':'Nuevo'}</span></div>`;
+      }).join('') + (csvData.length>8?`<div class="csv-row" style="color:var(--t3);justify-content:center">... y ${csvData.length-8} más</div>`:'');
+    document.getElementById('csv-preview-area').style.display = 'block';
+    document.getElementById('btn-import-confirm').style.display = 'inline-flex';
+  };
+  reader.readAsText(file,'UTF-8');
+};
+
+window.importarClientes = async function() {
+  if(!csvData.length){ showToast('No hay datos para importar'); return; }
+  const btn = document.getElementById('btn-import-confirm');
+  btn.textContent = 'Importando...'; btn.disabled = true;
+  let importados = 0, actualizados = 0;
+  const tefsActuales = new Map(allClientes.map(c=>[(c.telefono||'').replace(/\s/g,''), c.id]));
+  for(const r of csvData) {
+    try {
+      const tel = (r.telefono||'').replace(/\s/g,'');
+      if(tefsActuales.has(tel)) {
+        // Actualizar datos si hay más info
+        const cid = tefsActuales.get(tel);
+        const upd = {};
+        if(r.email)    upd.email    = r.email;
+        if(r.dni)      upd.dni      = r.dni;
+        if(r.direccion)upd.direccion= r.direccion;
+        if(r.localidad)upd.localidad= r.localidad;
+        if(r.cp)       upd.cp       = r.cp;
+        if(r.fechaNac) upd.fechaNac = r.fechaNac;
+        if(Object.keys(upd).length){ await updateDoc(doc(db,'clientes',cid), upd); actualizados++; }
+      } else if(tel || r.nombre) {
+        await addDoc(collection(db,'clientes'), {
+          nombre: r.nombre||'', apellidos: r.apellidos||'',
+          telefono: tel, email: r.email||'', dni: r.dni||'',
+          direccion: r.direccion||'', localidad: r.localidad||'',
+          cp: r.cp||'', fechaNac: r.fechaNac||'',
+          reservas: 0, createdAt: serverTimestamp()
+        });
+        importados++;
+      }
+    } catch(err){ console.warn('Error importando fila:', err); }
+  }
+  closeModal('importcsv');
+  resetCsvModal();
+  showToast(`✓ ${importados} nuevos · ${actualizados} actualizados`);
+  loadClientes();
+};
+
+window.resetCsvModal = function() {
+  csvData = [];
+  document.getElementById('csv-file').value = '';
+  document.getElementById('csv-preview-area').style.display = 'none';
+  document.getElementById('btn-import-confirm').style.display = 'none';
+  document.getElementById('btn-import-confirm').textContent = 'Importar clientes';
+  document.getElementById('btn-import-confirm').disabled = false;
+};
+
+// ── NIVELES FIDELIZACIÓN ──────────────────────────────────────
+let nivelesConfig = { bas:{min:1,desc:0}, pla:{min:5,desc:5}, oro:{min:10,desc:10} };
+
+async function loadNiveles() {
+  try {
+    const snap = await getDocs(query(collection(db,'config'), where('__name__','in',['niveles'])));
+    snap.forEach(d => {
+      const data = d.data();
+      if(data.bas) nivelesConfig.bas = data.bas;
+      if(data.pla) nivelesConfig.pla = data.pla;
+      if(data.oro) nivelesConfig.oro = data.oro;
+    });
+  } catch(e){}
+  // Poblar campos del modal con valores actuales
+  document.getElementById('niv-bas-min').value  = nivelesConfig.bas.min;
+  document.getElementById('niv-bas-desc').value = nivelesConfig.bas.desc;
+  document.getElementById('niv-pla-min').value  = nivelesConfig.pla.min;
+  document.getElementById('niv-pla-desc').value = nivelesConfig.pla.desc;
+  document.getElementById('niv-oro-min').value  = nivelesConfig.oro.min;
+  document.getElementById('niv-oro-desc').value = nivelesConfig.oro.desc;
+  // Actualizar tabla visible
+  renderNiveles();
+}
+
+function renderNiveles() {
+  const { bas, pla, oro } = nivelesConfig;
+  const rows = document.querySelectorAll('#panel-fidelizacion .trow');
+  if(rows[0]) rows[0].querySelector('.c.cm') && (rows[0].querySelectorAll('.c')[0].textContent = `${bas.min}–${pla.min-1} reservas`);
+  // Los textos de descuento ya están hardcoded en HTML — se actualizan aquí si existen
+}
+
+window.saveNiveles = async function() {
+  const bas = { min: parseInt(document.getElementById('niv-bas-min').value)||1,  desc: parseInt(document.getElementById('niv-bas-desc').value)||0 };
+  const pla = { min: parseInt(document.getElementById('niv-pla-min').value)||5,  desc: parseInt(document.getElementById('niv-pla-desc').value)||5 };
+  const oro = { min: parseInt(document.getElementById('niv-oro-min').value)||10, desc: parseInt(document.getElementById('niv-oro-desc').value)||10 };
+  await setDoc(doc(db,'config','niveles'), { bas, pla, oro, updatedAt: serverTimestamp() });
+  nivelesConfig = { bas, pla, oro };
+  closeModal('edit-niveles');
+  showToast('Niveles de fidelización guardados ✓');
+  loadClientes();
+};
+
+// Cargar niveles al inicio
+loadNiveles();
+
+// ── MIGRACIÓN HISTÓRICA BOOKLY ────────────────────────────────
+let xlsDataRaw = [];      // Todas las filas parseadas
+let xlsDataFiltrado = []; // Filas después de filtro fecha
+let xlsRefsExistentes = new Set(); // Referencias ya en Firestore
+
+// Drag & drop XLS
+(function(){
+  const drop = document.getElementById('xls-drop');
+  if(!drop) return;
+  drop.addEventListener('dragover', e=>{ e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', ()=>drop.classList.remove('over'));
+  drop.addEventListener('drop', e=>{ e.preventDefault(); drop.classList.remove('over'); if(e.dataTransfer.files[0]) parseXlsBookly(e.dataTransfer.files[0]); });
+})();
+
+function normalizarTel(t) {
+  if(!t) return '';
+  // Quitar todo menos dígitos
+  t = t.replace(/[^\d]/g,'');
+  // Quitar prefijo 34 si tiene 11 dígitos empezando por 34
+  if(t.length === 11 && t.startsWith('34')) t = t.slice(2);
+  // Descartar si queda menos de 9 dígitos (datos basura)
+  return t.length >= 9 ? t : '';
+}
+  if(!s) return '';
+  s = s.trim().split(' ')[0];
+  const m1 = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if(m1) return `${m1[3]}-${m1[2]}-${m1[1]}`;
+  const m2 = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(m2) return s;
+  return s;
+}
+
+function mapEstadoPago(ep) {
+  ep = (ep||'').toLowerCase();
+  if(ep.includes('pagado')) return 'cobrado';
+  if(ep.includes('reservado')) return 'parcial';
+  return 'pendiente';
+}
+
+function mapEstadoReserva(er) {
+  er = (er||'').toLowerCase();
+  if(er.includes('activa')) return 'Confirmada';
+  if(er.includes('bloqueada')) return 'Bloqueada';
+  if(er.includes('cancelada')) return 'Cancelada';
+  return 'Confirmada';
+}
+
+window.parseXlsBookly = async function(file) {
+  if(!file) return;
+  const btn = document.getElementById('btn-xls-import');
+  if(btn) { btn.disabled = true; btn.textContent = 'Leyendo archivo...'; }
+
+  // Leer como texto XML
+  const text = await file.text();
+  if(!text.includes('<?xml') && !text.includes('<Workbook')) {
+    showToast('El archivo no parece un XLS de Bookly válido');
+    if(btn){ btn.disabled=false; btn.innerHTML='<svg width="13" height="13" stroke="currentColor"><use href="#i-import"/></svg> Importar a Firebase'; }
+    return;
+  }
+
+  // Parsear XML
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(text, 'application/xml');
+  const ns = 'urn:schemas-microsoft-com:office:spreadsheet';
+
+  const rows = [];
+  xmlDoc.querySelectorAll('Row').forEach(row => {
+    const cells = [];
+    row.querySelectorAll('Cell').forEach(cell => {
+      const data = cell.querySelector('Data');
+      cells.push(data ? (data.textContent||'').trim() : '');
+    });
+    rows.push(cells);
+  });
+
+  if(rows.length < 2){ showToast('Archivo vacío o sin datos'); return; }
+
+  const headers = rows[0];
+  const dataRows = rows.slice(1).filter(r => r.some(c=>c));
+
+  // Mapear a objetos
+  const g = (r,i) => i < r.length ? (r[i]||'').trim() : '';
+
+  xlsDataRaw = dataRows.map(r => {
+    const nombre = g(r,6); const apellidos = g(r,7);
+    const entrada = g(r,2); const salida = g(r,3);
+    return {
+      referencia:      g(r,0),
+      fecha:           parsearFecha(g(r,1)),
+      horario:         (entrada && salida) ? `${entrada.slice(0,5)}–${salida.slice(0,5)}` : '',
+      horaEntrada:     entrada.slice(0,5),
+      horaSalida:      salida.slice(0,5),
+      precioBase:      parseFloat(g(r,4))||0,
+      importe:         parseFloat(g(r,5))||0,
+      nombre:          `${nombre} ${apellidos}`.trim(),
+      apellidos,
+      localidad:       g(r,8),
+      cp:              g(r,9),
+      telefono:        normalizarTel(g(r,10)),
+      dni:             g(r,11),
+      fechaNac:        parsearFecha(g(r,12)),
+      email:           g(r,13),
+      servicio:        g(r,14),
+      personas:        g(r,15),
+      notas:           g(r,16),
+      cupon:           g(r,17),
+      descuento:       parseFloat(g(r,19))||0,
+      metodoPago:      g(r,24),
+      extras:          g(r,25)||'Ninguno',
+      importeExtras:   parseFloat(g(r,26))||0,
+      cobrado:         parseFloat(g(r,27))||0,
+      pendiente:       parseFloat(g(r,28))||0,
+      estadoPago:      mapEstadoPago(g(r,29)),
+      estado:          mapEstadoReserva(g(r,30)),
+      fechaRegistro:   parsearFecha(g(r,31)),
+      creador:         g(r,36),
+      origen:          g(r,36).toLowerCase()==='web' ? 'web' : 'panel',
+      importado:       true,
+      fuenteImport:    `bookly_${new Date().toISOString().split('T')[0]}`
+    };
+  }).filter(r => r.referencia || r.fecha);
+
+  // Cargar referencias ya existentes en Firestore
+  try {
+    const snap = await getDocs(query(collection(db,'reservas'), where('importado','==',true)));
+    xlsRefsExistentes = new Set(snap.docs.map(d=>d.data().referencia).filter(Boolean));
+  } catch(e){ xlsRefsExistentes = new Set(); }
+
+  xlsDataFiltrado = [...xlsDataRaw];
+  actualizarPreviewXls();
+  document.getElementById('xls-preview-area').style.display = 'block';
+  if(btn){ btn.disabled=false; btn.innerHTML='<svg width="13" height="13" stroke="currentColor"><use href="#i-import"/></svg> Importar a Firebase'; }
+};
+
+function actualizarPreviewXls() {
+  const nuevas  = xlsDataFiltrado.filter(r => !xlsRefsExistentes.has(r.referencia));
+  const duplic  = xlsDataFiltrado.filter(r =>  xlsRefsExistentes.has(r.referencia));
+  const tels    = new Set(xlsDataFiltrado.map(r=>r.telefono).filter(Boolean));
+
+  document.getElementById('xp-total').textContent   = xlsDataFiltrado.length;
+  document.getElementById('xp-nuevas').textContent  = nuevas.length;
+  document.getElementById('xp-duplic').textContent  = duplic.length;
+  document.getElementById('xp-clientes').textContent= tels.size;
+
+  // Actualizar KPIs del panel
+  ['mig-total','mig-nuevas','mig-duplic','mig-clientes'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = [xlsDataFiltrado.length, nuevas.length, duplic.length, tels.size][i];
+  });
+
+  // Preview primeras 10 filas
+  const preview = document.getElementById('xls-preview');
+  preview.innerHTML = `
+    <div class="csv-row csv-head">
+      <span style="flex:1.5">Referencia</span>
+      <span style="flex:.8">Fecha</span>
+      <span style="flex:1.5">Cliente</span>
+      <span style="flex:1">Servicio</span>
+      <span style="flex:.7">Importe</span>
+      <span style="margin-left:auto">Estado</span>
+    </div>` +
+    xlsDataFiltrado.slice(0,10).map(r => {
+      const isDup = xlsRefsExistentes.has(r.referencia);
+      return `<div class="csv-row">
+        <span style="flex:1.5;font-family:'DM Mono',monospace;font-size:10px;color:var(--t3)">${r.referencia||'—'}</span>
+        <span style="flex:.8;font-size:11px">${r.fecha||'—'}</span>
+        <span style="flex:1.5;font-size:12px;font-weight:600">${r.nombre||'—'}</span>
+        <span style="flex:1;font-size:11px;color:var(--t2)">${(r.servicio||'').slice(0,18)}</span>
+        <span style="flex:.7;font-family:'DM Mono',monospace;font-size:11px">${r.importe}€</span>
+        <span class="${isDup?'csv-dup':'csv-ok'}">${isDup?'Existente':'Nueva'}</span>
+      </div>`;
+    }).join('') +
+    (xlsDataFiltrado.length > 10
+      ? `<div class="csv-row" style="color:var(--t3);justify-content:center">... y ${xlsDataFiltrado.length-10} reservas más</div>`
+      : '');
+}
+
+window.filtrarXls = function() {
+  const desde = document.getElementById('xls-desde').value;
+  xlsDataFiltrado = desde
+    ? xlsDataRaw.filter(r => r.fecha && r.fecha >= desde)
+    : [...xlsDataRaw];
+  actualizarPreviewXls();
+};
+
+window.importarBookly = async function() {
+  const nuevas = xlsDataFiltrado.filter(r => !xlsRefsExistentes.has(r.referencia));
+  if(!nuevas.length){ showToast('No hay reservas nuevas para importar'); return; }
+
+  const btn = document.getElementById('btn-xls-import');
+  btn.disabled = true;
+  document.getElementById('xls-progress').style.display = 'block';
+
+  let ok = 0; let errores = 0;
+  const clientes_map = {};
+  const total = nuevas.length;
+  const BATCH_SIZE = 50; // Firestore límite 500 ops/batch — usamos 50 para seguridad
+
+  for(let i = 0; i < total; i += BATCH_SIZE) {
+    const lote = nuevas.slice(i, i + BATCH_SIZE);
+    try {
+      // Escritura paralela dentro del lote
+      await Promise.all(lote.map(async r => {
+        try {
+          await addDoc(collection(db,'reservas'), r);
+          ok++;
+          // Acumular cliente
+          if(r.telefono && !clientes_map[r.telefono]) {
+            clientes_map[r.telefono] = {
+              nombre: r.nombre.split(' ')[0]||'',
+              apellidos: r.apellidos||'',
+              telefono: r.telefono,
+              email: r.email||'',
+              dni: r.dni||'',
+              fechaNac: r.fechaNac||'',
+              localidad: r.localidad||'',
+              cp: r.cp||'',
+              reservas: 0,
+              importado: true
+            };
+          }
+          if(clientes_map[r.telefono]) clientes_map[r.telefono].reservas++;
+        } catch(e){ errores++; console.warn('Error reserva:', r.referencia, e); }
+      }));
+    } catch(e){ console.warn('Error lote:', e); }
+
+    // Actualizar barra de progreso
+    const pct = Math.round((Math.min(i+BATCH_SIZE, total)/total)*100);
+    document.getElementById('xls-prog-bar').style.width = pct+'%';
+    document.getElementById('xls-prog-pct').textContent = pct+'%';
+    document.getElementById('xls-prog-txt').textContent = `Importando reservas... ${Math.min(i+BATCH_SIZE,total)}/${total}`;
+
+    // Pausa mínima entre lotes para no saturar Firestore
+    await new Promise(r=>setTimeout(r,120));
+  }
+
+  // Sync clientes — contador calculado desde Firestore, no acumulado
+  document.getElementById('xls-prog-txt').textContent = 'Sincronizando clientes...';
+  const clientesArr = Object.values(clientes_map);
+  let cliOk = 0;
+
+  for(let i = 0; i < clientesArr.length; i += BATCH_SIZE) {
+    await Promise.all(clientesArr.slice(i, i + BATCH_SIZE).map(async c => {
+      if(!c.telefono) return;
+      try {
+        // Contar reservas reales en Firestore para este teléfono
+        const resSnap = await getDocs(query(collection(db,'reservas'), where('telefono','==',c.telefono)));
+        const totalReservas = resSnap.size; // Número real, no acumulado
+
+        const cliSnap = await getDocs(query(collection(db,'clientes'), where('telefono','==',c.telefono)));
+        if(cliSnap.empty) {
+          // Cliente nuevo — crear con contador real
+          await addDoc(collection(db,'clientes'), {
+            nombre:    c.nombre,
+            apellidos: c.apellidos,
+            telefono:  c.telefono,
+            email:     c.email     || '',
+            dni:       c.dni       || '',
+            fechaNac:  c.fechaNac  || '',
+            localidad: c.localidad || '',
+            cp:        c.cp        || '',
+            reservas:  totalReservas,
+            importado: true,
+            createdAt: serverTimestamp()
+          });
+        } else {
+          // Cliente existente — actualizar contador real y enriquecer datos vacíos
+          const cDoc = cliSnap.docs[0];
+          const existing = cDoc.data();
+          const upd = { reservas: totalReservas, updatedAt: serverTimestamp() };
+          // Solo sobreescribir campos si el existente está vacío
+          if(!existing.email     && c.email)     upd.email     = c.email;
+          if(!existing.dni       && c.dni)       upd.dni       = c.dni;
+          if(!existing.fechaNac  && c.fechaNac)  upd.fechaNac  = c.fechaNac;
+          if(!existing.localidad && c.localidad) upd.localidad = c.localidad;
+          if(!existing.cp        && c.cp)        upd.cp        = c.cp;
+          await updateDoc(doc(db,'clientes',cDoc.id), upd);
+        }
+        cliOk++;
+      } catch(e){ console.warn('Error cliente:', c.telefono, e); }
+    }));
+    await new Promise(r=>setTimeout(r,80));
+  }
+
+  // Guardar log de importación
+  try {
+    await addDoc(collection(db,'import_log'), {
+      fecha: new Date().toISOString().split('T')[0],
+      fuente: 'bookly_xls',
+      totalLeidas: xlsDataFiltrado.length,
+      importadas: ok,
+      errores,
+      clientesSincronizados: cliOk,
+      createdAt: serverTimestamp()
+    });
+  } catch(e){}
+
+  document.getElementById('xls-progress').style.display = 'none';
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="13" height="13" stroke="currentColor"><use href="#i-import"/></svg> Importar a Firebase';
+
+  showToast(`✓ ${ok} reservas · ${cliOk} clientes sincronizados${errores?' · '+errores+' errores':''}`);
+  loadReservas();
+  loadClientes();
+  loadMigLog();
+  resetXlsModal();
+};
+
+window.resetXlsModal = function() {
+  xlsDataRaw = []; xlsDataFiltrado = [];
+  document.getElementById('xls-file').value = '';
+  document.getElementById('xls-preview-area').style.display = 'none';
+  document.getElementById('xls-desde').value = '';
+};
+
+async function loadMigLog() {
+  try {
+    const snap = await getDocs(query(collection(db,'import_log'), orderBy('createdAt','desc')));
+    const el = document.getElementById('mig-log');
+    if(!el) return;
+    if(snap.empty){ el.innerHTML = '<div class="empty">Sin importaciones registradas todavía.</div>'; return; }
+    el.innerHTML = snap.docs.map(d => {
+      const r = d.data();
+      return `<div class="aitm">
+        <div class="adot" style="background:var(--green)"></div>
+        <div class="atxt"><strong>${r.importadas} reservas</strong> importadas desde <strong>${r.fuente}</strong> · ${r.clientesSincronizados} clientes · ${r.errores||0} errores</div>
+        <div class="atime">${r.fecha||'—'}</div>
+      </div>`;
+    }).join('');
+  } catch(e){}
+}
+
+// Cargar log al abrir panel migración (ya existente en showPanel)
+const _origShowPanel = window.showPanel;
+window.showPanel = function(id, el) {
+  _origShowPanel(id, el);
+  if(id === 'migracion') loadMigLog();
 };
 
 // Login con Enter
