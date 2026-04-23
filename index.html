@@ -2613,13 +2613,26 @@ async function loadBlogPosts() {
   const grid = document.getElementById('blog-grid');
   if(!grid) return;
   try {
-    const q = query(
-      collection(_db, 'blog_posts'),
-      where('estado', '==', 'publicado'),
-      limit(6)
-    );
-    const snap = await getDocs(q);
-    if(snap.empty) {
+    // Sin where ni limit — evita necesidad de índice compuesto en Firestore.
+    // Filtramos y limitamos en cliente.
+    const snap = await getDocs(collection(_db, 'blog_posts'));
+
+    const allDocs = [];
+    snap.forEach(docSnap => allDocs.push({ id: docSnap.id, data: docSnap.data() }));
+
+    // Filtrar publicados y ordenar por fecha desc
+    const publicados = allDocs
+      .filter(p => p.data.estado === 'publicado')
+      .sort((a, b) => {
+        const ta = a.data.createdAt?.toMillis?.() || 0;
+        const tb = b.data.createdAt?.toMillis?.() || 0;
+        return tb - ta;
+      });
+
+    // Guardar todos en caché para "Ver todos" y modal
+    _allBlogPosts = publicados;
+
+    if(!publicados.length) {
       grid.innerHTML = `
         <div style="grid-column:span 3;text-align:center;padding:60px 20px;color:var(--tx3)">
           <div style="font-size:2.5rem;margin-bottom:16px">✍️</div>
@@ -2628,19 +2641,7 @@ async function loadBlogPosts() {
       return;
     }
 
-    // Ordenar por createdAt desc en cliente
-    const allDocs = [];
-    snap.forEach(docSnap => allDocs.push({ id: docSnap.id, data: docSnap.data() }));
-    allDocs.sort((a, b) => {
-      const ta = a.data.createdAt?.toMillis?.() || 0;
-      const tb = b.data.createdAt?.toMillis?.() || 0;
-      return tb - ta;
-    });
-
-    // Guardar en caché global para "Ver todos" y modal
-    _allBlogPosts = allDocs;
-
-    const topDocs = allDocs.slice(0, 3);
+    const topDocs = publicados.slice(0, 3);
     grid.innerHTML = '';
 
     topDocs.forEach(({ id, data: d }) => {
@@ -2682,12 +2683,15 @@ async function loadBlogPosts() {
       grid.appendChild(card);
     });
 
-    // Re-observe para animaciones scroll
     grid.querySelectorAll('[data-a]').forEach(el => scrollObs.observe(el));
 
   } catch(e) {
-    console.warn('Blog load error:', e.message);
-    grid.innerHTML = '';
+    console.error('Blog load error:', e.code, e.message);
+    // Mostrar mensaje en lugar de dejar el grid vacío silenciosamente
+    grid.innerHTML = `
+      <div style="grid-column:span 3;text-align:center;padding:40px 20px;color:var(--tx3);font-size:.85rem">
+        No se han podido cargar los posts (${e.code || e.message})
+      </div>`;
   }
 }
 
@@ -2871,19 +2875,18 @@ async function abrirVerTodos() {
   grid.innerHTML = '<div class="blog-todos-loading">Cargando posts...</div>';
 
   try {
-    const snap = await getDocs(query(
-      collection(_db, 'blog_posts'),
-      where('estado', '==', 'publicado')
-    ));
+    const snap = await getDocs(collection(_db, 'blog_posts'));
     const posts = [];
     snap.forEach(d => posts.push({ id: d.id, data: d.data() }));
-    posts.sort((a,b) => {
-      const ta = a.data.createdAt?.toMillis?.() || 0;
-      const tb = b.data.createdAt?.toMillis?.() || 0;
-      return tb - ta;
-    });
-    _allBlogPosts = posts;
-    renderTodosLosPost(posts);
+    const publicados = posts
+      .filter(p => p.data.estado === 'publicado')
+      .sort((a,b) => {
+        const ta = a.data.createdAt?.toMillis?.() || 0;
+        const tb = b.data.createdAt?.toMillis?.() || 0;
+        return tb - ta;
+      });
+    _allBlogPosts = publicados;
+    renderTodosLosPost(publicados);
   } catch(e) {
     grid.innerHTML = '<div class="blog-todos-loading">Error cargando posts.</div>';
     console.warn('Ver todos error:', e);
