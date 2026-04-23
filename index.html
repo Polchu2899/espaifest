@@ -2585,6 +2585,9 @@ const _fbConfig = {
 const _fbApp = getApps().length ? getApps()[0] : initializeApp(_fbConfig);
 const _db = getFirestore(_fbApp);
 
+// ── Caché global de posts — debe declararse ANTES de loadBlogPosts ──
+let _allBlogPosts = [];
+
 // Exponer al scope global para que enviarReserva() pueda guardar en Firestore
 window._fsDB = _db;
 window._fsAddDoc = addDoc;
@@ -2803,8 +2806,6 @@ window.copiarCodigo = function(codigo, id) {
   })();
 
 // ══ BLOG — MODAL POST COMPLETO ═══════════════════════════════
-let _allBlogPosts = []; // Cache de todos los posts cargados
-
 function abrirPost(id) {
   const post = _allBlogPosts.find(p => p.id === id);
   if(!post) return;
@@ -2847,6 +2848,7 @@ function cerrarPost() {
   document.getElementById('blog-modal-ov').classList.remove('open');
   document.body.style.overflow = '';
 }
+window.cerrarPost = cerrarPost;
 
 // Cerrar al hacer clic fuera
 document.getElementById('blog-modal-ov').addEventListener('click', function(e) {
@@ -2892,6 +2894,8 @@ function cerrarVerTodos() {
   document.getElementById('blog-todos-ov').classList.remove('open');
   document.body.style.overflow = '';
 }
+window.cerrarVerTodos = cerrarVerTodos;
+window.abrirVerTodos  = abrirVerTodos;
 
 function renderTodosLosPost(posts) {
   const grid = document.getElementById('blog-todos-grid');
