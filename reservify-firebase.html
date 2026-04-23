@@ -469,7 +469,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <!-- CLIENTES -->
       <div class="panel" id="panel-clientes">
         <div class="fbar">
-          <div class="swrap"><div class="sico"><svg><use href="#i-search"/></svg></div><input type="text" class="sinp" placeholder="Buscar cliente..."></div>
+          <div class="swrap"><div class="sico"><svg><use href="#i-search"/></svg></div><input type="text" class="sinp" id="search-cli" placeholder="Buscar por nombre, teléfono o email..." oninput="filterClientes()"></div>
           <button class="btn bg sm" style="margin-left:auto" onclick="exportClientes()"><svg width="13" height="13" stroke="currentColor"><use href="#i-up"/></svg>CSV</button>
           <button class="btn bg sm" onclick="openModal('importcsv')"><svg width="13" height="13" stroke="currentColor"><use href="#i-up"/></svg>Importar</button>
           <button class="btn bp sm" onclick="openModal('nuevo-cli')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nuevo</button>
@@ -1059,6 +1059,50 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
 </div>
 
+<!-- MODAL EDITAR CLIENTE -->
+<div class="mov" id="modal-edit-cli">
+  <div class="modal" style="max-width:580px;max-height:90vh;overflow-y:auto;">
+    <div class="mtitle">Editar cliente</div>
+    <div class="msub" id="edit-cli-sub">—</div>
+    <input type="hidden" id="ec-id">
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Datos personales</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="ec-nombre" placeholder="Nombre"></div>
+      <div class="fg"><label class="fl">Apellidos</label><input type="text" class="fi" id="ec-apellidos" placeholder="Apellidos"></div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">DNI / NIE</label><input type="text" class="fi" id="ec-dni" placeholder="12345678A"></div>
+      <div class="fg"><label class="fl">Fecha nacimiento</label><input type="date" class="fi" id="ec-fnac"></div>
+    </div>
+    <div class="fg"><label class="fl">Dirección</label><input type="text" class="fi" id="ec-dir" placeholder="Calle y número"></div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Localidad</label><input type="text" class="fi" id="ec-loc" placeholder="Ciudad"></div>
+      <div class="fg"><label class="fl">Código postal</label><input type="text" class="fi" id="ec-cp" placeholder="08XXX" maxlength="5"></div>
+    </div>
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Contacto</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Teléfono *</label><input type="text" class="fi" id="ec-tel" placeholder="6XX XXX XXX"></div>
+      <div class="fg"><label class="fl">Email</label><input type="text" class="fi" id="ec-email" placeholder="cliente@email.com"></div>
+    </div>
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Fidelización</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Nº reservas</label><input type="number" class="fi" id="ec-reservas" min="0"></div>
+      <div class="fg"><label class="fl">Nivel</label>
+        <div class="fi" id="ec-nivel-display" style="opacity:.6;cursor:default;user-select:none;">—</div>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Notas internas</label><textarea class="fi" id="ec-notas" style="min-height:56px;resize:vertical" placeholder="Notas privadas sobre el cliente..."></textarea></div>
+
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeModal('edit-cli')">Cancelar</button>
+      <button class="btn bp" onclick="guardarEdicionCliente()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- FIREBASE SDK -->
@@ -1511,31 +1555,58 @@ async function loadClientes() {
   } catch(e) { console.log('clientes err',e); }
 }
 
-function renderClientes() {
+function renderClientes(list) {
+  const data = list || allClientes;
   const el = document.getElementById('clientes-list');
   document.getElementById('k-cli').textContent = allClientes.length;
-  if (!allClientes.length) { el.innerHTML = '<div class="empty">Los clientes aparecerán aquí cuando hagan su primera reserva.</div>'; return; }
-  const nivelBadge = n => n>=10?'<span class="badge bg-p">Oro</span>':n>=5?'<span class="badge bg-a">Plata</span>':'<span class="badge bg-x">Básico</span>';
-  el.innerHTML = allClientes.map(c => `
+  if (!data.length) {
+    el.innerHTML = list
+      ? '<div class="empty">Sin resultados para esa búsqueda.</div>'
+      : '<div class="empty">Los clientes aparecerán aquí cuando hagan su primera reserva.</div>';
+    return;
+  }
+  const nivelBadge = n => n>=10
+    ? '<span class="badge bg-p">Oro</span>'
+    : n>=5 ? '<span class="badge bg-a">Plata</span>'
+    : '<span class="badge bg-x">Básico</span>';
+  el.innerHTML = data.map(c => `
     <div class="trow cc">
-      <div><div class="c cs">${c.nombre||'—'}</div><div style="font-size:11px;color:var(--t3)">${c.email||''}</div></div>
+      <div><div class="c cs">${c.nombre||'—'} ${c.apellidos||''}</div><div style="font-size:11px;color:var(--t3)">${c.email||''}</div></div>
       <div class="c cx cm">${c.telefono||'—'}</div>
       <div class="c cx">${c.reservas||0}</div>
       <div>${nivelBadge(c.reservas||0)}</div>
       <div class="c cm">${fmtDate(c.ultimaVisita)}</div>
-      <div class="ras"><button class="rab" onclick="showToast('Ficha próximamente')"><svg><use href="#i-eye"/></svg></button></div>
+      <div class="ras">
+        <button class="rab" onclick="abrirEditarCliente('${c.id}')" title="Editar cliente"><svg><use href="#i-edit"/></svg></button>
+      </div>
     </div>`).join('');
-  // Fidelización
-  const basico = allClientes.filter(c=>(c.reservas||0)<5).length;
-  const plata  = allClientes.filter(c=>(c.reservas||0)>=5&&(c.reservas||0)<10).length;
-  const oro    = allClientes.filter(c=>(c.reservas||0)>=10).length;
-  ['f-total','f-oro','f-basico','f-plata','f-orot'].forEach((id,i) => {
-    const vals = [allClientes.length, oro, basico, plata, oro];
-    const el2 = document.getElementById(id);
-    if(el2) el2.textContent = vals[i];
-  });
-  document.getElementById('f-desc').textContent = '—';
+  // Fidelización — solo con lista completa
+  if(!list) {
+    const basico = allClientes.filter(c=>(c.reservas||0)<5).length;
+    const plata  = allClientes.filter(c=>(c.reservas||0)>=5&&(c.reservas||0)<10).length;
+    const oro    = allClientes.filter(c=>(c.reservas||0)>=10).length;
+    ['f-total','f-oro','f-basico','f-plata','f-orot'].forEach((id,i) => {
+      const vals = [allClientes.length, oro, basico, plata, oro];
+      const el2 = document.getElementById(id);
+      if(el2) el2.textContent = vals[i];
+    });
+    document.getElementById('f-desc').textContent = '—';
+  }
 }
+
+window.filterClientes = () => {
+  const q = (document.getElementById('search-cli').value || '').toLowerCase().trim();
+  if(!q) { renderClientes(); return; }
+  const filtered = allClientes.filter(c =>
+    (c.nombre    ||'').toLowerCase().includes(q) ||
+    (c.apellidos ||'').toLowerCase().includes(q) ||
+    (c.telefono  ||'').toLowerCase().includes(q) ||
+    (c.email     ||'').toLowerCase().includes(q) ||
+    (c.localidad ||'').toLowerCase().includes(q) ||
+    (c.dni       ||'').toLowerCase().includes(q)
+  );
+  renderClientes(filtered);
+};
 
 window.exportClientes = () => {
   const csv = ['Nombre,Email,Teléfono,Reservas', ...allClientes.map(c=>`${c.nombre},${c.email},${c.telefono},${c.reservas}`)].join('\n');
@@ -2617,6 +2688,77 @@ window.guardarEdicionReserva = async function() {
     loadReservas();
   } catch(e) {
     console.error('Error guardando edición:', e);
+    showToast('Error al guardar — revisa la consola');
+  }
+};
+
+// ── EDITAR CLIENTE ────────────────────────────────────────────
+window.abrirEditarCliente = function(id) {
+  const c = allClientes.find(x => x.id === id);
+  if(!c) return;
+
+  document.getElementById('ec-id').value        = id;
+  document.getElementById('edit-cli-sub').textContent = `Tel: ${c.telefono||'—'} · ${c.reservas||0} reservas`;
+  document.getElementById('ec-nombre').value    = c.nombre    || '';
+  document.getElementById('ec-apellidos').value = c.apellidos || '';
+  document.getElementById('ec-dni').value       = c.dni       || '';
+  document.getElementById('ec-fnac').value      = c.fechaNac  || c.fechaNacimiento || '';
+  document.getElementById('ec-dir').value       = c.direccion || '';
+  document.getElementById('ec-loc').value       = c.localidad || '';
+  document.getElementById('ec-cp').value        = c.cp        || '';
+  document.getElementById('ec-tel').value       = c.telefono  || '';
+  document.getElementById('ec-email').value     = c.email     || '';
+  document.getElementById('ec-reservas').value  = c.reservas  || 0;
+  document.getElementById('ec-notas').value     = c.notas     || '';
+
+  // Calcular nivel visible
+  const n = c.reservas || 0;
+  const nivel = n >= 10 ? '🥇 Oro (10+ reservas)' : n >= 5 ? '🥈 Plata (5–9 reservas)' : '⚪ Básico (1–4 reservas)';
+  document.getElementById('ec-nivel-display').textContent = nivel;
+
+  // Actualizar nivel al cambiar reservas
+  document.getElementById('ec-reservas').oninput = function() {
+    const v = parseInt(this.value)||0;
+    const nv = v >= 10 ? '🥇 Oro (10+ reservas)' : v >= 5 ? '🥈 Plata (5–9 reservas)' : '⚪ Básico (1–4 reservas)';
+    document.getElementById('ec-nivel-display').textContent = nv;
+  };
+
+  openModal('edit-cli');
+};
+
+window.guardarEdicionCliente = async function() {
+  const id = document.getElementById('ec-id').value;
+  if(!id) return;
+
+  const nombre = document.getElementById('ec-nombre').value.trim();
+  const tel    = document.getElementById('ec-tel').value.trim();
+  if(!nombre) { showToast('El nombre es obligatorio'); return; }
+
+  const upd = {
+    nombre,
+    apellidos:  document.getElementById('ec-apellidos').value.trim(),
+    dni:        document.getElementById('ec-dni').value.trim(),
+    fechaNac:   document.getElementById('ec-fnac').value || '',
+    direccion:  document.getElementById('ec-dir').value.trim(),
+    localidad:  document.getElementById('ec-loc').value.trim(),
+    cp:         document.getElementById('ec-cp').value.trim(),
+    telefono:   tel,
+    email:      document.getElementById('ec-email').value.trim(),
+    reservas:   parseInt(document.getElementById('ec-reservas').value) || 0,
+    notas:      document.getElementById('ec-notas').value.trim(),
+    updatedAt:  serverTimestamp()
+  };
+
+  try {
+    await updateDoc(doc(db,'clientes',id), upd);
+    // Actualizar en memoria sin recargar toda la lista
+    const idx = allClientes.findIndex(c => c.id === id);
+    if(idx !== -1) allClientes[idx] = { ...allClientes[idx], ...upd };
+    closeModal('edit-cli');
+    showToast('Cliente actualizado ✓');
+    renderClientes(); // Re-render con datos actualizados
+  } catch(e) {
+    console.error('Error guardando cliente:', e);
     showToast('Error al guardar — revisa la consola');
   }
 };
