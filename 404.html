@@ -12,9 +12,11 @@ const REDIRECTS = {
   'fiesta-ninos': '#fiestas',
   'fiestas-ninos': '#fiestas',
   'animacion-infantil': '#fiestas',
+  'equipamiento-para-ninos': '#fiestas',           // ← AÑADIDO
   'encuentros-familiares-amigos': '#adultos',
   'eventos-especiales': '#adultos',
   'animacion-adultos-espaifest-martorell': '#adultos',
+  'celebrar-cumpleanos-baix-llobregat': '#adultos', // ← AÑADIDO
   'business-espaifest-martorell': '#business',
   'fotos-business-espaifest-martorell': '#business',
   'local-reuniones-empresas-baix-llobregat': '#business',
@@ -38,6 +40,7 @@ const REDIRECTS = {
   'local-para-fiestas-baix-llobregat': '#fiestas',
   'local-fiestas-baix-llobregat': '#fiestas',
   'alquilar-local-graduaciones-baix-llobregat': '#adultos',
+  'medidas-contra-el-covid-19-espaifest-martorell': '/', // ← AÑADIDO (página obsoleta → home)
   'aviso-legal': 'aviso-legal.html',
   'condiciones-de-uso': 'condiciones.html',
   'politica-de-privacidad-y-cookies': 'privacidad.html',
@@ -45,15 +48,11 @@ const REDIRECTS = {
 };
 
 (function(){
-  // Obtener el path actual sin la barra inicial
+  // Obtener el path actual sin la barra inicial ni la barra final
   var path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
   var target = REDIRECTS[path];
   if(target){
-    if(target.startsWith('#')){
-      window.location.replace('/' + target);
-    } else {
-      window.location.replace('/' + target);
-    }
+    window.location.replace(target.startsWith('http') ? target : '/' + target);
   } else {
     // URL no mapeada → home
     window.location.replace('/');
