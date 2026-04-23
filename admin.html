@@ -586,6 +586,13 @@ body {
                 <button class="tb-btn" onclick="insertLink()" title="Enlace">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
                 </button>
+                <div class="tb-sep"></div>
+                <span style="font-size:10px;color:var(--tx3);padding:0 4px">Color:</span>
+                <button class="tb-btn" onclick="document.execCommand('foreColor',false,'#FFFFFF')" title="Blanco" style="background:#fff;width:20px;height:20px;border-radius:4px;border:1px solid var(--br);padding:0;min-width:20px"></button>
+                <button class="tb-btn" onclick="document.execCommand('foreColor',false,'#F5A623')" title="Naranja" style="background:#F5A623;width:20px;height:20px;border-radius:4px;border:none;padding:0;min-width:20px"></button>
+                <button class="tb-btn" onclick="document.execCommand('foreColor',false,'#E91E8C')" title="Rosa" style="background:#E91E8C;width:20px;height:20px;border-radius:4px;border:none;padding:0;min-width:20px"></button>
+                <button class="tb-btn" onclick="document.execCommand('foreColor',false,'#0FC4C4')" title="Teal" style="background:#0FC4C4;width:20px;height:20px;border-radius:4px;border:none;padding:0;min-width:20px"></button>
+                <button class="tb-btn" onclick="document.execCommand('removeFormat',false,null)" title="Quitar formato" style="font-size:10px;padding:2px 6px">✕ fmt</button>
               </div>
               <div class="rich-editor" id="e-contenido" contenteditable="true" data-placeholder="Escribe aquí el contenido del post…"></div>
             </div>
@@ -749,18 +756,24 @@ function renderPostsList() {
       </div>`;
     return;
   }
+  const catMap = {
+    'fiestas-infantiles':'Fiestas infantiles','adultos':'Adultos',
+    'business':'Business','manualidades':'Manualidades','consejos':'Consejos'
+  };
   container.innerHTML = allPosts.map(p => {
-    const date = p.createdAt?.toDate().toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}) || '—';
+    // Proteger createdAt — puede ser Timestamp, string, o sentinel (null tras guardar localmente)
+    let date = '—';
+    try {
+      if (p.createdAt?.toDate) date = p.createdAt.toDate().toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});
+      else if (p.createdAt) date = new Date(p.createdAt).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});
+    } catch(e) { date = '—'; }
+
     const badge = p.estado === 'publicado'
       ? '<span class="badge badge-pub">✅ Publicado</span>'
       : '<span class="badge badge-bor">📝 Borrador</span>';
     const thumb = p.imagenURL
       ? `<div class="post-thumb"><img src="${p.imagenURL}" alt="" onerror="this.parentElement.innerHTML='🖼️'"></div>`
       : `<div class="post-thumb">📝</div>`;
-    const catMap = {
-      'fiestas-infantiles':'Fiestas infantiles','adultos':'Adultos',
-      'business':'Business','manualidades':'Manualidades','consejos':'Consejos'
-    };
     return `
       <div class="post-item">
         ${thumb}
@@ -822,6 +835,7 @@ window.openEditor = function(postId) {
 window.backToList = function() {
   document.getElementById('screen-editor').style.display = 'none';
   document.getElementById('screen-list').style.display = 'block';
+  loadPosts(); // Recargar siempre para tener Timestamps reales y lista actualizada
 };
 
 // ── Guardar post ──────────────────────────────────────────
@@ -838,7 +852,6 @@ window.savePost = async function(estadoOverride) {
   const msgEl = document.getElementById('saving-msg');
   msgEl.textContent = 'Guardando…';
 
-  // Slug simple desde el título
   const slug = titulo.toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .replace(/[^a-z0-9\s-]/g,'')
@@ -849,20 +862,20 @@ window.savePost = async function(estadoOverride) {
   try {
     if (editingPostId) {
       await updateDoc(doc(db, 'blog_posts', editingPostId), data);
-      // Actualizar local
-      const idx = allPosts.findIndex(p => p.id === editingPostId);
-      if (idx !== -1) allPosts[idx] = { ...allPosts[idx], ...data };
     } else {
       data.createdAt = serverTimestamp();
       const ref = await addDoc(collection(db, 'blog_posts'), data);
-      allPosts.unshift({ id: ref.id, ...data });
-      editingPostId = ref.id; // ahora estamos editando el que acabamos de crear
+      editingPostId = ref.id;
     }
 
     msgEl.textContent = estado === 'publicado' ? '✅ Publicado en la web' : '💾 Borrador guardado';
     document.getElementById('editor-title-hdr').textContent = 'Editar post';
     showToast(estado === 'publicado' ? '✅ Post publicado' : '💾 Borrador guardado');
     setTimeout(() => { msgEl.textContent = ''; }, 3000);
+
+    // Recargar lista desde Firestore para tener Timestamps reales
+    await loadPosts();
+
   } catch(e) {
     msgEl.textContent = '';
     showToast('Error al guardar. Inténtalo de nuevo.');
