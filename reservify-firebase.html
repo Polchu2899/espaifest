@@ -512,6 +512,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
       <!-- MIGRACIÓN HISTÓRICA -->
       <div class="panel" id="panel-migracion">
+        <!-- ── CABECERA TABS ── -->
+        <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--b2);padding-bottom:0">
+          <button class="mig-tab active" id="tab-bookly" onclick="switchMigTab('bookly')" style="background:none;border:none;color:var(--teal);font:700 13px 'Plus Jakarta Sans',sans-serif;padding:10px 16px;cursor:pointer;border-bottom:2px solid var(--teal);margin-bottom:-1px">Migración Bookly</button>
+          <button class="mig-tab" id="tab-backup" onclick="switchMigTab('backup')" style="background:none;border:none;color:var(--t2);font:600 13px 'Plus Jakarta Sans',sans-serif;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px">Copias de seguridad</button>
+        </div>
+
+        <!-- ══ TAB BOOKLY ══ -->
+        <div id="subtab-bookly">
         <div class="hero" style="margin-bottom:20px">
           <div>
             <h2>Migración histórica Bookly → Reservify</h2>
@@ -546,11 +554,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
                 <div class="ist"><div class="ist-n" id="xp-duplic" style="color:var(--amber)">0</div><div class="ist-l">Ya importadas</div></div>
                 <div class="ist"><div class="ist-n" id="xp-clientes" style="color:var(--purple)">0</div><div class="ist-l">Clientes únicos</div></div>
               </div>
-
-              <!-- Preview tabla -->
               <div class="csv-preview" id="xls-preview" style="max-height:280px"></div>
-
-              <!-- Opciones -->
               <div style="display:flex;gap:16px;align-items:center;margin:16px 0;padding:14px;background:var(--s3);border-radius:10px;border:1px solid var(--b2)">
                 <div style="flex:1">
                   <div style="font-size:12px;font-weight:700;margin-bottom:4px">Filtrar por fecha</div>
@@ -562,36 +566,129 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
                   <button class="btn bg sm" onclick="document.getElementById('xls-desde').value='';filtrarXls()">Todo</button>
                 </div>
               </div>
-
-              <!-- Progress -->
               <div id="xls-progress" style="display:none;margin-bottom:14px">
                 <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:6px">
-                  <span id="xls-prog-txt">Importando...</span>
-                  <span id="xls-prog-pct">0%</span>
+                  <span id="xls-prog-txt">Importando...</span><span id="xls-prog-pct">0%</span>
                 </div>
                 <div style="height:6px;background:var(--s3);border-radius:4px;overflow:hidden">
                   <div id="xls-prog-bar" style="height:100%;width:0%;background:var(--grad);border-radius:4px;transition:width .3s"></div>
                 </div>
               </div>
-
               <div style="display:flex;gap:10px">
                 <button class="btn bg" onclick="resetXlsModal()">Cancelar</button>
                 <button class="btn bp" id="btn-xls-import" onclick="importarBookly()">
-                  <svg width="13" height="13" stroke="currentColor"><use href="#i-import"/></svg>
-                  Importar a Firebase
+                  <svg width="13" height="13" stroke="currentColor"><use href="#i-import"/></svg>Importar a Firebase
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- LOG de importaciones previas -->
         <div class="card" style="margin-top:18px">
           <div class="chead"><div><div class="ctitle">Historial de importaciones</div><div class="csub">Registros de migraciones realizadas</div></div></div>
           <div id="mig-log"><div class="empty">Sin importaciones registradas todavía.</div></div>
         </div>
-      </div>
+        </div><!-- /subtab-bookly -->
 
+        <!-- ══ TAB BACKUP ══ -->
+        <div id="subtab-backup" style="display:none">
+          <div class="hero" style="margin-bottom:20px;background:linear-gradient(135deg,#091524,#0c1e38,#080e1a);border-color:rgba(139,92,246,.25)">
+            <div>
+              <h2>Copias de seguridad</h2>
+              <p>Exporta toda la base de datos en un JSON. Si algo falla, restaura desde ese archivo.</p>
+            </div>
+            <div class="hero-acts">
+              <button class="btn bp sm" onclick="exportarBackup()">
+                <svg width="13" height="13" stroke="currentColor"><use href="#i-up"/></svg>Crear copia ahora
+              </button>
+            </div>
+          </div>
+
+          <!-- Stats de lo que se exportará -->
+          <div class="kgrid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+            <div class="kcard"><div class="kval" id="bk-res" style="color:var(--teal)">—</div><div class="klbl">Reservas</div></div>
+            <div class="kcard"><div class="kval" id="bk-cli" style="color:var(--green)">—</div><div class="klbl">Clientes</div></div>
+            <div class="kcard"><div class="kval" id="bk-svc" style="color:var(--amber)">—</div><div class="klbl">Servicios</div></div>
+            <div class="kcard"><div class="kval" id="bk-pro" style="color:var(--purple)">—</div><div class="klbl">Promociones</div></div>
+          </div>
+
+          <!-- Exportar -->
+          <div class="card" style="margin-bottom:18px">
+            <div class="chead"><div><div class="ctitle">Exportar copia de seguridad</div><div class="csub">Descarga un archivo JSON con toda la base de datos</div></div></div>
+            <div style="padding:20px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="bk-chk-res" checked style="accent-color:var(--teal)"> Reservas</label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="bk-chk-cli" checked style="accent-color:var(--teal)"> Clientes</label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="bk-chk-svc" checked style="accent-color:var(--teal)"> Servicios</label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="bk-chk-pro" checked style="accent-color:var(--teal)"> Promociones</label>
+              </div>
+              <div id="bk-export-progress" style="display:none;margin-bottom:14px">
+                <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:6px">
+                  <span id="bk-prog-txt">Exportando...</span><span id="bk-prog-pct">0%</span>
+                </div>
+                <div style="height:6px;background:var(--s3);border-radius:4px;overflow:hidden">
+                  <div id="bk-prog-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--purple),var(--teal));border-radius:4px;transition:width .4s"></div>
+                </div>
+              </div>
+              <button class="btn bp" onclick="exportarBackup()" style="background:linear-gradient(135deg,var(--purple),var(--teal))">
+                <svg width="13" height="13" stroke="currentColor"><use href="#i-up"/></svg>Descargar copia de seguridad
+              </button>
+              <p style="font-size:11px;color:var(--t3);margin-top:10px">El archivo se guardará como <code style="background:var(--s3);padding:2px 6px;border-radius:4px;font-size:10px">espaifest-backup-YYYY-MM-DD.json</code></p>
+            </div>
+          </div>
+
+          <!-- Restaurar -->
+          <div class="card">
+            <div class="chead"><div><div class="ctitle">Restaurar desde copia</div><div class="csub">Sube un JSON de backup anterior para recuperar los datos</div></div></div>
+            <div style="padding:20px">
+              <div style="background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.2);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <p style="font-size:12px;color:var(--t2);line-height:1.6">La restauración <strong style="color:var(--tx)">añade datos</strong> — no borra lo que ya existe. Los documentos con el mismo ID se actualizan con los datos del backup. Ideal para recuperar datos perdidos sin perder los nuevos.</p>
+              </div>
+              <div class="csv-drop" id="bk-drop" onclick="document.getElementById('bk-file').click()">
+                <svg viewBox="0 0 24 24" style="margin:0 auto 10px;width:32px;height:32px;stroke:var(--t3);fill:none;stroke-width:1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <p><strong>Haz clic o arrastra el JSON de backup</strong></p>
+                <p style="font-size:11px;color:var(--t3);margin-top:4px">Solo archivos generados por esta herramienta</p>
+              </div>
+              <input type="file" id="bk-file" accept=".json" style="display:none" onchange="previewBackup(this.files[0])">
+
+              <div id="bk-restore-preview" style="display:none">
+                <div class="import-stats" style="margin-bottom:14px">
+                  <div class="ist"><div class="ist-n" id="bkr-res" style="color:var(--teal)">0</div><div class="ist-l">Reservas</div></div>
+                  <div class="ist"><div class="ist-n" id="bkr-cli" style="color:var(--green)">0</div><div class="ist-l">Clientes</div></div>
+                  <div class="ist"><div class="ist-n" id="bkr-svc" style="color:var(--amber)">0</div><div class="ist-l">Servicios</div></div>
+                  <div class="ist"><div class="ist-n" id="bkr-pro" style="color:var(--purple)">0</div><div class="ist-l">Promociones</div></div>
+                </div>
+                <div style="background:var(--s3);border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:12px;color:var(--t2)">
+                  <strong style="color:var(--tx)" id="bkr-nombre">—</strong><br>
+                  Generado el <span id="bkr-fecha">—</span> · versión <span id="bkr-version">—</span>
+                </div>
+                <div id="bk-restore-progress" style="display:none;margin-bottom:14px">
+                  <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:6px">
+                    <span id="bkr-prog-txt">Restaurando...</span><span id="bkr-prog-pct">0%</span>
+                  </div>
+                  <div style="height:6px;background:var(--s2);border-radius:4px;overflow:hidden">
+                    <div id="bkr-prog-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--purple),var(--teal));border-radius:4px;transition:width .3s"></div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:10px">
+                  <button class="btn bg" onclick="resetBackupRestore()">Cancelar</button>
+                  <button class="btn bp" id="btn-bk-restore" onclick="restaurarBackup()" style="background:linear-gradient(135deg,var(--purple),var(--teal))">
+                    <svg width="13" height="13" stroke="currentColor"><use href="#i-refresh"/></svg>Restaurar datos
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Historial backups -->
+          <div class="card" style="margin-top:18px">
+            <div class="chead"><div><div class="ctitle">Historial de copias</div><div class="csub">Últimas exportaciones registradas</div></div></div>
+            <div id="bk-log"><div class="empty">Sin copias registradas todavía.</div></div>
+          </div>
+        </div><!-- /subtab-backup -->
+
+      </div><!-- /panel-migracion -->
 
       <div class="panel" id="panel-configuracion">
         <div class="g2">
@@ -2117,6 +2214,227 @@ window.showPanel = function(id, el) {
   _origShowPanel(id, el);
   if(id === 'migracion') loadMigLog();
 };
+
+// ── TABS PANEL MIGRACIÓN ──────────────────────────────────────
+window.switchMigTab = function(tab) {
+  document.getElementById('subtab-bookly').style.display  = tab === 'bookly'  ? '' : 'none';
+  document.getElementById('subtab-backup').style.display  = tab === 'backup'  ? '' : 'none';
+  document.getElementById('tab-bookly').style.cssText  = tab === 'bookly'
+    ? 'background:none;border:none;color:var(--teal);font:700 13px "Plus Jakarta Sans",sans-serif;padding:10px 16px;cursor:pointer;border-bottom:2px solid var(--teal);margin-bottom:-1px'
+    : 'background:none;border:none;color:var(--t2);font:600 13px "Plus Jakarta Sans",sans-serif;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px';
+  document.getElementById('tab-backup').style.cssText  = tab === 'backup'
+    ? 'background:none;border:none;color:var(--teal);font:700 13px "Plus Jakarta Sans",sans-serif;padding:10px 16px;cursor:pointer;border-bottom:2px solid var(--teal);margin-bottom:-1px'
+    : 'background:none;border:none;color:var(--t2);font:600 13px "Plus Jakarta Sans",sans-serif;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px';
+  if(tab === 'backup') { actualizarStatsBackup(); loadBackupLog(); }
+};
+
+// Drop zone backup restore
+(function(){
+  const drop = document.getElementById('bk-drop');
+  if(!drop) return;
+  drop.addEventListener('dragover', e=>{ e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', ()=>drop.classList.remove('over'));
+  drop.addEventListener('drop', e=>{ e.preventDefault(); drop.classList.remove('over'); if(e.dataTransfer.files[0]) previewBackup(e.dataTransfer.files[0]); });
+})();
+
+async function actualizarStatsBackup() {
+  try {
+    const [res, cli, svc, pro] = await Promise.all([
+      getDocs(collection(db,'reservas')),
+      getDocs(collection(db,'clientes')),
+      getDocs(collection(db,'servicios')),
+      getDocs(collection(db,'promociones'))
+    ]);
+    document.getElementById('bk-res').textContent = res.size;
+    document.getElementById('bk-cli').textContent = cli.size;
+    document.getElementById('bk-svc').textContent = svc.size;
+    document.getElementById('bk-pro').textContent = pro.size;
+  } catch(e){}
+}
+
+// ── EXPORTAR BACKUP ───────────────────────────────────────────
+window.exportarBackup = async function() {
+  const inclRes = document.getElementById('bk-chk-res').checked;
+  const inclCli = document.getElementById('bk-chk-cli').checked;
+  const inclSvc = document.getElementById('bk-chk-svc').checked;
+  const inclPro = document.getElementById('bk-chk-pro').checked;
+
+  const progWrap = document.getElementById('bk-export-progress');
+  const progBar  = document.getElementById('bk-prog-bar');
+  const progTxt  = document.getElementById('bk-prog-txt');
+  const progPct  = document.getElementById('bk-prog-pct');
+  progWrap.style.display = 'block';
+
+  const backup = {
+    version:   '1.0',
+    app:       'Reservify EspaiFest',
+    exportado: new Date().toISOString(),
+    fecha:     new Date().toLocaleDateString('es-ES'),
+    colecciones: {}
+  };
+
+  const tareas = [];
+  if(inclRes) tareas.push({col:'reservas',   label:'Reservas'});
+  if(inclCli) tareas.push({col:'clientes',   label:'Clientes'});
+  if(inclSvc) tareas.push({col:'servicios',  label:'Servicios'});
+  if(inclPro) tareas.push({col:'promociones',label:'Promociones'});
+  // Siempre incluir config e import_log
+  tareas.push({col:'config',      label:'Configuración'});
+  tareas.push({col:'import_log',  label:'Historial importaciones'});
+
+  for(let i = 0; i < tareas.length; i++) {
+    const t = tareas[i];
+    progTxt.textContent = `Exportando ${t.label}...`;
+    const pct = Math.round((i/tareas.length)*90);
+    progBar.style.width = pct+'%'; progPct.textContent = pct+'%';
+    try {
+      const snap = await getDocs(collection(db, t.col));
+      backup.colecciones[t.col] = snap.docs.map(d => ({ _id: d.id, ...serializeDoc(d.data()) }));
+    } catch(e){ backup.colecciones[t.col] = []; }
+  }
+
+  progBar.style.width = '100%'; progPct.textContent = '100%';
+  progTxt.textContent = 'Generando archivo...';
+
+  // Descargar JSON
+  const fecha = new Date().toISOString().split('T')[0];
+  const json  = JSON.stringify(backup, null, 2);
+  const a = document.createElement('a');
+  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+  a.download = `espaifest-backup-${fecha}.json`;
+  a.click();
+
+  // Registrar en Firestore
+  const totales = Object.fromEntries(Object.entries(backup.colecciones).map(([k,v])=>[k,v.length]));
+  try {
+    await addDoc(collection(db,'backup_log'), {
+      fecha, tipo:'exportacion', colecciones: totales,
+      totalDocumentos: Object.values(totales).reduce((s,n)=>s+n,0),
+      createdAt: serverTimestamp()
+    });
+  } catch(e){}
+
+  setTimeout(()=>{ progWrap.style.display='none'; progBar.style.width='0%'; }, 1500);
+  showToast(`✓ Backup descargado — ${Object.values(totales).reduce((s,n)=>s+n,0)} documentos`);
+  loadBackupLog();
+};
+
+// Serializar Firestore Timestamps a ISO string para JSON
+function serializeDoc(data) {
+  if(!data || typeof data !== 'object') return data;
+  const out = {};
+  for(const [k,v] of Object.entries(data)) {
+    if(v && typeof v.toDate === 'function') out[k] = v.toDate().toISOString();
+    else if(Array.isArray(v)) out[k] = v.map(serializeDoc);
+    else if(v && typeof v === 'object' && !(v instanceof Date)) out[k] = serializeDoc(v);
+    else out[k] = v;
+  }
+  return out;
+}
+
+// ── PREVIEW BACKUP PARA RESTAURAR ────────────────────────────
+let backupData = null;
+
+window.previewBackup = async function(file) {
+  if(!file) return;
+  try {
+    const text = await file.text();
+    backupData = JSON.parse(text);
+    if(!backupData.colecciones) { showToast('Archivo no válido — no es un backup de Reservify'); return; }
+    const c = backupData.colecciones;
+    document.getElementById('bkr-res').textContent = (c.reservas   ||[]).length;
+    document.getElementById('bkr-cli').textContent = (c.clientes   ||[]).length;
+    document.getElementById('bkr-svc').textContent = (c.servicios  ||[]).length;
+    document.getElementById('bkr-pro').textContent = (c.promociones||[]).length;
+    document.getElementById('bkr-nombre').textContent  = backupData.app || 'Backup';
+    document.getElementById('bkr-fecha').textContent   = backupData.fecha || backupData.exportado?.split('T')[0] || '—';
+    document.getElementById('bkr-version').textContent = backupData.version || '—';
+    document.getElementById('bk-restore-preview').style.display = 'block';
+  } catch(e){ showToast('Error leyendo el archivo JSON'); }
+};
+
+// ── RESTAURAR BACKUP ──────────────────────────────────────────
+window.restaurarBackup = async function() {
+  if(!backupData?.colecciones) return;
+  const btn = document.getElementById('btn-bk-restore');
+  btn.disabled = true;
+  document.getElementById('bk-restore-progress').style.display = 'block';
+
+  const colsARestaurar = ['reservas','clientes','servicios','promociones','config'];
+  let totalDocs = 0; let restaurados = 0;
+  colsARestaurar.forEach(c => totalDocs += (backupData.colecciones[c]||[]).length);
+
+  for(const colNombre of colsARestaurar) {
+    const docs = backupData.colecciones[colNombre] || [];
+    if(!docs.length) continue;
+
+    document.getElementById('bkr-prog-txt').textContent = `Restaurando ${colNombre}...`;
+
+    const BATCH = 40;
+    for(let i = 0; i < docs.length; i += BATCH) {
+      await Promise.all(docs.slice(i, i+BATCH).map(async d => {
+        try {
+          const { _id, ...data } = d;
+          // Limpiar campos ISO string que eran Timestamps — los dejamos como string, Firestore los acepta
+          if(_id) {
+            await setDoc(doc(db, colNombre, _id), data, { merge: true });
+          } else {
+            await addDoc(collection(db, colNombre), data);
+          }
+          restaurados++;
+        } catch(e){ console.warn('Error restaurando doc:', e); }
+      }));
+      const pct = Math.round((restaurados/Math.max(totalDocs,1))*100);
+      document.getElementById('bkr-prog-bar').style.width = pct+'%';
+      document.getElementById('bkr-prog-pct').textContent = pct+'%';
+      await new Promise(r=>setTimeout(r,80));
+    }
+  }
+
+  // Registrar restauración
+  try {
+    await addDoc(collection(db,'backup_log'), {
+      fecha: new Date().toISOString().split('T')[0],
+      tipo: 'restauracion',
+      backupFecha: backupData.fecha || '—',
+      totalDocumentos: restaurados,
+      createdAt: serverTimestamp()
+    });
+  } catch(e){}
+
+  document.getElementById('bk-restore-progress').style.display = 'none';
+  btn.disabled = false;
+  showToast(`✓ ${restaurados} documentos restaurados`);
+  resetBackupRestore();
+  loadAllData();
+  loadBackupLog();
+};
+
+window.resetBackupRestore = function() {
+  backupData = null;
+  document.getElementById('bk-file').value = '';
+  document.getElementById('bk-restore-preview').style.display = 'none';
+};
+
+async function loadBackupLog() {
+  try {
+    const snap = await getDocs(query(collection(db,'backup_log'), orderBy('createdAt','desc')));
+    const el = document.getElementById('bk-log');
+    if(!el) return;
+    if(snap.empty){ el.innerHTML = '<div class="empty">Sin copias registradas todavía.</div>'; return; }
+    el.innerHTML = snap.docs.slice(0,10).map(d => {
+      const r = d.data();
+      const esExport = r.tipo === 'exportacion';
+      const color = esExport ? 'var(--teal)' : 'var(--purple)';
+      const etiq  = esExport ? 'Exportación' : 'Restauración';
+      return `<div class="aitm">
+        <div class="adot" style="background:${color}"></div>
+        <div class="atxt"><strong>${etiq}</strong> · ${r.totalDocumentos||0} documentos${r.backupFecha?' · backup del '+r.backupFecha:''}</div>
+        <div class="atime">${r.fecha||'—'}</div>
+      </div>`;
+    }).join('');
+  } catch(e){}
+}
 
 // Login con Enter
 document.getElementById('login-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
