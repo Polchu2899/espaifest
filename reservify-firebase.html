@@ -1083,6 +1083,15 @@ async function loadReservas() {
   }
 }
 
+function pagoBadge(r) {
+  const ep = r.estadoPago || '';
+  if(ep === 'cobrado') return '<span class="badge bg-g">Cobrado</span>';
+  if(ep === 'parcial')  return '<span class="badge bg-t">Señal</span>';
+  const pend = (r.importe||0) - (r.cobrado||r.senal||0);
+  if(pend > 0) return '<span class="badge bg-a">Pendiente</span>';
+  return '<span class="badge bg-x">—</span>';
+}
+
 function renderReservas(list) {
   const el = document.getElementById('reservas-list');
   if (!list.length) { el.innerHTML = '<div class="empty">No hay reservas todavía. ¡Crea la primera!</div>'; return; }
@@ -1095,14 +1104,6 @@ function renderReservas(list) {
     const notasIcon = r.notas
       ? `<span style="margin-left:4px;color:var(--amber);font-size:10px;cursor:default"${notasTip} title="${r.notas.replace(/"/g,'&quot;')}">📝</span>`
       : '';
-    const pagoBadge = r => {
-      const ep = r.estadoPago || '';
-      if(ep === 'cobrado') return '<span class="badge bg-g">Cobrado</span>';
-      if(ep === 'parcial')  return '<span class="badge bg-t">Señal</span>';
-      const pend = (r.importe||0) - (r.cobrado||r.senal||0);
-      if(pend > 0) return '<span class="badge bg-a">Pendiente</span>';
-      return '<span class="badge bg-x">—</span>';
-    };
     return `
     <div class="trow rc" onclick="openDet('${r.id}')">
       <div><div class="c cs">${r.nombre||'—'}${notasIcon}</div><div class="cx cm" style="font-size:11px;color:var(--t3)">${subInfo}</div></div>
@@ -1600,13 +1601,16 @@ function updateDashboard() {
 // ── UTILS ─────────────────────────────────────────────────────
 const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],promociones:['Promociones'],fidelizacion:['Fidelización'],configuracion:['Configuración'],migracion:['Migración histórica']};
 
-window.showPanel = (id,el) => {
+window.showPanel = (id, el) => {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
   if(el) el.classList.add('active');
   document.getElementById('ptitle').textContent = titles[id]?.[0]||id;
   updateCrumb();
+  // Acciones específicas por panel
+  if(id === 'migracion') loadMigLog();
+  if(id === 'clientes')  loadClientes();
 };
 
 function updateCrumb() {
@@ -1892,13 +1896,12 @@ let xlsRefsExistentes = new Set(); // Referencias ya en Firestore
 
 function normalizarTel(t) {
   if(!t) return '';
-  // Quitar todo menos dígitos
   t = t.replace(/[^\d]/g,'');
-  // Quitar prefijo 34 si tiene 11 dígitos empezando por 34
   if(t.length === 11 && t.startsWith('34')) t = t.slice(2);
-  // Descartar si queda menos de 9 dígitos (datos basura)
   return t.length >= 9 ? t : '';
 }
+
+function parsearFecha(s) {
   if(!s) return '';
   s = s.trim().split(' ')[0];
   const m1 = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
@@ -2207,13 +2210,6 @@ async function loadMigLog() {
     }).join('');
   } catch(e){}
 }
-
-// Cargar log al abrir panel migración (ya existente en showPanel)
-const _origShowPanel = window.showPanel;
-window.showPanel = function(id, el) {
-  _origShowPanel(id, el);
-  if(id === 'migracion') loadMigLog();
-};
 
 // ── TABS PANEL MIGRACIÓN ──────────────────────────────────────
 window.switchMigTab = function(tab) {
