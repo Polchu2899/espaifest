@@ -563,7 +563,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
                 <div style="display:flex;gap:8px;align-items:center">
                   <label style="font-size:12px;color:var(--t2)">Desde:</label>
                   <input type="date" class="fi" id="xls-desde" style="width:160px;padding:7px 10px;font-size:12px" onchange="filtrarXls()">
-                  <button class="btn bg sm" onclick="document.getElementById('xls-desde').value='';filtrarXls()">Todo</button>
+                  <button class="btn bg sm" id="btn-todo-xls" onclick="resetFiltroXls()" style="background:var(--grad);color:#080c14;border:none">✓ Todo</button>
                 </div>
               </div>
               <div id="xls-progress" style="display:none;margin-bottom:14px">
@@ -982,6 +982,83 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
 </div>
 
+<!-- MODAL EDITAR RESERVA -->
+<div class="mov" id="modal-edit-res">
+  <div class="modal" style="max-width:640px;max-height:90vh;overflow-y:auto;">
+    <div class="mtitle">Editar reserva</div>
+    <div class="msub" id="edit-res-sub">—</div>
+    <input type="hidden" id="edit-res-id">
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Datos del cliente</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="er-nombre" placeholder="Nombre completo"></div>
+      <div class="fg"><label class="fl">Teléfono</label><input type="text" class="fi" id="er-tel" placeholder="6XX XXX XXX"></div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Email</label><input type="text" class="fi" id="er-email" placeholder="cliente@email.com"></div>
+      <div class="fg"><label class="fl">DNI / NIE</label><input type="text" class="fi" id="er-dni" placeholder="12345678A"></div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Localidad</label><input type="text" class="fi" id="er-loc" placeholder="Ciudad"></div>
+      <div class="fg"><label class="fl">Código postal</label><input type="text" class="fi" id="er-cp" placeholder="08XXX" maxlength="5"></div>
+    </div>
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Detalles de la reserva</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Fecha *</label><input type="date" class="fi" id="er-fecha"></div>
+      <div class="fg"><label class="fl">Franja horaria</label><input type="text" class="fi" id="er-horario" placeholder="10:00–14:00"></div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Tipo de evento</label>
+        <select class="fsi" id="er-servicio">
+          <option>Fiesta infantil</option><option>Fiesta adultos</option>
+          <option>Reunión familiar</option><option>Cumpleaños adultos</option>
+          <option>Cumpleaños adulto mayor de 25 años</option>
+          <option>Cumpleaños 18 años (con familia)</option>
+          <option>Baby shower</option><option>Despedida de soltera</option>
+          <option>Reunión empresa</option><option>Business</option>
+          <option>Family &amp; Friends</option>
+          <option>Clases / Taller</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Personas</label>
+        <select class="fsi" id="er-personas">
+          <option>Hasta 10 personas</option>
+          <option>De 10 a 20 personas (inc. niñ@s)</option>
+          <option>De 20 a 30 personas (inc. niñ@s)</option>
+          <option>De 30 a 40 personas (inc. niñ@s)</option>
+          <option>De 40 a 50 personas (inc. niñ@s)</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Pago</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Importe total (€)</label><input type="number" class="fi" id="er-importe"></div>
+      <div class="fg"><label class="fl">Cobrado (€)</label><input type="number" class="fi" id="er-cobrado"></div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Método de pago</label>
+        <select class="fsi" id="er-pago">
+          <option>Transferencia bancaria</option><option>Bizum</option><option>Efectivo</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Estado reserva</label>
+        <select class="fsi" id="er-estado">
+          <option>Confirmada</option><option>Pendiente</option><option>Cancelada</option><option>Bloqueada</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Extras</label><input type="text" class="fi" id="er-extras" placeholder="Extras contratados"></div>
+    <div class="fg"><label class="fl">Notas</label><textarea class="fi" id="er-notas" style="min-height:60px;resize:vertical" placeholder="Observaciones..."></textarea></div>
+
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeModal('edit-res')">Cancelar</button>
+      <button class="btn bp" onclick="guardarEdicionReserva()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- FIREBASE SDK -->
@@ -1073,13 +1150,24 @@ let allReservas = [];
 
 async function loadReservas() {
   try {
-    const q = query(collection(db,'reservas'), orderBy('createdAt','desc'));
-    const snap = await getDocs(q);
+    // Sin orderBy — las reservas importadas tienen createdAt como string, no Timestamp.
+    // Ordenar en cliente por fecha de reserva desc para consistencia.
+    const snap = await getDocs(collection(db,'reservas'));
     allReservas = snap.docs.map(d => ({id:d.id,...d.data()}));
+    // Ordenar: primero por fecha de reserva desc, luego por createdAt
+    allReservas.sort((a,b) => {
+      const fa = a.fecha || ''; const fb = b.fecha || '';
+      if(fb !== fa) return fb.localeCompare(fa);
+      // Mismo día: más reciente primero
+      const ta = a.createdAt?.toMillis?.() || new Date(a.createdAt||0).getTime();
+      const tb = b.createdAt?.toMillis?.() || new Date(b.createdAt||0).getTime();
+      return tb - ta;
+    });
     renderReservas(allReservas);
     updateDashboard();
   } catch(e) {
     document.getElementById('reservas-list').innerHTML = '<div class="empty">Error al cargar reservas. Verifica los permisos de Firestore.</div>';
+    console.error('loadReservas error:', e);
   }
 }
 
@@ -1308,6 +1396,7 @@ window.openDet = function(id) {
   document.getElementById('det-actions').innerHTML = `
     ${estado !== 'confirmada' ? `<button class="btn bp" onclick="confirmarDesdeModal('${id}')">✓ Confirmar</button>` : ''}
     <button class="btn bt" onclick="abrirModalPago('${id}')">💳 Registrar pago</button>
+    <button class="btn bg" onclick="abrirEditarReserva('${id}')"><svg width="12" height="12" stroke="currentColor" style="vertical-align:middle"><use href="#i-edit"/></svg> Editar</button>
     ${estado !== 'cancelada'  ? `<button class="btn bg" onclick="cancelarDesdeModal('${id}')" style="background:var(--rbg);color:var(--red);border-color:rgba(244,63,94,.3)">Cancelar</button>` : ''}
     <button class="btn bg" onclick="closeDet()">Cerrar</button>
   `;
@@ -2083,7 +2172,9 @@ window.importarBookly = async function() {
       // Escritura paralela dentro del lote
       await Promise.all(lote.map(async r => {
         try {
-          await addDoc(collection(db,'reservas'), r);
+          // Añadir createdAt como string ISO — compatible con sort en cliente
+          const docData = { ...r, createdAt: r.fechaRegistro || new Date().toISOString().split('T')[0] };
+          await addDoc(collection(db,'reservas'), docData);
           ok++;
           // Acumular cliente
           if(r.telefono && !clientes_map[r.telefono]) {
@@ -2431,6 +2522,104 @@ async function loadBackupLog() {
     }).join('');
   } catch(e){}
 }
+
+// ── RESET FILTRO XLS ─────────────────────────────────────────
+window.resetFiltroXls = function() {
+  document.getElementById('xls-desde').value = '';
+  filtrarXls();
+};
+
+// ── EDITAR RESERVA ────────────────────────────────────────────
+window.abrirEditarReserva = function(id) {
+  const r = allReservas.find(x => x.id === id);
+  if(!r) return;
+
+  document.getElementById('edit-res-id').value   = id;
+  document.getElementById('edit-res-sub').textContent = `Ref: ${r.referencia || id}`;
+
+  // Datos cliente
+  document.getElementById('er-nombre').value  = r.nombre   || '';
+  document.getElementById('er-tel').value     = r.telefono || '';
+  document.getElementById('er-email').value   = r.email    || '';
+  document.getElementById('er-dni').value     = r.dni      || '';
+  document.getElementById('er-loc').value     = r.localidad|| '';
+  document.getElementById('er-cp').value      = r.cp       || '';
+
+  // Reserva
+  document.getElementById('er-fecha').value   = r.fecha    || '';
+  document.getElementById('er-horario').value = r.horario  || '';
+  document.getElementById('er-extras').value  = r.extras   || '';
+  document.getElementById('er-notas').value   = r.notas    || r.comentarios || '';
+  document.getElementById('er-importe').value = r.importe  || 0;
+  document.getElementById('er-cobrado').value = r.cobrado  || r.senal || 0;
+
+  // Selects — buscar opción más cercana al valor guardado
+  const setSelect = (id, val) => {
+    const sel = document.getElementById(id);
+    const opts = Array.from(sel.options);
+    const match = opts.find(o => o.value.toLowerCase().includes((val||'').toLowerCase().slice(0,8)));
+    if(match) sel.value = match.value;
+    else { // Añadir opción dinámica si no existe
+      const opt = document.createElement('option');
+      opt.value = val; opt.textContent = val;
+      sel.appendChild(opt); sel.value = val;
+    }
+  };
+  setSelect('er-servicio', r.servicio || '');
+  setSelect('er-personas', r.personas || '');
+  setSelect('er-pago',     r.metodoPago || 'Transferencia bancaria');
+  setSelect('er-estado',   r.estado   || 'Confirmada');
+
+  closeDet();
+  openModal('edit-res');
+};
+
+window.guardarEdicionReserva = async function() {
+  const id = document.getElementById('edit-res-id').value;
+  if(!id) return;
+
+  const nombre   = document.getElementById('er-nombre').value.trim();
+  const fecha    = document.getElementById('er-fecha').value;
+  if(!nombre || !fecha) { showToast('Nombre y fecha son obligatorios'); return; }
+
+  const importe  = parseFloat(document.getElementById('er-importe').value) || 0;
+  const cobrado  = parseFloat(document.getElementById('er-cobrado').value) || 0;
+  const pendiente = Math.max(0, importe - cobrado);
+  const estadoPago = cobrado >= importe && cobrado > 0 ? 'cobrado' : cobrado > 0 ? 'parcial' : 'pendiente';
+
+  const upd = {
+    nombre:     nombre,
+    telefono:   document.getElementById('er-tel').value.trim(),
+    email:      document.getElementById('er-email').value.trim(),
+    dni:        document.getElementById('er-dni').value.trim(),
+    localidad:  document.getElementById('er-loc').value.trim(),
+    cp:         document.getElementById('er-cp').value.trim(),
+    fecha,
+    horario:    document.getElementById('er-horario').value.trim(),
+    servicio:   document.getElementById('er-servicio').value,
+    personas:   document.getElementById('er-personas').value,
+    extras:     document.getElementById('er-extras').value.trim() || 'Ninguno',
+    notas:      document.getElementById('er-notas').value.trim(),
+    importe,
+    cobrado,
+    pendiente,
+    estadoPago,
+    metodoPago: document.getElementById('er-pago').value,
+    estado:     document.getElementById('er-estado').value,
+    updatedAt:  serverTimestamp(),
+    editadoPor: 'panel'
+  };
+
+  try {
+    await updateDoc(doc(db,'reservas',id), upd);
+    closeModal('edit-res');
+    showToast('Reserva actualizada ✓');
+    loadReservas();
+  } catch(e) {
+    console.error('Error guardando edición:', e);
+    showToast('Error al guardar — revisa la consola');
+  }
+};
 
 // Login con Enter
 document.getElementById('login-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
