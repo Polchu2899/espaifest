@@ -1023,6 +1023,95 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 .cal-day.partial{background:oklch(87% .19 90/.08);}
 .dot-partial{width:6px;height:6px;border-radius:50%;background:oklch(87% .19 90);}
 
+/* ══ MODAL BLOG POST ════════════════════════════════════ */
+.blog-modal-ov{
+  position:fixed;inset:0;background:oklch(0% 0 0/.75);backdrop-filter:blur(12px);
+  z-index:2000;display:flex;align-items:flex-start;justify-content:center;
+  padding:clamp(1rem,4vw,3rem);overflow-y:auto;
+  opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+.blog-modal-ov.open{opacity:1;pointer-events:all;}
+.blog-modal-box{
+  background:var(--bg);border:1px solid var(--bd);border-radius:24px;
+  width:100%;max-width:760px;position:relative;
+  transform:translateY(20px);transition:transform .35s cubic-bezier(.25,.46,.45,.94);
+  overflow:hidden;
+}
+.blog-modal-ov.open .blog-modal-box{transform:translateY(0);}
+.blog-modal-hero{width:100%;height:280px;overflow:hidden;position:relative;}
+.blog-modal-hero img{width:100%;height:100%;object-fit:cover;}
+.blog-modal-hero-placeholder{width:100%;height:280px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:3rem;}
+.blog-modal-close{
+  position:absolute;top:16px;right:16px;z-index:10;
+  width:38px;height:38px;border-radius:50%;
+  background:oklch(0% 0 0/.5);backdrop-filter:blur(8px);
+  border:1px solid oklch(100% 0 0/.15);color:#fff;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+}
+.blog-modal-close:hover{background:oklch(0% 0 0/.75);}
+.blog-modal-body{padding:clamp(1.5rem,4vw,2.5rem);}
+.blog-modal-cat{
+  display:inline-block;font:700 .65rem var(--fb);text-transform:uppercase;
+  letter-spacing:.1em;padding:4px 12px;border-radius:20px;
+  background:var(--s2);margin-bottom:14px;
+}
+.blog-modal-titulo{font:800 clamp(1.4rem,4vw,2rem) var(--fd);line-height:1.25;margin-bottom:12px;color:var(--tx1);}
+.blog-modal-meta{font-size:.78rem;color:var(--tx3);display:flex;gap:10px;align-items:center;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--bd);}
+.blog-modal-meta .bm-dot{width:3px;height:3px;border-radius:50%;background:var(--tx3);}
+.blog-modal-contenido{
+  font-size:.92rem;color:var(--tx2);line-height:1.85;
+}
+.blog-modal-contenido h1,.blog-modal-contenido h2,.blog-modal-contenido h3{
+  color:var(--tx1);font-family:var(--fd);margin:1.5rem 0 .75rem;line-height:1.3;
+}
+.blog-modal-contenido h2{font-size:1.3rem;}
+.blog-modal-contenido h3{font-size:1.1rem;}
+.blog-modal-contenido p{margin-bottom:1rem;}
+.blog-modal-contenido strong,.blog-modal-contenido b{color:var(--tx1);}
+.blog-modal-contenido a{color:var(--co);text-decoration:underline;}
+.blog-modal-contenido img{max-width:100%;border-radius:12px;margin:1rem 0;}
+.blog-modal-contenido ul,.blog-modal-contenido ol{padding-left:1.5rem;margin-bottom:1rem;}
+.blog-modal-contenido li{margin-bottom:.4rem;}
+.blog-modal-contenido blockquote{
+  border-left:3px solid var(--co);padding:.75rem 1.25rem;
+  margin:1.25rem 0;background:var(--s2);border-radius:0 10px 10px 0;
+  font-style:italic;color:var(--tx2);
+}
+/* Modal ver todos */
+.blog-todos-ov{
+  position:fixed;inset:0;background:oklch(0% 0 0/.8);backdrop-filter:blur(14px);
+  z-index:1900;display:flex;align-items:flex-start;justify-content:center;
+  padding:clamp(1rem,4vw,2rem);overflow-y:auto;
+  opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+.blog-todos-ov.open{opacity:1;pointer-events:all;}
+.blog-todos-box{
+  background:var(--s1);border:1px solid var(--bd);border-radius:24px;
+  width:100%;max-width:1100px;padding:clamp(1.5rem,4vw,2.5rem);
+  transform:translateY(20px);transition:transform .35s cubic-bezier(.25,.46,.45,.94);
+}
+.blog-todos-ov.open .blog-todos-box{transform:translateY(0);}
+.blog-todos-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.blog-todos-titulo{font:800 1.5rem var(--fd);}
+.blog-todos-close{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--bd);
+  background:var(--s2);color:var(--tx2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.blog-todos-close:hover{background:var(--s3);color:var(--tx1);}
+.blog-todos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+.blog-todos-loading{text-align:center;padding:40px;color:var(--tx3);font-size:.9rem;}
+
+@media(max-width:600px){
+  .blog-modal-hero{height:200px;}
+  .blog-modal-body{padding:1.25rem;}
+  .blog-todos-grid{grid-template-columns:1fr;}
+}
+
+/* Cursor pointer en cards del blog */
+.blog-card{cursor:pointer;}
+
 /* ══ COOKIE BANNER ══════════════════════════════════════ */
 #cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:9000;background:var(--s1);border-top:1px solid var(--bd);padding:18px clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;box-shadow:0 -8px 32px oklch(0% 0 0/.35);transform:translateY(0);transition:transform .4s cubic-bezier(.25,.46,.45,.94);}
 #cookie-banner.ck-hidden{transform:translateY(110%);}
@@ -1704,7 +1793,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
         <div class="eyebrow ew-y"><div class="ew-dot"></div><span data-es="Blog e inspiración" data-ca="Blog i inspiració">Blog e inspiración</span></div>
         <h2 class="sec-h2" data-es="Ideas para tu próxima celebración" data-ca="Idees per a la teva propera celebració" data-blur="top">Ideas para tu próxima celebración</h2>
       </div>
-      <a href="#" style="font:700 .875rem var(--fd);color:var(--co);white-space:nowrap" data-es="Ver todos →" data-ca="Veure tots →">Ver todos →</a>
+      <a href="#" onclick="event.preventDefault();abrirVerTodos()" style="font:700 .875rem var(--fd);color:var(--co);white-space:nowrap" data-es="Ver todos →" data-ca="Veure tots →">Ver todos →</a>
     </div>
 
     <!-- Posts cargados dinámicamente desde Firebase -->
@@ -2521,8 +2610,6 @@ async function loadBlogPosts() {
   const grid = document.getElementById('blog-grid');
   if(!grid) return;
   try {
-    // Nota: orderBy + where requiere índice compuesto en Firestore.
-    // Ordenamos en cliente para evitar dependencia del índice.
     const q = query(
       collection(_db, 'blog_posts'),
       where('estado', '==', 'publicado'),
@@ -2537,55 +2624,66 @@ async function loadBlogPosts() {
         </div>`;
       return;
     }
-    // Ordenar por createdAt desc en cliente y limitar a 3
-    const docs = [];
-    snap.forEach(docSnap => docs.push(docSnap));
-    docs.sort((a, b) => {
-      const ta = a.data().createdAt?.toMillis?.() || 0;
-      const tb = b.data().createdAt?.toMillis?.() || 0;
+
+    // Ordenar por createdAt desc en cliente
+    const allDocs = [];
+    snap.forEach(docSnap => allDocs.push({ id: docSnap.id, data: docSnap.data() }));
+    allDocs.sort((a, b) => {
+      const ta = a.data.createdAt?.toMillis?.() || 0;
+      const tb = b.data.createdAt?.toMillis?.() || 0;
       return tb - ta;
     });
-    const topDocs = docs.slice(0, 3);
 
+    // Guardar en caché global para "Ver todos" y modal
+    _allBlogPosts = allDocs;
+
+    const topDocs = allDocs.slice(0, 3);
     grid.innerHTML = '';
-    topDocs.forEach(docSnap => {
-      const d = docSnap.data();
-      const date = d.createdAt?.toDate().toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}) || '';
+
+    topDocs.forEach(({ id, data: d }) => {
+      const date = d.createdAt?.toDate
+        ? d.createdAt.toDate().toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})
+        : '';
       const catLabel = CAT_LABELS[d.categoria] || d.categoria || '';
       const catColor = CAT_COLORS[d.categoria] || 'var(--co)';
       const img = d.imagenURL
         ? `<img src="${d.imagenURL}" alt="${d.titulo}" loading="lazy">`
         : `<div style="width:100%;height:100%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:2rem">📝</div>`;
       const excerpt = d.extracto
-        ? d.extracto.substring(0, 120) + (d.extracto.length > 120 ? '...' : '')
-        : '';
-      // Strip HTML from contenido for excerpt fallback
-      const plainContent = d.contenido
-        ? d.contenido.replace(/<[^>]*>/g,'').substring(0, 120) + '...'
-        : '';
+        ? d.extracto.substring(0, 120) + (d.extracto.length > 120 ? '…' : '')
+        : d.contenido ? d.contenido.replace(/<[^>]*>/g,'').substring(0, 120) + '…' : '';
 
-      grid.innerHTML += `
-        <div class="blog-card" data-a="up">
-          <div class="blog-img">
-            ${img}
-            <span class="blog-cat" style="color:${catColor}">${catLabel}</span>
-          </div>
-          <div class="blog-body">
-            <div class="blog-title">${d.titulo}</div>
-            <div class="blog-exc">${excerpt || plainContent}</div>
-            <div class="blog-meta">
-              <span>EspaiFest</span>
-              <span class="bm-dot"></span>
-              <span>${date}</span>
-            </div>
+      const card = document.createElement('div');
+      card.className = 'blog-card';
+      card.setAttribute('data-a', 'up');
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', `Leer: ${d.titulo}`);
+      card.innerHTML = `
+        <div class="blog-img">
+          ${img}
+          <span class="blog-cat" style="color:${catColor}">${catLabel}</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-title">${d.titulo}</div>
+          <div class="blog-exc">${excerpt}</div>
+          <div class="blog-meta">
+            <span>EspaiFest</span>
+            <span class="bm-dot"></span>
+            <span>${date}</span>
           </div>
         </div>`;
+
+      card.addEventListener('click', () => abrirPost(id));
+      card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') abrirPost(id); });
+      grid.appendChild(card);
     });
-    // Re-observe new elements for scroll animation
+
+    // Re-observe para animaciones scroll
     grid.querySelectorAll('[data-a]').forEach(el => scrollObs.observe(el));
+
   } catch(e) {
     console.warn('Blog load error:', e.message);
-    // No mostrar error al usuario — simplemente no carga
     grid.innerHTML = '';
   }
 }
@@ -2704,6 +2802,154 @@ window.copiarCodigo = function(codigo, id) {
     });
   })();
 
-</script>
+// ══ BLOG — MODAL POST COMPLETO ═══════════════════════════════
+let _allBlogPosts = []; // Cache de todos los posts cargados
+
+function abrirPost(id) {
+  const post = _allBlogPosts.find(p => p.id === id);
+  if(!post) return;
+  const d = post.data;
+  const catLabel = CAT_LABELS[d.categoria] || d.categoria || '';
+  const catColor = CAT_COLORS[d.categoria] || 'var(--co)';
+  const date = d.createdAt?.toDate
+    ? d.createdAt.toDate().toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'})
+    : (d.createdAt ? new Date(d.createdAt).toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}) : '');
+
+  const heroHTML = d.imagenURL
+    ? `<div class="blog-modal-hero"><img src="${d.imagenURL}" alt="${d.titulo}" loading="lazy"></div>`
+    : `<div class="blog-modal-hero-placeholder">📝</div>`;
+
+  document.getElementById('blog-modal-inner').innerHTML = `
+    <div style="position:relative">
+      ${heroHTML}
+      <button class="blog-modal-close" onclick="cerrarPost()" aria-label="Cerrar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="blog-modal-body">
+      <span class="blog-modal-cat" style="color:${catColor}">${catLabel}</span>
+      <div class="blog-modal-titulo">${d.titulo || ''}</div>
+      <div class="blog-modal-meta">
+        <span>EspaiFest</span>
+        <span class="bm-dot"></span>
+        <span>${date}</span>
+      </div>
+      <div class="blog-modal-contenido">${d.contenido || '<p>Contenido no disponible.</p>'}</div>
+    </div>
+  `;
+
+  const ov = document.getElementById('blog-modal-ov');
+  ov.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarPost() {
+  document.getElementById('blog-modal-ov').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Cerrar al hacer clic fuera
+document.getElementById('blog-modal-ov').addEventListener('click', function(e) {
+  if(e.target === this) cerrarPost();
+});
+
+// ══ BLOG — VER TODOS ═════════════════════════════════════════
+async function abrirVerTodos() {
+  const ov = document.getElementById('blog-todos-ov');
+  const grid = document.getElementById('blog-todos-grid');
+  ov.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Si ya tenemos posts en caché, renderizar directamente
+  if(_allBlogPosts.length > 0) {
+    renderTodosLosPost(_allBlogPosts);
+    return;
+  }
+
+  grid.innerHTML = '<div class="blog-todos-loading">Cargando posts...</div>';
+
+  try {
+    const snap = await getDocs(query(
+      collection(_db, 'blog_posts'),
+      where('estado', '==', 'publicado')
+    ));
+    const posts = [];
+    snap.forEach(d => posts.push({ id: d.id, data: d.data() }));
+    posts.sort((a,b) => {
+      const ta = a.data.createdAt?.toMillis?.() || 0;
+      const tb = b.data.createdAt?.toMillis?.() || 0;
+      return tb - ta;
+    });
+    _allBlogPosts = posts;
+    renderTodosLosPost(posts);
+  } catch(e) {
+    grid.innerHTML = '<div class="blog-todos-loading">Error cargando posts.</div>';
+    console.warn('Ver todos error:', e);
+  }
+}
+
+function cerrarVerTodos() {
+  document.getElementById('blog-todos-ov').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderTodosLosPost(posts) {
+  const grid = document.getElementById('blog-todos-grid');
+  if(!posts.length) {
+    grid.innerHTML = '<div class="blog-todos-loading">No hay posts publicados todavía.</div>';
+    return;
+  }
+  grid.innerHTML = posts.map(p => {
+    const d = p.data;
+    const catLabel = CAT_LABELS[d.categoria] || d.categoria || '';
+    const catColor = CAT_COLORS[d.categoria] || 'var(--co)';
+    const date = d.createdAt?.toDate
+      ? d.createdAt.toDate().toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})
+      : '';
+    const excerpt = d.extracto
+      ? d.extracto.substring(0,100) + (d.extracto.length > 100 ? '…' : '')
+      : (d.contenido ? d.contenido.replace(/<[^>]*>/g,'').substring(0,100) + '…' : '');
+    const imgHTML = d.imagenURL
+      ? `<img src="${d.imagenURL}" alt="${d.titulo}" loading="lazy">`
+      : `<div style="width:100%;height:100%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:2rem">📝</div>`;
+    return `
+      <div class="blog-card" onclick="cerrarVerTodos();abrirPost('${p.id}')">
+        <div class="blog-img">${imgHTML}<span class="blog-cat" style="color:${catColor}">${catLabel}</span></div>
+        <div class="blog-body">
+          <div class="blog-title">${d.titulo || ''}</div>
+          <div class="blog-exc">${excerpt}</div>
+          <div class="blog-meta"><span>EspaiFest</span><span class="bm-dot"></span><span>${date}</span></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+document.getElementById('blog-todos-ov').addEventListener('click', function(e) {
+  if(e.target === this) cerrarVerTodos();
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') { cerrarPost(); cerrarVerTodos(); }
+});
+
+<!-- MODAL POST COMPLETO -->
+<div class="blog-modal-ov" id="blog-modal-ov" role="dialog" aria-modal="true" aria-label="Post del blog">
+  <div class="blog-modal-box" id="blog-modal-inner"></div>
+</div>
+
+<!-- MODAL VER TODOS LOS POSTS -->
+<div class="blog-todos-ov" id="blog-todos-ov" role="dialog" aria-modal="true" aria-label="Todos los posts">
+  <div class="blog-todos-box">
+    <div class="blog-todos-head">
+      <div class="blog-todos-titulo" data-es="Todos los posts" data-ca="Tots els posts">Todos los posts</div>
+      <button class="blog-todos-close" onclick="cerrarVerTodos()" aria-label="Cerrar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="blog-todos-grid" id="blog-todos-grid">
+      <div class="blog-todos-loading">Cargando...</div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
