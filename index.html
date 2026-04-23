@@ -2822,10 +2822,34 @@ function sanitizeContenido(html) {
 }
 
 // ══ BLOG — MODAL POST COMPLETO ═══════════════════════════════
-function abrirPost(id) {
-  const post = _allBlogPosts.find(p => p.id === id);
-  if(!post) return;
-  const d = post.data;
+async function abrirPost(id) {
+  const ov = document.getElementById('blog-modal-ov');
+  document.getElementById('blog-modal-inner').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;min-height:300px;color:var(--tx3)">
+      <div style="text-align:center"><div style="font-size:2rem;margin-bottom:12px">⏳</div><p style="font-size:.9rem">Cargando post...</p></div>
+    </div>`;
+  ov.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Leer siempre de Firestore — garantiza datos frescos aunque el post haya sido editado
+  try {
+    const { getDoc, doc: fsDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    const snap = await getDoc(fsDoc(_db, 'blog_posts', id));
+    if(!snap.exists()) {
+      document.getElementById('blog-modal-inner').innerHTML = `<div style="padding:3rem;text-align:center;color:var(--tx3)">Post no encontrado.</div>`;
+      return;
+    }
+    const d = snap.data();
+    renderModalPost(id, d);
+  } catch(e) {
+    // Fallback a caché si falla la lectura
+    const cached = _allBlogPosts.find(p => p.id === id);
+    if(cached) { renderModalPost(id, cached.data); return; }
+    document.getElementById('blog-modal-inner').innerHTML = `<div style="padding:3rem;text-align:center;color:var(--tx3)">Error cargando post.</div>`;
+    console.error('abrirPost error:', e);
+  }
+}
+function renderModalPost(id, d) {
   const catLabel = CAT_LABELS[d.categoria] || d.categoria || '';
   const catColor = CAT_COLORS[d.categoria] || 'var(--co)';
   const date = d.createdAt?.toDate
@@ -2854,10 +2878,6 @@ function abrirPost(id) {
       <div class="blog-modal-contenido">${sanitizeContenido(d.contenido)}</div>
     </div>
   `;
-
-  const ov = document.getElementById('blog-modal-ov');
-  ov.classList.add('open');
-  document.body.style.overflow = 'hidden';
 }
 
 function cerrarPost() {
@@ -2877,15 +2897,9 @@ async function abrirVerTodos() {
   const grid = document.getElementById('blog-todos-grid');
   ov.classList.add('open');
   document.body.style.overflow = 'hidden';
-
-  // Si ya tenemos posts en caché, renderizar directamente
-  if(_allBlogPosts.length > 0) {
-    renderTodosLosPost(_allBlogPosts);
-    return;
-  }
-
   grid.innerHTML = '<div class="blog-todos-loading">Cargando posts...</div>';
 
+  // Siempre leer de Firestore — datos siempre frescos
   try {
     const snap = await getDocs(collection(_db, 'blog_posts'));
     const posts = [];
