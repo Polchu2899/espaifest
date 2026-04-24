@@ -308,6 +308,18 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .ist-n{font-size:20px;font-weight:800;font-family:'DM Mono',monospace;}
 .ist-l{font-size:11px;color:var(--t2);margin-top:2px;}
 
+/* ── INFORMES ── */
+.inf-per.active{background:var(--teal)!important;color:#080c14!important;border-color:var(--teal)!important;}
+.inf-bar-wrap{display:flex;align-items:center;gap:8px;padding:8px 20px;}
+.inf-bar-lbl{font-size:12px;color:var(--t2);width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;}
+.inf-bar-track{flex:1;height:8px;background:var(--s3);border-radius:4px;overflow:hidden;}
+.inf-bar-fill{height:100%;border-radius:4px;transition:width .6s cubic-bezier(.25,.46,.45,.94);}
+.inf-bar-val{font-size:12px;font-family:'DM Mono',monospace;color:var(--t2);width:36px;text-align:right;flex-shrink:0;}
+.inf-pago-card{background:var(--s3);border-radius:12px;padding:16px;text-align:center;}
+.inf-pago-n{font-size:1.6rem;font-weight:800;margin-bottom:4px;}
+.inf-pago-l{font-size:11px;color:var(--t2);}
+.inf-pago-pct{font-size:11px;font-weight:700;margin-top:4px;}
+
 /* TOAST */
 .toast{position:fixed;bottom:28px;right:28px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--rxs);padding:12px 18px;font-size:13px;font-weight:500;color:var(--tx);display:flex;align-items:center;gap:8px;z-index:2000;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.5);}
 .toast.show{transform:translateY(0);opacity:1;}
@@ -385,7 +397,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="ni" onclick="showPanel('configuracion',this)"><span class="ni-ico"><svg><use href="#i-gear"/></svg></span>Mi negocio</div>
       <div class="ni" onclick="showPanel('migracion',this)"><span class="ni-ico"><svg><use href="#i-import"/></svg></span>Migración histórica<span class="stag">XLS</span></div>
       <div class="ng" style="margin-top:8px;opacity:.35">Próximamente</div>
-      <div class="ni dim"><span class="ni-ico"><svg><use href="#i-trending"/></svg></span>Informes<span class="stag">pronto</span></div>
+      <div class="ni" onclick="showPanel('informes',this)"><span class="ni-ico"><svg><use href="#i-trending"/></svg></span>Informes</div>
     </nav>
     <div class="sfooter">
       <div class="ucard">
@@ -496,6 +508,69 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       </div>
 
       <!-- FIDELIZACIÓN -->
+      <!-- ══ PANEL INFORMES ══ -->
+      <div class="panel" id="panel-informes">
+
+        <!-- KPIs financieros -->
+        <div class="kgrid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px" id="inf-kpis">
+          <div class="kcard"><div class="kval" id="inf-total-res" style="color:var(--teal)">—</div><div class="klbl">Total reservas</div></div>
+          <div class="kcard"><div class="kval" id="inf-ingresos" style="color:var(--green)">—</div><div class="klbl">Ingresos totales</div></div>
+          <div class="kcard"><div class="kval" id="inf-cobrado" style="color:var(--teal)">—</div><div class="klbl">Cobrado</div></div>
+          <div class="kcard"><div class="kval" id="inf-pendiente" style="color:var(--amber)">—</div><div class="klbl">Pendiente cobro</div></div>
+        </div>
+
+        <!-- Filtro período -->
+        <div class="card" style="margin-bottom:18px">
+          <div style="padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <span style="font-size:12px;font-weight:700;color:var(--t2)">Período:</span>
+            <button class="btn bg sm inf-per active" id="per-3m" onclick="setPeriodo(3,this)">3 meses</button>
+            <button class="btn bg sm inf-per" id="per-6m" onclick="setPeriodo(6,this)">6 meses</button>
+            <button class="btn bg sm inf-per" id="per-12m" onclick="setPeriodo(12,this)">12 meses</button>
+            <button class="btn bg sm inf-per" id="per-all" onclick="setPeriodo(0,this)">Todo</button>
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <button class="btn bg sm" onclick="exportInformes()">
+                <svg width="13" height="13" stroke="currentColor"><use href="#i-up"/></svg>Exportar CSV
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px">
+
+          <!-- Gráfico evolución mensual -->
+          <div class="card" style="grid-column:span 2">
+            <div class="chead"><div><div class="ctitle">Evolución mensual</div><div class="csub" id="inf-chart-sub">Reservas e ingresos por mes</div></div></div>
+            <div style="padding:20px 20px 8px;overflow-x:auto">
+              <canvas id="inf-chart" height="180" style="width:100%;display:block"></canvas>
+            </div>
+            <div id="inf-chart-legend" style="padding:8px 20px 16px;display:flex;gap:20px;font-size:11px;color:var(--t2)">
+              <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:3px;border-radius:2px;background:var(--teal);display:inline-block"></span>Reservas</span>
+              <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:3px;border-radius:2px;background:var(--green);display:inline-block"></span>Ingresos (€)</span>
+            </div>
+          </div>
+
+          <!-- Por tipo de evento -->
+          <div class="card">
+            <div class="chead"><div><div class="ctitle">Por tipo de evento</div><div class="csub">Reservas por servicio</div></div></div>
+            <div id="inf-servicios" style="padding:4px 0 8px"></div>
+          </div>
+
+          <!-- Top clientes -->
+          <div class="card">
+            <div class="chead"><div><div class="ctitle">Top 10 clientes</div><div class="csub">Por número de reservas</div></div></div>
+            <div id="inf-top-cli" style="padding:4px 0 8px"></div>
+          </div>
+
+        </div>
+
+        <!-- Reservas por estado de pago -->
+        <div class="card" style="margin-bottom:18px">
+          <div class="chead"><div><div class="ctitle">Estado de pagos</div><div class="csub">Distribución del cobro</div></div></div>
+          <div id="inf-pagos" style="padding:16px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px"></div>
+        </div>
+
+      </div><!-- /panel-informes -->
+
       <div class="panel" id="panel-fidelizacion">
         <div class="g3">
           <div class="kcard"><div class="ktop"><div class="kico ki-p"><svg stroke="var(--purple)"><use href="#i-users"/></svg></div></div><div class="kval" id="f-total">—</div><div class="klbl">Clientes con tarjeta</div></div>
@@ -1759,7 +1834,7 @@ function updateDashboard() {
 }
 
 // ── UTILS ─────────────────────────────────────────────────────
-const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],promociones:['Promociones'],fidelizacion:['Fidelización'],configuracion:['Configuración'],migracion:['Migración histórica']};
+const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],promociones:['Promociones'],fidelizacion:['Fidelización'],configuracion:['Configuración'],migracion:['Migración histórica'],informes:['Informes']};
 
 window.showPanel = (id, el) => {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -1771,6 +1846,7 @@ window.showPanel = (id, el) => {
   // Acciones específicas por panel
   if(id === 'migracion') loadMigLog();
   if(id === 'clientes')  loadClientes();
+  if(id === 'informes')  renderInformes();
 };
 
 function updateCrumb() {
@@ -2801,6 +2877,246 @@ window.guardarEdicionCliente = async function() {
     console.error('Error guardando cliente:', e);
     showToast('Error al guardar — revisa la consola');
   }
+};
+
+// ── INFORMES ──────────────────────────────────────────────────
+let _infPeriodo = 3; // meses (0 = todo)
+
+window.setPeriodo = function(meses, btn) {
+  _infPeriodo = meses;
+  document.querySelectorAll('.inf-per').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderInformes();
+};
+
+function getReservasFiltradas() {
+  if(!_infPeriodo) return allReservas;
+  const cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - _infPeriodo);
+  const cutStr = cutoff.toISOString().split('T')[0];
+  return allReservas.filter(r => (r.fecha || '') >= cutStr);
+}
+
+function renderInformes() {
+  const data = getReservasFiltradas();
+
+  // ── KPIs ──
+  const totalIngresos = data.reduce((s,r) => s + (parseFloat(r.importe)||0), 0);
+  const totalCobrado  = data.reduce((s,r) => s + (parseFloat(r.cobrado)||parseFloat(r.senal)||0), 0);
+  const totalPend     = data.reduce((s,r) => s + (parseFloat(r.pendiente)||Math.max(0,(parseFloat(r.importe)||0)-(parseFloat(r.cobrado)||parseFloat(r.senal)||0))), 0);
+
+  document.getElementById('inf-total-res').textContent = data.length;
+  document.getElementById('inf-ingresos').textContent  = fmtMoney(totalIngresos);
+  document.getElementById('inf-cobrado').textContent   = fmtMoney(totalCobrado);
+  document.getElementById('inf-pendiente').textContent = fmtMoney(totalPend);
+
+  // ── GRÁFICO MENSUAL ──
+  renderChartMensual(data);
+
+  // ── POR SERVICIO ──
+  renderPorServicio(data);
+
+  // ── TOP CLIENTES ──
+  renderTopClientes(data);
+
+  // ── ESTADO DE PAGOS ──
+  renderEstadoPagos(data);
+}
+
+function renderChartMensual(data) {
+  const canvas = document.getElementById('inf-chart');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  // Agrupar por mes (últimos N meses según filtro, mín 3, máx 24)
+  const nMeses = _infPeriodo || 24;
+  const meses = [];
+  const now = new Date();
+  for(let i = nMeses - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    meses.push({
+      key: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,
+      lbl: d.toLocaleDateString('es-ES',{month:'short',year:'2-digit'}),
+      res: 0, ing: 0
+    });
+  }
+
+  data.forEach(r => {
+    if(!r.fecha) return;
+    const key = r.fecha.substring(0,7);
+    const m = meses.find(x => x.key === key);
+    if(m) { m.res++; m.ing += parseFloat(r.importe)||0; }
+  });
+
+  const maxRes = Math.max(...meses.map(m=>m.res), 1);
+  const maxIng = Math.max(...meses.map(m=>m.ing), 1);
+
+  // Dimensiones
+  const dpr = window.devicePixelRatio || 1;
+  const W   = canvas.parentElement.clientWidth - 40;
+  const H   = 180;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.scale(dpr, dpr);
+
+  const PAD_L = 40; const PAD_R = 10; const PAD_T = 10; const PAD_B = 36;
+  const chartW = W - PAD_L - PAD_R;
+  const chartH = H - PAD_T - PAD_B;
+
+  // Background
+  ctx.clearRect(0, 0, W, H);
+
+  // Líneas de guía
+  ctx.strokeStyle = 'rgba(255,255,255,.06)';
+  ctx.lineWidth = 1;
+  for(let i = 0; i <= 4; i++) {
+    const y = PAD_T + (chartH / 4) * i;
+    ctx.beginPath(); ctx.moveTo(PAD_L, y); ctx.lineTo(W - PAD_R, y); ctx.stroke();
+  }
+
+  const barW    = Math.max(4, Math.min(24, (chartW / meses.length) * 0.55));
+  const step    = chartW / meses.length;
+
+  meses.forEach((m, i) => {
+    const x = PAD_L + step * i + step / 2;
+
+    // Barra reservas (teal)
+    const hRes = (m.res / maxRes) * chartH;
+    const gRes = ctx.createLinearGradient(0, PAD_T + chartH - hRes, 0, PAD_T + chartH);
+    gRes.addColorStop(0, 'oklch(73% .14 190)');
+    gRes.addColorStop(1, 'oklch(73% .14 190 / .3)');
+    ctx.fillStyle = gRes;
+    ctx.beginPath();
+    ctx.roundRect(x - barW - 1, PAD_T + chartH - hRes, barW, hRes, [3,3,0,0]);
+    ctx.fill();
+
+    // Línea ingresos (green)
+    if(i > 0) {
+      const xPrev = PAD_L + step * (i-1) + step/2;
+      const yPrev = PAD_T + chartH - (meses[i-1].ing / maxIng) * chartH;
+      const yCurr = PAD_T + chartH - (m.ing / maxIng) * chartH;
+      ctx.strokeStyle = 'oklch(72% .17 155)';
+      ctx.lineWidth   = 2;
+      ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(xPrev, yPrev); ctx.lineTo(x, yCurr); ctx.stroke();
+
+      // Punto
+      ctx.fillStyle = 'oklch(72% .17 155)';
+      ctx.beginPath(); ctx.arc(x, yCurr, 3, 0, Math.PI*2); ctx.fill();
+    }
+
+    // Etiqueta mes — solo cada 2 si hay muchos
+    const mostrar = meses.length <= 6 || i % Math.ceil(meses.length/6) === 0;
+    if(mostrar) {
+      ctx.fillStyle = 'rgba(255,255,255,.4)';
+      ctx.font      = `10px 'DM Sans', sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(m.lbl, x, H - PAD_B + 14);
+    }
+  });
+
+  // Eje Y — valor máximo
+  ctx.fillStyle = 'rgba(255,255,255,.35)';
+  ctx.font      = '9px DM Sans';
+  ctx.textAlign = 'right';
+  ctx.fillText(maxRes, PAD_L - 4, PAD_T + 4);
+  ctx.fillText('0', PAD_L - 4, PAD_T + chartH);
+}
+
+function renderPorServicio(data) {
+  const el = document.getElementById('inf-servicios');
+  if(!el) return;
+
+  const conteo = {};
+  data.forEach(r => {
+    const s = (r.servicio || 'Sin especificar').substring(0,30);
+    conteo[s] = (conteo[s]||0) + 1;
+  });
+
+  const sorted = Object.entries(conteo).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const maxVal = sorted[0]?.[1] || 1;
+
+  const colores = ['var(--teal)','var(--co)','var(--cp)','var(--purple)','var(--green)','var(--amber)','var(--teal)','var(--co)'];
+
+  el.innerHTML = sorted.map(([svc,n],i) => `
+    <div class="inf-bar-wrap">
+      <div class="inf-bar-lbl" title="${svc}">${svc}</div>
+      <div class="inf-bar-track">
+        <div class="inf-bar-fill" style="width:${Math.round(n/maxVal*100)}%;background:${colores[i%colores.length]}"></div>
+      </div>
+      <div class="inf-bar-val">${n}</div>
+    </div>`).join('') || '<div class="empty">Sin datos</div>';
+}
+
+function renderTopClientes(data) {
+  const el = document.getElementById('inf-top-cli');
+  if(!el) return;
+
+  const conteo = {};
+  data.forEach(r => {
+    const nombre = (r.nombre||'Desconocido').trim();
+    if(!conteo[nombre]) conteo[nombre] = { n:0, tel: r.telefono||'' };
+    conteo[nombre].n++;
+  });
+
+  const sorted = Object.entries(conteo).sort((a,b)=>b[1].n-a[1].n).slice(0,10);
+  const maxVal = sorted[0]?.[1].n || 1;
+
+  el.innerHTML = sorted.map(([nom,{n,tel}],i) => `
+    <div class="inf-bar-wrap">
+      <div class="inf-bar-lbl" title="${nom}${tel?' · '+tel:''}">${i+1}. ${nom}</div>
+      <div class="inf-bar-track">
+        <div class="inf-bar-fill" style="width:${Math.round(n/maxVal*100)}%;background:var(--purple)"></div>
+      </div>
+      <div class="inf-bar-val">${n}</div>
+    </div>`).join('') || '<div class="empty">Sin datos</div>';
+}
+
+function renderEstadoPagos(data) {
+  const el = document.getElementById('inf-pagos');
+  if(!el) return;
+
+  const cobrado  = data.filter(r => r.estadoPago === 'cobrado').length;
+  const parcial  = data.filter(r => r.estadoPago === 'parcial').length;
+  const pend     = data.filter(r => !r.estadoPago || r.estadoPago === 'pendiente').length;
+  const total    = data.length || 1;
+
+  const pct = n => Math.round(n/total*100);
+
+  el.innerHTML = `
+    <div class="inf-pago-card">
+      <div class="inf-pago-n" style="color:var(--green)">${cobrado}</div>
+      <div class="inf-pago-l">Cobrado íntegro</div>
+      <div class="inf-pago-pct" style="color:var(--green)">${pct(cobrado)}%</div>
+    </div>
+    <div class="inf-pago-card">
+      <div class="inf-pago-n" style="color:var(--teal)">${parcial}</div>
+      <div class="inf-pago-l">Señal cobrada</div>
+      <div class="inf-pago-pct" style="color:var(--teal)">${pct(parcial)}%</div>
+    </div>
+    <div class="inf-pago-card">
+      <div class="inf-pago-n" style="color:var(--amber)">${pend}</div>
+      <div class="inf-pago-l">Pendiente</div>
+      <div class="inf-pago-pct" style="color:var(--amber)">${pct(pend)}%</div>
+    </div>`;
+}
+
+window.exportInformes = function() {
+  const data = getReservasFiltradas();
+  const header = 'Fecha,Cliente,Teléfono,Servicio,Importe,Cobrado,Pendiente,Estado pago,Estado reserva';
+  const rows = data.map(r => [
+    r.fecha||'', r.nombre||'', r.telefono||'', r.servicio||'',
+    r.importe||0, r.cobrado||0, r.pendiente||0,
+    r.estadoPago||'', r.estado||''
+  ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+  const csv  = [header, ...rows].join('\n');
+  const a    = document.createElement('a');
+  a.href     = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
+  a.download = `espaifest-informe-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  showToast(`CSV exportado — ${data.length} reservas`);
 };
 
 // Login con Enter
