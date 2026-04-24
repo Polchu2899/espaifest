@@ -356,12 +356,23 @@ body {
 .tb-btn:hover { background: var(--s3); color: var(--tx); }
 .tb-btn.active { background: var(--co); color: #fff; border-color: var(--co); }
 .tb-sep { width: 1px; background: var(--br); margin: 2px 4px; }
+.color-swatch {
+  width: 22px; height: 22px; border-radius: 5px; padding: 0;
+  min-width: 22px; border-width: 2px; cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+}
+.color-swatch:hover { transform: scale(1.2); box-shadow: 0 0 0 2px var(--co); }
 .rich-editor {
-  min-height: 240px;
+  min-height: 320px;
+  max-height: 600px;
+  overflow-y: auto;
   padding: 16px;
   outline: none;
-  line-height: 1.65;
+  line-height: 1.75;
   color: var(--tx);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 .rich-editor:empty::before {
   content: attr(data-placeholder);
@@ -573,26 +584,37 @@ body {
             <label class="field-label">Contenido</label>
             <div class="rich-wrap">
               <div class="rich-toolbar">
+                <!-- Formato texto -->
                 <button class="tb-btn" onclick="fmt('bold')" title="Negrita"><strong>N</strong></button>
                 <button class="tb-btn" onclick="fmt('italic')" title="Cursiva"><em>C</em></button>
+                <button class="tb-btn" onclick="fmt('underline')" title="Subrayado"><u>S</u></button>
                 <div class="tb-sep"></div>
-                <button class="tb-btn" onclick="fmtBlock('h2')" title="Título H2">H2</button>
-                <button class="tb-btn" onclick="fmtBlock('h3')" title="Título H3">H3</button>
+                <!-- Bloques — P para volver a texto normal -->
+                <button class="tb-btn" onclick="fmtBlock('p')" title="Párrafo normal" style="font-size:.75rem">¶ P</button>
+                <button class="tb-btn" onclick="fmtBlock('h2')" title="Título grande">H2</button>
+                <button class="tb-btn" onclick="fmtBlock('h3')" title="Título pequeño">H3</button>
                 <div class="tb-sep"></div>
+                <!-- Listas -->
                 <button class="tb-btn" onclick="fmt('insertUnorderedList')" title="Lista">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/></svg>
                 </button>
                 <div class="tb-sep"></div>
+                <!-- Enlace -->
                 <button class="tb-btn" onclick="insertLink()" title="Enlace">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
                 </button>
                 <div class="tb-sep"></div>
-                <span style="font-size:10px;color:var(--tx3);padding:0 4px">Color:</span>
-                <button class="tb-btn" onclick="document.execCommand('foreColor',false,'#FFFFFF')" title="Blanco" style="background:#fff;width:20px;height:20px;border-radius:4px;border:1px solid var(--br);padding:0;min-width:20px"></button>
-                <button class="tb-btn" onclick="document.execCommand('foreColor',false,'#F5A623')" title="Naranja" style="background:#F5A623;width:20px;height:20px;border-radius:4px;border:none;padding:0;min-width:20px"></button>
-                <button class="tb-btn" onclick="document.execCommand('foreColor',false,'#E91E8C')" title="Rosa" style="background:#E91E8C;width:20px;height:20px;border-radius:4px;border:none;padding:0;min-width:20px"></button>
-                <button class="tb-btn" onclick="document.execCommand('foreColor',false,'#0FC4C4')" title="Teal" style="background:#0FC4C4;width:20px;height:20px;border-radius:4px;border:none;padding:0;min-width:20px"></button>
-                <button class="tb-btn" onclick="document.execCommand('removeFormat',false,null)" title="Quitar formato" style="font-size:10px;padding:2px 6px">✕ fmt</button>
+                <!-- Colores de texto -->
+                <span style="font-size:10px;color:var(--tx3);align-self:center;padding:0 2px">Color:</span>
+                <button class="tb-btn color-swatch" onclick="setColor('#FFFFFF')" title="Blanco" style="background:#fff;border-color:#555"></button>
+                <button class="tb-btn color-swatch" onclick="setColor('#111111')" title="Negro" style="background:#111;border-color:#555"></button>
+                <button class="tb-btn color-swatch" onclick="setColor('#F5A623')" title="Naranja" style="background:#F5A623;border-color:#F5A623"></button>
+                <button class="tb-btn color-swatch" onclick="setColor('#E91E8C')" title="Rosa" style="background:#E91E8C;border-color:#E91E8C"></button>
+                <button class="tb-btn color-swatch" onclick="setColor('#0FC4C4')" title="Teal" style="background:#0FC4C4;border-color:#0FC4C4"></button>
+                <button class="tb-btn color-swatch" onclick="setColor('#7C3AED')" title="Morado" style="background:#7C3AED;border-color:#7C3AED"></button>
+                <div class="tb-sep"></div>
+                <!-- Quitar formato -->
+                <button class="tb-btn" onclick="quitarFormato()" title="Quitar formato" style="font-size:.75rem;padding:3px 8px">✕ fmt</button>
               </div>
               <div class="rich-editor" id="e-contenido" contenteditable="true" data-placeholder="Escribe aquí el contenido del post…"></div>
             </div>
@@ -627,7 +649,10 @@ body {
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:6px"><polyline points="20 6 9 17 4 12"/></svg>
               Publicar en la web
             </button>
-            <button class="btn-draft" onclick="savePost('borrador')">Guardar borrador</button>
+            <button class="btn-draft" onclick="savePost('borrador')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:5px"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v14z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Guardar borrador (no aparece en la web)
+            </button>
             <div class="saving-indicator" id="saving-msg"></div>
           </div>
 
@@ -756,24 +781,18 @@ function renderPostsList() {
       </div>`;
     return;
   }
-  const catMap = {
-    'fiestas-infantiles':'Fiestas infantiles','adultos':'Adultos',
-    'business':'Business','manualidades':'Manualidades','consejos':'Consejos'
-  };
   container.innerHTML = allPosts.map(p => {
-    // Proteger createdAt — puede ser Timestamp, string, o sentinel (null tras guardar localmente)
-    let date = '—';
-    try {
-      if (p.createdAt?.toDate) date = p.createdAt.toDate().toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});
-      else if (p.createdAt) date = new Date(p.createdAt).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});
-    } catch(e) { date = '—'; }
-
+    const date = p.createdAt?.toDate().toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}) || '—';
     const badge = p.estado === 'publicado'
       ? '<span class="badge badge-pub">✅ Publicado</span>'
       : '<span class="badge badge-bor">📝 Borrador</span>';
     const thumb = p.imagenURL
       ? `<div class="post-thumb"><img src="${p.imagenURL}" alt="" onerror="this.parentElement.innerHTML='🖼️'"></div>`
       : `<div class="post-thumb">📝</div>`;
+    const catMap = {
+      'fiestas-infantiles':'Fiestas infantiles','adultos':'Adultos',
+      'business':'Business','manualidades':'Manualidades','consejos':'Consejos'
+    };
     return `
       <div class="post-item">
         ${thumb}
@@ -835,7 +854,6 @@ window.openEditor = function(postId) {
 window.backToList = function() {
   document.getElementById('screen-editor').style.display = 'none';
   document.getElementById('screen-list').style.display = 'block';
-  loadPosts(); // Recargar siempre para tener Timestamps reales y lista actualizada
 };
 
 // ── Guardar post ──────────────────────────────────────────
@@ -852,6 +870,7 @@ window.savePost = async function(estadoOverride) {
   const msgEl = document.getElementById('saving-msg');
   msgEl.textContent = 'Guardando…';
 
+  // Slug simple desde el título
   const slug = titulo.toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .replace(/[^a-z0-9\s-]/g,'')
@@ -862,20 +881,20 @@ window.savePost = async function(estadoOverride) {
   try {
     if (editingPostId) {
       await updateDoc(doc(db, 'blog_posts', editingPostId), data);
+      // Actualizar local
+      const idx = allPosts.findIndex(p => p.id === editingPostId);
+      if (idx !== -1) allPosts[idx] = { ...allPosts[idx], ...data };
     } else {
       data.createdAt = serverTimestamp();
       const ref = await addDoc(collection(db, 'blog_posts'), data);
-      editingPostId = ref.id;
+      allPosts.unshift({ id: ref.id, ...data });
+      editingPostId = ref.id; // ahora estamos editando el que acabamos de crear
     }
 
     msgEl.textContent = estado === 'publicado' ? '✅ Publicado en la web' : '💾 Borrador guardado';
     document.getElementById('editor-title-hdr').textContent = 'Editar post';
     showToast(estado === 'publicado' ? '✅ Post publicado' : '💾 Borrador guardado');
     setTimeout(() => { msgEl.textContent = ''; }, 3000);
-
-    // Recargar lista desde Firestore para tener Timestamps reales
-    await loadPosts();
-
   } catch(e) {
     msgEl.textContent = '';
     showToast('Error al guardar. Inténtalo de nuevo.');
@@ -940,19 +959,49 @@ window.previewImg = function(rawUrl) {
 };
 
 // ── Rich editor ───────────────────────────────────────────
-window.fmt = function(cmd) { document.execCommand(cmd, false, null); };
-window.fmtBlock = function(tag) { document.execCommand('formatBlock', false, tag); };
-window.insertLink = function() {
-  const url = prompt('URL del enlace:');
-  if (url) document.execCommand('createLink', false, url);
+window.fmt = function(cmd) {
+  document.getElementById('e-contenido').focus();
+  document.execCommand(cmd, false, null);
 };
 
-// Intro en el editor no crea <div>, crea <p>
+window.fmtBlock = function(tag) {
+  document.getElementById('e-contenido').focus();
+  document.execCommand('formatBlock', false, tag);
+};
+
+window.setColor = function(color) {
+  document.getElementById('e-contenido').focus();
+  document.execCommand('foreColor', false, color);
+};
+
+window.quitarFormato = function() {
+  document.getElementById('e-contenido').focus();
+  // Volver a párrafo y quitar estilos inline
+  document.execCommand('formatBlock', false, 'p');
+  document.execCommand('removeFormat', false, null);
+};
+
+window.insertLink = function() {
+  const url = prompt('URL del enlace:');
+  if (url) {
+    document.getElementById('e-contenido').focus();
+    document.execCommand('createLink', false, url);
+  }
+};
+
+// Enter crea párrafo nuevo — fix del wrap
 document.getElementById('e-contenido').addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
     document.execCommand('insertParagraph');
   }
+});
+
+// Prevenir paste con formato pesado — pegar solo texto plano
+document.getElementById('e-contenido').addEventListener('paste', e => {
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+  document.execCommand('insertText', false, text);
 });
 
 // ── Toast ─────────────────────────────────────────────────
