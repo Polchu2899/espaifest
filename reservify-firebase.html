@@ -504,9 +504,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </div>
         <div class="card">
           <div class="chead"><div><div class="ctitle">Niveles del programa</div></div><button class="btn bg sm" onclick="openModal('edit-niveles')"><svg width="13" height="13" stroke="currentColor"><use href="#i-edit"/></svg>Editar</button></div>
-          <div class="trow" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px"><div><span class="badge bg-x">Básico</span></div><div class="c cm">1–4 reservas</div><div class="c cm">Sin descuento</div><div class="c cx" id="f-basico">—</div></div>
-          <div class="trow" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px"><div><span class="badge bg-a">Plata</span></div><div class="c cm">5–9 reservas</div><div class="c" style="color:var(--green);font-weight:600">5% descuento</div><div class="c cx" id="f-plata">—</div></div>
-          <div class="trow" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px"><div><span class="badge bg-p">Oro</span></div><div class="c cm">10+ reservas</div><div class="c" style="color:var(--green);font-weight:600">10% descuento</div><div class="c cx" id="f-orot">—</div></div>
+          <div class="trow" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px"><div><span class="badge bg-x">Básico</span></div><div class="c cm" id="rng-bas">1–4 reservas</div><div class="c cm" id="dsc-bas">Sin descuento</div><div class="c cx" id="f-basico">—</div></div>
+          <div class="trow" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px"><div><span class="badge bg-a">Plata</span></div><div class="c cm" id="rng-pla">5–9 reservas</div><div class="c" id="dsc-pla" style="color:var(--green);font-weight:600">5% descuento</div><div class="c cx" id="f-plata">—</div></div>
+          <div class="trow" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px"><div><span class="badge bg-p">Oro</span></div><div class="c cm" id="rng-oro">10+ reservas</div><div class="c" id="dsc-oro" style="color:var(--green);font-weight:600">10% descuento</div><div class="c cx" id="f-orot">—</div></div>
         </div>
       </div>
 
@@ -2000,41 +2000,81 @@ let nivelesConfig = { bas:{min:1,desc:0}, pla:{min:5,desc:5}, oro:{min:10,desc:1
 
 async function loadNiveles() {
   try {
-    const snap = await getDocs(query(collection(db,'config'), where('__name__','in',['niveles'])));
+    const snap = await getDocs(collection(db,'config'));
     snap.forEach(d => {
-      const data = d.data();
-      if(data.bas) nivelesConfig.bas = data.bas;
-      if(data.pla) nivelesConfig.pla = data.pla;
-      if(data.oro) nivelesConfig.oro = data.oro;
+      if(d.id === 'niveles') {
+        const data = d.data();
+        if(data.bas) nivelesConfig.bas = data.bas;
+        if(data.pla) nivelesConfig.pla = data.pla;
+        if(data.oro) nivelesConfig.oro = data.oro;
+      }
     });
-  } catch(e){}
-  // Poblar campos del modal con valores actuales
+  } catch(e){ console.warn('loadNiveles error:', e.message); }
+
+  // Poblar campos del modal con valores actuales de Firestore
   document.getElementById('niv-bas-min').value  = nivelesConfig.bas.min;
   document.getElementById('niv-bas-desc').value = nivelesConfig.bas.desc;
   document.getElementById('niv-pla-min').value  = nivelesConfig.pla.min;
   document.getElementById('niv-pla-desc').value = nivelesConfig.pla.desc;
   document.getElementById('niv-oro-min').value  = nivelesConfig.oro.min;
   document.getElementById('niv-oro-desc').value = nivelesConfig.oro.desc;
-  // Actualizar tabla visible
+
   renderNiveles();
 }
 
 function renderNiveles() {
   const { bas, pla, oro } = nivelesConfig;
-  const rows = document.querySelectorAll('#panel-fidelizacion .trow');
-  if(rows[0]) rows[0].querySelector('.c.cm') && (rows[0].querySelectorAll('.c')[0].textContent = `${bas.min}–${pla.min-1} reservas`);
-  // Los textos de descuento ya están hardcoded en HTML — se actualizan aquí si existen
+
+  // Rangos de la tabla
+  const setEl = (id, txt, color) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.textContent = txt;
+    if(color) el.style.color = color;
+  };
+
+  setEl('rng-bas', `${bas.min}–${pla.min - 1} reservas`);
+  setEl('dsc-bas', bas.desc > 0 ? `${bas.desc}% descuento` : 'Sin descuento',
+        bas.desc > 0 ? 'var(--green)' : '');
+
+  setEl('rng-pla', `${pla.min}–${oro.min - 1} reservas`);
+  setEl('dsc-pla', `${pla.desc}% descuento`);
+
+  setEl('rng-oro', `${oro.min}+ reservas`);
+  setEl('dsc-oro', `${oro.desc}% descuento`);
+
+  // También actualizar campos del modal por si está abierto
+  const fields = [
+    ['niv-bas-min', bas.min], ['niv-bas-desc', bas.desc],
+    ['niv-pla-min', pla.min], ['niv-pla-desc', pla.desc],
+    ['niv-oro-min', oro.min], ['niv-oro-desc', oro.desc],
+  ];
+  fields.forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if(el && document.activeElement !== el) el.value = val;
+  });
 }
 
 window.saveNiveles = async function() {
   const bas = { min: parseInt(document.getElementById('niv-bas-min').value)||1,  desc: parseInt(document.getElementById('niv-bas-desc').value)||0 };
   const pla = { min: parseInt(document.getElementById('niv-pla-min').value)||5,  desc: parseInt(document.getElementById('niv-pla-desc').value)||5 };
   const oro = { min: parseInt(document.getElementById('niv-oro-min').value)||10, desc: parseInt(document.getElementById('niv-oro-desc').value)||10 };
-  await setDoc(doc(db,'config','niveles'), { bas, pla, oro, updatedAt: serverTimestamp() });
-  nivelesConfig = { bas, pla, oro };
-  closeModal('edit-niveles');
-  showToast('Niveles de fidelización guardados ✓');
-  loadClientes();
+
+  // Validaciones
+  if(pla.min <= bas.min) { showToast('El mínimo de Plata debe ser mayor que el de Básico'); return; }
+  if(oro.min <= pla.min) { showToast('El mínimo de Oro debe ser mayor que el de Plata'); return; }
+
+  try {
+    await setDoc(doc(db,'config','niveles'), { bas, pla, oro, updatedAt: serverTimestamp() });
+    nivelesConfig = { bas, pla, oro };
+    renderNiveles();     // Actualizar tabla inmediatamente
+    closeModal('edit-niveles');
+    showToast('Niveles guardados ✓ — se reflejarán en la web al recargarla');
+    loadClientes();      // Recalcular contadores por nivel
+  } catch(e) {
+    console.error('saveNiveles error:', e);
+    showToast('Error al guardar niveles');
+  }
 };
 
 // Cargar niveles al inicio
