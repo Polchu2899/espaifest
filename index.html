@@ -2,7 +2,7 @@
 <html lang="es" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 
 <!-- ══ SEO PRIMARIO ══════════════════════════════════════ -->
 <title>EspaiFest Martorell | Sala de Fiestas y Eventos — Reserva Online</title>
@@ -637,18 +637,24 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 /* ── HAMBURGUESA ── */
 .ham-btn{
   display:none;flex-direction:column;justify-content:center;align-items:center;
-  gap:5px;width:42px;height:42px;border-radius:10px;border:1px solid var(--bd);
+  gap:5px;width:44px;height:44px;border-radius:12px;border:1px solid var(--bd);
   background:var(--s2);cursor:pointer;padding:0;flex-shrink:0;z-index:810;
+  /* Sombra para visibilidad en hero oscuro */
+  box-shadow:0 2px 12px oklch(0% 0 0/.25);
 }
 .ham-btn span{
-  display:block;width:20px;height:2px;border-radius:2px;
-  background:var(--tx2);transition:all .3s cubic-bezier(.34,1.56,.64,1);transform-origin:center;
+  display:block;width:22px;height:2px;border-radius:2px;
+  background:var(--tx1);transition:all .3s cubic-bezier(.34,1.56,.64,1);transform-origin:center;
 }
 .ham-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
 .ham-btn.open span:nth-child(2){opacity:0;transform:scaleX(0);}
 .ham-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
 
-/* Overlay móvil */
+/* WA flotante con safe-area para notch/barra Android */
+.wa-fab{
+  bottom:max(26px, calc(16px + env(safe-area-inset-bottom)));
+  right:max(20px, env(safe-area-inset-right, 20px));
+}
 .mob-overlay{
   position:fixed;inset:0;background:oklch(0% 0 0/.6);z-index:799;
   opacity:0;pointer-events:none;transition:opacity .3s ease;
@@ -706,8 +712,13 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 .mob-theme:hover{color:var(--tx1);border-color:var(--co);}
 
 @media(max-width:768px){
-  nav{padding:0 1rem;height:68px;}
-  .n-links{display:none;}
+  nav{
+    padding:0 1rem;height:68px;
+    /* Fondo sólido en móvil para que el hamburguesa sea siempre visible */
+    background:var(--s0) !important;
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--bd);
+  }
   .ham-btn{display:flex;}
   .cards3,.price-grid,.manu-grid,.blog-grid{grid-template-columns:1fr;}
   footer{padding:2.5rem 1rem 1.5rem;}.ft-grid{grid-template-columns:1fr;gap:24px;}
@@ -739,6 +750,8 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   .res-form{padding:20px;}
   .res-form-grid{grid-template-columns:1fr!important;}
   .form-group.s2{grid-column:span 1!important;}
+  /* WA más arriba en móvil para no taparse con barra nav Android */
+  .wa-fab{bottom:max(80px, calc(70px + env(safe-area-inset-bottom)));right:16px;}
 }
 
 /* ══ VIEW TRANSITIONS API ══════════════════════════════ */
@@ -1581,9 +1594,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             </div>
             <div class="fid-meta">
               <div class="fid-name" data-es="Básico" data-ca="Bàsic">Básico</div>
-              <div class="fid-desc" data-es="1–4 reservas · Sin descuento" data-ca="1–4 reserves · Sense descompte">1–4 reservas · Sin descuento</div>
+              <div class="fid-desc" id="fid-desc-bas" data-es="1–4 reservas · Sin descuento" data-ca="1–4 reserves · Sense descompte">1–4 reservas · Sin descuento</div>
             </div>
-            <div class="fid-discount" style="color:var(--tx3)">—</div>
+            <div class="fid-discount" id="fid-disc-bas" style="color:var(--tx3)">—</div>
           </div>
           <div class="fid-level">
             <div class="fid-badge fb-silver">
@@ -1591,9 +1604,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             </div>
             <div class="fid-meta">
               <div class="fid-name" data-es="Plata" data-ca="Plata">Plata</div>
-              <div class="fid-desc" data-es="5–9 reservas" data-ca="5–9 reserves">5–9 reservas</div>
+              <div class="fid-desc" id="fid-desc-pla" data-es="5–9 reservas" data-ca="5–9 reserves">5–9 reservas</div>
             </div>
-            <div class="fid-discount">5%</div>
+            <div class="fid-discount" id="fid-disc-pla">5%</div>
           </div>
           <div class="fid-level">
             <div class="fid-badge fb-gold">
@@ -1601,9 +1614,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             </div>
             <div class="fid-meta">
               <div class="fid-name" data-es="Oro" data-ca="Or">Oro</div>
-              <div class="fid-desc" data-es="10+ reservas" data-ca="10+ reserves">10+ reservas</div>
+              <div class="fid-desc" id="fid-desc-oro" data-es="10+ reservas" data-ca="10+ reserves">10+ reservas</div>
             </div>
-            <div class="fid-discount" style="color:var(--cy)">10%</div>
+            <div class="fid-discount" id="fid-disc-oro" style="color:var(--cy)">10%</div>
           </div>
         </div>
       </div>
@@ -2637,13 +2650,15 @@ async function loadBlogPosts() {
     _allBlogPosts = publicados;
 
     if(!publicados.length) {
-      grid.innerHTML = `
-        <div style="grid-column:span 3;text-align:center;padding:60px 20px;color:var(--tx3)">
-          <div style="font-size:2.5rem;margin-bottom:16px">✍️</div>
-          <p>Próximamente nuevos posts</p>
-        </div>`;
+      // Ocultar sección blog completa hasta que haya posts publicados
+      const blogSection = document.getElementById('blog');
+      if(blogSection) blogSection.style.display = 'none';
+      grid.innerHTML = '';
       return;
     }
+    // Asegurarse de que la sección es visible
+    const blogSection = document.getElementById('blog');
+    if(blogSection) blogSection.style.display = '';
 
     const topDocs = publicados.slice(0, 3);
     grid.innerHTML = '';
@@ -2729,6 +2744,63 @@ loadBlogPosts();
 loadFechasOcupadas();
 loadServiciosWeb();
 loadPromocionesWeb();
+loadFidelizacionWeb();
+
+// ── FIDELIZACIÓN DESDE FIRESTORE (config/niveles) ─────────────
+async function loadFidelizacionWeb() {
+  try {
+    const snap = await getDocs(collection(_db, 'config'));
+    let niveles = null;
+    snap.forEach(d => { if(d.id === 'niveles') niveles = d.data(); });
+    if(!niveles) return; // Sin config — mantener valores por defecto del HTML
+
+    const { bas, pla, oro } = niveles;
+
+    // Básico
+    if(bas) {
+      const descBas = document.getElementById('fid-desc-bas');
+      const discBas = document.getElementById('fid-disc-bas');
+      const rangoBas = pla ? `${bas.min}–${pla.min - 1}` : `${bas.min}+`;
+      if(descBas) {
+        const txt = bas.desc > 0
+          ? `${rangoBas} reservas`
+          : `${rangoBas} reservas · Sin descuento`;
+        descBas.textContent = txt;
+        descBas.setAttribute('data-es', txt);
+      }
+      if(discBas) discBas.textContent = bas.desc > 0 ? `${bas.desc}%` : '—';
+    }
+
+    // Plata
+    if(pla) {
+      const descPla = document.getElementById('fid-desc-pla');
+      const discPla = document.getElementById('fid-disc-pla');
+      const rangoPla = oro ? `${pla.min}–${oro.min - 1}` : `${pla.min}+`;
+      if(descPla) { descPla.textContent = `${rangoPla} reservas`; descPla.setAttribute('data-es', `${rangoPla} reservas`); }
+      if(discPla) discPla.textContent = `${pla.desc}%`;
+    }
+
+    // Oro
+    if(oro) {
+      const descOro = document.getElementById('fid-desc-oro');
+      const discOro = document.getElementById('fid-disc-oro');
+      if(descOro) { descOro.textContent = `${oro.min}+ reservas`; descOro.setAttribute('data-es', `${oro.min}+ reservas`); }
+      if(discOro) discOro.textContent = `${oro.desc}%`;
+    }
+
+    // Actualizar texto "A partir de la quinta" dinámicamente
+    if(pla?.min) {
+      const ordinal = pla.min === 2 ? 'segunda' : pla.min === 3 ? 'tercera' : pla.min === 4 ? 'cuarta'
+        : pla.min === 5 ? 'quinta' : pla.min === 6 ? 'sexta' : pla.min === 7 ? 'séptima'
+        : pla.min === 8 ? 'octava' : pla.min === 9 ? 'novena' : pla.min === 10 ? 'décima' : `${pla.min}ª`;
+      document.querySelectorAll('[data-fid-desde]').forEach(el => {
+        el.textContent = ordinal;
+      });
+    }
+  } catch(e) {
+    console.warn('loadFidelizacionWeb error:', e.message);
+  }
+}
 
 // ── SERVICIOS EXTRA DESDE FIRESTORE ──────────────────────────
 async function loadServiciosWeb() {
