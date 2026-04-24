@@ -880,12 +880,23 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <!-- MODAL PROMO -->
 <div class="mov" id="modal-promo">
   <div class="modal">
-    <div class="mtitle">Nueva promoción</div><div class="msub">Crea un código de descuento</div>
-    <div class="fg"><label class="fl">Nombre</label><input type="text" class="fi" id="p-nombre" placeholder="Ej: Verano 2026"></div>
-    <div class="fg"><label class="fl">Descripción</label><input type="text" class="fi" id="p-desc" placeholder="Describe la oferta"></div>
-    <div class="fr2"><div class="fg"><label class="fl">Descuento (%)</label><input type="number" class="fi" id="p-pct" placeholder="15"></div><div class="fg"><label class="fl">Código</label><input type="text" class="fi" id="p-code" placeholder="VERANO26"></div></div>
-    <div class="fr2"><div class="fg"><label class="fl">Válido desde</label><input type="date" class="fi" id="p-desde"></div><div class="fg"><label class="fl">Válido hasta</label><input type="date" class="fi" id="p-hasta"></div></div>
-    <div class="mfoot"><button class="btn bg" onclick="closeModal('promo')">Cancelar</button><button class="btn bp" onclick="savePromo()">Crear promoción</button></div>
+    <div class="mtitle" id="promo-modal-title">Nueva promoción</div>
+    <div class="msub" id="promo-modal-sub">Crea un código de descuento</div>
+    <input type="hidden" id="p-edit-id">
+    <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="p-nombre" placeholder="Ej: Oferta de verano"></div>
+    <div class="fg"><label class="fl">Descripción</label><input type="text" class="fi" id="p-desc" placeholder="Describe la oferta brevemente"></div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Descuento (%)</label><input type="number" class="fi" id="p-pct" placeholder="15" min="1" max="100"></div>
+      <div class="fg"><label class="fl">Código promocional</label><input type="text" class="fi" id="p-code" placeholder="VERANO26" style="text-transform:uppercase"></div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Válido desde</label><input type="date" class="fi" id="p-desde"></div>
+      <div class="fg"><label class="fl">Válido hasta *</label><input type="date" class="fi" id="p-hasta"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeModal('promo');limpiarModalPromo()">Cancelar</button>
+      <button class="btn bp" id="promo-save-btn" onclick="savePromo()">Crear promoción</button>
+    </div>
   </div>
 </div>
 
@@ -1746,10 +1757,15 @@ async function loadPromos() {
     const hoy = new Date().toISOString().split('T')[0];
     el.innerHTML = promos.map(p => {
       const activa = p.hasta >= hoy;
-      return `<div class="pcard" style="${!activa?'opacity:.5':''}">
-        <div class="ptop"><span class="badge ${activa?'bg-g':'bg-r'}">${activa?'Activa':'Caducada'}</span>
-          <button class="rab" onclick="eliminarPromo('${p.id}')"><svg><use href="#i-trash"/></svg></button></div>
-        <div class="pname">${p.nombre}</div><div class="pdesc">${p.descripcion}</div>
+      return `<div class="pcard" style="${!activa?'opacity:.55':''}">
+        <div class="ptop">
+          <span class="badge ${activa?'bg-g':'bg-r'}">${activa?'Activa':'Caducada'}</span>
+          <div style="display:flex;gap:6px">
+            <button class="rab" onclick="editarPromo('${p.id}')" title="Editar"><svg><use href="#i-edit"/></svg></button>
+            <button class="rab rab-cancel" onclick="eliminarPromo('${p.id}')" title="Eliminar"><svg><use href="#i-trash"/></svg></button>
+          </div>
+        </div>
+        <div class="pname">${p.nombre}</div><div class="pdesc">${p.descripcion||''}</div>
         <div class="ppct">-${p.descuento}%</div>
         <div class="pfoot"><span class="pcode">${p.codigo}</span><span class="badge bg-x">hasta ${p.hasta}</span></div>
       </div>`;
@@ -1758,23 +1774,88 @@ async function loadPromos() {
 }
 
 window.savePromo = async () => {
+  const editId = document.getElementById('p-edit-id').value;
   const data = {
-    nombre: document.getElementById('p-nombre').value,
-    descripcion: document.getElementById('p-desc').value,
-    descuento: parseInt(document.getElementById('p-pct').value)||10,
-    codigo: document.getElementById('p-code').value.toUpperCase(),
-    desde: document.getElementById('p-desde').value,
-    hasta: document.getElementById('p-hasta').value,
-    createdAt: serverTimestamp()
+    nombre:      document.getElementById('p-nombre').value.trim(),
+    descripcion: document.getElementById('p-desc').value.trim(),
+    descuento:   parseInt(document.getElementById('p-pct').value)||10,
+    codigo:      document.getElementById('p-code').value.toUpperCase().trim(),
+    desde:       document.getElementById('p-desde').value,
+    hasta:       document.getElementById('p-hasta').value,
+    updatedAt:   serverTimestamp()
   };
-  if (!data.nombre || !data.codigo) { showToast('Rellena nombre y código'); return; }
-  await addDoc(collection(db,'promociones'), data);
-  closeModal('promo');
-  showToast('Promoción creada');
-  loadPromos();
+  if(!data.nombre || !data.codigo || !data.hasta) { showToast('Rellena nombre, código y fecha de fin'); return; }
+
+  try {
+    if(editId) {
+      // Editar existente
+      await updateDoc(doc(db,'promociones',editId), data);
+      showToast('Promoción actualizada ✓');
+    } else {
+      // Crear nueva
+      data.createdAt = serverTimestamp();
+      await addDoc(collection(db,'promociones'), data);
+      showToast('Promoción creada ✓');
+    }
+    closeModal('promo');
+    limpiarModalPromo();
+    loadPromos();
+  } catch(e) {
+    console.error('savePromo error:', e);
+    showToast('Error al guardar la promoción');
+  }
+};
+
+window.editarPromo = async (id) => {
+  // Buscar los datos actuales en Firestore
+  try {
+    const snap = await getDocs(collection(db,'promociones'));
+    const p = snap.docs.map(d=>({id:d.id,...d.data()})).find(x=>x.id===id);
+    if(!p) { showToast('Promoción no encontrada'); return; }
+
+    // Rellenar el modal con los datos actuales
+    document.getElementById('p-edit-id').value    = id;
+    document.getElementById('p-nombre').value     = p.nombre      || '';
+    document.getElementById('p-desc').value       = p.descripcion || '';
+    document.getElementById('p-pct').value        = p.descuento   || 10;
+    document.getElementById('p-code').value       = p.codigo      || '';
+    document.getElementById('p-desde').value      = p.desde       || '';
+    document.getElementById('p-hasta').value      = p.hasta       || '';
+
+    // Cambiar títulos del modal a modo edición
+    document.getElementById('promo-modal-title').textContent = 'Editar promoción';
+    document.getElementById('promo-modal-sub').textContent   = `Modificando: ${p.nombre}`;
+    document.getElementById('promo-save-btn').textContent    = 'Guardar cambios';
+
+    openModal('promo');
+  } catch(e) {
+    console.error('editarPromo error:', e);
+    showToast('Error al cargar la promoción');
+  }
+};
+
+function limpiarModalPromo() {
+  document.getElementById('p-edit-id').value  = '';
+  document.getElementById('p-nombre').value   = '';
+  document.getElementById('p-desc').value     = '';
+  document.getElementById('p-pct').value      = '';
+  document.getElementById('p-code').value     = '';
+  document.getElementById('p-desde').value    = '';
+  document.getElementById('p-hasta').value    = '';
+  document.getElementById('promo-modal-title').textContent = 'Nueva promoción';
+  document.getElementById('promo-modal-sub').textContent   = 'Crea un código de descuento';
+  document.getElementById('promo-save-btn').textContent    = 'Crear promoción';
+}
+
+// Limpiar modal al abrir desde "Nueva promoción"
+const _origOpenModal = window.openModal;
+window.openModal = function(id) {
+  if(id === 'promo' && !document.getElementById('p-edit-id').value) limpiarModalPromo();
+  _origOpenModal(id);
 };
 
 window.eliminarPromo = async (id) => {
+  if(!confirm('¿Eliminar esta promoción? Esta acción no se puede deshacer.')) return;
   await deleteDoc(doc(db,'promociones',id));
   showToast('Promoción eliminada');
   loadPromos();
