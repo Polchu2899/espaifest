@@ -2158,6 +2158,20 @@ function setLang(lang, btn) {
     if(elD && desc) elD.textContent  = desc;
   });
 
+  // Sincronizar cards del blog
+  document.querySelectorAll('.blog-card[data-post-id]').forEach(card => {
+    const tituloEl  = card.querySelector('.blog-card-titulo');
+    const excerptEl = card.querySelector('.blog-card-excerpt');
+    if(tituloEl)  tituloEl.textContent  = card.dataset[lang==='ca'?'caTitulo':'esTitulo']  || tituloEl.textContent;
+    if(excerptEl) excerptEl.textContent = card.dataset[lang==='ca'?'caExcerpt':'esExcerpt'] || excerptEl.textContent;
+  });
+
+  // Si hay un post abierto, re-renderizarlo en el nuevo idioma
+  const modalOv = document.getElementById('blog-modal-ov');
+  if(modalOv?.classList.contains('open') && modalOv.dataset.postId) {
+    abrirPost(modalOv.dataset.postId);
+  }
+
   // Traducir on-the-fly contenido sin traducción CA guardada
   if(lang === 'ca') traducirContenidoSinCA();
   // Al volver a ES, restaurar texto original
@@ -2856,6 +2870,7 @@ async function loadBlogPosts() {
 
     const topDocs = publicados.slice(0, 3);
     grid.innerHTML = '';
+    const lang = document.documentElement.lang || 'es';
 
     topDocs.forEach(({ id, data: d }) => {
       const date = d.createdAt?.toDate
@@ -2866,24 +2881,35 @@ async function loadBlogPosts() {
       const img = d.imagenURL
         ? `<img src="${d.imagenURL}" alt="${d.titulo}" loading="lazy">`
         : `<div style="width:100%;height:100%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:2rem">📝</div>`;
-      const excerpt = d.extracto
-        ? d.extracto.substring(0, 120) + (d.extracto.length > 120 ? '…' : '')
-        : d.contenido ? d.contenido.replace(/<[^>]*>/g,'').substring(0, 120) + '…' : '';
+
+      // Textos según idioma activo — fallback a ES
+      const titulo   = (lang==='ca' && d.titulo_ca)   ? d.titulo_ca   : (d.titulo   || '');
+      const extracto_es = d.extracto   ? d.extracto.substring(0,120)+(d.extracto.length>120?'…':'')
+                        : d.contenido  ? d.contenido.replace(/<[^>]*>/g,'').substring(0,120)+'…' : '';
+      const extracto_ca = d.extracto_ca ? d.extracto_ca.substring(0,120)+(d.extracto_ca.length>120?'…':'')
+                        : extracto_es;
+      const excerpt  = (lang==='ca') ? extracto_ca : extracto_es;
 
       const card = document.createElement('div');
       card.className = 'blog-card';
       card.setAttribute('data-a', 'up');
       card.setAttribute('role', 'button');
       card.setAttribute('tabindex', '0');
-      card.setAttribute('aria-label', `Leer: ${d.titulo}`);
+      card.setAttribute('aria-label', `Leer: ${titulo}`);
+      // Atributos bilingüe para sincronización al cambiar idioma
+      card.dataset.postId  = id;
+      card.dataset.esTitulo = d.titulo || '';
+      card.dataset.caTitulo = d.titulo_ca || d.titulo || '';
+      card.dataset.esExcerpt = extracto_es;
+      card.dataset.caExcerpt = extracto_ca;
       card.innerHTML = `
         <div class="blog-img">
           ${img}
           <span class="blog-cat" style="color:${catColor}">${catLabel}</span>
         </div>
         <div class="blog-body">
-          <div class="blog-title">${d.titulo}</div>
-          <div class="blog-exc">${excerpt}</div>
+          <div class="blog-title blog-card-titulo">${titulo}</div>
+          <div class="blog-exc blog-card-excerpt">${excerpt}</div>
           <div class="blog-meta">
             <span>EspaiFest</span>
             <span class="bm-dot"></span>
@@ -3201,14 +3227,19 @@ async function abrirPost(id) {
   }
 }
 function renderModalPost(id, d) {
+  const lang     = document.documentElement.lang || 'es';
   const catLabel = CAT_LABELS[d.categoria] || d.categoria || '';
   const catColor = CAT_COLORS[d.categoria] || 'var(--co)';
   const date = d.createdAt?.toDate
     ? d.createdAt.toDate().toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'})
     : (d.createdAt ? new Date(d.createdAt).toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}) : '');
 
+  // Elegir idioma — fallback a ES si no hay CA
+  const titulo   = (lang==='ca' && d.titulo_ca)    ? d.titulo_ca    : (d.titulo    || '');
+  const contenido= (lang==='ca' && d.contenido_ca) ? d.contenido_ca : (d.contenido || '');
+
   const heroHTML = d.imagenURL
-    ? `<div class="blog-modal-hero"><img src="${d.imagenURL}" alt="${d.titulo}" loading="lazy"></div>`
+    ? `<div class="blog-modal-hero"><img src="${d.imagenURL}" alt="${titulo}" loading="lazy"></div>`
     : `<div class="blog-modal-hero-placeholder">📝</div>`;
 
   document.getElementById('blog-modal-inner').innerHTML = `
@@ -3220,15 +3251,18 @@ function renderModalPost(id, d) {
     </div>
     <div class="blog-modal-body">
       <span class="blog-modal-cat" style="color:${catColor}">${catLabel}</span>
-      <div class="blog-modal-titulo">${d.titulo || ''}</div>
+      <div class="blog-modal-titulo">${titulo}</div>
       <div class="blog-modal-meta">
         <span>EspaiFest</span>
         <span class="bm-dot"></span>
         <span>${date}</span>
       </div>
-      <div class="blog-modal-contenido">${sanitizeContenido(d.contenido)}</div>
+      <div class="blog-modal-contenido">${sanitizeContenido(contenido)}</div>
     </div>
   `;
+
+  // Guardar referencia al post abierto para sincronizar al cambiar idioma
+  document.getElementById('blog-modal-ov').dataset.postId = id;
 }
 
 function cerrarPost() {
