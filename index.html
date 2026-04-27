@@ -2138,7 +2138,7 @@ function setLang(lang, btn) {
   document.documentElement.lang = lang;
   syncMobLang(lang);
 
-  // Actualizar servicios dinámicos de Firestore (tienen data-es-nombre / data-ca-nombre)
+  // Actualizar servicios dinámicos de Firestore
   document.querySelectorAll('.svc-chip').forEach(chip => {
     const nombre = chip.getAttribute(`data-${lang}-nombre`);
     const desc   = chip.getAttribute(`data-${lang}-desc`);
@@ -2158,7 +2158,95 @@ function setLang(lang, btn) {
     if(elD && desc) elD.textContent  = desc;
   });
 
+  // Traducir on-the-fly contenido sin traducción CA guardada
+  if(lang === 'ca') traducirContenidoSinCA();
+  // Al volver a ES, restaurar texto original
+  if(lang === 'es') restaurarContenidoES();
+
   showToast(lang==='es'?'Castellano activado':'Català activat');
+}
+
+// Traduce on-the-fly via API los elementos que no tienen _ca guardado
+async function traducirContenidoSinCA() {
+  const textos = [];
+
+  // Recopilar servicios sin traducción CA
+  document.querySelectorAll('.svc-chip').forEach((chip, i) => {
+    const nomCA = chip.getAttribute('data-ca-nombre');
+    const nomES = chip.getAttribute('data-es-nombre');
+    // Si el CA es igual al ES significa que no hay traducción real guardada
+    if(nomES && nomCA === nomES) {
+      textos.push({ tipo:'svc', idx:i, campo:'nombre', texto:nomES, el:chip.querySelector('.svc-nombre') });
+    }
+    const descCA = chip.getAttribute('data-ca-desc');
+    const descES = chip.getAttribute('data-es-desc');
+    if(descES && descCA === descES) {
+      textos.push({ tipo:'svc', idx:i, campo:'desc', texto:descES, el:chip.querySelector('.svc-desc') });
+    }
+  });
+
+  // Recopilar promos sin traducción CA
+  document.querySelectorAll('.promo-card[data-es-nombre]').forEach((card, i) => {
+    const nomCA = card.getAttribute('data-ca-nombre');
+    const nomES = card.getAttribute('data-es-nombre');
+    if(nomES && nomCA === nomES) {
+      textos.push({ tipo:'promo', idx:i, campo:'nombre', texto:nomES, el:card.querySelector('.promo-nombre') });
+    }
+    const descCA = card.getAttribute('data-ca-desc');
+    const descES = card.getAttribute('data-es-desc');
+    if(descES && descCA === descES) {
+      textos.push({ tipo:'promo', idx:i, campo:'desc', texto:descES, el:card.querySelector('.promo-desc-txt') });
+    }
+  });
+
+  if(!textos.length) return; // Todo ya tiene traducción
+
+  try {
+    const lista = textos.map((t,i) => `${i+1}. ${t.texto}`).join('\n');
+    const prompt = `Traduce al catalán estos textos de una sala de fiestas. Responde SOLO con JSON: {"traducciones":["texto1_ca","texto2_ca",...]} — mismo orden, sin explicaciones.\n${lista}`;
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:500,
+        messages:[{role:'user',content:prompt}] })
+    });
+    const result = await resp.json();
+    const parsed = JSON.parse((result.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
+    const traducciones = parsed.traducciones || [];
+
+    textos.forEach((t, i) => {
+      const ca = traducciones[i];
+      if(ca && t.el && document.documentElement.lang === 'ca') {
+        t.el.textContent = ca;
+        // Guardar en el atributo para no volver a traducir
+        const chip = t.el.closest('.svc-chip');
+        const card = t.el.closest('.promo-card');
+        if(chip && t.campo === 'nombre') chip.setAttribute('data-ca-nombre', ca);
+        if(chip && t.campo === 'desc')   chip.setAttribute('data-ca-desc',   ca);
+        if(card && t.campo === 'nombre') card.setAttribute('data-ca-nombre', ca);
+        if(card && t.campo === 'desc')   card.setAttribute('data-ca-desc',   ca);
+      }
+    });
+  } catch(e){ console.warn('Traducción on-the-fly falló:', e.message); }
+}
+
+function restaurarContenidoES() {
+  document.querySelectorAll('.svc-chip').forEach(chip => {
+    const nomES  = chip.getAttribute('data-es-nombre');
+    const descES = chip.getAttribute('data-es-desc');
+    const elN = chip.querySelector('.svc-nombre');
+    const elD = chip.querySelector('.svc-desc');
+    if(elN && nomES)  elN.textContent  = nomES;
+    if(elD && descES) elD.textContent  = descES;
+  });
+  document.querySelectorAll('.promo-card[data-es-nombre]').forEach(card => {
+    const nomES  = card.getAttribute('data-es-nombre');
+    const descES = card.getAttribute('data-es-desc');
+    const elN = card.querySelector('.promo-nombre');
+    const elD = card.querySelector('.promo-desc-txt');
+    if(elN && nomES)  elN.textContent  = nomES;
+    if(elD && descES) elD.textContent  = descES;
+  });
 }
 
 function syncMobLang(lang) {
