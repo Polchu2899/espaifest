@@ -483,16 +483,47 @@ section{padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem);}
 #precios{background:var(--s0);}
 .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px;}
 /* ── SERVICIOS EXTRA FIRESTORE ── */
-.svc-extra{margin-top:32px;border-top:1px solid var(--bd);padding-top:32px;display:none;}
+.svc-extra{margin-top:40px;border-top:1px solid var(--bd);padding-top:40px;display:none;}
 .svc-extra.visible{display:block;}
-.svc-extra-title{font:700 .7rem var(--fb);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:16px;text-align:center;}
-.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
-.svc-chip{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:12px;transition:border-color .2s,transform .2s;}
-.svc-chip:hover{border-color:oklch(68% .22 38/.4);transform:translateY(-2px);}
-.svc-chip-ico{width:36px;height:36px;border-radius:10px;background:oklch(68% .22 38/.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.svc-chip-ico svg{width:18px;height:18px;stroke:var(--co);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-.svc-chip-name{font:600 .88rem var(--fb);color:var(--tx1);}
-.svc-chip-price{font:700 .78rem var(--fb);color:var(--co);margin-top:2px;}
+.svc-extra-title{font:700 .7rem var(--fb);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:24px;text-align:center;}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
+.svc-chip{
+  background:var(--s1);border:1px solid var(--bd);border-radius:20px;
+  padding:24px;display:flex;flex-direction:column;gap:14px;
+  position:relative;overflow:hidden;
+  transition:transform .25s cubic-bezier(.25,.46,.45,.94),box-shadow .25s,border-color .25s;
+  cursor:default;
+}
+.svc-chip::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--cp),var(--co));
+  opacity:0;transition:opacity .25s;
+}
+.svc-chip:hover{transform:translateY(-5px);border-color:oklch(68% .22 38/.3);box-shadow:0 16px 40px oklch(0% 0 0/.12);}
+.svc-chip:hover::before{opacity:1;}
+.svc-chip-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.svc-chip-ico{
+  width:44px;height:44px;border-radius:14px;flex-shrink:0;
+  background:linear-gradient(135deg,oklch(68% .22 38/.15),oklch(55% .28 310/.15));
+  display:flex;align-items:center;justify-content:center;
+}
+.svc-chip-ico svg{width:22px;height:22px;stroke:var(--co);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.svc-chip-precio-tag{
+  background:linear-gradient(135deg,var(--cp),var(--co));
+  border-radius:20px;padding:4px 12px;
+  font:800 .9rem var(--fb);color:#fff;white-space:nowrap;
+}
+.svc-chip-name{font:700 1rem var(--fd);color:var(--tx1);line-height:1.25;}
+.svc-chip-desc{font-size:.82rem;color:var(--tx3);line-height:1.5;}
+.svc-chip-footer{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--bd);margin-top:auto;}
+.svc-chip-dur{font-size:.78rem;color:var(--tx3);display:flex;align-items:center;gap:5px;}
+.svc-chip-dur svg{width:12px;height:12px;stroke:var(--tx3);fill:none;stroke-width:2;}
+.svc-chip-cta{
+  font:700 .75rem var(--fb);color:var(--co);text-decoration:none;
+  display:flex;align-items:center;gap:4px;transition:gap .2s;
+}
+.svc-chip-cta:hover{gap:7px;color:var(--co);}
+.svc-chip-cta svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;}
 /* ── PROMOCIONES FIRESTORE ── */
 #promociones-web{display:none;}
 #promociones-web.visible{display:block;}
@@ -2106,6 +2137,23 @@ function setLang(lang, btn) {
   if(btn) btn.classList.add('on');
   document.documentElement.lang = lang;
   syncMobLang(lang);
+
+  // Actualizar servicios dinámicos de Firestore (tienen data-es-nombre / data-ca-nombre)
+  document.querySelectorAll('.svc-chip').forEach(chip => {
+    const nombre = chip.getAttribute(`data-${lang}-nombre`);
+    const desc   = chip.getAttribute(`data-${lang}-desc`);
+    const elNom  = chip.querySelector('.svc-nombre');
+    const elDesc = chip.querySelector('.svc-desc');
+    if(elNom && nombre) elNom.textContent = nombre;
+    if(elDesc && desc)  elDesc.textContent = desc;
+  });
+
+  // Actualizar promos dinámicas si existen
+  document.querySelectorAll('[data-es][data-ca]').forEach(el => {
+    const t = el.getAttribute('data-'+lang);
+    if(t) el.textContent = t;
+  });
+
   showToast(lang==='es'?'Castellano activado':'Català activat');
 }
 
@@ -2859,24 +2907,55 @@ async function loadFidelizacionWeb() {
 // ── SERVICIOS EXTRA DESDE FIRESTORE ──────────────────────────
 async function loadServiciosWeb() {
   try {
-    const snap = await getDocs(query(collection(_db,'servicios'), where('activo','==',true)));
-    if(snap.empty) return; // Nada que mostrar — sección oculta
-    const servicios = snap.docs.map(d=>({id:d.id,...d.data()}));
+    const snap = await getDocs(collection(_db,'servicios'));
+    if(snap.empty) return;
+    const servicios = snap.docs.map(d=>({id:d.id,...d.data()})).filter(s=>s.activo!==false);
+    if(!servicios.length) return;
+
     const grid = document.getElementById('svc-extra-grid');
     if(!grid) return;
-    const checkSvg = `<svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>`;
-    grid.innerHTML = servicios.map(s=>`
-      <div class="svc-chip" data-a="up">
-        <div class="svc-chip-ico">${checkSvg}</div>
-        <div>
-          <div class="svc-chip-name">${s.nombre||'—'}</div>
-          ${s.precio ? `<div class="svc-chip-price">${parseFloat(s.precio).toFixed(0)} €${s.duracion?' · '+s.duracion:''}</div>` : ''}
-        </div>
-      </div>`).join('');
+
+    const clockSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+    const arrowSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
+
+    const lang = document.documentElement.lang || 'es';
+
+    grid.innerHTML = servicios.map(s => {
+      const nombre = (lang==='ca' && s.nombre_ca) ? s.nombre_ca : (s.nombre||'—');
+      const desc   = (lang==='ca' && s.descripcion_ca) ? s.descripcion_ca : (s.descripcion||'');
+      const precio = s.precio ? `${parseFloat(s.precio).toFixed(0)} €` : '';
+      const dur    = s.duracion || '';
+
+      return `
+        <div class="svc-chip" data-a="up"
+             data-es-nombre="${(s.nombre||'').replace(/"/g,'&quot;')}"
+             data-es-desc="${(s.descripcion||'').replace(/"/g,'&quot;')}"
+             data-ca-nombre="${(s.nombre_ca||s.nombre||'').replace(/"/g,'&quot;')}"
+             data-ca-desc="${(s.descripcion_ca||s.descripcion||'').replace(/"/g,'&quot;')}">
+          <div class="svc-chip-head">
+            <div class="svc-chip-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="oklch(68% .22 38/.3)" stroke="var(--co)"/>
+              </svg>
+            </div>
+            ${precio ? `<div class="svc-chip-precio-tag">${precio}</div>` : ''}
+          </div>
+          <div>
+            <div class="svc-chip-name svc-nombre">${nombre}</div>
+            ${desc ? `<div class="svc-chip-desc svc-desc">${desc}</div>` : ''}
+          </div>
+          <div class="svc-chip-footer">
+            ${dur ? `<div class="svc-chip-dur">${clockSvg}<span>${dur}</span></div>` : '<div></div>'}
+            <a href="#reservas" class="svc-chip-cta" data-es="Reservar" data-ca="Reservar">
+              Reservar ${arrowSvg}
+            </a>
+          </div>
+        </div>`;
+    }).join('');
+
     const wrap = document.getElementById('svc-extra-wrap');
-    if(wrap){ wrap.classList.add('visible'); }
-    // Re-observe para animaciones scroll
-    if(typeof scrollObs !== 'undefined'){
+    if(wrap) wrap.classList.add('visible');
+    if(typeof scrollObs !== 'undefined') {
       grid.querySelectorAll('[data-a]').forEach(el=>scrollObs.observe(el));
     }
   } catch(e){ console.warn('Servicios web error:',e.message); }
