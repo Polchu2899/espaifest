@@ -460,6 +460,54 @@ body {
   font-size: .8rem;
   color: var(--tx3);
   min-height: 18px;
+
+/* ── TRADUCTOR ── */
+.trad-dir {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.trad-dir-btn {
+  padding: 9px 6px;
+  border: 1.5px solid var(--br);
+  border-radius: 10px;
+  background: var(--s2);
+  color: var(--tx2);
+  font: 600 .78rem 'Syne', sans-serif;
+  cursor: pointer;
+  text-align: center;
+  transition: all .18s;
+  line-height: 1.3;
+}
+.trad-dir-btn:hover { border-color: var(--co); color: var(--co); }
+.trad-dir-btn.active {
+  background: var(--co);
+  border-color: var(--co);
+  color: #fff;
+}
+.btn-traducir {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: var(--rad);
+  background: linear-gradient(135deg, oklch(55% .28 310), oklch(68% .22 38));
+  color: #fff;
+  font: 700 .9rem 'Syne', sans-serif;
+  cursor: pointer;
+  transition: opacity .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-traducir:hover { opacity: .88; }
+.btn-traducir:disabled { opacity: .5; cursor: not-allowed; }
+.trad-estado {
+  font-size: .75rem;
+  color: var(--tx3);
+  text-align: center;
+  min-height: 16px;
+}
 }
 
 /* ── MODAL CONFIRMACIÓN ── */
@@ -683,6 +731,45 @@ body {
               Guardar borrador (no aparece en la web)
             </button>
             <div class="saving-indicator" id="saving-msg"></div>
+          </div>
+
+          <!-- Traductor automático -->
+          <div class="side-card">
+            <div class="side-card-title">🌐 Traductor automático</div>
+            <p style="font-size:.78rem;color:var(--tx3);margin:0;line-height:1.5">Traduce título, extracto y contenido completo con un clic. El resultado se vuelca en los campos del idioma destino.</p>
+
+            <div>
+              <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:6px">Dirección</div>
+              <div class="trad-dir">
+                <button class="trad-dir-btn active" id="trad-es-ca" onclick="setTradDir('es','ca')">
+                  🇪🇸 ES<br><span style="font-size:.9em">↓</span><br>🟡 CA
+                </button>
+                <button class="trad-dir-btn" id="trad-ca-es" onclick="setTradDir('ca','es')">
+                  🟡 CA<br><span style="font-size:.9em">↓</span><br>🇪🇸 ES
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:6px">¿Qué traducir?</div>
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;cursor:pointer">
+                  <input type="checkbox" id="trad-titulo" checked style="accent-color:var(--co)"> Título
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;cursor:pointer">
+                  <input type="checkbox" id="trad-extracto" checked style="accent-color:var(--co)"> Extracto
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;cursor:pointer">
+                  <input type="checkbox" id="trad-contenido" checked style="accent-color:var(--co)"> Contenido completo
+                </label>
+              </div>
+            </div>
+
+            <button class="btn-traducir" id="btn-traducir" onclick="traducirPost()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>
+              Traducir ahora
+            </button>
+            <div class="trad-estado" id="trad-estado"></div>
           </div>
 
           <!-- Imagen -->
@@ -1055,6 +1142,116 @@ window.showToast = function(msg) {
   t.classList.add('show');
   clearTimeout(_tt);
   _tt = setTimeout(() => t.classList.remove('show'), 2800);
+};
+
+// ── TRADUCTOR AUTOMÁTICO ─────────────────────────────────
+const WORKER_URL = 'https://espaifest-brevo.lucasyleodigital.workers.dev';
+let _tradDe = 'español';
+let _tradA  = 'catalán';
+
+window.setTradDir = function(de, a) {
+  _tradDe = de === 'es' ? 'español' : 'catalán';
+  _tradA  = a  === 'ca' ? 'catalán' : 'español';
+  document.getElementById('trad-es-ca').classList.toggle('active', de === 'es');
+  document.getElementById('trad-ca-es').classList.toggle('active', de === 'ca');
+};
+
+async function traducirTexto(texto) {
+  if(!texto.trim()) return '';
+  const resp = await fetch(`${WORKER_URL}/translate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ texto, de: _tradDe, a: _tradA })
+  });
+  if(!resp.ok) throw new Error(`Error ${resp.status}`);
+  const data = await resp.json();
+  if(data.error) throw new Error(data.error);
+  return data.traduccion || '';
+}
+
+window.traducirPost = async function() {
+  const btn    = document.getElementById('btn-traducir');
+  const estado = document.getElementById('trad-estado');
+  const haceTitulo    = document.getElementById('trad-titulo')?.checked;
+  const haceExtracto  = document.getElementById('trad-extracto')?.checked;
+  const haceContenido = document.getElementById('trad-contenido')?.checked;
+
+  if(!haceTitulo && !haceExtracto && !haceContenido) {
+    showToast('Selecciona al menos un campo para traducir');
+    return;
+  }
+
+  // Determinar campos origen y destino según dirección
+  const esCA = _tradDe === 'español';
+  const getOrigen = (esId, caId) => document.getElementById(esCA ? esId : caId);
+  const getDestino= (esId, caId) => document.getElementById(esCA ? caId : esId);
+
+  btn.disabled = true;
+  btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Traduciendo...`;
+
+  let ok = 0; let errores = [];
+
+  try {
+    // ── Título ──
+    if(haceTitulo) {
+      const src = getOrigen('e-titulo', 'e-titulo-ca');
+      const dst = getDestino('e-titulo', 'e-titulo-ca');
+      if(src?.value.trim()) {
+        estado.textContent = `Traduciendo título ${_tradDe}→${_tradA}...`;
+        const traducido = await traducirTexto(src.value.trim());
+        if(dst) dst.value = traducido;
+        ok++;
+      }
+    }
+
+    // ── Extracto ──
+    if(haceExtracto) {
+      const src = getOrigen('e-extracto', 'e-extracto-ca');
+      const dst = getDestino('e-extracto', 'e-extracto-ca');
+      if(src?.value.trim()) {
+        estado.textContent = 'Traduciendo extracto...';
+        const traducido = await traducirTexto(src.value.trim());
+        if(dst) dst.value = traducido;
+        ok++;
+      }
+    }
+
+    // ── Contenido ──
+    if(haceContenido) {
+      const src = getOrigen('e-contenido', 'e-contenido-ca');
+      const dst = getDestino('e-contenido', 'e-contenido-ca');
+      if(src?.innerHTML.trim()) {
+        estado.textContent = 'Traduciendo contenido (puede tardar unos segundos)...';
+        // Extraer texto visible manteniendo estructura HTML
+        const htmlSrc = src.innerHTML;
+        const traducido = await traducirTexto(htmlSrc);
+        if(dst) {
+          dst.innerHTML = traducido;
+          // Abrir el acordeón CA si estaba cerrado
+          const details = dst.closest('details');
+          if(details) details.open = true;
+        }
+        ok++;
+      }
+    }
+
+    estado.textContent = ok > 0
+      ? `✓ Traducido al ${_tradA} — revisa el resultado antes de publicar`
+      : 'No había texto que traducir';
+    estado.style.color = 'var(--green)';
+    setTimeout(() => { estado.textContent = ''; estado.style.color = ''; }, 5000);
+    showToast(`✓ Traducción completada (${_tradDe} → ${_tradA})`);
+
+  } catch(e) {
+    console.error('Error traduciendo:', e);
+    estado.textContent = `Error: ${e.message}`;
+    estado.style.color = 'var(--red, #f43f5e)';
+    setTimeout(() => { estado.textContent = ''; estado.style.color = ''; }, 5000);
+    showToast('Error en la traducción — revisa que el Worker está desplegado');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg> Traducir ahora`;
+  }
 };
 
 // ── Editor catalán ──────────────────────────────────────
