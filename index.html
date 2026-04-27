@@ -2148,10 +2148,14 @@ function setLang(lang, btn) {
     if(elDesc && desc)  elDesc.textContent = desc;
   });
 
-  // Actualizar promos dinámicas si existen
-  document.querySelectorAll('[data-es][data-ca]').forEach(el => {
-    const t = el.getAttribute('data-'+lang);
-    if(t) el.textContent = t;
+  // Actualizar promos dinámicas de Firestore
+  document.querySelectorAll('.promo-card[data-es-nombre]').forEach(card => {
+    const nom  = card.getAttribute(`data-${lang}-nombre`);
+    const desc = card.getAttribute(`data-${lang}-desc`);
+    const elN  = card.querySelector('.promo-nombre');
+    const elD  = card.querySelector('.promo-desc-txt');
+    if(elN && nom)  elN.textContent  = nom;
+    if(elD && desc) elD.textContent  = desc;
   });
 
   showToast(lang==='es'?'Castellano activado':'Català activat');
@@ -2990,18 +2994,26 @@ async function loadPromocionesWeb() {
     const grid = document.getElementById('promo-grid-web');
     if(!grid) return;
 
+    const lang = document.documentElement.lang || 'es';
     const copySvg = `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
-    grid.innerHTML = activas.map(p=>`
-      <div class="promo-card" data-a="up">
+    grid.innerHTML = activas.map(p=>{
+      const nombre = (lang==='ca' && p.nombre_ca) ? p.nombre_ca : (p.nombre||'Promoción');
+      const desc   = (lang==='ca' && p.descripcion_ca) ? p.descripcion_ca : (p.descripcion||'');
+      return `
+      <div class="promo-card" data-a="up"
+           data-es-nombre="${(p.nombre||'').replace(/"/g,'&quot;')}"
+           data-es-desc="${(p.descripcion||'').replace(/"/g,'&quot;')}"
+           data-ca-nombre="${(p.nombre_ca||p.nombre||'').replace(/"/g,'&quot;')}"
+           data-ca-desc="${(p.descripcion_ca||p.descripcion||'').replace(/"/g,'&quot;')}">
         <div class="promo-pct">-${p.descuento||0}%</div>
-        <div class="promo-name">${p.nombre||'Promoción'}</div>
-        <div class="promo-desc">${p.descripcion||''}</div>
+        <div class="promo-name promo-nombre">${nombre}</div>
+        <div class="promo-desc promo-desc-txt">${desc}</div>
         <div class="promo-footer">
           <span class="promo-code" id="pc-${p.id}">${p.codigo||''}</span>
           <button class="promo-copy" onclick="copiarCodigo('${p.codigo||''}','${p.id}')" title="Copiar código">${copySvg}</button>
           <span class="promo-valido" data-es="Hasta ${p.hasta}" data-ca="Fins ${p.hasta}">Hasta ${p.hasta}</span>
         </div>
-      </div>`).join('');
+      </div>`}).join('');
 
     const sec = document.getElementById('promociones-web');
     if(sec) sec.classList.add('visible');
