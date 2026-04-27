@@ -183,7 +183,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .cm{color:var(--t2);}
 .cx{font-family:'DM Mono',monospace;font-size:12px;}
 .rc{grid-template-columns:1.4fr .85fr 1fr .65fr .9fr .85fr .75fr;gap:10px;}
-.pc{grid-template-columns:.7fr 1.4fr .8fr 1fr 1fr .9fr;gap:12px;}
+.pc{grid-template-columns:.6fr 1.3fr .75fr .9fr .9fr .85fr .7fr;gap:10px;}
 .cc{grid-template-columns:1.6fr 1fr .8fr .9fr 1fr .8fr;gap:12px;}
 .sc{grid-template-columns:1.6fr 1fr 1fr .8fr .8fr;gap:12px;}
 
@@ -467,15 +467,32 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
       <!-- PAGOS -->
       <div class="panel" id="panel-pagos">
-        <div class="kgrid" style="grid-template-columns:repeat(3,1fr)">
+        <!-- KPIs -->
+        <div class="kgrid" style="grid-template-columns:repeat(4,1fr);margin-bottom:18px">
           <div class="kcard"><div class="ktop"><div class="kico ki-g"><svg stroke="var(--green)"><use href="#i-check"/></svg></div></div><div class="kval" id="p-cobrado">—</div><div class="klbl">Cobrado este mes</div></div>
-          <div class="kcard"><div class="ktop"><div class="kico ki-a"><svg stroke="var(--amber)"><use href="#i-clock"/></svg></div></div><div class="kval" id="p-pend">—</div><div class="klbl">Pendiente</div></div>
+          <div class="kcard"><div class="ktop"><div class="kico ki-a"><svg stroke="var(--amber)"><use href="#i-clock"/></svg></div></div><div class="kval" id="p-pend">—</div><div class="klbl">Pendiente total</div></div>
           <div class="kcard"><div class="ktop"><div class="kico ki-t"><svg stroke="var(--teal)"><use href="#i-trending"/></svg></div></div><div class="kval" id="p-ticket">—</div><div class="klbl">Ticket medio</div></div>
+          <div class="kcard"><div class="ktop"><div class="kico ki-p"><svg stroke="var(--purple)"><use href="#i-star"/></svg></div></div><div class="kval" id="p-total-ing">—</div><div class="klbl">Ingresos totales</div></div>
+        </div>
+        <!-- Buscador y filtros -->
+        <div class="fbar" style="margin-bottom:12px">
+          <div class="swrap"><div class="sico"><svg><use href="#i-search"/></svg></div><input type="text" class="sinp" id="search-pag" placeholder="Buscar por cliente, fecha o referencia..." oninput="filterPagos()"></div>
+          <select class="fsi sm" id="fil-pag-estado" onchange="filterPagos()" style="width:140px">
+            <option value="">Todos los estados</option>
+            <option value="cobrado">Cobrado</option>
+            <option value="parcial">Señal cobrada</option>
+            <option value="pendiente">Pendiente</option>
+          </select>
+          <select class="fsi sm" id="fil-pag-mes" onchange="filterPagos()" style="width:130px">
+            <option value="">Todos los meses</option>
+          </select>
+          <button class="btn bg sm" onclick="exportPagos()"><svg width="13" height="13" stroke="currentColor"><use href="#i-up"/></svg>CSV</button>
         </div>
         <div class="card">
-          <div class="thead pc"><span>Ref.</span><span>Cliente</span><span>Fecha</span><span>Método</span><span>Estado</span><span style="text-align:right">Importe</span></div>
+          <div class="thead pc"><span>Ref.</span><span>Cliente</span><span>Fecha</span><span>Método</span><span>Estado pago</span><span style="text-align:right">Importe</span><span style="text-align:right">Acciones</span></div>
           <div id="pagos-list"><div class="loading"><div class="spinner"></div>Cargando pagos...</div></div>
         </div>
+        <div id="pagos-footer" style="padding:10px 0;font-size:12px;color:var(--t3);text-align:right"></div>
       </div>
 
       <!-- CLIENTES -->
@@ -1878,19 +1895,16 @@ function updateDashboard() {
   // Pagos panel
   const cobrado = estesMes.filter(r=>(r.estado||'').toLowerCase()==='confirmada').reduce((s,r)=>s+(r.importe||0),0);
   document.getElementById('p-cobrado').textContent = fmtMoney(cobrado);
-  document.getElementById('p-pend').textContent = fmtMoney(pend);
+  document.getElementById('p-pend').textContent    = fmtMoney(pend);
   const ticket = estesMes.length ? (ingresos/estesMes.length) : 0;
-  document.getElementById('p-ticket').textContent = fmtMoney(ticket);
-  // Pagos list
-  document.getElementById('pagos-list').innerHTML = estesMes.slice(0,8).map((r,i) => `
-    <div class="trow pc">
-      <div class="c cx cm">#${(i+1).toString().padStart(4,'0')}</div>
-      <div class="c cs">${r.nombre||'—'}</div>
-      <div class="c cm">${r.fecha||'—'}</div>
-      <div>${metodoBadge(r.metodoPago)}</div>
-      <div>${estadoBadge(r.estado)}</div>
-      <div class="c cx cs" style="text-align:right">${fmtMoney(r.importe)}</div>
-    </div>`).join('') || '<div class="empty">Sin movimientos este mes</div>';
+  document.getElementById('p-ticket').textContent  = fmtMoney(ticket);
+  // Ingresos totales históricos
+  const totalIng = allReservas.reduce((s,r)=>s+(parseFloat(r.importe)||0),0);
+  const elTI = document.getElementById('p-total-ing');
+  if(elTI) elTI.textContent = fmtMoney(totalIng);
+
+  // Renderizar panel pagos si está activo
+  renderPagos();
   // Config datos
   document.getElementById('cfg-datos').innerHTML = `
     <div class="cfitem"><div class="cflbl">Negocio</div><div class="cfval">EspaiFest</div></div>
@@ -1928,6 +1942,7 @@ window.showPanel = (id, el) => {
   if(id === 'migracion') loadMigLog();
   if(id === 'clientes')  loadClientes();
   if(id === 'informes')  renderInformes();
+  if(id === 'pagos')     renderPagos();
 };
 
 function updateCrumb() {
@@ -3198,6 +3213,125 @@ window.exportInformes = function() {
   a.download = `espaifest-informe-${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
   showToast(`CSV exportado — ${data.length} reservas`);
+};
+
+// ── PANEL PAGOS ───────────────────────────────────────────────
+function renderPagos() {
+  const el = document.getElementById('pagos-list');
+  if(!el) return;
+
+  // Poblar selector de meses si está vacío
+  const selMes = document.getElementById('fil-pag-mes');
+  if(selMes && selMes.options.length <= 1) {
+    const mesesSet = new Set(allReservas.map(r=>(r.fecha||'').substring(0,7)).filter(Boolean));
+    const mesesArr = [...mesesSet].sort().reverse();
+    mesesArr.forEach(m => {
+      const [y,mo] = m.split('-');
+      const lbl = new Date(parseInt(y),parseInt(mo)-1,1)
+        .toLocaleDateString('es-ES',{month:'long',year:'numeric'});
+      selMes.innerHTML += `<option value="${m}">${lbl.charAt(0).toUpperCase()+lbl.slice(1)}</option>`;
+    });
+  }
+
+  filterPagos();
+}
+
+window.filterPagos = function() {
+  const el = document.getElementById('pagos-list');
+  const footer = document.getElementById('pagos-footer');
+  if(!el) return;
+
+  const q       = (document.getElementById('search-pag')?.value || '').toLowerCase().trim();
+  const estado  = document.getElementById('fil-pag-estado')?.value || '';
+  const mes     = document.getElementById('fil-pag-mes')?.value || '';
+
+  let data = [...allReservas];
+
+  if(q)      data = data.filter(r =>
+    (r.nombre||'').toLowerCase().includes(q) ||
+    (r.telefono||'').toLowerCase().includes(q) ||
+    (r.fecha||'').includes(q) ||
+    (r.referencia||'').toLowerCase().includes(q));
+
+  if(estado) data = data.filter(r => (r.estadoPago||'pendiente') === estado);
+  if(mes)    data = data.filter(r => (r.fecha||'').startsWith(mes));
+
+  // Ordenar por fecha desc
+  data.sort((a,b) => (b.fecha||'').localeCompare(a.fecha||''));
+
+  if(!data.length) {
+    el.innerHTML = '<div class="empty">Sin resultados para los filtros aplicados.</div>';
+    if(footer) footer.textContent = '';
+    return;
+  }
+
+  // Calcular totales del filtro
+  const totalFiltro = data.reduce((s,r)=>s+(parseFloat(r.importe)||0),0);
+  const cobFiltro   = data.reduce((s,r)=>s+(parseFloat(r.cobrado)||parseFloat(r.senal)||0),0);
+  const pendFiltro  = totalFiltro - cobFiltro;
+
+  el.innerHTML = data.map((r,i) => {
+    const ep = r.estadoPago || 'pendiente';
+    const epBadge = ep === 'cobrado'  ? '<span class="badge bg-g">Cobrado</span>'
+                  : ep === 'parcial'  ? '<span class="badge bg-t">Señal</span>'
+                  : '<span class="badge bg-a">Pendiente</span>';
+    const refDisplay = r.referencia
+      ? `<span style="font-size:10px;font-family:monospace;color:var(--t3)">${r.referencia.substring(0,12)}</span>`
+      : `<span style="color:var(--t3)">#${(i+1).toString().padStart(4,'0')}</span>`;
+    return `
+      <div class="trow pc" style="cursor:default">
+        <div>${refDisplay}</div>
+        <div>
+          <div class="c cs">${r.nombre||'—'}</div>
+          <div style="font-size:11px;color:var(--t3)">${r.telefono||''}</div>
+        </div>
+        <div class="c cm">${r.fecha||'—'}</div>
+        <div>${metodoBadge(r.metodoPago)}</div>
+        <div>${epBadge}</div>
+        <div style="text-align:right">
+          <div class="c cs">${fmtMoney(r.importe)}</div>
+          ${r.cobrado||r.senal ? `<div style="font-size:10px;color:var(--green)">cob: ${fmtMoney(r.cobrado||r.senal)}</div>` : ''}
+          ${(parseFloat(r.pendiente)||Math.max(0,(r.importe||0)-(r.cobrado||r.senal||0))) > 0
+            ? `<div style="font-size:10px;color:var(--amber)">pend: ${fmtMoney(parseFloat(r.pendiente)||((r.importe||0)-(r.cobrado||r.senal||0)))}</div>` : ''}
+        </div>
+        <div class="ras" style="justify-content:flex-end">
+          <button class="rab" onclick="abrirModalPago('${r.id}')" title="Registrar / editar pago">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          </button>
+          <button class="rab" onclick="openDet('${r.id}')" title="Ver detalle">
+            <svg><use href="#i-eye"/></svg>
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+
+  if(footer) footer.textContent =
+    `${data.length} reservas · Total: ${fmtMoney(totalFiltro)} · Cobrado: ${fmtMoney(cobFiltro)} · Pendiente: ${fmtMoney(pendFiltro)}`;
+};
+
+window.exportPagos = function() {
+  const estado = document.getElementById('fil-pag-estado')?.value || '';
+  const mes    = document.getElementById('fil-pag-mes')?.value || '';
+  let data     = [...allReservas];
+  if(estado) data = data.filter(r=>(r.estadoPago||'pendiente')===estado);
+  if(mes)    data = data.filter(r=>(r.fecha||'').startsWith(mes));
+  data.sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+
+  const header = 'Referencia,Cliente,Teléfono,Fecha,Servicio,Importe,Cobrado,Pendiente,Estado pago,Método pago';
+  const rows   = data.map(r => {
+    const cob  = parseFloat(r.cobrado||r.senal||0);
+    const pend = Math.max(0,(parseFloat(r.importe)||0)-cob);
+    return [r.referencia||'',r.nombre||'',r.telefono||'',r.fecha||'',r.servicio||'',
+      r.importe||0, cob.toFixed(2), pend.toFixed(2),
+      r.estadoPago||'pendiente', r.metodoPago||'']
+      .map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');
+  });
+  const csv  = [header,...rows].join('\n');
+  const a    = document.createElement('a');
+  a.href     = 'data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download = `espaifest-pagos-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  showToast(`CSV exportado — ${data.length} registros`);
 };
 
 // Login con Enter
