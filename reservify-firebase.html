@@ -1910,25 +1910,42 @@ async function loadPromos() {
 }
 
 window.savePromo = async () => {
-  const editId = document.getElementById('p-edit-id').value;
+  const editId      = document.getElementById('p-edit-id').value;
+  const nombre      = document.getElementById('p-nombre').value.trim();
+  const descripcion = document.getElementById('p-desc').value.trim();
+  const descuento   = parseInt(document.getElementById('p-pct').value)||10;
+  const codigo      = document.getElementById('p-code').value.toUpperCase().trim();
+  const desde       = document.getElementById('p-desde').value;
+  const hasta       = document.getElementById('p-hasta').value;
+
+  if(!nombre || !codigo || !hasta) { showToast('Rellena nombre, código y fecha de fin'); return; }
+
+  // Traducción automática ES→CA
+  let nombre_ca = nombre, descripcion_ca = descripcion;
+  try {
+    const prompt = `Traduce al catalán estos textos de una promoción de sala de fiestas. Responde SOLO con JSON válido sin markdown:\n{"nombre_ca":"...","descripcion_ca":"..."}\nNombre ES: ${nombre}\nDescripción ES: ${descripcion||''}`;
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:200,
+        messages:[{role:'user',content:prompt}] })
+    });
+    const result = await resp.json();
+    const parsed = JSON.parse((result.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
+    nombre_ca      = parsed.nombre_ca      || nombre;
+    descripcion_ca = parsed.descripcion_ca || descripcion;
+  } catch(e){ console.warn('Traducción promo falló, usando ES'); }
+
   const data = {
-    nombre:      document.getElementById('p-nombre').value.trim(),
-    descripcion: document.getElementById('p-desc').value.trim(),
-    descuento:   parseInt(document.getElementById('p-pct').value)||10,
-    codigo:      document.getElementById('p-code').value.toUpperCase().trim(),
-    desde:       document.getElementById('p-desde').value,
-    hasta:       document.getElementById('p-hasta').value,
-    updatedAt:   serverTimestamp()
+    nombre, descripcion, descuento, codigo, desde, hasta,
+    nombre_ca, descripcion_ca,
+    updatedAt: serverTimestamp()
   };
-  if(!data.nombre || !data.codigo || !data.hasta) { showToast('Rellena nombre, código y fecha de fin'); return; }
 
   try {
     if(editId) {
-      // Editar existente
       await updateDoc(doc(db,'promociones',editId), data);
       showToast('Promoción actualizada ✓');
     } else {
-      // Crear nueva
       data.createdAt = serverTimestamp();
       await addDoc(collection(db,'promociones'), data);
       showToast('Promoción creada ✓');
