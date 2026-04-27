@@ -865,36 +865,59 @@ window.savePost = async function(estadoOverride) {
   const categoria = document.getElementById('e-cat').value;
   const imagenURL = normalizeDriveURL(document.getElementById('e-img').value.trim());
 
-  if (!titulo) { showToast('El título es obligatorio'); return; }
+  if(!titulo) { showToast('El título es obligatorio'); return; }
 
   const msgEl = document.getElementById('saving-msg');
   msgEl.textContent = 'Guardando…';
 
-  // Slug simple desde el título
   const slug = titulo.toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .replace(/[^a-z0-9\s-]/g,'')
     .trim().replace(/\s+/g,'-');
 
-  const data = { titulo, extracto, contenido, estado, categoria, imagenURL, slug, updatedAt: serverTimestamp() };
+  // Traducción automática ES→CA
+  msgEl.textContent = 'Traduciendo al catalán…';
+  let titulo_ca = titulo, extracto_ca = extracto;
+  try {
+    const prompt = `Traduce al catalán estos textos de un blog de sala de fiestas. Responde SOLO con JSON válido sin markdown:
+{"titulo_ca":"...","extracto_ca":"..."}
+Título ES: ${titulo}
+Extracto ES: ${extracto||''}`;
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:300,
+        messages:[{role:'user',content:prompt}] })
+    });
+    const result = await resp.json();
+    const parsed = JSON.parse((result.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
+    titulo_ca  = parsed.titulo_ca  || titulo;
+    extracto_ca= parsed.extracto_ca|| extracto;
+  } catch(e){ console.warn('Traducción falló, usando ES'); }
+
+  const data = {
+    titulo, extracto, contenido, estado, categoria, imagenURL, slug,
+    titulo_ca, extracto_ca,
+    updatedAt: serverTimestamp()
+  };
 
   try {
-    if (editingPostId) {
+    if(editingPostId) {
       await updateDoc(doc(db, 'blog_posts', editingPostId), data);
-      // Actualizar local
-      const idx = allPosts.findIndex(p => p.id === editingPostId);
-      if (idx !== -1) allPosts[idx] = { ...allPosts[idx], ...data };
     } else {
       data.createdAt = serverTimestamp();
       const ref = await addDoc(collection(db, 'blog_posts'), data);
-      allPosts.unshift({ id: ref.id, ...data });
-      editingPostId = ref.id; // ahora estamos editando el que acabamos de crear
+      editingPostId = ref.id;
     }
 
     msgEl.textContent = estado === 'publicado' ? '✅ Publicado en la web' : '💾 Borrador guardado';
     document.getElementById('editor-title-hdr').textContent = 'Editar post';
     showToast(estado === 'publicado' ? '✅ Post publicado' : '💾 Borrador guardado');
-    setTimeout(() => { msgEl.textContent = ''; }, 3000);
+    setTimeout(()=>{ msgEl.textContent=''; }, 3000);
+
+    // Recargar SIEMPRE desde Firestore para que la vista previa sea correcta
+    await loadPosts();
+
   } catch(e) {
     msgEl.textContent = '';
     showToast('Error al guardar. Inténtalo de nuevo.');
