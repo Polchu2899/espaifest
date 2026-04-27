@@ -2943,56 +2943,56 @@ loadFidelizacionWeb();
 // ── FIDELIZACIÓN DESDE FIRESTORE (config/niveles) ─────────────
 async function loadFidelizacionWeb() {
   try {
-    const snap = await getDocs(collection(_db, 'config'));
-    let niveles = null;
-    snap.forEach(d => { if(d.id === 'niveles') niveles = d.data(); });
-    if(!niveles) return; // Sin config — mantener valores por defecto del HTML
+    // Importar getDoc para leer un documento específico
+    const { doc: fsDoc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    const snap = await getDoc(fsDoc(_db, 'config', 'niveles'));
+    if(!snap.exists()) return; // Sin config — mantener valores del HTML
 
+    const niveles = snap.data();
     const { bas, pla, oro } = niveles;
+    if(!bas || !pla || !oro) return;
 
-    // Básico
-    if(bas) {
-      const descBas = document.getElementById('fid-desc-bas');
-      const discBas = document.getElementById('fid-disc-bas');
-      const rangoBas = pla ? `${bas.min}–${pla.min - 1}` : `${bas.min}+`;
-      if(descBas) {
-        const txt = bas.desc > 0
-          ? `${rangoBas} reservas`
-          : `${rangoBas} reservas · Sin descuento`;
-        descBas.textContent = txt;
-        descBas.setAttribute('data-es', txt);
-      }
-      if(discBas) discBas.textContent = bas.desc > 0 ? `${bas.desc}%` : '—';
-    }
+    // ── Básico ──
+    const rangoBas = `${bas.min}–${pla.min - 1}`;
+    const txtBas   = bas.desc > 0 ? `${rangoBas} reservas` : `${rangoBas} reservas · Sin descuento`;
+    const txtBasCA = bas.desc > 0 ? `${rangoBas} reserves` : `${rangoBas} reserves · Sense descompte`;
+    setFidEl('fid-desc-bas', txtBas,  'fid-desc-bas', txtBas, txtBasCA);
+    setFidEl('fid-disc-bas', bas.desc > 0 ? `${bas.desc}%` : '—', null, null, null);
 
-    // Plata
-    if(pla) {
-      const descPla = document.getElementById('fid-desc-pla');
-      const discPla = document.getElementById('fid-disc-pla');
-      const rangoPla = oro ? `${pla.min}–${oro.min - 1}` : `${pla.min}+`;
-      if(descPla) { descPla.textContent = `${rangoPla} reservas`; descPla.setAttribute('data-es', `${rangoPla} reservas`); }
-      if(discPla) discPla.textContent = `${pla.desc}%`;
-    }
+    // ── Plata ──
+    const rangoPla = `${pla.min}–${oro.min - 1}`;
+    setFidEl('fid-desc-pla', `${rangoPla} reservas`, 'fid-desc-pla', `${rangoPla} reservas`, `${rangoPla} reserves`);
+    setFidEl('fid-disc-pla', `${pla.desc}%`, null, null, null);
 
-    // Oro
-    if(oro) {
-      const descOro = document.getElementById('fid-desc-oro');
-      const discOro = document.getElementById('fid-disc-oro');
-      if(descOro) { descOro.textContent = `${oro.min}+ reservas`; descOro.setAttribute('data-es', `${oro.min}+ reservas`); }
-      if(discOro) discOro.textContent = `${oro.desc}%`;
-    }
+    // ── Oro ──
+    setFidEl('fid-desc-oro', `${oro.min}+ reservas`, 'fid-desc-oro', `${oro.min}+ reservas`, `${oro.min}+ reserves`);
+    setFidEl('fid-disc-oro', `${oro.desc}%`, null, null, null);
 
-    // Actualizar texto "A partir de la quinta" dinámicamente
-    if(pla?.min) {
-      const ordinal = pla.min === 2 ? 'segunda' : pla.min === 3 ? 'tercera' : pla.min === 4 ? 'cuarta'
-        : pla.min === 5 ? 'quinta' : pla.min === 6 ? 'sexta' : pla.min === 7 ? 'séptima'
-        : pla.min === 8 ? 'octava' : pla.min === 9 ? 'novena' : pla.min === 10 ? 'décima' : `${pla.min}ª`;
+    // Actualizar texto del párrafo "A partir de la quinta"
+    if(pla.min) {
+      const ordEs = ['','primera','segunda','tercera','cuarta','quinta','sexta','séptima','octava','novena','décima'][pla.min] || `${pla.min}ª`;
+      const ordCa = ['','primera','segona','tercera','quarta','cinquena','sisena','setena','vuitena','novena','desena'][pla.min] || `${pla.min}a`;
       document.querySelectorAll('[data-fid-desde]').forEach(el => {
-        el.textContent = ordinal;
+        el.textContent = document.documentElement.lang === 'ca' ? ordCa : ordEs;
+        el.dataset.es = ordEs; el.dataset.ca = ordCa;
       });
     }
   } catch(e) {
-    console.warn('loadFidelizacionWeb error:', e.message);
+    console.warn('loadFidelizacionWeb error:', e.code || e.message);
+    // Si es error de permisos, avisar en consola con solución
+    if(e.code === 'permission-denied') {
+      console.warn('→ Añade en Firestore Rules: match /config/{id} { allow read: if true; }');
+    }
+  }
+}
+
+function setFidEl(id, texto, idAttr, esVal, caVal) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = texto;
+  if(idAttr && esVal) {
+    el.setAttribute('data-es', esVal);
+    if(caVal) el.setAttribute('data-ca', caVal);
   }
 }
 
