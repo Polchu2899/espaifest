@@ -1,82 +1,133 @@
 # ════════════════════════════════════════════════════════════
-# EspaiFest — Redirecciones 301 para GitHub Pages
-# NOTA: GitHub Pages NO soporta .htaccess (Apache).
-# Este archivo es para referencia si en el futuro se migra
-# a un hosting Apache. Para GitHub Pages se usa _redirects
-# (Netlify) o la lógica JS de redirección incluida en index.html
+# EspaiFest — .htaccess para cPanel / LiteSpeed
+# Hosting: Indedmedia (Apache/LiteSpeed compatible)
 # ════════════════════════════════════════════════════════════
 
 Options -Indexes
 RewriteEngine On
 
-# ── Forzar HTTPS ──────────────────────────────────────────
+# ── Forzar HTTPS ──────────────────────────────────────────────
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# ── Eliminar www ──────────────────────────────────────────
-RewriteCond %{HTTP_HOST} ^www\.espaifest\.com [NC]
+# ── Canonicalizar a espaifest.com (sin www, sin .cat/.es) ────
+RewriteCond %{HTTP_HOST} ^www\.espaifest\.com$ [NC]
 RewriteRule ^(.*)$ https://espaifest.com/$1 [L,R=301]
 
-# ── Páginas de eventos / servicios → secciones SPA ───────
-RewriteRule ^fiestas-infantiles-espaifest-martorell/?$ https://espaifest.com/#fiestas [L,R=301]
-RewriteRule ^fiestas-infantiles/?$                      https://espaifest.com/#fiestas [L,R=301]
-RewriteRule ^fiesta-ninos/?$                            https://espaifest.com/#fiestas [L,R=301]
-RewriteRule ^fiestas-ninos/?$                           https://espaifest.com/#fiestas [L,R=301]
-RewriteRule ^encuentros-familiares-amigos/?$            https://espaifest.com/#adultos [L,R=301]
-RewriteRule ^eventos-especiales/?$                      https://espaifest.com/#adultos [L,R=301]
-RewriteRule ^animacion-infantil/?$                      https://espaifest.com/#fiestas [L,R=301]
-RewriteRule ^animacion-adultos-espaifest-martorell/?$   https://espaifest.com/#adultos [L,R=301]
+RewriteCond %{HTTP_HOST} ^(www\.)?espaifest\.cat$ [NC]
+RewriteRule ^(.*)$ https://espaifest.com/$1 [L,R=301]
 
-# ── Business ──────────────────────────────────────────────
-RewriteRule ^business-espaifest-martorell/?$            https://espaifest.com/#business [L,R=301]
-RewriteRule ^fotos-business-espaifest-martorell/?$      https://espaifest.com/#business [L,R=301]
-RewriteRule ^local-reuniones-empresas-baix-llobregat/?$ https://espaifest.com/#business [L,R=301]
+RewriteCond %{HTTP_HOST} ^(www\.)?espaifest\.es$ [NC]
+RewriteRule ^(.*)$ https://espaifest.com/$1 [L,R=301]
 
-# ── Servicios / Extras ────────────────────────────────────
-RewriteRule ^catering/?$                                https://espaifest.com/#reservas [L,R=301]
-RewriteRule ^equipamientos/?$                           https://espaifest.com/#business [L,R=301]
-RewriteRule ^tarjeta-invitacion-martorell/?$            https://espaifest.com/#fidelizacion [L,R=301]
-RewriteRule ^tarjeta_fidelizacion/?$                    https://espaifest.com/#fidelizacion [L,R=301]
+# ── Security Headers ─────────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 
-# ── Precios ───────────────────────────────────────────────
-RewriteRule ^precios_martorell/?$                       https://espaifest.com/#precios [L,R=301]
-RewriteRule ^precios_martorell_1/?$                     https://espaifest.com/#precios [L,R=301]
-RewriteRule ^precios/?$                                 https://espaifest.com/#precios [L,R=301]
+  # HSTS — descomentar solo cuando SSL esté confirmado y estable
+  # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 
-# ── Galería ───────────────────────────────────────────────
-RewriteRule ^la-sala/?$                                 https://espaifest.com/#galeria [L,R=301]
-RewriteRule ^galeria-local-fiestas-martorell/?$         https://espaifest.com/#galeria [L,R=301]
+  # CSP ajustado para Firebase SDK + Google Fonts + canvas inline
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; img-src 'self' data: blob: https:; frame-src 'none'; object-src 'none';"
+</IfModule>
 
-# ── Reservas ──────────────────────────────────────────────
-RewriteRule ^reservar-local-fiesta-martorell/?$         https://espaifest.com/#reservas [L,R=301]
-RewriteRule ^solicitud-para-modificar-reserva/?$        https://espaifest.com/#reservas [L,R=301]
-RewriteRule ^contacto-alquiler-local-martorell/?$       https://espaifest.com/#reservas [L,R=301]
+# ── Proteger archivos sensibles ───────────────────────────────
+<Files ".htaccess">
+  Order allow,deny
+  Deny from all
+</Files>
+<Files ".htpasswd">
+  Order allow,deny
+  Deny from all
+</Files>
 
-# ── Blog / Info ───────────────────────────────────────────
-RewriteRule ^blog/?$                                    https://espaifest.com/#blog [L,R=301]
-RewriteRule ^blog/(.*)$                                 https://espaifest.com/#blog [L,R=301]
-RewriteRule ^promociones/?$                             https://espaifest.com/#precios [L,R=301]
-RewriteRule ^last-minute/?$                             https://espaifest.com/#precios [L,R=301]
-RewriteRule ^preguntas-frecuentes/?$                    https://espaifest.com/#reservas [L,R=301]
-RewriteRule ^noticias-martorell/?$                      https://espaifest.com/#blog [L,R=301]
+# ════════════════════════════════════════════════════════════
+# REDIRECCIONES 301 — SEO (preserva posicionamiento WordPress)
+# ════════════════════════════════════════════════════════════
 
-# ── Páginas SEO locales ───────────────────────────────────
-RewriteRule ^local-para-fiestas-baix-llobregat/?$       https://espaifest.com/#fiestas [L,R=301]
-RewriteRule ^alquilar-local-graduaciones-baix-llobregat/?$ https://espaifest.com/#adultos [L,R=301]
-RewriteRule ^servicios-local-fiesta-martorell/?$        https://espaifest.com/ [L,R=301]
-RewriteRule ^local-fiestas-martorell/?$                 https://espaifest.com/ [L,R=301]
-RewriteRule ^local-fiestas-baix-llobregat/?$            https://espaifest.com/#fiestas [L,R=301]
+# ── Fiestas / Eventos ─────────────────────────────────────────
+RewriteRule ^fiestas-infantiles-espaifest-martorell/?$         https://espaifest.com/#fiestas [L,R=301]
+RewriteRule ^fiestas-infantiles/?$                             https://espaifest.com/#fiestas [L,R=301]
+RewriteRule ^fiesta-ninos/?$                                   https://espaifest.com/#fiestas [L,R=301]
+RewriteRule ^fiestas-ninos/?$                                  https://espaifest.com/#fiestas [L,R=301]
+RewriteRule ^encuentros-familiares-amigos/?$                   https://espaifest.com/#adultos [L,R=301]
+RewriteRule ^eventos-especiales/?$                             https://espaifest.com/#adultos [L,R=301]
+RewriteRule ^animacion-infantil/?$                             https://espaifest.com/#fiestas [L,R=301]
+RewriteRule ^animacion-adultos-espaifest-martorell/?$          https://espaifest.com/#adultos [L,R=301]
 
-# ── Legal ─────────────────────────────────────────────────
-RewriteRule ^aviso-legal/?$                             https://espaifest.com/aviso-legal.html [L,R=301]
-RewriteRule ^condiciones-de-uso/?$                      https://espaifest.com/condiciones.html [L,R=301]
-RewriteRule ^politica-de-privacidad-y-cookies/?$        https://espaifest.com/privacidad.html [L,R=301]
-RewriteRule ^politica-de-cookies/?$                     https://espaifest.com/cookies.html [L,R=301]
+# ── Business ──────────────────────────────────────────────────
+RewriteRule ^business-espaifest-martorell/?$                   https://espaifest.com/#business [L,R=301]
+RewriteRule ^fotos-business-espaifest-martorell/?$             https://espaifest.com/#business [L,R=301]
+RewriteRule ^local-reuniones-empresas-baix-llobregat/?$        https://espaifest.com/#business [L,R=301]
 
-# ── Medidas COVID (página obsoleta) ──────────────────────
+# ── Servicios / Extras ────────────────────────────────────────
+RewriteRule ^catering/?$                                       https://espaifest.com/#reservas [L,R=301]
+RewriteRule ^equipamientos/?$                                  https://espaifest.com/#business [L,R=301]
+RewriteRule ^tarjeta-invitacion-martorell/?$                   https://espaifest.com/#fidelizacion [L,R=301]
+RewriteRule ^tarjeta_fidelizacion/?$                           https://espaifest.com/#fidelizacion [L,R=301]
+
+# ── Precios ───────────────────────────────────────────────────
+RewriteRule ^precios_martorell/?$                              https://espaifest.com/#precios [L,R=301]
+RewriteRule ^precios_martorell_1/?$                            https://espaifest.com/#precios [L,R=301]
+RewriteRule ^precios/?$                                        https://espaifest.com/#precios [L,R=301]
+
+# ── Galería ───────────────────────────────────────────────────
+RewriteRule ^la-sala/?$                                        https://espaifest.com/#galeria [L,R=301]
+RewriteRule ^galeria-local-fiestas-martorell/?$                https://espaifest.com/#galeria [L,R=301]
+
+# ── Reservas ──────────────────────────────────────────────────
+RewriteRule ^reservar-local-fiesta-martorell/?$                https://espaifest.com/#reservas [L,R=301]
+RewriteRule ^solicitud-para-modificar-reserva/?$               https://espaifest.com/#reservas [L,R=301]
+RewriteRule ^contacto-alquiler-local-martorell/?$              https://espaifest.com/#reservas [L,R=301]
+
+# ── Blog / Info ───────────────────────────────────────────────
+RewriteRule ^blog/?$                                           https://espaifest.com/#blog [L,R=301]
+RewriteRule ^blog/(.*)$                                        https://espaifest.com/#blog [L,R=301]
+RewriteRule ^promociones/?$                                    https://espaifest.com/#precios [L,R=301]
+RewriteRule ^last-minute/?$                                    https://espaifest.com/#precios [L,R=301]
+RewriteRule ^preguntas-frecuentes/?$                           https://espaifest.com/#reservas [L,R=301]
+RewriteRule ^noticias-martorell/?$                             https://espaifest.com/#blog [L,R=301]
+
+# ── SEO local ────────────────────────────────────────────────
+RewriteRule ^local-para-fiestas-baix-llobregat/?$              https://espaifest.com/#fiestas [L,R=301]
+RewriteRule ^alquilar-local-graduaciones-baix-llobregat/?$     https://espaifest.com/#adultos [L,R=301]
+RewriteRule ^servicios-local-fiesta-martorell/?$               https://espaifest.com/ [L,R=301]
+RewriteRule ^local-fiestas-martorell/?$                        https://espaifest.com/ [L,R=301]
+RewriteRule ^local-fiestas-baix-llobregat/?$                   https://espaifest.com/#fiestas [L,R=301]
+
+# ── Legal ─────────────────────────────────────────────────────
+RewriteRule ^aviso-legal/?$                                    https://espaifest.com/aviso-legal.html [L,R=301]
+RewriteRule ^condiciones-de-uso/?$                             https://espaifest.com/condiciones.html [L,R=301]
+RewriteRule ^politica-de-privacidad-y-cookies/?$               https://espaifest.com/privacidad.html [L,R=301]
+RewriteRule ^politica-de-cookies/?$                            https://espaifest.com/cookies.html [L,R=301]
+
+# ── Obsoletas ─────────────────────────────────────────────────
 RewriteRule ^medidas-contra-el-covid-19-espaifest-martorell/?$ https://espaifest.com/ [L,R=301]
 
-# ── Cualquier otra URL no mapeada → home ─────────────────
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# ── Archivos reales — no redirigir ────────────────────────────
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ── Cualquier otra URL no mapeada → home ─────────────────────
 RewriteRule ^(.*)$ https://espaifest.com/ [L,R=301]
+
+# ════════════════════════════════════════════════════════════
+# CACHÉ — Rendimiento
+# ════════════════════════════════════════════════════════════
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html                 "access plus 1 hour"
+  ExpiresByType text/css                  "access plus 1 month"
+  ExpiresByType application/javascript    "access plus 1 month"
+  ExpiresByType image/jpeg                "access plus 6 months"
+  ExpiresByType image/png                 "access plus 6 months"
+  ExpiresByType image/webp                "access plus 6 months"
+  ExpiresByType image/svg+xml             "access plus 6 months"
+  ExpiresByType image/x-icon              "access plus 1 year"
+  ExpiresByType application/manifest+json "access plus 1 week"
+</IfModule>
