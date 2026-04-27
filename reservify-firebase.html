@@ -886,11 +886,26 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <!-- MODAL SERVICIO -->
 <div class="mov" id="modal-svc">
   <div class="modal">
-    <div class="mtitle">Nuevo servicio</div><div class="msub">Añade un servicio a tu negocio</div>
-    <div class="fg"><label class="fl">Nombre del servicio</label><input type="text" class="fi" id="s-nombre" placeholder="Ej: Fiesta infantil"></div>
-    <div class="fg"><label class="fl">Descripción</label><input type="text" class="fi" id="s-desc" placeholder="Breve descripción"></div>
-    <div class="fr2"><div class="fg"><label class="fl">Duración</label><input type="text" class="fi" id="s-dur" placeholder="4 horas"></div><div class="fg"><label class="fl">Precio (€)</label><input type="number" class="fi" id="s-precio" value="85"></div></div>
-    <div class="mfoot"><button class="btn bg" onclick="closeModal('svc')">Cancelar</button><button class="btn bp" onclick="saveServicio()">Guardar servicio</button></div>
+    <div class="mtitle" id="svc-modal-title">Nuevo servicio</div>
+    <div class="msub" id="svc-modal-sub">Se mostrará en la web y en el formulario de reserva</div>
+    <input type="hidden" id="s-edit-id">
+    <div class="fg"><label class="fl">Nombre del servicio *</label><input type="text" class="fi" id="s-nombre" placeholder="Ej: Fiesta infantil deluxe"></div>
+    <div class="fg"><label class="fl">Descripción</label><input type="text" class="fi" id="s-desc" placeholder="Breve descripción visible en la web"></div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Duración</label><input type="text" class="fi" id="s-dur" placeholder="4 horas"></div>
+      <div class="fg"><label class="fl">Precio (€)</label><input type="number" class="fi" id="s-precio" value="85"></div>
+    </div>
+    <div class="fg" style="display:flex;align-items:center;gap:12px;padding:10px 0">
+      <label class="fl" style="margin:0">Visible en la web</label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="s-activo" checked style="width:16px;height:16px;accent-color:var(--teal)">
+        <span style="font-size:13px;color:var(--t2)">Sí, mostrar en la web</span>
+      </label>
+    </div>
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeModal('svc');limpiarModalSvc()">Cancelar</button>
+      <button class="btn bp" id="svc-save-btn" onclick="saveServicio()">Guardar servicio</button>
+    </div>
   </div>
 </div>
 
@@ -1726,39 +1741,110 @@ async function loadServicios() {
     const snap = await getDocs(collection(db,'servicios'));
     const servicios = snap.docs.map(d => ({id:d.id,...d.data()}));
     const el = document.getElementById('servicios-list');
-    if (!servicios.length) {
+    if(!servicios.length) {
       el.innerHTML = '<div class="empty">No hay servicios. Añade el primero.</div>';
       return;
     }
-    el.innerHTML = servicios.map(s => `
-      <div class="trow sc">
-        <div><div class="c cs">${s.nombre||'—'}</div><div style="font-size:11px;color:var(--t3)">${s.descripcion||''}</div></div>
+    el.innerHTML = servicios.map(s => {
+      const activo = s.activo !== false; // por defecto activo
+      return `
+      <div class="trow sc" style="${!activo?'opacity:.55':''}">
+        <div>
+          <div class="c cs">${s.nombre||'—'}</div>
+          <div style="font-size:11px;color:var(--t3)">${s.descripcion||''}</div>
+        </div>
         <div class="c cm">${s.duracion||'—'}</div>
         <div class="c cx cs">${fmtMoney(s.precio)}</div>
-        <div><span class="badge bg-g">Activo</span></div>
-        <div class="ras">
-          <button class="rab" onclick="eliminarServicio('${s.id}')"><svg><use href="#i-trash"/></svg></button>
+        <div>
+          <span class="badge ${activo?'bg-g':'bg-x'}" style="cursor:pointer" onclick="toggleServicio('${s.id}',${activo})" title="${activo?'Clic para ocultar de la web':'Clic para mostrar en la web'}">
+            ${activo?'✓ En la web':'Oculto'}
+          </span>
         </div>
-      </div>`).join('');
+        <div class="ras">
+          <button class="rab" onclick="editarServicio('${s.id}')" title="Editar"><svg><use href="#i-edit"/></svg></button>
+          <button class="rab rab-cancel" onclick="eliminarServicio('${s.id}')" title="Eliminar"><svg><use href="#i-trash"/></svg></button>
+        </div>
+      </div>`;
+    }).join('');
   } catch(e) { console.log('servicios err',e); }
 }
 
 window.saveServicio = async () => {
+  const editId = document.getElementById('s-edit-id').value;
   const data = {
-    nombre: document.getElementById('s-nombre').value,
-    descripcion: document.getElementById('s-desc').value,
-    duracion: document.getElementById('s-dur').value,
-    precio: parseFloat(document.getElementById('s-precio').value)||85,
-    activo: true
+    nombre:      document.getElementById('s-nombre').value.trim(),
+    descripcion: document.getElementById('s-desc').value.trim(),
+    duracion:    document.getElementById('s-dur').value.trim(),
+    precio:      parseFloat(document.getElementById('s-precio').value)||85,
+    activo:      document.getElementById('s-activo').checked,
+    updatedAt:   serverTimestamp()
   };
-  if (!data.nombre) { showToast('Escribe el nombre del servicio'); return; }
-  await addDoc(collection(db,'servicios'), data);
-  closeModal('svc');
-  showToast('Servicio guardado');
-  loadServicios();
+  if(!data.nombre) { showToast('Escribe el nombre del servicio'); return; }
+  try {
+    if(editId) {
+      await updateDoc(doc(db,'servicios',editId), data);
+      showToast('Servicio actualizado ✓');
+    } else {
+      data.createdAt = serverTimestamp();
+      await addDoc(collection(db,'servicios'), data);
+      showToast('Servicio guardado ✓ — ya aparece en la web');
+    }
+    closeModal('svc');
+    limpiarModalSvc();
+    loadServicios();
+  } catch(e) {
+    console.error('saveServicio error:', e);
+    showToast('Error al guardar el servicio');
+  }
 };
 
+window.editarServicio = async (id) => {
+  try {
+    const snap = await getDocs(collection(db,'servicios'));
+    const s = snap.docs.map(d=>({id:d.id,...d.data()})).find(x=>x.id===id);
+    if(!s) { showToast('Servicio no encontrado'); return; }
+
+    document.getElementById('s-edit-id').value    = id;
+    document.getElementById('s-nombre').value     = s.nombre      || '';
+    document.getElementById('s-desc').value       = s.descripcion || '';
+    document.getElementById('s-dur').value        = s.duracion    || '';
+    document.getElementById('s-precio').value     = s.precio      || 85;
+    document.getElementById('s-activo').checked   = s.activo !== false;
+
+    document.getElementById('svc-modal-title').textContent = 'Editar servicio';
+    document.getElementById('svc-modal-sub').textContent   = `Modificando: ${s.nombre}`;
+    document.getElementById('svc-save-btn').textContent    = 'Guardar cambios';
+
+    openModal('svc');
+  } catch(e) {
+    showToast('Error al cargar el servicio');
+  }
+};
+
+window.toggleServicio = async (id, activo) => {
+  try {
+    await updateDoc(doc(db,'servicios',id), { activo: !activo, updatedAt: serverTimestamp() });
+    showToast(!activo ? 'Servicio visible en la web ✓' : 'Servicio oculto de la web');
+    loadServicios();
+  } catch(e) {
+    showToast('Error al cambiar visibilidad');
+  }
+};
+
+function limpiarModalSvc() {
+  document.getElementById('s-edit-id').value  = '';
+  document.getElementById('s-nombre').value   = '';
+  document.getElementById('s-desc').value     = '';
+  document.getElementById('s-dur').value      = '';
+  document.getElementById('s-precio').value   = 85;
+  document.getElementById('s-activo').checked = true;
+  document.getElementById('svc-modal-title').textContent = 'Nuevo servicio';
+  document.getElementById('svc-modal-sub').textContent   = 'Se mostrará en la web y en el formulario de reserva';
+  document.getElementById('svc-save-btn').textContent    = 'Guardar servicio';
+}
+
 window.eliminarServicio = async (id) => {
+  if(!confirm('¿Eliminar este servicio? No se puede deshacer.')) return;
   await deleteDoc(doc(db,'servicios',id));
   showToast('Servicio eliminado');
   loadServicios();
