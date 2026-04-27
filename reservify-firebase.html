@@ -885,12 +885,20 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- MODAL SERVICIO -->
 <div class="mov" id="modal-svc">
-  <div class="modal">
+  <div class="modal" style="max-width:560px">
     <div class="mtitle" id="svc-modal-title">Nuevo servicio</div>
-    <div class="msub" id="svc-modal-sub">Se mostrará en la web y en el formulario de reserva</div>
+    <div class="msub" id="svc-modal-sub">Se mostrará en la web en español y catalán</div>
     <input type="hidden" id="s-edit-id">
-    <div class="fg"><label class="fl">Nombre del servicio *</label><input type="text" class="fi" id="s-nombre" placeholder="Ej: Fiesta infantil deluxe"></div>
-    <div class="fg"><label class="fl">Descripción</label><input type="text" class="fi" id="s-desc" placeholder="Breve descripción visible en la web"></div>
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🇪🇸 Castellano</div>
+    <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="s-nombre" placeholder="Ej: Fiesta de jubilación" oninput="autoFillCA('s-nombre','s-nombre-ca')"></div>
+    <div class="fg"><label class="fl">Descripción</label><input type="text" class="fi" id="s-desc" placeholder="Breve descripción visible en la web" oninput="autoFillCA('s-desc','s-desc-ca')"></div>
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🟡 Catalán <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)">(opcional — si lo dejas vacío se usa el castellano)</span></div>
+    <div class="fg"><label class="fl">Nom (CA)</label><input type="text" class="fi" id="s-nombre-ca" placeholder="Ej: Festa de jubilació"></div>
+    <div class="fg"><label class="fl">Descripció (CA)</label><input type="text" class="fi" id="s-desc-ca" placeholder="Breu descripció visible a la web"></div>
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Detalles</div>
     <div class="fr2">
       <div class="fg"><label class="fl">Duración</label><input type="text" class="fi" id="s-dur" placeholder="4 horas"></div>
       <div class="fg"><label class="fl">Precio (€)</label><input type="number" class="fi" id="s-precio" value="85"></div>
@@ -911,15 +919,23 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- MODAL PROMO -->
 <div class="mov" id="modal-promo">
-  <div class="modal">
+  <div class="modal" style="max-width:560px">
     <div class="mtitle" id="promo-modal-title">Nueva promoción</div>
-    <div class="msub" id="promo-modal-sub">Crea un código de descuento</div>
+    <div class="msub" id="promo-modal-sub">Crea un código de descuento en español y catalán</div>
     <input type="hidden" id="p-edit-id">
-    <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="p-nombre" placeholder="Ej: Oferta de verano"></div>
-    <div class="fg"><label class="fl">Descripción</label><input type="text" class="fi" id="p-desc" placeholder="Describe la oferta brevemente"></div>
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🇪🇸 Castellano</div>
+    <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="p-nombre" placeholder="Ej: Oferta de verano" oninput="autoFillCA('p-nombre','p-nombre-ca')"></div>
+    <div class="fg"><label class="fl">Descripción</label><input type="text" class="fi" id="p-desc" placeholder="Describe la oferta brevemente" oninput="autoFillCA('p-desc','p-desc-ca')"></div>
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🟡 Catalán <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)">(opcional)</span></div>
+    <div class="fg"><label class="fl">Nom (CA)</label><input type="text" class="fi" id="p-nombre-ca" placeholder="Ej: Oferta d'estiu"></div>
+    <div class="fg"><label class="fl">Descripció (CA)</label><input type="text" class="fi" id="p-desc-ca" placeholder="Descriu l'oferta breument"></div>
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Detalles</div>
     <div class="fr2">
-      <div class="fg"><label class="fl">Descuento (%)</label><input type="number" class="fi" id="p-pct" placeholder="15" min="1" max="100"></div>
-      <div class="fg"><label class="fl">Código promocional</label><input type="text" class="fi" id="p-code" placeholder="VERANO26" style="text-transform:uppercase"></div>
+      <div class="fg"><label class="fl">Descuento (%) *</label><input type="number" class="fi" id="p-pct" placeholder="15" min="1" max="100"></div>
+      <div class="fg"><label class="fl">Código promocional *</label><input type="text" class="fi" id="p-code" placeholder="VERANO26" style="text-transform:uppercase"></div>
     </div>
     <div class="fr2">
       <div class="fg"><label class="fl">Válido desde</label><input type="date" class="fi" id="p-desde"></div>
@@ -1770,46 +1786,20 @@ async function loadServicios() {
 }
 
 window.saveServicio = async () => {
-  const editId = document.getElementById('s-edit-id').value;
+  const editId      = document.getElementById('s-edit-id').value;
   const nombre      = document.getElementById('s-nombre').value.trim();
   const descripcion = document.getElementById('s-desc').value.trim();
+  const nombre_ca   = document.getElementById('s-nombre-ca').value.trim() || nombre;
+  const desc_ca     = document.getElementById('s-desc-ca').value.trim()   || descripcion;
   const duracion    = document.getElementById('s-dur').value.trim();
   const precio      = parseFloat(document.getElementById('s-precio').value)||85;
   const activo      = document.getElementById('s-activo').checked;
 
   if(!nombre) { showToast('Escribe el nombre del servicio'); return; }
 
-  // Traducción automática ES→CA
-  let nombre_ca = '', descripcion_ca = '';
-  try {
-    const prompt = `Traduce al catalán estos textos de un servicio de sala de fiestas. Responde SOLO con JSON válido, sin markdown ni explicaciones:
-{"nombre_ca":"...","descripcion_ca":"..."}
-Nombre ES: ${nombre}
-Descripción ES: ${descripcion||''}`;
-
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 200,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    const result = await resp.json();
-    const txt = result.content?.[0]?.text || '{}';
-    const parsed = JSON.parse(txt.replace(/```json|```/g,'').trim());
-    nombre_ca      = parsed.nombre_ca      || nombre;
-    descripcion_ca = parsed.descripcion_ca || descripcion;
-  } catch(e) {
-    // Si falla la traducción, usar el mismo texto en ES como fallback
-    nombre_ca = nombre; descripcion_ca = descripcion;
-    console.warn('Traducción automática falló, usando ES como fallback');
-  }
-
   const data = {
     nombre, descripcion, duracion, precio, activo,
-    nombre_ca, descripcion_ca,
+    nombre_ca, descripcion_ca: desc_ca,
     updatedAt: serverTimestamp()
   };
 
@@ -1820,7 +1810,7 @@ Descripción ES: ${descripcion||''}`;
     } else {
       data.createdAt = serverTimestamp();
       await addDoc(collection(db,'servicios'), data);
-      showToast('Servicio guardado ✓ — ya aparece en la web (ES + CA)');
+      showToast('Servicio guardado ✓ — visible en la web');
     }
     closeModal('svc');
     limpiarModalSvc();
@@ -1840,6 +1830,8 @@ window.editarServicio = async (id) => {
     document.getElementById('s-edit-id').value    = id;
     document.getElementById('s-nombre').value     = s.nombre      || '';
     document.getElementById('s-desc').value       = s.descripcion || '';
+    document.getElementById('s-nombre-ca').value  = s.nombre_ca   || '';
+    document.getElementById('s-desc-ca').value    = s.descripcion_ca || '';
     document.getElementById('s-dur').value        = s.duracion    || '';
     document.getElementById('s-precio').value     = s.precio      || 85;
     document.getElementById('s-activo').checked   = s.activo !== false;
@@ -1865,16 +1857,28 @@ window.toggleServicio = async (id, activo) => {
 };
 
 function limpiarModalSvc() {
-  document.getElementById('s-edit-id').value  = '';
-  document.getElementById('s-nombre').value   = '';
-  document.getElementById('s-desc').value     = '';
-  document.getElementById('s-dur').value      = '';
+  ['s-edit-id','s-nombre','s-desc','s-nombre-ca','s-desc-ca','s-dur'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
   document.getElementById('s-precio').value   = 85;
   document.getElementById('s-activo').checked = true;
   document.getElementById('svc-modal-title').textContent = 'Nuevo servicio';
-  document.getElementById('svc-modal-sub').textContent   = 'Se mostrará en la web y en el formulario de reserva';
+  document.getElementById('svc-modal-sub').textContent   = 'Se mostrará en la web en español y catalán';
   document.getElementById('svc-save-btn').textContent    = 'Guardar servicio';
 }
+
+// Helper: copia texto ES→CA si CA está vacío (para no machacar lo que ha escrito)
+window.autoFillCA = function(esId, caId) {
+  const caEl = document.getElementById(caId);
+  if(caEl && !caEl.dataset.modified) {
+    caEl.value = document.getElementById(esId).value;
+  }
+};
+// Marcar campo CA como modificado manualmente para no sobreescribir
+['s-nombre-ca','s-desc-ca','p-nombre-ca','p-desc-ca'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('input', () => { el.dataset.modified = '1'; });
+});
 
 window.eliminarServicio = async (id) => {
   if(!confirm('¿Eliminar este servicio? No se puede deshacer.')) return;
@@ -1913,6 +1917,8 @@ window.savePromo = async () => {
   const editId      = document.getElementById('p-edit-id').value;
   const nombre      = document.getElementById('p-nombre').value.trim();
   const descripcion = document.getElementById('p-desc').value.trim();
+  const nombre_ca   = document.getElementById('p-nombre-ca').value.trim() || nombre;
+  const desc_ca     = document.getElementById('p-desc-ca').value.trim()   || descripcion;
   const descuento   = parseInt(document.getElementById('p-pct').value)||10;
   const codigo      = document.getElementById('p-code').value.toUpperCase().trim();
   const desde       = document.getElementById('p-desde').value;
@@ -1920,24 +1926,9 @@ window.savePromo = async () => {
 
   if(!nombre || !codigo || !hasta) { showToast('Rellena nombre, código y fecha de fin'); return; }
 
-  // Traducción automática ES→CA
-  let nombre_ca = nombre, descripcion_ca = descripcion;
-  try {
-    const prompt = `Traduce al catalán estos textos de una promoción de sala de fiestas. Responde SOLO con JSON válido sin markdown:\n{"nombre_ca":"...","descripcion_ca":"..."}\nNombre ES: ${nombre}\nDescripción ES: ${descripcion||''}`;
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:200,
-        messages:[{role:'user',content:prompt}] })
-    });
-    const result = await resp.json();
-    const parsed = JSON.parse((result.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
-    nombre_ca      = parsed.nombre_ca      || nombre;
-    descripcion_ca = parsed.descripcion_ca || descripcion;
-  } catch(e){ console.warn('Traducción promo falló, usando ES'); }
-
   const data = {
     nombre, descripcion, descuento, codigo, desde, hasta,
-    nombre_ca, descripcion_ca,
+    nombre_ca, descripcion_ca: desc_ca,
     updatedAt: serverTimestamp()
   };
 
@@ -1960,22 +1951,21 @@ window.savePromo = async () => {
 };
 
 window.editarPromo = async (id) => {
-  // Buscar los datos actuales en Firestore
   try {
     const snap = await getDocs(collection(db,'promociones'));
     const p = snap.docs.map(d=>({id:d.id,...d.data()})).find(x=>x.id===id);
     if(!p) { showToast('Promoción no encontrada'); return; }
 
-    // Rellenar el modal con los datos actuales
     document.getElementById('p-edit-id').value    = id;
     document.getElementById('p-nombre').value     = p.nombre      || '';
     document.getElementById('p-desc').value       = p.descripcion || '';
+    document.getElementById('p-nombre-ca').value  = p.nombre_ca   || '';
+    document.getElementById('p-desc-ca').value    = p.descripcion_ca || '';
     document.getElementById('p-pct').value        = p.descuento   || 10;
     document.getElementById('p-code').value       = p.codigo      || '';
     document.getElementById('p-desde').value      = p.desde       || '';
     document.getElementById('p-hasta').value      = p.hasta       || '';
 
-    // Cambiar títulos del modal a modo edición
     document.getElementById('promo-modal-title').textContent = 'Editar promoción';
     document.getElementById('promo-modal-sub').textContent   = `Modificando: ${p.nombre}`;
     document.getElementById('promo-save-btn').textContent    = 'Guardar cambios';
@@ -1988,15 +1978,15 @@ window.editarPromo = async (id) => {
 };
 
 function limpiarModalPromo() {
-  document.getElementById('p-edit-id').value  = '';
-  document.getElementById('p-nombre').value   = '';
-  document.getElementById('p-desc').value     = '';
-  document.getElementById('p-pct').value      = '';
-  document.getElementById('p-code').value     = '';
-  document.getElementById('p-desde').value    = '';
-  document.getElementById('p-hasta').value    = '';
+  ['p-edit-id','p-nombre','p-desc','p-nombre-ca','p-desc-ca','p-pct','p-code','p-desde','p-hasta'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  // Limpiar flag de modificado manual
+  ['p-nombre-ca','p-desc-ca'].forEach(id => {
+    const el = document.getElementById(id); if(el) delete el.dataset.modified;
+  });
   document.getElementById('promo-modal-title').textContent = 'Nueva promoción';
-  document.getElementById('promo-modal-sub').textContent   = 'Crea un código de descuento';
+  document.getElementById('promo-modal-sub').textContent   = 'Crea un código de descuento en español y catalán';
   document.getElementById('promo-save-btn').textContent    = 'Crear promoción';
 }
 
