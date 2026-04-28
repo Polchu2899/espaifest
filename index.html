@@ -2464,76 +2464,6 @@ function filterManu(season, btn) {
   });
 }
 
-// ── KITS DESDE FIRESTORE ──────────────────────────────────────
-const _KIT_SEASON_LABELS = { verano:'Verano', pascua:'Pascua', navidad:'Navidad', general:'Todo el año' };
-const _KIT_SEASON_LABELS_CA = { verano:'Estiu', pascua:'Pasqua', navidad:'Nadal', general:'Tot l\'any' };
-const _KIT_COVER_CSS = { verano:'mc-1', pascua:'mc-2', navidad:'mc-3', general:'mc-4' };
-const _KIT_SEASON_COLORS = {
-  verano: 'oklch(73% .14 190)', pascua: 'oklch(72% .15 90)',
-  navidad: 'oklch(66% .24 355)', general: 'oklch(73% .14 190)'
-};
-const _WA_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
-
-async function loadKits() {
-  const grid = document.getElementById('manu-grid');
-  if (!grid) return;
-  try {
-    const snap = await getDocs(collection(_db, 'kits'));
-    const kits = snap.docs
-      .map(d => ({id: d.id, ...d.data()}))
-      .filter(k => k.activo !== false)
-      .sort((a, b) => (a.orden||99) - (b.orden||99));
-
-    const lang = document.documentElement.lang || 'es';
-
-    if (!kits.length) {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t2)">No hay kits disponibles en este momento.</div>';
-      return;
-    }
-
-    grid.innerHTML = kits.map((k, i) => {
-      const season = k.temporada || 'general';
-      const coverCss = _KIT_COVER_CSS[season] || 'mc-1';
-      const seasonColor = _KIT_SEASON_COLORS[season] || 'var(--ct)';
-      const seasonLabel = lang === 'ca'
-        ? (_KIT_SEASON_LABELS_CA[season] || season)
-        : (_KIT_SEASON_LABELS[season] || season);
-      const nombre = (lang === 'ca' && k.nombre_ca) ? k.nombre_ca : (k.nombre || '');
-      const desc   = (lang === 'ca' && k.desc_ca)   ? k.desc_ca   : (k.desc   || '');
-      const precio = k.precio ? `${k.precio}€` : '';
-      const delay  = i * 80;
-
-      const coverContent = k.imagenURL
-        ? `<img src="${k.imagenURL}" alt="${nombre}" style="width:100%;height:100%;object-fit:cover;border-radius:0">`
-        : `<div class="manu-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${seasonColor}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>`;
-
-      return `<div class="manu-card" data-a="up" data-d="${delay}" data-season="${season}">
-        <div class="manu-cover ${k.imagenURL ? '' : coverCss}" style="position:relative;overflow:hidden">
-          <span class="manu-season" style="color:${seasonColor};position:absolute;top:10px;left:10px;z-index:2"
-            data-es="${_KIT_SEASON_LABELS[season]||season}" data-ca="${_KIT_SEASON_LABELS_CA[season]||season}">${seasonLabel}</span>
-          ${coverContent}
-        </div>
-        <div class="manu-body">
-          <div class="manu-name" data-es="${k.nombre||''}" data-ca="${k.nombre_ca||k.nombre||''}">${nombre}</div>
-          <div class="manu-desc" data-es="${k.desc||''}" data-ca="${k.desc_ca||k.desc||''}">${desc}</div>
-          <div class="manu-foot">
-            <div class="manu-price">${precio}</div>
-            <button class="btn-wa-sm" onclick="pedirWA('${(nombre||'').replace(/'/g,"\\'")}'">${_WA_SVG} Pedir</button>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-
-    // Reanimar con observer tras renderizado dinámico
-    if (window._setupAnimObserver) window._setupAnimObserver();
-
-  } catch(e) {
-    console.warn('loadKits error:', e);
-    // Fallback: ocultar sección sin datos
-    grid.innerHTML = '';
-  }
-}
-
 // ── WHATSAPP / RESERVAS ───────────────────────────────────────
 function pedirWA(prod) {
   const msg = encodeURIComponent(`Hola! Me interesa el ${prod} de EspaiFest.`);
@@ -3010,6 +2940,72 @@ async function loadFechasOcupadas() {
     });
   } catch(e) {
     console.warn('Fechas ocupadas error:', e.message);
+  }
+}
+
+// ── KITS DESDE FIRESTORE ──────────────────────────────────────
+const _KIT_SEASON_LABELS    = { verano:'Verano', pascua:'Pascua', navidad:'Navidad', general:'Todo el año' };
+const _KIT_SEASON_LABELS_CA = { verano:'Estiu', pascua:'Pasqua', navidad:'Nadal', general:"Tot l'any" };
+const _KIT_COVER_CSS        = { verano:'mc-1', pascua:'mc-2', navidad:'mc-3', general:'mc-4' };
+const _KIT_SEASON_COLORS    = { verano:'oklch(73% .14 190)', pascua:'oklch(72% .15 90)', navidad:'oklch(66% .24 355)', general:'oklch(73% .14 190)' };
+const _WA_PATH = 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z';
+
+async function loadKits() {
+  const grid = document.getElementById('manu-grid');
+  if (!grid) return;
+  try {
+    const snap = await getDocs(collection(_db, 'kits'));
+    const kits = snap.docs
+      .map(d => ({id: d.id, ...d.data()}))
+      .filter(k => k.activo !== false)
+      .sort((a, b) => (a.orden||99) - (b.orden||99));
+
+    const lang = document.documentElement.lang || 'es';
+
+    if (!kits.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t2)">No hay kits disponibles.</div>';
+      return;
+    }
+
+    const waSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="${_WA_PATH}"/></svg>`;
+
+    grid.innerHTML = kits.map((k, i) => {
+      const season      = k.temporada || 'general';
+      const coverCss    = _KIT_COVER_CSS[season] || 'mc-1';
+      const seasonColor = _KIT_SEASON_COLORS[season] || 'var(--ct)';
+      const seasonLabel = lang === 'ca' ? (_KIT_SEASON_LABELS_CA[season]||season) : (_KIT_SEASON_LABELS[season]||season);
+      const nombre      = (lang==='ca' && k.nombre_ca) ? k.nombre_ca : (k.nombre||'');
+      const desc        = (lang==='ca' && k.desc_ca)   ? k.desc_ca   : (k.desc||'');
+      const precio      = k.precio ? `${k.precio}€` : '';
+      const delay       = i * 80;
+
+      const coverContent = k.imagenURL
+        ? `<img src="${k.imagenURL}" alt="${nombre}" style="width:100%;height:100%;object-fit:cover;border-radius:0">`
+        : `<div class="manu-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${seasonColor}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>`;
+
+      const nombreSafe = (nombre||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+      return `<div class="manu-card" data-a="up" data-d="${delay}" data-season="${season}">
+        <div class="manu-cover ${k.imagenURL?'':coverCss}" style="position:relative;overflow:hidden">
+          <span class="manu-season" style="color:${seasonColor};position:absolute;top:10px;left:10px;z-index:2"
+            data-es="${_KIT_SEASON_LABELS[season]||season}" data-ca="${_KIT_SEASON_LABELS_CA[season]||season}">${seasonLabel}</span>
+          ${coverContent}
+        </div>
+        <div class="manu-body">
+          <div class="manu-name" data-es="${k.nombre||''}" data-ca="${k.nombre_ca||k.nombre||''}">${nombre}</div>
+          <div class="manu-desc" data-es="${k.desc||''}" data-ca="${k.desc_ca||k.desc||''}">${desc}</div>
+          <div class="manu-foot">
+            <div class="manu-price">${precio}</div>
+            <button class="btn-wa-sm" onclick="pedirWA('${nombreSafe}')">${waSvg} Pedir</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    if (window._setupAnimObserver) window._setupAnimObserver();
+
+  } catch(e) {
+    console.warn('loadKits error:', e);
+    grid.innerHTML = '';
   }
 }
 
