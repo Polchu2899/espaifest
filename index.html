@@ -711,18 +711,20 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 }
 .ham-btn{
   display:none;flex-direction:column;justify-content:center;align-items:center;
-  gap:5px;width:44px;height:44px;border-radius:12px;border:1px solid var(--bd);
+  gap:5px;width:44px;height:44px;border-radius:12px;border:1.5px solid oklch(0% 0 0/.15);
   background:var(--s2);cursor:pointer;padding:0;flex-shrink:0;z-index:810;
-  /* Sombra para visibilidad en hero oscuro */
-  box-shadow:0 2px 12px oklch(0% 0 0/.25);
+  box-shadow:0 2px 12px oklch(0% 0 0/.15);
 }
 .ham-btn span{
-  display:block;width:22px;height:2px;border-radius:2px;
-  background:var(--tx1);transition:all .3s cubic-bezier(.34,1.56,.64,1);transform-origin:center;
+  display:block;width:22px;height:2.5px;border-radius:2px;
+  background:oklch(20% 0 0);transition:all .3s cubic-bezier(.34,1.56,.64,1);transform-origin:center;
 }
-.ham-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+[data-theme="dark"] .ham-btn span{
+  background:oklch(90% 0 0);
+}
+.ham-btn.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg);}
 .ham-btn.open span:nth-child(2){opacity:0;transform:scaleX(0);}
-.ham-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.ham-btn.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg);}
 
 /* WA flotante con safe-area para notch/barra Android */
 .wa-fab{
