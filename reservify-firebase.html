@@ -1960,7 +1960,7 @@ window.autoFillCA = function(esId, caId) {
   }
 };
 // Marcar campo CA como modificado manualmente para no sobreescribir
-['s-nombre-ca','s-desc-ca','p-nombre-ca','p-desc-ca'].forEach(id => {
+['s-nombre-ca','s-desc-ca','p-nombre-ca','p-desc-ca','k-nombre-ca','k-desc-ca'].forEach(id => {
   const el = document.getElementById(id);
   if(el) el.addEventListener('input', () => { el.dataset.modified = '1'; });
 });
@@ -2225,6 +2225,10 @@ function limpiarModalKit() {
   ['k-edit-id','k-nombre','k-desc','k-nombre-ca','k-desc-ca','k-precio','k-orden','k-imagen'].forEach(id => {
     const el = document.getElementById(id); if(el) el.value = '';
   });
+  // Limpiar flag de modificado manual para que autoFillCA vuelva a funcionar
+  ['k-nombre-ca','k-desc-ca'].forEach(id => {
+    const el = document.getElementById(id); if(el) delete el.dataset.modified;
+  });
   const sel = document.getElementById('k-temporada'); if(sel) sel.value = 'general';
   const act = document.getElementById('k-activo'); if(act) act.value = 'true';
   document.getElementById('kit-img-preview').style.display = 'none';
@@ -2233,12 +2237,31 @@ function limpiarModalKit() {
   document.getElementById('kit-save-btn').textContent    = 'Crear kit';
 }
 
+// Convierte URL de Google Drive /view? al formato directo usable como src de imagen
+function normalizeGDriveUrl(url) {
+  if (!url) return url;
+  // Formato: https://drive.google.com/file/d/FILE_ID/view?...
+  const m = url.match(/drive\.google\.com\/file\/d\/([^/?\s]+)/);
+  if (m) return `https://drive.google.com/uc?export=view&id=${m[1]}`;
+  // Formato alternativo: /open?id=FILE_ID
+  const m2 = url.match(/drive\.google\.com\/open\?id=([^&\s]+)/);
+  if (m2) return `https://drive.google.com/uc?export=view&id=${m2[1]}`;
+  return url;
+}
+
 window.previewKitImg = function() {
-  const url = document.getElementById('k-imagen').value.trim();
+  const raw  = document.getElementById('k-imagen').value.trim();
+  const url  = normalizeGDriveUrl(raw);
   const wrap = document.getElementById('kit-img-preview');
   const img  = document.getElementById('kit-img-el');
-  if (url) { img.src = url; wrap.style.display = 'block'; }
-  else { wrap.style.display = 'none'; }
+  if (url) {
+    img.src = url;
+    wrap.style.display = 'block';
+    // Si era Drive, actualizar el campo con la URL ya normalizada para que se guarde bien
+    if (url !== raw) document.getElementById('k-imagen').value = url;
+  } else {
+    wrap.style.display = 'none';
+  }
 };
 
 // ── DASHBOARD KPIs ────────────────────────────────────────────
