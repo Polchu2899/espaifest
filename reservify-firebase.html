@@ -269,9 +269,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .sw{width:18px;height:18px;border-radius:4px;display:inline-block;vertical-align:middle;margin-right:7px;border:1px solid var(--b2);}
 
 /* MODAL */
-.mov{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;}
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
 .mov.open{display:flex;animation:fu .18s ease;}
-.modal{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);width:100%;max-width:500px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+.modal{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);width:100%;max-width:500px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.6);margin:auto;}
 .mtitle{font-size:18px;font-weight:800;margin-bottom:4px;}
 .msub{font-size:13px;color:var(--t2);margin-bottom:22px;}
 .fg{margin-bottom:14px;}
@@ -2075,14 +2075,6 @@ function limpiarModalPromo() {
   document.getElementById('promo-save-btn').textContent    = 'Crear promoción';
 }
 
-// Limpiar modal al abrir desde "Nueva promoción"
-const _origOpenModal = window.openModal;
-window.openModal = function(id) {
-  if(id === 'promo' && !document.getElementById('p-edit-id').value) limpiarModalPromo();
-  if(id === 'kit'   && !document.getElementById('k-edit-id').value) limpiarModalKit();
-  _origOpenModal(id);
-};
-
 window.eliminarPromo = async (id) => {
   if(!confirm('¿Eliminar esta promoción? Esta acción no se puede deshacer.')) return;
   await deleteDoc(doc(db,'promociones',id));
@@ -2241,11 +2233,11 @@ function limpiarModalKit() {
 function normalizeGDriveUrl(url) {
   if (!url) return url;
   // Formato: https://drive.google.com/file/d/FILE_ID/view?...
-  const m = url.match(/drive\.google\.com\/file\/d\/([^/?\s]+)/);
-  if (m) return `https://drive.google.com/uc?export=view&id=${m[1]}`;
-  // Formato alternativo: /open?id=FILE_ID
-  const m2 = url.match(/drive\.google\.com\/open\?id=([^&\s]+)/);
-  if (m2) return `https://drive.google.com/uc?export=view&id=${m2[1]}`;
+  const m = url.match(/drive\.google\.com\/file\/d\/([^/?#\s]+)/);
+  if (m) return `https://lh3.googleusercontent.com/d/${m[1]}`;
+  // Formato alternativo: /open?id=FILE_ID o ?id=FILE_ID
+  const m2 = url.match(/[?&]id=([^&\s]+)/);
+  if (m2 && url.includes('drive.google.com')) return `https://lh3.googleusercontent.com/d/${m2[1]}`;
   return url;
 }
 
@@ -2336,7 +2328,11 @@ function updateCrumb() {
   document.getElementById('pcrumb').textContent = now.toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
 
-window.openModal = id => document.getElementById('modal-'+id).classList.add('open');
+window.openModal = id => {
+  if(id === 'promo' && !document.getElementById('p-edit-id').value) limpiarModalPromo();
+  if(id === 'kit'   && !document.getElementById('k-edit-id').value) limpiarModalKit();
+  document.getElementById('modal-'+id).classList.add('open');
+};
 window.closeModal = id => document.getElementById('modal-'+id).classList.remove('open');
 document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 
