@@ -979,8 +979,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <input type="hidden" id="k-edit-id">
 
     <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🇪🇸 Castellano</div>
-    <div class="fg"><label class="fl">Nombre del kit *</label><input type="text" class="fi" id="k-nombre" placeholder="Ej: Kit pintura con dedos" oninput="autoFillCA('k-nombre','k-nombre-ca')"></div>
-    <div class="fg"><label class="fl">Descripción</label><textarea class="fi" id="k-desc" rows="2" placeholder="Describe el contenido del kit brevemente" oninput="autoFillCA('k-desc','k-desc-ca')" style="resize:vertical"></textarea></div>
+    <div class="fg"><label class="fl">Nombre del kit *</label><input type="text" class="fi" id="k-nombre" placeholder="Ej: Kit pintura con dedos"></div>
+    <div class="fg"><label class="fl">Descripción</label><textarea class="fi" id="k-desc" rows="2" placeholder="Describe el contenido del kit brevemente" style="resize:vertical"></textarea></div>
 
     <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🟡 Catalán <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)">(opcional)</span></div>
     <div class="fg"><label class="fl">Nom (CA)</label><input type="text" class="fi" id="k-nombre-ca" placeholder="Ej: Kit pintura amb dits"></div>
@@ -1960,7 +1960,7 @@ window.autoFillCA = function(esId, caId) {
   }
 };
 // Marcar campo CA como modificado manualmente para no sobreescribir
-['s-nombre-ca','s-desc-ca','p-nombre-ca','p-desc-ca','k-nombre-ca','k-desc-ca'].forEach(id => {
+['s-nombre-ca','s-desc-ca','p-nombre-ca','p-desc-ca'].forEach(id => {
   const el = document.getElementById(id);
   if(el) el.addEventListener('input', () => { el.dataset.modified = '1'; });
 });
