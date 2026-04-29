@@ -269,9 +269,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .sw{width:18px;height:18px;border-radius:4px;display:inline-block;vertical-align:middle;margin-right:7px;border:1px solid var(--b2);}
 
 /* MODAL */
-.mov{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;}
 .mov.open{display:flex;animation:fu .18s ease;}
-.modal{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);width:100%;max-width:500px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.6);margin:auto;}
+.modal{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);width:100%;max-width:500px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.6);}
 .mtitle{font-size:18px;font-weight:800;margin-bottom:4px;}
 .msub{font-size:13px;color:var(--t2);margin-bottom:22px;}
 .fg{margin-bottom:14px;}
@@ -319,6 +319,38 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .inf-pago-n{font-size:1.6rem;font-weight:800;margin-bottom:4px;}
 .inf-pago-l{font-size:11px;color:var(--t2);}
 .inf-pago-pct{font-size:11px;font-weight:700;margin-top:4px;}
+
+/* ── RECORDATORIOS ── */
+.rec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px;}
+.rec-date-nav{display:flex;align-items:center;gap:10px;}
+.rec-date-label{font-size:15px;font-weight:700;letter-spacing:-.3px;}
+.rec-date-sub{font-size:12px;color:var(--t3);margin-top:2px;}
+.rec-nav-btn{width:30px;height:30px;border-radius:var(--rxs);background:var(--s3);border:1px solid var(--b2);color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.rec-nav-btn:hover{background:var(--s4);color:var(--tx);}
+.rec-nav-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;}
+.rec-stats{display:flex;gap:10px;}
+.rec-stat{background:var(--s2);border:1px solid var(--b1);border-radius:var(--rs);padding:8px 14px;text-align:center;min-width:70px;}
+.rec-stat-n{font-size:18px;font-weight:800;font-family:'DM Mono',monospace;}
+.rec-stat-l{font-size:10px;color:var(--t3);margin-top:1px;}
+.rec-empty{text-align:center;padding:60px 20px;color:var(--t3);}
+.rec-empty svg{width:44px;height:44px;stroke:var(--t3);fill:none;stroke-width:1.2;margin:0 auto 16px;display:block;}
+.rec-empty p{font-size:14px;margin-bottom:6px;color:var(--t2);}
+.rec-empty small{font-size:12px;}
+.rec-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:18px 20px;margin-bottom:10px;display:flex;align-items:center;gap:16px;transition:border-color .15s;}
+.rec-card:hover{border-color:var(--b2);}
+.rec-card.sent{border-color:rgba(16,185,129,.25);background:linear-gradient(135deg,rgba(16,185,129,.03),transparent);}
+.rec-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(15,212,196,.15),rgba(34,211,238,.08));border:1px solid rgba(15,212,196,.2);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--teal);flex-shrink:0;}
+.rec-info{flex:1;min-width:0;}
+.rec-name{font-size:14px;font-weight:700;margin-bottom:3px;}
+.rec-meta{display:flex;gap:12px;flex-wrap:wrap;}
+.rec-chip{font-size:11px;color:var(--t2);display:flex;align-items:center;gap:4px;}
+.rec-chip svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0;}
+.rec-actions{display:flex;gap:8px;flex-shrink:0;align-items:center;}
+.rec-sent-badge{font-size:11px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:4px;}
+.rec-sent-badge svg{width:13px;height:13px;stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;}
+.rec-preview{margin-top:10px;padding:12px 14px;background:var(--s2);border-radius:var(--rxs);font-size:12px;color:var(--t2);line-height:1.6;display:none;border-left:2px solid rgba(15,212,196,.3);}
+.rec-card.expanded .rec-preview{display:block;}
+.rec-toggle{font-size:11px;color:var(--teal);cursor:pointer;margin-top:6px;display:inline-flex;align-items:center;gap:3px;}
 
 /* TOAST */
 .toast{position:fixed;bottom:28px;right:28px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--rxs);padding:12px 18px;font-size:13px;font-weight:500;color:var(--tx);display:flex;align-items:center;gap:8px;z-index:2000;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.5);}
@@ -392,8 +424,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="ni" onclick="showPanel('servicios',this)"><span class="ni-ico"><svg><use href="#i-grid"/></svg></span>Servicios</div>
       <div class="ng" style="margin-top:8px">Marketing</div>
       <div class="ni" onclick="showPanel('promociones',this)"><span class="ni-ico"><svg><use href="#i-tag"/></svg></span>Promociones</div>
-      <div class="ni" onclick="showPanel('kits',this)"><span class="ni-ico"><svg><use href="#i-grid"/></svg></span>Kits manualidades</div>
       <div class="ni" onclick="showPanel('fidelizacion',this)"><span class="ni-ico"><svg><use href="#i-star"/></svg></span>Fidelización</div>
+      <div class="ni" onclick="showPanel('recordatorios',this);loadRecordatorios()"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Recordatorios<span class="nbadge" id="badge-rec" style="display:none">0</span></div>
       <div class="ng" style="margin-top:8px">Ajustes</div>
       <div class="ni" onclick="showPanel('configuracion',this)"><span class="ni-ico"><svg><use href="#i-gear"/></svg></span>Mi negocio</div>
       <div class="ni" onclick="showPanel('migracion',this)"><span class="ni-ico"><svg><use href="#i-import"/></svg></span>Migración histórica<span class="stag">XLS</span></div>
@@ -526,28 +558,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       </div>
 
       <!-- FIDELIZACIÓN -->
-      <!-- ══ PANEL KITS MANUALIDADES ══ -->
-      <div class="panel" id="panel-kits">
-        <div class="fbar">
-          <div style="font-size:13px;color:var(--t2);flex:1">Kits que aparecen en la web. Añade imagen (URL), nombre, descripción, precio y temporada.</div>
-          <button class="btn bp sm" onclick="openModal('kit')">
-            <svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nuevo kit
-          </button>
-        </div>
-
-        <!-- Info tip -->
-        <div style="background:oklch(55% .18 190/.12);border:1px solid oklch(55% .18 190/.3);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--t2);margin-bottom:16px;display:flex;align-items:flex-start;gap:10px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(65% .18 190)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span><b>Imagen:</b> pega una URL pública (Google Drive, Dropbox, web…). Para Google Drive: comparte el archivo → "Cualquiera con el enlace" → pega el enlace directo.</span>
-        </div>
-
-        <!-- Grid de kits -->
-        <div id="kits-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px">
-          <div class="loading"><div class="spinner"></div>Cargando kits...</div>
-        </div>
-      </div><!-- /panel-kits -->
-
-      <!-- FIDELIZACIÓN -->
       <!-- ══ PANEL INFORMES ══ -->
       <div class="panel" id="panel-informes">
 
@@ -622,6 +632,53 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div class="trow" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px"><div><span class="badge bg-x">Básico</span></div><div class="c cm" id="rng-bas">1–4 reservas</div><div class="c cm" id="dsc-bas">Sin descuento</div><div class="c cx" id="f-basico">—</div></div>
           <div class="trow" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px"><div><span class="badge bg-a">Plata</span></div><div class="c cm" id="rng-pla">5–9 reservas</div><div class="c" id="dsc-pla" style="color:var(--green);font-weight:600">5% descuento</div><div class="c cx" id="f-plata">—</div></div>
           <div class="trow" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px"><div><span class="badge bg-p">Oro</span></div><div class="c cm" id="rng-oro">10+ reservas</div><div class="c" id="dsc-oro" style="color:var(--green);font-weight:600">10% descuento</div><div class="c cx" id="f-orot">—</div></div>
+        </div>
+      </div>
+
+      </div>
+
+      <!-- RECORDATORIOS WHATSAPP -->
+      <div class="panel" id="panel-recordatorios">
+        <div class="rec-header">
+          <div>
+            <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:4px">Recordatorios WhatsApp</div>
+            <div class="rec-date-nav">
+              <button class="rec-nav-btn" onclick="recChangeDay(-1)" title="Día anterior"><svg><polyline points="15 18 9 12 15 6"/></svg></button>
+              <div>
+                <div class="rec-date-label" id="rec-fecha-label">Cargando...</div>
+                <div class="rec-date-sub" id="rec-fecha-sub"></div>
+              </div>
+              <button class="rec-nav-btn" onclick="recChangeDay(1)" title="Día siguiente"><svg><polyline points="9 18 15 12 9 6"/></svg></button>
+              <button class="btn bt sm" onclick="recGoToday()" style="margin-left:4px">Mañana</button>
+            </div>
+          </div>
+          <div class="rec-stats">
+            <div class="rec-stat">
+              <div class="rec-stat-n" id="rec-total" style="color:var(--teal)">—</div>
+              <div class="rec-stat-l">Reservas</div>
+            </div>
+            <div class="rec-stat">
+              <div class="rec-stat-n" id="rec-enviados" style="color:var(--green)">0</div>
+              <div class="rec-stat-l">Enviados</div>
+            </div>
+            <div class="rec-stat">
+              <div class="rec-stat-n" id="rec-pendientes" style="color:var(--amber)">—</div>
+              <div class="rec-stat-l">Pendientes</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info banner -->
+        <div style="background:rgba(15,212,196,.06);border:1px solid rgba(15,212,196,.18);border-radius:var(--rs);padding:12px 16px;margin-bottom:18px;display:flex;align-items:flex-start;gap:12px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div style="font-size:12px;color:var(--t2);line-height:1.6">
+            Pulsa <strong style="color:var(--tx)">Enviar WhatsApp</strong> en cada tarjeta. Se abrirá WhatsApp con el mensaje listo — solo tienes que darle a <strong style="color:var(--tx)">Enviar</strong>. El estado se marca automáticamente.
+          </div>
+        </div>
+
+        <!-- Lista de reservas del día -->
+        <div id="rec-list">
+          <div class="loading"><div class="spinner"></div>Cargando reservas...</div>
         </div>
       </div>
 
@@ -967,68 +1024,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="mfoot">
       <button class="btn bg" onclick="closeModal('promo');limpiarModalPromo()">Cancelar</button>
       <button class="btn bp" id="promo-save-btn" onclick="savePromo()">Crear promoción</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal kit manualidades -->
-<div class="mov" id="modal-kit">
-  <div class="modal" style="max-width:580px">
-    <div class="mtitle" id="kit-modal-title">Nuevo kit</div>
-    <div class="msub" id="kit-modal-sub">Rellena los datos del kit que aparecerá en la web</div>
-    <input type="hidden" id="k-edit-id">
-
-    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🇪🇸 Castellano</div>
-    <div class="fg"><label class="fl">Nombre del kit *</label><input type="text" class="fi" id="k-nombre" placeholder="Ej: Kit pintura con dedos"></div>
-    <div class="fg"><label class="fl">Descripción</label><textarea class="fi" id="k-desc" rows="2" placeholder="Describe el contenido del kit brevemente" style="resize:vertical"></textarea></div>
-
-    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🟡 Catalán <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)">(opcional)</span></div>
-    <div class="fg"><label class="fl">Nom (CA)</label><input type="text" class="fi" id="k-nombre-ca" placeholder="Ej: Kit pintura amb dits"></div>
-    <div class="fg"><label class="fl">Descripció (CA)</label><textarea class="fi" id="k-desc-ca" rows="2" placeholder="Descriu el contingut del kit" style="resize:vertical"></textarea></div>
-
-    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Detalles</div>
-    <div class="fr2">
-      <div class="fg">
-        <label class="fl">Precio (€) *</label>
-        <input type="number" class="fi" id="k-precio" placeholder="8.50" min="0" step="0.01">
-      </div>
-      <div class="fg">
-        <label class="fl">Temporada *</label>
-        <select class="fi" id="k-temporada">
-          <option value="verano">Verano</option>
-          <option value="pascua">Pascua</option>
-          <option value="navidad">Navidad</option>
-          <option value="general">Todo el año</option>
-        </select>
-      </div>
-    </div>
-    <div class="fr2">
-      <div class="fg">
-        <label class="fl">Orden de aparición</label>
-        <input type="number" class="fi" id="k-orden" placeholder="1" min="1">
-      </div>
-      <div class="fg">
-        <label class="fl">Estado</label>
-        <select class="fi" id="k-activo">
-          <option value="true">Visible en la web</option>
-          <option value="false">Oculto</option>
-        </select>
-      </div>
-    </div>
-
-    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Imagen</div>
-    <div class="fg">
-      <label class="fl">URL de la imagen</label>
-      <input type="url" class="fi" id="k-imagen" placeholder="https://..." oninput="previewKitImg()">
-    </div>
-    <div id="kit-img-preview" style="display:none;margin-top:10px;border-radius:10px;overflow:hidden;height:140px;background:var(--s2)">
-      <img id="kit-img-el" src="" alt="Preview" style="width:100%;height:100%;object-fit:cover">
-    </div>
-    <p style="font-size:11px;color:var(--t3);margin-top:6px">Pega una URL pública. Google Drive: comparte el archivo → "Cualquiera con el enlace" → copia el enlace directo.</p>
-
-    <div class="mfoot">
-      <button class="btn bg" onclick="closeModal('kit');limpiarModalKit()">Cancelar</button>
-      <button class="btn bp" id="kit-save-btn" onclick="saveKit()">Crear kit</button>
     </div>
   </div>
 </div>
@@ -1405,7 +1400,7 @@ function metodoBadge(m) {
 
 // ── LOAD ALL ──────────────────────────────────────────────────
 window.loadAllData = async () => {
-  await Promise.all([loadReservas(), loadClientes(), loadServicios(), loadPromos(), loadKits()]);
+  await Promise.all([loadReservas(), loadClientes(), loadServicios(), loadPromos()]);
 };
 
 // ── RESERVAS ──────────────────────────────────────────────────
@@ -2075,185 +2070,18 @@ function limpiarModalPromo() {
   document.getElementById('promo-save-btn').textContent    = 'Crear promoción';
 }
 
+// Limpiar modal al abrir desde "Nueva promoción"
+const _origOpenModal = window.openModal;
+window.openModal = function(id) {
+  if(id === 'promo' && !document.getElementById('p-edit-id').value) limpiarModalPromo();
+  _origOpenModal(id);
+};
+
 window.eliminarPromo = async (id) => {
   if(!confirm('¿Eliminar esta promoción? Esta acción no se puede deshacer.')) return;
   await deleteDoc(doc(db,'promociones',id));
   showToast('Promoción eliminada');
   loadPromos();
-};
-
-// ══ KITS MANUALIDADES ════════════════════════════════════════════
-
-const _KIT_SEASON_INFO = {
-  verano:  { label:'Verano',    color:'oklch(73% .14 190)', bg:'oklch(70% .12 190/.15)' },
-  pascua:  { label:'Pascua',    color:'oklch(72% .15 90)',  bg:'oklch(72% .12 90/.15)'  },
-  navidad: { label:'Navidad',   color:'oklch(66% .24 355)', bg:'oklch(66% .18 355/.15)' },
-  general: { label:'Todo el año',color:'oklch(73% .14 190)',bg:'oklch(60% .1 240/.12)'  }
-};
-
-async function loadKits() {
-  const grid = document.getElementById('kits-grid');
-  if (!grid) return;
-  try {
-    const snap = await getDocs(collection(db, 'kits'));
-    const kits = snap.docs
-      .map(d => ({id: d.id, ...d.data()}))
-      .sort((a, b) => (a.orden||99) - (b.orden||99));
-
-    if (!kits.length) {
-      grid.innerHTML = '<div class="empty" style="grid-column:1/-1">No hay kits. Crea el primero con el botón "Nuevo kit".</div>';
-      return;
-    }
-
-    grid.innerHTML = kits.map(k => {
-      const si = _KIT_SEASON_INFO[k.temporada] || _KIT_SEASON_INFO.general;
-      const activo = k.activo !== false;
-      const imgHtml = k.imagenURL
-        ? `<img src="${k.imagenURL}" alt="${k.nombre||''}" style="width:100%;height:100%;object-fit:cover;border-radius:10px 10px 0 0" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-        : '';
-      const placeholderHtml = `<div style="display:${k.imagenURL?'none':'flex'};align-items:center;justify-content:center;height:120px;background:var(--s3);border-radius:10px 10px 0 0;color:var(--t3);font-size:12px">Sin imagen</div>`;
-
-      return `<div style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;overflow:hidden;opacity:${activo?1:.5};transition:opacity .2s">
-        <div style="height:120px;position:relative;overflow:hidden">
-          ${imgHtml}${placeholderHtml}
-          <span style="position:absolute;top:8px;left:8px;font:700 .6rem var(--fb);text-transform:uppercase;letter-spacing:.07em;padding:3px 8px;border-radius:20px;background:${si.bg};color:${si.color};backdrop-filter:blur(8px)">${si.label}</span>
-          ${!activo ? '<span style="position:absolute;top:8px;right:8px;font:700 .6rem var(--fb);padding:3px 8px;border-radius:20px;background:oklch(50% .2 25/.2);color:oklch(65% .2 25)">Oculto</span>' : ''}
-        </div>
-        <div style="padding:12px 14px">
-          <div style="font:700 .9rem/1.2 var(--fd);margin-bottom:4px;color:var(--t1)">${k.nombre||'Sin nombre'}</div>
-          <div style="font-size:.78rem;color:var(--t2);margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${k.desc||''}</div>
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <span style="font:700 1.1rem/1 var(--fd);color:var(--cp)">${k.precio ? k.precio+'€' : '—'}</span>
-            <div style="display:flex;gap:6px">
-              <button class="rab" onclick="editarKit('${k.id}')" title="Editar"><svg><use href="#i-edit"/></svg></button>
-              <button class="rab rab-cancel" onclick="eliminarKit('${k.id}')" title="Eliminar"><svg><use href="#i-trash"/></svg></button>
-            </div>
-          </div>
-          ${k.nombre_ca ? `<div style="font-size:.68rem;color:var(--t3);margin-top:6px">CA: ${k.nombre_ca}</div>` : ''}
-        </div>
-      </div>`;
-    }).join('');
-  } catch(e) {
-    console.error('loadKits error:', e);
-    document.getElementById('kits-grid').innerHTML = '<div class="empty" style="grid-column:1/-1">Error cargando kits.</div>';
-  }
-}
-
-window.saveKit = async () => {
-  const editId  = document.getElementById('k-edit-id').value;
-  const nombre  = document.getElementById('k-nombre').value.trim();
-  const desc    = document.getElementById('k-desc').value.trim();
-  const nombreCa= document.getElementById('k-nombre-ca').value.trim() || nombre;
-  const descCa  = document.getElementById('k-desc-ca').value.trim()   || desc;
-  const precio  = parseFloat(document.getElementById('k-precio').value) || 0;
-  const temporada = document.getElementById('k-temporada').value;
-  const orden   = parseInt(document.getElementById('k-orden').value) || 99;
-  const activo  = document.getElementById('k-activo').value === 'true';
-  const imagenURL = document.getElementById('k-imagen').value.trim();
-
-  if (!nombre) { showToast('El nombre del kit es obligatorio'); return; }
-
-  const data = {
-    nombre, desc, nombre_ca: nombreCa, desc_ca: descCa,
-    precio, temporada, orden, activo, imagenURL,
-    updatedAt: serverTimestamp()
-  };
-
-  try {
-    if (editId) {
-      await updateDoc(doc(db, 'kits', editId), data);
-      showToast('Kit actualizado ✓');
-    } else {
-      data.createdAt = serverTimestamp();
-      await addDoc(collection(db, 'kits'), data);
-      showToast('Kit creado ✓');
-    }
-    closeModal('kit');
-    limpiarModalKit();
-    loadKits();
-  } catch(e) {
-    console.error('saveKit error:', e);
-    showToast('Error al guardar el kit');
-  }
-};
-
-window.editarKit = async (id) => {
-  try {
-    const snap = await getDocs(collection(db, 'kits'));
-    const k = snap.docs.map(d=>({id:d.id,...d.data()})).find(x=>x.id===id);
-    if (!k) { showToast('Kit no encontrado'); return; }
-
-    document.getElementById('k-edit-id').value   = id;
-    document.getElementById('k-nombre').value    = k.nombre    || '';
-    document.getElementById('k-desc').value      = k.desc      || '';
-    document.getElementById('k-nombre-ca').value = k.nombre_ca || '';
-    document.getElementById('k-desc-ca').value   = k.desc_ca   || '';
-    document.getElementById('k-precio').value    = k.precio    || '';
-    document.getElementById('k-temporada').value = k.temporada || 'general';
-    document.getElementById('k-orden').value     = k.orden     || '';
-    document.getElementById('k-activo').value    = k.activo !== false ? 'true' : 'false';
-    document.getElementById('k-imagen').value    = k.imagenURL || '';
-
-    document.getElementById('kit-modal-title').textContent = 'Editar kit';
-    document.getElementById('kit-modal-sub').textContent   = `Modificando: ${k.nombre}`;
-    document.getElementById('kit-save-btn').textContent    = 'Guardar cambios';
-
-    previewKitImg();
-    openModal('kit');
-  } catch(e) {
-    console.error('editarKit error:', e);
-    showToast('Error al cargar el kit');
-  }
-};
-
-window.eliminarKit = async (id) => {
-  if (!confirm('¿Eliminar este kit? Esta acción no se puede deshacer.')) return;
-  await deleteDoc(doc(db, 'kits', id));
-  showToast('Kit eliminado');
-  loadKits();
-};
-
-function limpiarModalKit() {
-  ['k-edit-id','k-nombre','k-desc','k-nombre-ca','k-desc-ca','k-precio','k-orden','k-imagen'].forEach(id => {
-    const el = document.getElementById(id); if(el) el.value = '';
-  });
-  // Limpiar flag de modificado manual para que autoFillCA vuelva a funcionar
-  ['k-nombre-ca','k-desc-ca'].forEach(id => {
-    const el = document.getElementById(id); if(el) delete el.dataset.modified;
-  });
-  const sel = document.getElementById('k-temporada'); if(sel) sel.value = 'general';
-  const act = document.getElementById('k-activo'); if(act) act.value = 'true';
-  document.getElementById('kit-img-preview').style.display = 'none';
-  document.getElementById('kit-modal-title').textContent = 'Nuevo kit';
-  document.getElementById('kit-modal-sub').textContent   = 'Rellena los datos del kit que aparecerá en la web';
-  document.getElementById('kit-save-btn').textContent    = 'Crear kit';
-}
-
-// Convierte URL de Google Drive /view? al formato directo usable como src de imagen
-function normalizeGDriveUrl(url) {
-  if (!url) return url;
-  // Formato: https://drive.google.com/file/d/FILE_ID/view?...
-  const m = url.match(/drive\.google\.com\/file\/d\/([^/?#\s]+)/);
-  if (m) return `https://lh3.googleusercontent.com/d/${m[1]}`;
-  // Formato alternativo: /open?id=FILE_ID o ?id=FILE_ID
-  const m2 = url.match(/[?&]id=([^&\s]+)/);
-  if (m2 && url.includes('drive.google.com')) return `https://lh3.googleusercontent.com/d/${m2[1]}`;
-  return url;
-}
-
-window.previewKitImg = function() {
-  const raw  = document.getElementById('k-imagen').value.trim();
-  const url  = normalizeGDriveUrl(raw);
-  const wrap = document.getElementById('kit-img-preview');
-  const img  = document.getElementById('kit-img-el');
-  if (url) {
-    img.src = url;
-    wrap.style.display = 'block';
-    // Si era Drive, actualizar el campo con la URL ya normalizada para que se guarde bien
-    if (url !== raw) document.getElementById('k-imagen').value = url;
-  } else {
-    wrap.style.display = 'none';
-  }
 };
 
 // ── DASHBOARD KPIs ────────────────────────────────────────────
@@ -2307,7 +2135,7 @@ function updateDashboard() {
 }
 
 // ── UTILS ─────────────────────────────────────────────────────
-const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],promociones:['Promociones'],fidelizacion:['Fidelización'],configuracion:['Configuración'],migracion:['Migración histórica'],informes:['Informes']};
+const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],promociones:['Promociones'],fidelizacion:['Fidelización'],recordatorios:['Recordatorios WhatsApp'],configuracion:['Configuración'],migracion:['Migración histórica'],informes:['Informes']};
 
 window.showPanel = (id, el) => {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -2328,11 +2156,7 @@ function updateCrumb() {
   document.getElementById('pcrumb').textContent = now.toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
 
-window.openModal = id => {
-  if(id === 'promo' && !document.getElementById('p-edit-id').value) limpiarModalPromo();
-  if(id === 'kit'   && !document.getElementById('k-edit-id').value) limpiarModalKit();
-  document.getElementById('modal-'+id).classList.add('open');
-};
+window.openModal = id => document.getElementById('modal-'+id).classList.add('open');
 window.closeModal = id => document.getElementById('modal-'+id).classList.remove('open');
 document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 
@@ -3714,6 +3538,184 @@ window.exportPagos = function() {
   a.download = `espaifest-pagos-${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
   showToast(`CSV exportado — ${data.length} registros`);
+};
+
+// ── RECORDATORIOS WHATSAPP ────────────────────────────────────
+let recFecha = null;        // Date objeto del día visualizado
+let recEnviadosSet = new Set(); // IDs ya marcados como enviados en esta sesión
+
+function recDateKey(d) {
+  // Devuelve 'YYYY-MM-DD' en hora local
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dd}`;
+}
+
+function recGoToday() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1); // por defecto "mañana"
+  recFecha = d;
+  renderRecordatorios();
+}
+
+function recChangeDay(delta) {
+  if(!recFecha) recFecha = new Date();
+  recFecha.setDate(recFecha.getDate() + delta);
+  renderRecordatorios();
+}
+
+window.loadRecordatorios = function() {
+  if(!recFecha) {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    recFecha = d;
+  }
+  renderRecordatorios();
+};
+
+function renderRecordatorios() {
+  const key = recDateKey(recFecha);
+  const hoy = recDateKey(new Date());
+  const manana = (() => { const d = new Date(); d.setDate(d.getDate()+1); return recDateKey(d); })();
+
+  // Labels
+  let labelFecha, labelSub;
+  if(key === hoy) { labelFecha = 'Hoy'; }
+  else if(key === manana) { labelFecha = 'Mañana'; }
+  else {
+    labelFecha = recFecha.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+    labelFecha = labelFecha.charAt(0).toUpperCase() + labelFecha.slice(1);
+  }
+  labelSub = recFecha.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('rec-fecha-label').textContent = labelFecha;
+  document.getElementById('rec-fecha-sub').textContent = labelSub;
+
+  // Filtrar reservas de ese día (no canceladas)
+  const reservasDia = allReservas.filter(r =>
+    r.fecha === key && (r.estado||'').toLowerCase() !== 'cancelada'
+  );
+
+  // Estadísticas
+  const total = reservasDia.length;
+  const enviados = reservasDia.filter(r => recEnviadosSet.has(r.id)).length;
+  document.getElementById('rec-total').textContent = total;
+  document.getElementById('rec-enviados').textContent = enviados;
+  document.getElementById('rec-pendientes').textContent = total - enviados;
+
+  // Badge en sidebar
+  const badge = document.getElementById('badge-rec');
+  if(total > 0 && enviados < total) {
+    badge.textContent = total - enviados;
+    badge.style.display = '';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  const lista = document.getElementById('rec-list');
+  if(!lista) return;
+
+  if(total === 0) {
+    lista.innerHTML = `
+      <div class="rec-empty">
+        <svg viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"/></svg>
+        <p>Sin reservas para este día</p>
+        <small>Usa las flechas para cambiar de fecha</small>
+      </div>`;
+    return;
+  }
+
+  lista.innerHTML = reservasDia.map(r => {
+    const isSent = recEnviadosSet.has(r.id);
+    const inicial = (r.nombre||'?').charAt(0).toUpperCase();
+    const horario = r.horario || '—';
+    const servicio = r.servicio || '—';
+    const tel = (r.telefono||'').replace(/\s/g,'');
+    const hasTel = tel.length >= 9;
+
+    const msg = recBuildMsg(r, key);
+    const waUrl = hasTel
+      ? `https://wa.me/34${tel.replace(/^\+?34/,'')}?text=${encodeURIComponent(msg)}`
+      : null;
+
+    return `
+      <div class="rec-card${isSent?' sent':''}" id="rec-card-${r.id}">
+        <div class="rec-avatar">${inicial}</div>
+        <div class="rec-info">
+          <div class="rec-name">${r.nombre||'Sin nombre'}</div>
+          <div class="rec-meta">
+            <span class="rec-chip">
+              <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              ${horario}
+            </span>
+            <span class="rec-chip">
+              <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+              ${servicio}
+            </span>
+            ${tel ? `<span class="rec-chip">
+              <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.8 19.8 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.8 19.8 0 01.08 1.22a2 2 0 012-2.17h3a2 2 0 012 1.72 12.8 12.8 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 6.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.8 12.8 0 002.81.7A2 2 0 0122 13.92v3z"/></svg>
+              ${r.telefono}
+            </span>` : ''}
+          </div>
+          <div class="rec-toggle" onclick="recTogglePreview('${r.id}')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Ver mensaje
+          </div>
+          <div class="rec-preview" id="rec-prev-${r.id}">${msg.replace(/\n/g,'<br>')}</div>
+        </div>
+        <div class="rec-actions">
+          ${isSent
+            ? `<div class="rec-sent-badge">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                Enviado
+              </div>`
+            : hasTel
+              ? `<button class="btn bp sm" onclick="recEnviar('${r.id}','${waUrl.replace(/'/g,"\\'")}')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  Enviar WhatsApp
+                </button>`
+              : `<span style="font-size:11px;color:var(--red)">Sin teléfono</span>`
+          }
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function recBuildMsg(r, fechaKey) {
+  const nombre = (r.nombre||'').split(' ')[0] || 'cliente';
+  const fecha = new Date(fechaKey + 'T12:00:00');
+  const diaSemana = fecha.toLocaleDateString('es-ES',{weekday:'long'});
+  const diaStr = fecha.toLocaleDateString('es-ES',{day:'numeric',month:'long'});
+  const horario = r.horario || '';
+  const servicio = r.servicio || 'vuestra celebración';
+
+  return `🎉 ¡Hola ${nombre}!
+
+Mañana os esperamos en EspaiFest para ${servicio.toLowerCase()}.
+
+📅 ${diaSemana.charAt(0).toUpperCase()+diaSemana.slice(1)}, ${diaStr}${horario ? '\n🕐 ' + horario : ''}
+📍 C/ Francesc Macià, 37 · Martorell
+
+Si necesitáis algo antes de llegar, estamos aquí:
+📞 674 379 709
+
+¡Hasta mañana! 🎈
+— Equipo EspaiFest`;
+}
+
+window.recTogglePreview = function(id) {
+  const card = document.getElementById('rec-card-'+id);
+  if(card) card.classList.toggle('expanded');
+};
+
+window.recEnviar = function(id, url) {
+  window.open(url, '_blank', 'noopener');
+  // Marcar como enviado tras 1.5s (tiempo para que abra WhatsApp)
+  setTimeout(() => {
+    recEnviadosSet.add(id);
+    renderRecordatorios();
+    showToast('Marcado como enviado ✓');
+  }, 1500);
 };
 
 // Login con Enter
