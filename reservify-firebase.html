@@ -3543,6 +3543,7 @@ window.exportPagos = function() {
 // ── RECORDATORIOS WHATSAPP ────────────────────────────────────
 let recFecha = null;        // Date objeto del día visualizado
 let recEnviadosSet = new Set(); // IDs ya marcados como enviados en esta sesión
+const recMsgEdits = {};     // Mensajes editados por ID
 
 function recDateKey(d) {
   // Devuelve 'YYYY-MM-DD' en hora local
@@ -3625,6 +3626,7 @@ function renderRecordatorios() {
     return;
   }
 
+  // Guardar mensajes editados por ID para que persistan al re-render
   lista.innerHTML = reservasDia.map(r => {
     const isSent = recEnviadosSet.has(r.id);
     const inicial = (r.nombre||'?').charAt(0).toUpperCase();
@@ -3633,10 +3635,8 @@ function renderRecordatorios() {
     const tel = (r.telefono||'').replace(/\s/g,'');
     const hasTel = tel.length >= 9;
 
-    const msg = recBuildMsg(r, key);
-    const waUrl = hasTel
-      ? `https://wa.me/34${tel.replace(/^\+?34/,'')}?text=${encodeURIComponent(msg)}`
-      : null;
+    // Usar mensaje editado si existe, si no el generado automático
+    if(!recMsgEdits[r.id]) recMsgEdits[r.id] = recBuildMsg(r, key);
 
     return `
       <div class="rec-card${isSent?' sent':''}" id="rec-card-${r.id}">
@@ -3657,11 +3657,27 @@ function renderRecordatorios() {
               ${r.telefono}
             </span>` : ''}
           </div>
-          <div class="rec-toggle" onclick="recTogglePreview('${r.id}')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            Ver mensaje
+          ${!isSent ? `<div class="rec-toggle" onclick="recToggleEditor('${r.id}')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Ver y editar mensaje
           </div>
-          <div class="rec-preview" id="rec-prev-${r.id}">${msg.replace(/\n/g,'<br>')}</div>
+          <div class="rec-editor" id="rec-ed-${r.id}" style="display:none;margin-top:10px">
+            <textarea
+              id="rec-ta-${r.id}"
+              rows="10"
+              style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--rxs);padding:12px;color:var(--tx);font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.7;resize:vertical;outline:none;transition:border-color .15s;"
+              onfocus="this.style.borderColor='var(--teal)'"
+              onblur="this.style.borderColor='var(--b2)'"
+              oninput="recSaveEdit('${r.id}')"
+            >${recMsgEdits[r.id]}</textarea>
+            <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+              <button class="btn bg sm" onclick="recResetMsg('${r.id}','${key}')">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                Restablecer
+              </button>
+              <span style="font-size:11px;color:var(--t3);margin-left:auto" id="rec-chars-${r.id}">${recMsgEdits[r.id].length} car.</span>
+            </div>
+          </div>` : ''}
         </div>
         <div class="rec-actions">
           ${isSent
@@ -3670,7 +3686,7 @@ function renderRecordatorios() {
                 Enviado
               </div>`
             : hasTel
-              ? `<button class="btn bp sm" onclick="recEnviar('${r.id}','${waUrl.replace(/'/g,"\\'")}')">
+              ? `<button class="btn bp sm" onclick="recEnviar('${r.id}','${tel}')">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
                   Enviar WhatsApp
                 </button>`
@@ -3703,14 +3719,46 @@ Si necesitáis algo antes de llegar, estamos aquí:
 — Equipo EspaiFest`;
 }
 
-window.recTogglePreview = function(id) {
-  const card = document.getElementById('rec-card-'+id);
-  if(card) card.classList.toggle('expanded');
+window.recToggleEditor = function(id) {
+  const ed = document.getElementById('rec-ed-'+id);
+  if(!ed) return;
+  const visible = ed.style.display !== 'none';
+  ed.style.display = visible ? 'none' : 'block';
+  // Poner foco en el textarea al abrir
+  if(!visible) {
+    const ta = document.getElementById('rec-ta-'+id);
+    if(ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+  }
 };
 
-window.recEnviar = function(id, url) {
+window.recSaveEdit = function(id) {
+  const ta = document.getElementById('rec-ta-'+id);
+  if(!ta) return;
+  recMsgEdits[id] = ta.value;
+  const chars = document.getElementById('rec-chars-'+id);
+  if(chars) chars.textContent = ta.value.length + ' car.';
+};
+
+window.recResetMsg = function(id, fechaKey) {
+  const r = allReservas.find(x => x.id === id);
+  if(!r) return;
+  const msg = recBuildMsg(r, fechaKey);
+  recMsgEdits[id] = msg;
+  const ta = document.getElementById('rec-ta-'+id);
+  if(ta) { ta.value = msg; ta.focus(); }
+  const chars = document.getElementById('rec-chars-'+id);
+  if(chars) chars.textContent = msg.length + ' car.';
+  showToast('Mensaje restablecido');
+};
+
+window.recEnviar = function(id, tel) {
+  // Usar el mensaje actual del textarea si está abierto, o del store
+  const ta = document.getElementById('rec-ta-'+id);
+  if(ta) recMsgEdits[id] = ta.value;
+  const msg = recMsgEdits[id] || '';
+  const telLimpio = tel.replace(/^\+?34/,'').replace(/\s/g,'');
+  const url = `https://wa.me/34${telLimpio}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank', 'noopener');
-  // Marcar como enviado tras 1.5s (tiempo para que abra WhatsApp)
   setTimeout(() => {
     recEnviadosSet.add(id);
     renderRecordatorios();
