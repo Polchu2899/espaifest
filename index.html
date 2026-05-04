@@ -2044,15 +2044,15 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             </div>
           </div>
           <div class="fr2">
-            <div class="fg"><label class="fl" data-es="Fecha deseada *" data-ca="Data desitjada *">Fecha deseada *</label><input type="date" class="fi" id="r-f" required></div>
+            <div class="fg"><label class="fl" data-es="Fecha deseada *" data-ca="Data desitjada *">Fecha deseada *</label><input type="date" class="fi" id="r-f" required onchange="webLoadFranjasPorFecha(this.value)"></div>
             <div class="fg"><label class="fl" data-es="Franja horaria *" data-ca="Franja horària *">Franja horaria *</label>
-              <select class="fsel" id="r-horario" required>
-                <option value="">Selecciona...</option>
-                <option value="Mañana (10:00-14:00) — 85€">🌅 Mañana (10:00–14:00) — 85 €</option>
-                <option value="Mañana (11:00-15:00) — 85€">🌅 Mañana (11:00–15:00) — 85 €</option>
-                <option value="Tarde (16:30-20:30) — 85€">🌇 Tarde (16:30–20:30) — 85 €</option>
-                <option value="Todo el día (10:00-20:00) — 130€">☀️ Todo el día (10:00–20:00) — 130 €</option>
+              <select class="fsel" id="r-horario" required onchange="calcularTotal()">
+                <option value="">— Elige fecha primero —</option>
               </select>
+              <div id="web-price-preview" style="display:none;margin-top:7px;padding:9px 13px;background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:10px;display:none;font-size:.8rem;align-items:center;justify-content:space-between;gap:8px;">
+                <span id="web-price-label" style="color:var(--tx2)">Precio sala</span>
+                <strong id="web-price-val" style="color:var(--co);font-size:1rem;font-weight:800">—</strong>
+              </div>
             </div>
           </div>
           <div class="fg"><label class="fl" data-es="Cuéntanos más" data-ca="Explica'ns més">Cuéntanos más</label><textarea class="fta" id="r-no" placeholder="Número de personas, necesidades especiales, decoración..."></textarea></div>
@@ -2747,10 +2747,20 @@ function selectSlot(slot, grupo, precio) {
 
   // Rellenar fecha en el formulario
   const fiEl = document.getElementById('r-f');
-  if(fiEl && calSelected) fiEl.value = calSelected;
-
-  // Disparar carga de franjas dinámicas en el form si existe la función
-  if(typeof loadFranjasByDate === 'function') loadFranjasByDate(calSelected, slot);
+  if(fiEl && calSelected) {
+    fiEl.value = calSelected;
+    webLoadFranjasPorFecha(calSelected);
+    // Seleccionar el slot correcto en el select tras cargarlo
+    setTimeout(() => {
+      const selEl = document.getElementById('r-horario');
+      if(selEl) {
+        Array.from(selEl.options).forEach(opt => {
+          if(opt.textContent.includes(slot)) opt.selected = true;
+        });
+        calcularTotal();
+      }
+    }, 50);
+  }
 
   // Nota en el textarea
   const noEl = document.getElementById('r-no');
@@ -2845,17 +2855,97 @@ const _TIPO_MAP = {
 };
 
 // ── TOTAL EN TIEMPO REAL ──────────────────────────────────────
-const _PRECIO_HORARIO = {
-  'Mañana (10:00-14:00) — 85€': 85,
-  'Mañana (11:00-15:00) — 85€': 85,
-  'Tarde (16:30-20:30) — 85€':  85,
-  'Todo el día (10:00-20:00) — 130€': 130
-};
+
+// Carga las franjas del formulario web según la fecha elegida
+function webLoadFranjasPorFecha(fechaStr) {
+  const sel  = document.getElementById('r-horario');
+  const prev = document.getElementById('web-price-preview');
+  if(!sel) return;
+  sel.innerHTML = '';
+  if(prev) prev.style.display = 'none';
+
+  if(!fechaStr) {
+    sel.innerHTML = '<option value="">— Elige fecha primero —</option>';
+    return;
+  }
+
+  // Detectar día especial
+  const d = new Date(fechaStr+'T12:00:00');
+  const ddmm = String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
+  const esp = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
+  if(esp) {
+    const opt = document.createElement('option');
+    opt.value = `${esp.celebracion} · ${esp.horario}`;
+    opt.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
+    opt.dataset.precio = esp.precio;
+    opt.dataset.esDiaEsp = '1';
+    sel.appendChild(opt);
+    webUpdatePricePreview(esp.precio, true);
+    calcularTotal();
+    return;
+  }
+
+  // Franjas normales según día de semana
+  const diaSemIdx = (d.getDay()+6)%7;
+  const diaKey = ['lu','ma','mi','ju','vi','sa','do'][diaSemIdx];
+  const todas = [...(indexTarifas?.estandar||[]), ...(indexTarifas?.ampliados||[])];
+  const disponibles = todas.filter(f => {
+    const v = f[diaKey];
+    return v !== '—' && v !== '' && v != null;
+  });
+
+  if(!disponibles.length) {
+    sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
+    return;
+  }
+
+  const opt0 = document.createElement('option');
+  opt0.value = '';
+  opt0.textContent = '— Selecciona franja —';
+  sel.appendChild(opt0);
+
+  disponibles.forEach(f => {
+    const precio = f[diaKey];
+    const opt = document.createElement('option');
+    opt.value = `${f.turno} (${f.horario})`;
+    opt.textContent = `${f.turno} · ${f.horario} — ${precio} €`;
+    opt.dataset.precio = precio;
+    sel.appendChild(opt);
+  });
+
+  calcularTotal();
+}
+
+function webUpdatePricePreview(precio, esDiaEsp) {
+  const prev  = document.getElementById('web-price-preview');
+  const val   = document.getElementById('web-price-val');
+  const label = document.getElementById('web-price-label');
+  if(!prev) return;
+  if(precio > 0) {
+    prev.style.display = 'flex';
+    val.textContent = precio + ' €';
+    label.textContent = esDiaEsp ? '⭐ Tarifa día especial' : 'Precio sala';
+  } else {
+    prev.style.display = 'none';
+  }
+}
+
+// Obtiene el precio de sala desde el option seleccionado
+function getPrecioSalaWeb() {
+  const sel = document.getElementById('r-horario');
+  if(!sel) return 0;
+  const opt = sel.options[sel.selectedIndex];
+  return opt?.dataset.precio ? parseFloat(opt.dataset.precio) : 0;
+}
 
 function calcularTotal() {
-  const hor  = document.getElementById('r-horario')?.value || '';
-  const pSala = _PRECIO_HORARIO[hor] || 0;
-  if(!pSala) { document.getElementById('resumen-total').style.display='none'; return; }
+  const hor   = document.getElementById('r-horario')?.value || '';
+  const pSala = getPrecioSalaWeb();
+
+  // Actualizar preview de precio sala
+  webUpdatePricePreview(pSala, document.getElementById('r-horario')?.options[document.getElementById('r-horario')?.selectedIndex]?.dataset.esDiaEsp === '1');
+
+  if(!pSala || !hor) { document.getElementById('resumen-total').style.display='none'; return; }
 
   const horaExtRaw = document.querySelector('input[name="r-horaext"]:checked')?.value || 'ninguna|0';
   const pHora = parseFloat(horaExtRaw.split('|')[1]) || 0;
@@ -2870,7 +2960,7 @@ function calcularTotal() {
 
   // Construir líneas
   const lineas = [];
-  lineas.push(`<div style="display:flex;justify-content:space-between;"><span>Sala — ${hor.replace(/ — \d+€/,'')}</span><span style="font-weight:700;color:var(--tx1)">${pSala.toFixed(2)} €</span></div>`);
+  lineas.push(`<div style="display:flex;justify-content:space-between;"><span>Sala — ${hor}</span><span style="font-weight:700;color:var(--tx1)">${pSala.toFixed(2)} €</span></div>`);
   if(pHora > 0) lineas.push(`<div style="display:flex;justify-content:space-between;"><span>${horaLabel}</span><span style="font-weight:700;color:var(--tx1)">${pHora.toFixed(2)} €</span></div>`);
   if(pExtras > 0) lineas.push(`<div style="display:flex;justify-content:space-between;"><span>Extras (${extChecked.filter(cb=>parseFloat(cb.dataset.precio)>0).length} seleccionados)</span><span style="font-weight:700;color:var(--tx1)">${pExtras.toFixed(2)} €</span></div>`);
   if(hasConsulta) lineas.push(`<div style="color:var(--tx3);font-size:.78rem;">+ artículos a consultar</div>`);
@@ -2930,7 +3020,7 @@ async function enviarReserva() {
   const servicioLabel = _TIPO_MAP[tipo] || tipo;
 
   // ── Calcular precio sala ─────────────────────────────────────
-  const precioSala = _PRECIO_HORARIO[hor] || 85;
+  const precioSala = getPrecioSalaWeb() || 85;
 
   // ── Extras seleccionados ─────────────────────────────────────
   const extObjs = Array.from(document.querySelectorAll('.r-ext:checked')).map(cb => ({
@@ -2962,7 +3052,7 @@ async function enviarReserva() {
     to_email:      e,
     to_name:       `${n} ${ap}`,
     fecha_reserva: fmtFecha(f),
-    horario:       hor.replace(/ — \d+€/,''),
+    horario:       hor,
     evento:        servicioLabel,
     personas:      pers,
     hora_extra:    horaExtStr,
@@ -2986,7 +3076,7 @@ async function enviarReserva() {
     cliente_tel:   t,
     cliente_email: e,
     fecha_reserva: fmtFecha(f),
-    horario:       hor.replace(/ — \d+€/,''),
+    horario:       hor,
     evento:        servicioLabel,
     personas:      pers,
     hora_extra:    horaExtStr,
@@ -3032,7 +3122,7 @@ async function enviarReserva() {
     `👤 ${n} ${ap}${linDni}${linDir}\n` +
     `📞 ${t} · ✉️ ${e}\n` +
     `🎊 ${servicioLabel} · ${pers}\n` +
-    `📅 ${fmtFecha(f)} · 🕐 ${hor.replace(/ — \d+€/,'')}` +
+    `📅 ${fmtFecha(f)} · 🕐 ${hor}` +
     `${linHrExt}${linExt}${linNota}\n\n` +
     `💶 Total estimado: ${fmtEur(totalEstimado)}\n` +
     `💳 Señal 50%: ${fmtEur(senalPago)}`
