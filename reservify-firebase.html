@@ -352,6 +352,36 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .rec-card.expanded .rec-preview{display:block;}
 .rec-toggle{font-size:11px;color:var(--teal);cursor:pointer;margin-top:6px;display:inline-flex;align-items:center;gap:3px;}
 
+/* ── TARIFAS ── */
+.tar-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.tar-tab{padding:7px 16px;border-radius:var(--rxs);border:1px solid var(--b2);background:var(--s2);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+.tar-tab.on{background:var(--teal);color:#000;border-color:var(--teal);}
+.tar-section{display:none;}.tar-section.on{display:block;}
+.tar-save-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.tar-save-bar h3{font-size:14px;font-weight:700;}
+.tar-hint{font-size:11px;color:var(--t2);margin-bottom:14px;padding:10px 14px;background:var(--s2);border-radius:var(--rxs);border-left:2px solid var(--teal);}
+.tar-table-wrap{overflow-x:auto;border-radius:var(--rs);border:1px solid var(--b1);}
+.tar-table{width:100%;border-collapse:collapse;font-size:12px;min-width:600px;}
+.tar-table th{background:var(--s3);color:var(--t2);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:10px 12px;text-align:center;border-bottom:1px solid var(--b2);}
+.tar-table th:first-child,.tar-table th:nth-child(2){text-align:left;}
+.tar-table td{padding:8px 10px;border-bottom:1px solid var(--b1);text-align:center;vertical-align:middle;}
+.tar-table tr:last-child td{border-bottom:none;}
+.tar-table tr:hover td{background:var(--s2);}
+.tar-table td:first-child,.tar-table td:nth-child(2){text-align:left;color:var(--tx);font-weight:600;}
+.tar-inp{width:72px;background:var(--s3);border:1px solid var(--b2);border-radius:4px;padding:5px 8px;color:var(--tx);font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;text-align:center;outline:none;transition:border-color .12s;}
+.tar-inp:focus{border-color:var(--teal);}
+.tar-inp.wide{width:120px;}
+.tar-inp.dash{background:transparent;border-color:transparent;color:var(--t3);pointer-events:none;}
+.tar-row-del{background:none;border:none;cursor:pointer;color:var(--t3);padding:4px;border-radius:4px;transition:color .12s;}
+.tar-row-del:hover{color:var(--red);}
+.tar-row-del svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+.tar-add-row{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.tar-add-row input{flex:1;min-width:90px;}
+.price-preview{background:rgba(15,212,196,.08);border:1px solid rgba(15,212,196,.2);border-radius:var(--rxs);padding:10px 14px;margin-top:8px;display:none;font-size:13px;}
+.price-preview strong{color:var(--teal);font-size:16px;font-weight:800;}
+.price-preview.visible{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.dia-esp-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(245,158,11,.15);color:var(--amber);margin-left:6px;}
+
 /* TOAST */
 .toast{position:fixed;bottom:28px;right:28px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--rxs);padding:12px 18px;font-size:13px;font-weight:500;color:var(--tx);display:flex;align-items:center;gap:8px;z-index:2000;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.5);}
 .toast.show{transform:translateY(0);opacity:1;}
@@ -422,6 +452,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="ni" onclick="showPanel('pagos',this)"><span class="ni-ico"><svg><use href="#i-money"/></svg></span>Pagos</div>
       <div class="ni" onclick="showPanel('clientes',this)"><span class="ni-ico"><svg><use href="#i-users"/></svg></span>Clientes</div>
       <div class="ni" onclick="showPanel('servicios',this)"><span class="ni-ico"><svg><use href="#i-grid"/></svg></span>Servicios</div>
+      <div class="ni" onclick="showPanel('tarifas',this);loadTarifas()"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>Tarifas</div>
       <div class="ng" style="margin-top:8px">Marketing</div>
       <div class="ni" onclick="showPanel('promociones',this)"><span class="ni-ico"><svg><use href="#i-tag"/></svg></span>Promociones</div>
       <div class="ni" onclick="showPanel('fidelizacion',this)"><span class="ni-ico"><svg><use href="#i-star"/></svg></span>Fidelización</div>
@@ -548,6 +579,130 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <div class="card">
           <div class="thead sc"><span>Servicio</span><span>Duración</span><span>Precio</span><span>Estado</span><span style="text-align:right">Acciones</span></div>
           <div id="servicios-list"><div class="loading"><div class="spinner"></div>Cargando servicios...</div></div>
+        </div>
+      </div>
+
+      <!-- PROMOCIONES -->
+      <div class="panel" id="panel-tarifas">
+        <div class="tar-tabs">
+          <button class="tar-tab on" onclick="tarSwitch('estandar',this)">Turnos estándar (4h)</button>
+          <button class="tar-tab" onclick="tarSwitch('ampliados',this)">Turnos ampliados</button>
+          <button class="tar-tab" onclick="tarSwitch('especiales',this)">Días especiales</button>
+          <button class="tar-tab" onclick="tarSwitch('extras',this)">Extras</button>
+        </div>
+
+        <!-- ESTÁNDAR -->
+        <div class="tar-section on" id="tar-estandar">
+          <div class="tar-save-bar">
+            <h3>Turnos estándar — 4 horas</h3>
+            <button class="btn bp sm" onclick="saveTarifas('estandar')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Guardar cambios
+            </button>
+          </div>
+          <p class="tar-hint">Edita cualquier precio directamente. Usa <strong>—</strong> para marcar una franja no disponible ese día.</p>
+          <div class="tar-table-wrap">
+            <table class="tar-table" id="tar-table-estandar">
+              <thead><tr>
+                <th>Turno</th><th>Horario</th>
+                <th>Lu</th><th>Ma</th><th>Mi</th><th>Ju</th><th>Vi</th><th>Sá</th><th>Do</th>
+                <th></th>
+              </tr></thead>
+              <tbody id="tar-body-estandar"></tbody>
+            </table>
+          </div>
+          <div class="tar-add-row">
+            <input class="fi tar-inp wide" id="tar-e-turno" placeholder="Turno (ej: Mañana)">
+            <input class="fi tar-inp wide" id="tar-e-hora" placeholder="Horario (ej: 10h–14h)">
+            <button class="btn bg sm" onclick="tarAddRow('estandar')">+ Añadir franja</button>
+          </div>
+        </div>
+
+        <!-- AMPLIADOS -->
+        <div class="tar-section" id="tar-ampliados">
+          <div class="tar-save-bar">
+            <h3>Turnos ampliados</h3>
+            <button class="btn bp sm" onclick="saveTarifas('ampliados')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Guardar cambios
+            </button>
+          </div>
+          <p class="tar-hint">Franjas de más de 4 horas: Todo el día, Tarde-Noche, etc.</p>
+          <div class="tar-table-wrap">
+            <table class="tar-table" id="tar-table-ampliados">
+              <thead><tr>
+                <th>Turno</th><th>Horario</th>
+                <th>Lu</th><th>Ma</th><th>Mi</th><th>Ju</th><th>Vi</th><th>Sá</th><th>Do</th>
+                <th></th>
+              </tr></thead>
+              <tbody id="tar-body-ampliados"></tbody>
+            </table>
+          </div>
+          <div class="tar-add-row">
+            <input class="fi tar-inp wide" id="tar-a-turno" placeholder="Turno">
+            <input class="fi tar-inp wide" id="tar-a-hora" placeholder="Horario">
+            <button class="btn bg sm" onclick="tarAddRow('ampliados')">+ Añadir franja</button>
+          </div>
+        </div>
+
+        <!-- DÍAS ESPECIALES -->
+        <div class="tar-section" id="tar-especiales">
+          <div class="tar-save-bar">
+            <h3>Días especiales</h3>
+            <button class="btn bp sm" onclick="saveTarifas('especiales')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Guardar cambios
+            </button>
+          </div>
+          <p class="tar-hint">Festivos y celebraciones con tarifa especial. Se detectan automáticamente al seleccionar fecha en el formulario.</p>
+          <div class="tar-table-wrap">
+            <table class="tar-table" id="tar-table-especiales">
+              <thead><tr>
+                <th style="text-align:left">Celebración</th>
+                <th style="text-align:left">Día / Mes</th>
+                <th style="text-align:left">Horario</th>
+                <th>Precio (€)</th>
+                <th></th>
+              </tr></thead>
+              <tbody id="tar-body-especiales"></tbody>
+            </table>
+          </div>
+          <div class="tar-add-row">
+            <input class="fi tar-inp wide" id="tar-es-nom" placeholder="Celebración">
+            <input class="fi tar-inp" id="tar-es-dia" placeholder="DD/MM">
+            <input class="fi tar-inp wide" id="tar-es-hora" placeholder="Horario">
+            <input class="fi tar-inp" id="tar-es-precio" placeholder="€" type="number">
+            <button class="btn bg sm" onclick="tarAddEspecial()">+ Añadir</button>
+          </div>
+        </div>
+
+        <!-- EXTRAS -->
+        <div class="tar-section" id="tar-extras">
+          <div class="tar-save-bar">
+            <h3>Servicios extra</h3>
+            <button class="btn bp sm" onclick="saveTarifas('extras')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Guardar cambios
+            </button>
+          </div>
+          <p class="tar-hint">Limpieza y hora extra por franja. Se muestran en el formulario de reserva y en el presupuesto al cliente.</p>
+          <div class="tar-table-wrap">
+            <table class="tar-table" id="tar-table-extras">
+              <thead><tr>
+                <th style="text-align:left">Concepto</th>
+                <th style="text-align:left">Turno</th>
+                <th>Precio (€)</th>
+                <th></th>
+              </tr></thead>
+              <tbody id="tar-body-extras"></tbody>
+            </table>
+          </div>
+          <div class="tar-add-row">
+            <input class="fi tar-inp wide" id="tar-ex-concepto" placeholder="Concepto (ej: Limpieza)">
+            <input class="fi tar-inp wide" id="tar-ex-turno" placeholder="Turno (ej: Mañana)">
+            <input class="fi tar-inp" id="tar-ex-precio" placeholder="€" type="number">
+            <button class="btn bg sm" onclick="tarAddExtra()">+ Añadir</button>
+          </div>
         </div>
       </div>
 
@@ -925,24 +1080,23 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       </div>
     </div>
     <div class="fr2">
-      <div class="fg"><label class="fl">Fecha *</label><input type="date" class="fi" id="r-fecha"></div>
+      <div class="fg"><label class="fl">Fecha *</label><input type="date" class="fi" id="r-fecha" onchange="loadFranjasPorFecha(this.value);calcPrecioAuto()"></div>
       <div class="fg"><label class="fl">Franja horaria</label>
-        <select class="fsi" id="r-horario">
-          <option value="Mañana (10:00-14:00) — 85€">Mañana (10:00-14:00) — 85 €</option>
-          <option value="Mañana (11:00-15:00) — 85€">Mañana (11:00-15:00) — 85 €</option>
-          <option value="Tarde (16:30-20:30) — 85€">Tarde (16:30-20:30) — 85 €</option>
-          <option value="Todo el día (10:00-20:00) — 130€">Todo el día (10:00-20:00) — 130 €</option>
+        <select class="fsi" id="r-horario" onchange="calcPrecioAuto()">
+          <option value="">— Selecciona fecha primero —</option>
         </select>
+        <div class="price-preview" id="price-preview">
+          <span id="price-preview-label">Precio estimado</span>
+          <strong id="price-preview-val">—</strong>
+        </div>
       </div>
     </div>
 
     <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:14px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Extras y pago</div>
     <div class="fg"><label class="fl">Extras seleccionados</label><input type="text" class="fi" id="r-extras" placeholder="Ej: Menú mini, Bandeja Dulce..."></div>
     <div class="fg"><label class="fl">Hora extra</label>
-      <select class="fsi" id="r-horaext">
+      <select class="fsi" id="r-horaext" onchange="calcPrecioAuto()">
         <option value="Sin horas extra">Sin horas extra</option>
-        <option value="+1h antes (10 €)">+1h antes (10 €)</option>
-        <option value="+1h después (10 €)">+1h después (10 €)</option>
       </select>
     </div>
     <div class="fr2">
@@ -1589,8 +1743,10 @@ window.saveReserva = async () => {
   document.getElementById('r-importe').value = '85';
 };
 
-const FRANJAS_MANANA = ['09:00–13:00','10:00–14:00'];
-const FRANJAS_TARDE  = ['16:00–20:00','17:00–21:00','18:00–22:00'];
+const FRANJAS_MANANA = ['10h–14h','11h–15h','10:00–14:00','11:00–15:00','Mañana (10:00-14:00)'];
+const FRANJAS_TARDE  = ['16:30h–20:30h','16:30–20:30','Tarde (16:30-20:30)'];
+const FRANJAS_NOCHE  = ['19:30h–23:30h','21:15h–01:30h','16:30h–01:30h'];
+const FRANJAS_DIA    = ['10h–20h','10:00–20:00','Todo el día'];
 
 function getHorario(r) {
   // Prioridad: campo horario directo, luego extraer de notas
@@ -2135,7 +2291,7 @@ function updateDashboard() {
 }
 
 // ── UTILS ─────────────────────────────────────────────────────
-const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],promociones:['Promociones'],fidelizacion:['Fidelización'],recordatorios:['Recordatorios WhatsApp'],configuracion:['Configuración'],migracion:['Migración histórica'],informes:['Informes']};
+const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],tarifas:['Tarifas y precios'],promociones:['Promociones'],fidelizacion:['Fidelización'],recordatorios:['Recordatorios WhatsApp'],configuracion:['Configuración'],migracion:['Migración histórica'],informes:['Informes']};
 
 window.showPanel = (id, el) => {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -2149,6 +2305,7 @@ window.showPanel = (id, el) => {
   if(id === 'clientes')  loadClientes();
   if(id === 'informes')  renderInformes();
   if(id === 'pagos')     renderPagos();
+  if(id === 'tarifas')   loadTarifas();
 };
 
 function updateCrumb() {
@@ -3764,6 +3921,286 @@ window.recEnviar = function(id, tel) {
     renderRecordatorios();
     showToast('Marcado como enviado ✓');
   }, 1500);
+};
+
+// ── TARIFAS ──────────────────────────────────────────────────
+// Datos por defecto (se sobreescriben con Firestore)
+const TARIFAS_DEFAULT = {
+  estandar: [
+    {turno:'Mañana', horario:'10h–14h', lu:85,ma:85,mi:85,ju:85,vi:90,sa:130,do:130},
+    {turno:'Mañana', horario:'11h–15h', lu:85,ma:85,mi:85,ju:85,vi:90,sa:130,do:130},
+    {turno:'Tarde',  horario:'16:30h–20:30h', lu:85,ma:85,mi:85,ju:85,vi:100,sa:140,do:140},
+    {turno:'Tarde-Noche', horario:'19:30h–23:30h', lu:'—',ma:'—',mi:'—',ju:'—',vi:170,sa:185,do:'—'},
+    {turno:'Noche',  horario:'21:15h–01:30h', lu:'—',ma:'—',mi:'—',ju:'—',vi:200,sa:200,do:'—'},
+  ],
+  ampliados: [
+    {turno:'Todo el día',  horario:'10h–20h',      lu:150,ma:150,mi:150,ju:150,vi:170,sa:250,do:270},
+    {turno:'Tarde-Noche',  horario:'16:30h–01:30h',lu:'—',ma:'—',mi:'—',ju:'—',vi:390,sa:450,do:'—'},
+  ],
+  especiales: [
+    {celebracion:'Año Nuevo',         dia:'01/01', horario:'12h–19h', precio:310},
+    {celebracion:'Reyes',             dia:'06/01', horario:'12h–19h', precio:310},
+    {celebracion:'Carnaval',          dia:'',      horario:'20h–02h', precio:280},
+    {celebracion:'Verbena St. Joan',  dia:'23/06', horario:'20h–02h', precio:280},
+    {celebracion:'Castañada',         dia:'31/10', horario:'20h–02h', precio:280},
+    {celebracion:'Nochebuena',        dia:'24/12', horario:'20h–02h', precio:350},
+    {celebracion:'Navidad mediodía',  dia:'25/12', horario:'12h–19h', precio:310},
+    {celebracion:'Navidad noche',     dia:'25/12', horario:'20h–02h', precio:310},
+    {celebracion:'Sant Esteve',       dia:'26/12', horario:'12h–19h', precio:310},
+    {celebracion:'Fin de Año',        dia:'31/12', horario:'20h–03h', precio:350},
+  ],
+  extras: [
+    {concepto:'Limpieza', turno:'Mañana (9h–15h)',  precio:30},
+    {concepto:'Limpieza', turno:'Tarde (15h–22h)',   precio:30},
+    {concepto:'Limpieza', turno:'Noche (22h–03h)',   precio:50},
+    {concepto:'Limpieza', turno:'Todo el día',       precio:50},
+    {concepto:'Hora extra', turno:'Mañana (9h–15h)', precio:20},
+    {concepto:'Hora extra', turno:'Tarde (15h–22h)', precio:25},
+    {concepto:'Hora extra', turno:'Noche (22h–03h)', precio:40},
+    {concepto:'Hora extra', turno:'Todo el día',     precio:30},
+  ]
+};
+
+let tarifasData = JSON.parse(JSON.stringify(TARIFAS_DEFAULT));
+const DIAS = ['lu','ma','mi','ju','vi','sa','do'];
+const DIAS_LABEL = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+
+// ── Cargar desde Firestore ──
+window.loadTarifas = async function() {
+  try {
+    const snap = await getDocs(collection(db,'tarifas'));
+    if(!snap.empty) {
+      snap.forEach(d => {
+        if(tarifasData[d.id] !== undefined) tarifasData[d.id] = d.data().filas || tarifasData[d.id];
+      });
+    }
+  } catch(e) { console.warn('Tarifas: usando datos locales',e); }
+  renderTarTabla('estandar');
+  renderTarTabla('ampliados');
+  renderTarTablaEspeciales();
+  renderTarTablaExtras();
+};
+
+// ── Switch de tabs ──
+window.tarSwitch = function(sec, btn) {
+  document.querySelectorAll('.tar-section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tar-tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tar-'+sec).classList.add('on');
+  btn.classList.add('on');
+};
+
+// ── Render tabla estándar / ampliados ──
+function renderTarTabla(tipo) {
+  const tbody = document.getElementById('tar-body-'+tipo);
+  if(!tbody) return;
+  tbody.innerHTML = (tarifasData[tipo]||[]).map((row,i) => `
+    <tr>
+      <td><input class="tar-inp wide" value="${row.turno}" onchange="tarifasData['${tipo}'][${i}].turno=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.horario}" onchange="tarifasData['${tipo}'][${i}].horario=this.value"></td>
+      ${DIAS.map(d => {
+        const val = row[d];
+        const isDash = val === '—' || val === '' || val == null;
+        return `<td><input class="tar-inp${isDash?' dash':''}" value="${isDash?'—':val}"
+          onchange="tarCellChange(this,'${tipo}',${i},'${d}')"
+          onfocus="if(this.value==='—')this.value='';this.classList.remove('dash')"
+          onblur="if(!this.value){this.value='—';this.classList.add('dash')}"></td>`;
+      }).join('')}
+      <td><button class="tar-row-del" onclick="tarDelRow('${tipo}',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
+    </tr>`).join('');
+}
+
+function tarCellChange(inp, tipo, i, dia) {
+  const v = inp.value.trim();
+  tarifasData[tipo][i][dia] = (v === '—' || v === '') ? '—' : parseFloat(v)||v;
+}
+
+window.tarDelRow = function(tipo, i) {
+  tarifasData[tipo].splice(i,1);
+  if(tipo==='estandar'||tipo==='ampliados') renderTarTabla(tipo);
+  else if(tipo==='especiales') renderTarTablaEspeciales();
+  else renderTarTablaExtras();
+};
+
+window.tarAddRow = function(tipo) {
+  const t = document.getElementById(`tar-${tipo==='estandar'?'e':'a'}-turno`).value.trim();
+  const h = document.getElementById(`tar-${tipo==='estandar'?'e':'a'}-hora`).value.trim();
+  if(!t||!h){showToast('Rellena turno y horario');return;}
+  const row = {turno:t, horario:h};
+  DIAS.forEach(d => row[d]='—');
+  tarifasData[tipo].push(row);
+  renderTarTabla(tipo);
+  document.getElementById(`tar-${tipo==='estandar'?'e':'a'}-turno`).value='';
+  document.getElementById(`tar-${tipo==='estandar'?'e':'a'}-hora`).value='';
+};
+
+// ── Especiales ──
+function renderTarTablaEspeciales() {
+  const tbody = document.getElementById('tar-body-especiales');
+  if(!tbody) return;
+  tbody.innerHTML = (tarifasData.especiales||[]).map((row,i) => `
+    <tr>
+      <td><input class="tar-inp wide" value="${row.celebracion}" onchange="tarifasData.especiales[${i}].celebracion=this.value"></td>
+      <td><input class="tar-inp" value="${row.dia}" placeholder="DD/MM" onchange="tarifasData.especiales[${i}].dia=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.horario}" onchange="tarifasData.especiales[${i}].horario=this.value"></td>
+      <td><input class="tar-inp" type="number" value="${row.precio}" onchange="tarifasData.especiales[${i}].precio=parseFloat(this.value)||0"></td>
+      <td><button class="tar-row-del" onclick="tarDelRow('especiales',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
+    </tr>`).join('');
+}
+
+window.tarAddEspecial = function() {
+  const nom   = document.getElementById('tar-es-nom').value.trim();
+  const dia   = document.getElementById('tar-es-dia').value.trim();
+  const hora  = document.getElementById('tar-es-hora').value.trim();
+  const prec  = parseFloat(document.getElementById('tar-es-precio').value)||0;
+  if(!nom){showToast('Rellena el nombre de la celebración');return;}
+  tarifasData.especiales.push({celebracion:nom,dia,horario:hora,precio:prec});
+  renderTarTablaEspeciales();
+  ['tar-es-nom','tar-es-dia','tar-es-hora','tar-es-precio'].forEach(id=>{document.getElementById(id).value='';});
+};
+
+// ── Extras ──
+function renderTarTablaExtras() {
+  const tbody = document.getElementById('tar-body-extras');
+  if(!tbody) return;
+  tbody.innerHTML = (tarifasData.extras||[]).map((row,i) => `
+    <tr>
+      <td><input class="tar-inp wide" value="${row.concepto}" onchange="tarifasData.extras[${i}].concepto=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.turno}" onchange="tarifasData.extras[${i}].turno=this.value"></td>
+      <td><input class="tar-inp" type="number" value="${row.precio}" onchange="tarifasData.extras[${i}].precio=parseFloat(this.value)||0"></td>
+      <td><button class="tar-row-del" onclick="tarDelRow('extras',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
+    </tr>`).join('');
+}
+
+window.tarAddExtra = function() {
+  const con  = document.getElementById('tar-ex-concepto').value.trim();
+  const tur  = document.getElementById('tar-ex-turno').value.trim();
+  const prec = parseFloat(document.getElementById('tar-ex-precio').value)||0;
+  if(!con||!tur){showToast('Rellena concepto y turno');return;}
+  tarifasData.extras.push({concepto:con,turno:tur,precio:prec});
+  renderTarTablaExtras();
+  ['tar-ex-concepto','tar-ex-turno','tar-ex-precio'].forEach(id=>{document.getElementById(id).value='';});
+};
+
+// ── Guardar en Firestore ──
+window.saveTarifas = async function(tipo) {
+  try {
+    await setDoc(doc(db,'tarifas',tipo), { filas: tarifasData[tipo], updatedAt: serverTimestamp() });
+    showToast('Tarifas guardadas en Firestore ✓');
+  } catch(e) {
+    showToast('Error al guardar: '+e.message);
+  }
+};
+
+// ── Helpers para formulario de reserva ──
+// Devuelve índice del día de semana (0=lu…6=do) para una fecha YYYY-MM-DD
+function diaSemanaIdx(fechaStr) {
+  const d = new Date(fechaStr+'T12:00:00');
+  return (d.getDay()+6)%7; // 0=Lu 6=Do
+}
+
+// Detecta si la fecha es un día especial
+function getDiaEspecial(fechaStr) {
+  const d = new Date(fechaStr+'T12:00:00');
+  const ddmm = String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
+  return (tarifasData.especiales||[]).find(e => e.dia === ddmm) || null;
+}
+
+// Carga las franjas disponibles para la fecha seleccionada
+window.loadFranjasPorFecha = function(fechaStr) {
+  const sel = document.getElementById('r-horario');
+  if(!sel) return;
+  sel.innerHTML = '';
+
+  if(!fechaStr) {
+    sel.innerHTML = '<option value="">— Selecciona fecha primero —</option>';
+    return;
+  }
+
+  const esp = getDiaEspecial(fechaStr);
+  if(esp) {
+    sel.innerHTML = `<option value="${esp.celebracion} ${esp.horario} — ${esp.precio}€">${esp.celebracion} · ${esp.horario} — ${esp.precio} €</option>`;
+    calcPrecioAuto();
+    return;
+  }
+
+  const idx = diaSemanaIdx(fechaStr);
+  const diaKey = DIAS[idx];
+  const todas = [...(tarifasData.estandar||[]), ...(tarifasData.ampliados||[])];
+  const disponibles = todas.filter(f => {
+    const v = f[diaKey];
+    return v !== '—' && v !== '' && v != null;
+  });
+
+  if(!disponibles.length) {
+    sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
+    return;
+  }
+
+  disponibles.forEach(f => {
+    const precio = f[diaKey];
+    const opt = document.createElement('option');
+    opt.value = `${f.turno} (${f.horario}) — ${precio}€`;
+    opt.textContent = `${f.turno} · ${f.horario} — ${precio} €`;
+    opt.dataset.precio = precio;
+    sel.appendChild(opt);
+  });
+
+  // Actualizar hora extra según turno
+  loadHorasExtra(disponibles[0]);
+  calcPrecioAuto();
+};
+
+function loadHorasExtra(franjaRow) {
+  const sel = document.getElementById('r-horaext');
+  if(!sel) return;
+  sel.innerHTML = '<option value="Sin horas extra">Sin horas extra</option>';
+  const turnoLower = (franjaRow?.turno||'').toLowerCase();
+  let turnoKey = 'Mañana (9h–15h)';
+  if(turnoLower.includes('tarde') && turnoLower.includes('noche')) turnoKey='Noche (22h–03h)';
+  else if(turnoLower.includes('noche')) turnoKey='Noche (22h–03h)';
+  else if(turnoLower.includes('tarde')) turnoKey='Tarde (15h–22h)';
+  else if(turnoLower.includes('todo')) turnoKey='Todo el día';
+
+  const hexExtras = (tarifasData.extras||[]).filter(e=>e.concepto==='Hora extra'&&e.turno===turnoKey);
+  hexExtras.forEach(e => {
+    const opt = document.createElement('option');
+    opt.value = `+1h (${e.precio}€)`;
+    opt.textContent = `+1h extra — ${e.precio} €`;
+    opt.dataset.precio = e.precio;
+    sel.appendChild(opt);
+  });
+}
+
+// Calcula y muestra el precio automáticamente
+window.calcPrecioAuto = function() {
+  const sel   = document.getElementById('r-horario');
+  const prev  = document.getElementById('price-preview');
+  const prevV = document.getElementById('price-preview-val');
+  const prevL = document.getElementById('price-preview-label');
+  const imp   = document.getElementById('r-importe');
+  if(!sel||!prev) return;
+
+  const opt = sel.options[sel.selectedIndex];
+  if(!opt || !opt.dataset.precio) {
+    prev.classList.remove('visible');
+    return;
+  }
+
+  const fechaStr = document.getElementById('r-fecha')?.value || '';
+  const esp = fechaStr ? getDiaEspecial(fechaStr) : null;
+
+  let base = parseFloat(opt.dataset.precio)||0;
+
+  // Sumar hora extra si la hay
+  const hexSel = document.getElementById('r-horaext');
+  const hexOpt = hexSel?.options[hexSel.selectedIndex];
+  const hexPrecio = hexOpt?.dataset.precio ? parseFloat(hexOpt.dataset.precio) : 0;
+  const total = base + hexPrecio;
+
+  prev.classList.add('visible');
+  prevV.textContent = total + ' €';
+  prevL.innerHTML = esp ? `<span class="dia-esp-badge">Día especial</span> Precio fijo` : 'Precio estimado';
+  if(imp) imp.value = total;
 };
 
 // Login con Enter
