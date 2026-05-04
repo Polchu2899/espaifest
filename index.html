@@ -3596,9 +3596,6 @@ async function loadBlogPosts() {
 // ══ TARIFAS DESDE FIRESTORE → PRECIOS INDEX + CALENDARIO ════
 async function loadTarifasIndex() {
   try {
-    const tipos = ['estandar','ampliados','especiales','extras'];
-    const snaps = await Promise.all(tipos.map(t => getDocs(query(collection(_db,'tarifas')))));
-    // getDocs colección completa
     const snap = await getDocs(collection(_db,'tarifas'));
     if(!snap.empty) {
       snap.forEach(d => {
@@ -3609,9 +3606,7 @@ async function loadTarifasIndex() {
     }
   } catch(e) { console.warn('Tarifas index: usando defaults',e); }
   renderTodosPreciosIndex();
-  // Recargar fechas para que los días especiales se reflejen en el calendario
   loadFechasOcupadas();
-  // Re-renderizar franjas del calendario si hay día seleccionado
   if(calSelected) renderFranjas(calSelected);
 }
 
