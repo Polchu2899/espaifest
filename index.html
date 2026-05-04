@@ -2565,6 +2565,11 @@ function setLang(lang, btn) {
   // Al volver a ES, restaurar texto original
   if(lang === 'es') restaurarContenidoES();
 
+  // Regenerar calendario con el nuevo idioma (días de semana y mes)
+  if(typeof renderCal === 'function') renderCal();
+  // Si hay franja seleccionada, re-renderizarla también
+  if(calSelected && typeof renderFranjas === 'function') renderFranjas(calSelected);
+
   showToast(lang==='es'?'Castellano activado':'Català activat');
 }
 
@@ -2956,19 +2961,26 @@ function selectSlot(slot, grupo, precio) {
   setTimeout(()=>{ document.getElementById('reservas')?.scrollIntoView({behavior:'smooth',block:'start'}); },300);
 }
 
-const DAY_NAMES = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const DAY_NAMES_ES = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const DAY_NAMES_CA = ['Dl','Dm','Dc','Dj','Dv','Ds','Dg'];
+const DAY_NAMES = DAY_NAMES_ES; // alias por compatibilidad
+
+function getCalLang() { return document.documentElement.lang === 'ca' ? 'ca' : 'es'; }
 
 function renderCal() {
   const now = new Date();
   if(!calYear){ calYear=now.getFullYear(); calMonth=now.getMonth(); }
+  const lang = getCalLang();
+  const locale = lang === 'ca' ? 'ca-ES' : 'es-ES';
   const titleEl = document.getElementById('cal-month-title');
   if(titleEl) {
-    const t = new Date(calYear,calMonth,1).toLocaleString('es-ES',{month:'long',year:'numeric'});
+    const t = new Date(calYear,calMonth,1).toLocaleString(locale,{month:'long',year:'numeric'});
     titleEl.textContent = t.charAt(0).toUpperCase()+t.slice(1);
   }
   const grid = document.getElementById('cal-grid');
   if(!grid) return;
-  let html = DAY_NAMES.map(d=>`<div class="cal-day-hdr">${d}</div>`).join('');
+  const dayNames = lang === 'ca' ? DAY_NAMES_CA : DAY_NAMES_ES;
+  let html = dayNames.map(d=>`<div class="cal-day-hdr">${d}</div>`).join('');
   let dow = new Date(calYear,calMonth,1).getDay();
   dow = dow===0?6:dow-1;
   for(let i=0;i<dow;i++) html+='<div class="cal-day empty"></div>';
