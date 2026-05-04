@@ -673,6 +673,51 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 .eq-notice p{font-size:.8rem;color:var(--tx2);margin:0;}
 .eq-notice strong{color:var(--tx1);}
 
+/* ══ PRECIOS ACORDEÓN ═══════════════════════════════ */
+.prc-tabs{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;justify-content:center;}
+.prc-tab{padding:8px 20px;border-radius:40px;border:1px solid var(--bd);background:transparent;color:var(--tx2);font:600 .82rem var(--fb);cursor:pointer;transition:all .2s;}
+.prc-tab.on{background:var(--co);color:#fff;border-color:var(--co);box-shadow:0 4px 16px oklch(68% .22 38/.3);}
+.prc-panel{display:none;animation:fu .2s ease;}.prc-panel.on{display:block;}
+/* Tabla de precios */
+.prc-table-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--bd);margin-bottom:12px;}
+.prc-table{width:100%;border-collapse:collapse;font-size:.82rem;min-width:520px;}
+.prc-table th{background:var(--s1);color:var(--tx2);font:700 .7rem var(--fb);text-transform:uppercase;letter-spacing:.07em;padding:11px 14px;text-align:center;border-bottom:1px solid var(--bd);}
+.prc-table th:first-child,.prc-table th:nth-child(2){text-align:left;}
+.prc-table td{padding:11px 14px;border-bottom:1px solid var(--bd);text-align:center;color:var(--tx1);font-weight:500;}
+.prc-table tr:last-child td{border-bottom:none;}
+.prc-table tr:hover td{background:var(--s2);}
+.prc-table td:first-child{text-align:left;font-weight:700;color:var(--tx1);}
+.prc-table td:nth-child(2){text-align:left;color:var(--tx2);font-weight:400;font-size:.78rem;}
+.prc-cell-dash{color:var(--bd);font-size:1.1rem;}
+.prc-cell-hi{font-weight:800;color:var(--co);}
+.prc-esp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:12px;}
+.prc-esp-card{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;transition:border-color .2s;}
+.prc-esp-card:hover{border-color:oklch(87% .19 90/.4);}
+.prc-esp-name{font-size:.85rem;font-weight:700;margin-bottom:4px;}
+.prc-esp-meta{font-size:.75rem;color:var(--tx2);margin-bottom:8px;}
+.prc-esp-price{font:800 1.3rem var(--fd);color:var(--cy);}
+.prc-esp-price sup{font-size:.7rem;font-weight:700;vertical-align:super;}
+.prc-extras-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
+.prc-extra-card{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.prc-extra-left{font-size:.82rem;}
+.prc-extra-concepto{font-weight:700;color:var(--tx1);}
+.prc-extra-turno{font-size:.72rem;color:var(--tx2);margin-top:2px;}
+.prc-extra-price{font:800 1rem var(--fd);color:var(--ct);white-space:nowrap;}
+.prc-loading{text-align:center;padding:40px;color:var(--tx2);font-size:.85rem;}
+/* Responsive móvil — tablas → cards apiladas */
+@media(max-width:640px){
+  .prc-table-wrap{border:none;border-radius:0;margin:0 -1rem 12px;}
+  .prc-table{font-size:.78rem;}
+  .prc-tabs{gap:6px;}
+  .prc-tab{padding:7px 14px;font-size:.75rem;}
+  .prc-esp-grid{grid-template-columns:1fr 1fr;}
+  .prc-extras-grid{grid-template-columns:1fr;}
+}
+/* ── CALENDARIO FRANJAS EXTENDIDO ── */
+.cf-grupo-noche .cf-grupo-label{color:oklch(66% .24 355);}
+.cf-grupo-diacomp .cf-grupo-label{color:var(--cy);}
+.cf-slot-precio{font-size:.68rem;color:var(--tx3);margin-top:1px;}
+
 /* ═══ RESPONSIVE ═════════════════════════════════ */
 @media(max-width:1024px){
   .hero{grid-template-columns:1fr;}.h-side{min-height:58vh;}.h-div{display:none;}
@@ -1541,15 +1586,19 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
       <div class="cal-grid" id="cal-grid"></div>
         <div class="cal-franjas" id="cal-franjas">
           <div class="cf-titulo" data-es="Franjas disponibles" data-ca="Franges disponibles">Franjas disponibles</div>
-          <div class="cf-grupo">
+          <div class="cf-grupo" id="cf-grupo-manana">
             <div class="cf-grupo-label" data-es="Mañana" data-ca="Matí">Mañana</div>
             <div class="cf-slots" id="cf-manana"></div>
           </div>
-          <div class="cf-grupo">
+          <div class="cf-grupo" id="cf-grupo-tarde">
             <div class="cf-grupo-label" data-es="Tarde" data-ca="Tarda">Tarde</div>
             <div class="cf-slots" id="cf-tarde"></div>
           </div>
-          <div class="cf-grupo">
+          <div class="cf-grupo cf-grupo-noche" id="cf-grupo-noche" style="display:none">
+            <div class="cf-grupo-label" data-es="Tarde-Noche / Noche" data-ca="Tarda-Nit / Nit">Tarde-Noche / Noche</div>
+            <div class="cf-slots" id="cf-noche"></div>
+          </div>
+          <div class="cf-grupo cf-grupo-diacomp" id="cf-grupo-diacomp">
             <div class="cf-grupo-label" data-es="Todo el día" data-ca="Tot el dia">Todo el día</div>
             <div class="cf-slots" id="cf-diacomp"></div>
           </div>
@@ -1612,53 +1661,68 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <div class="tc" data-a="up">
       <div class="eyebrow ew-b" style="justify-content:center"><div class="ew-dot"></div><span data-es="Precios transparentes" data-ca="Preus transparents">Precios transparentes</span></div>
       <h2 class="sec-h2" data-es="Sin letra pequeña" data-blur="top" data-ca="Sense lletra petita">Sin letra pequeña</h2>
-      <p class="sec-lead" data-es="Un precio claro por 4 horas de espacio privado exclusivo. Todo lo que necesitas incluido desde el primer momento." data-ca="Un preu clar per 4 hores d'espai privat exclusiu. Tot inclòs des del primer moment.">Un precio claro por 4 horas de espacio privado exclusivo. Todo incluido.</p>
+      <p class="sec-lead" data-es="Todas las franjas, todos los precios. Sin sorpresas. Desde 85€ por 4 horas de espacio privado exclusivo." data-ca="Totes les franges, tots els preus. Sense sorpreses. Des de 85€ per 4 hores d'espai privat exclusiu.">Todas las franjas, todos los precios. Sin sorpresas. Desde 85€ por 4 horas de espacio privado exclusivo.</p>
     </div>
-    <div class="price-grid">
-      <div class="pc pc-1" data-a="up" data-d="0">
-        <div class="pc-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="oklch(66% .24 355)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
-        <div class="pc-name" data-es="FIESTA INFANTIL" data-ca="FESTA INFANTIL">FIESTA INFANTIL</div>
-        <div class="pc-amount"><sup>€</sup>85</div>
-        <div class="pc-period" data-es="por 4 horas · espacio exclusivo" data-ca="per 4 hores · espai exclusiu">por 4 horas · espacio exclusivo</div>
-        <div class="pc-items">
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Sala completa de 115m²" data-ca="Sala completa de 115m²">Sala completa de 115m²</span></div>
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="2 zonas infantiles diferenciadas" data-ca="2 zones infantils diferenciades">2 zonas infantiles diferenciadas</span></div>
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Zona adultos TV y futbolín" data-ca="Zona adults TV i futbolí">Zona adultos: TV y futbolín</span></div>
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Cocina office completa" data-ca="Cuina office completa">Cocina office completa</span></div>
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Equipo música y proyector" data-ca="Equip música i projector">Equipo de música y proyector</span></div>
-        </div>
-        <button class="pc-btn pb-ghost" onclick="document.getElementById('reservas').scrollIntoView({behavior:'smooth'})" data-es="Reservar" data-ca="Reservar">Reservar</button>
+
+    <!-- Tabs -->
+    <div class="prc-tabs" data-a="up" role="tablist">
+      <button class="prc-tab on" onclick="prcSwitch('estandar',this)" role="tab" data-es="Turnos 4h" data-ca="Torns 4h">Turnos 4h</button>
+      <button class="prc-tab" onclick="prcSwitch('ampliados',this)" role="tab" data-es="Día completo" data-ca="Dia complet">Día completo</button>
+      <button class="prc-tab" onclick="prcSwitch('especiales',this)" role="tab" data-es="Días especiales" data-ca="Dies especials">Días especiales</button>
+      <button class="prc-tab" onclick="prcSwitch('extras',this)" role="tab" data-es="Extras" data-ca="Extres">Extras</button>
+    </div>
+
+    <!-- Panel Turnos estándar -->
+    <div class="prc-panel on" id="prc-estandar" data-a="up">
+      <div class="prc-loading" id="prc-load-estandar">Cargando tarifas...</div>
+      <div class="prc-table-wrap" id="prc-wrap-estandar" style="display:none">
+        <table class="prc-table" id="prc-tbl-estandar">
+          <thead><tr>
+            <th data-es="Turno" data-ca="Torn">Turno</th>
+            <th data-es="Horario" data-ca="Horari">Horario</th>
+            <th>Lu</th><th>Ma</th><th>Mi</th><th>Ju</th><th>Vi</th><th>Sá</th><th>Do</th>
+          </tr></thead>
+          <tbody id="prc-body-estandar"></tbody>
+        </table>
       </div>
-      <div class="pc pc-2 feat" data-a="up" data-d="100">
-        <div class="pc-badge" data-es="Más popular" data-ca="Més popular">Más popular</div>
-        <div class="pc-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="oklch(68% .22 38)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-        <div class="pc-name" data-es="ADULTOS & FAMILIAR" data-ca="ADULTS & FAMILIAR">ADULTOS & FAMILIAR</div>
-        <div class="pc-amount"><sup>€</sup>85</div>
-        <div class="pc-period" data-es="por 4 horas · hasta 50 personas" data-ca="per 4 hores · fins a 50 persones">por 4 horas · hasta 50 personas</div>
-        <div class="pc-items">
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Sala completa exclusiva" data-ca="Sala completa exclusiva">Sala completa exclusiva</span></div>
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Proyector HD incluido" data-ca="Projector HD inclòs">Proyector HD incluido</span></div>
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Tu playlist en el equipo música" data-ca="La teva playlist a l'equip de música">Tu playlist en el equipo de música</span></div>
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Cafetera Nespresso" data-ca="Cafetera Nespresso">Cafetera Nespresso</span></div>
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Servicio hora extra disponible" data-ca="Servei hora extra disponible">Servicio hora extra disponible</span></div>
-        </div>
-        <button class="pc-btn pb-pri" onclick="document.getElementById('reservas').scrollIntoView({behavior:'smooth'})" data-es="Reservar ahora" data-ca="Reservar ara">Reservar ahora</button>
-      </div>
-      <div class="pc pc-3" data-a="up" data-d="200">
-        <div class="pc-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="32" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-        <div class="pc-name" data-es="BUSINESS / CLASES" data-ca="BUSINESS / CLASSES">BUSINESS / CLASES</div>
-        <div class="pc-amount"><sup>€</sup>85</div>
-        <div class="pc-period" data-es="por 4 horas · tarifas mensuales" data-ca="per 4 hores · tarifes mensuals">por 4 horas · tarifas mensuales</div>
-        <div class="pc-items">
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="WiFi fibra óptica ultrarrápido" data-ca="WiFi fibra òptica ultraràpid">WiFi fibra óptica ultrarrápido</span></div>
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Proyector HD" data-ca="Projector HD">Proyector HD</span></div>
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Coffee break Nespresso" data-ca="Coffee break Nespresso">Coffee break Nespresso</span></div>
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Sala insonorizada" data-ca="Sala insonoritzada">Sala insonorizada</span></div>
-          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Factura para empresa" data-ca="Factura per a empresa">Factura para empresa</span></div>
-        </div>
-        <button class="pc-btn pb-ghost" onclick="document.getElementById('reservas').scrollIntoView({behavior:'smooth'})" data-es="Consultar" data-ca="Consultar">Consultar</button>
+      <p style="font-size:.75rem;color:var(--tx2);margin-top:10px;text-align:center" data-es="Precios en € por sesión · IVA no incluido" data-ca="Preus en € per sessió · IVA no inclòs">Precios en € por sesión · IVA no incluido</p>
+    </div>
+
+    <!-- Panel Ampliados -->
+    <div class="prc-panel" id="prc-ampliados" data-a="up">
+      <div class="prc-loading" id="prc-load-ampliados">Cargando tarifas...</div>
+      <div class="prc-table-wrap" id="prc-wrap-ampliados" style="display:none">
+        <table class="prc-table" id="prc-tbl-ampliados">
+          <thead><tr>
+            <th data-es="Turno" data-ca="Torn">Turno</th>
+            <th data-es="Horario" data-ca="Horari">Horario</th>
+            <th>Lu</th><th>Ma</th><th>Mi</th><th>Ju</th><th>Vi</th><th>Sá</th><th>Do</th>
+          </tr></thead>
+          <tbody id="prc-body-ampliados"></tbody>
+        </table>
       </div>
     </div>
+
+    <!-- Panel Especiales -->
+    <div class="prc-panel" id="prc-especiales" data-a="up">
+      <div class="prc-loading" id="prc-load-especiales">Cargando tarifas...</div>
+      <div class="prc-esp-grid" id="prc-grid-especiales" style="display:none"></div>
+    </div>
+
+    <!-- Panel Extras -->
+    <div class="prc-panel" id="prc-extras" data-a="up">
+      <div class="prc-loading" id="prc-load-extras">Cargando tarifas...</div>
+      <div class="prc-extras-grid" id="prc-grid-extras" style="display:none"></div>
+    </div>
+
+    <!-- CTA -->
+    <div style="text-align:center;margin-top:36px" data-a="up">
+      <a href="#reservas" class="btn btn-primary" data-es="Reservar ahora" data-ca="Reservar ara">Reservar ahora
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <p style="font-size:.78rem;color:var(--tx2);margin-top:12px" data-es="¿Necesitas un horario diferente? Escríbenos y lo buscamos." data-ca="Necessites un horari diferent? Escriu-nos i ho busquem.">¿Necesitas un horario diferente? <a href="https://api.whatsapp.com/send?phone=34674379709" target="_blank" rel="noopener" style="color:var(--ct);text-decoration:none">Escríbenos y lo buscamos →</a></p>
+    </div>
+
     <!-- Servicios adicionales desde Firestore -->
     <div class="svc-extra" id="svc-extra-wrap">
       <div class="svc-extra-title" data-es="Servicios adicionales disponibles" data-ca="Serveis addicionals disponibles">Servicios adicionales disponibles</div>
@@ -1668,6 +1732,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 </section>
 
 <!-- ══ FIDELIZACIÓN ══════════════════════════════════ -->
+<section id="fidelizacion">
   <div class="container">
     <div class="tc" data-a="up">
       <div class="eyebrow ew-p" style="justify-content:center"><div class="ew-dot"></div><span data-es="Programa de fidelización" data-ca="Programa de fidelització">Programa de fidelización</span></div>
@@ -2493,101 +2558,211 @@ function toggleTheme() {
   }
 })();
 
+// ── PRECIOS INDEX — datos compartidos con Firestore ──────────
+const DIAS_IDX = ['lu','ma','mi','ju','vi','sa','do'];
+const TARIFAS_FB_DEFAULT = {
+  estandar: [
+    {turno:'Mañana', horario:'10h–14h', lu:85,ma:85,mi:85,ju:85,vi:90,sa:130,do:130},
+    {turno:'Mañana', horario:'11h–15h', lu:85,ma:85,mi:85,ju:85,vi:90,sa:130,do:130},
+    {turno:'Tarde',  horario:'16:30h–20:30h', lu:85,ma:85,mi:85,ju:85,vi:100,sa:140,do:140},
+    {turno:'Tarde-Noche',horario:'19:30h–23:30h',lu:'—',ma:'—',mi:'—',ju:'—',vi:170,sa:185,do:'—'},
+    {turno:'Noche',  horario:'21:15h–01:30h', lu:'—',ma:'—',mi:'—',ju:'—',vi:200,sa:200,do:'—'},
+  ],
+  ampliados: [
+    {turno:'Todo el día', horario:'10h–20h', lu:150,ma:150,mi:150,ju:150,vi:170,sa:250,do:270},
+    {turno:'Tarde-Noche', horario:'16:30h–01:30h',lu:'—',ma:'—',mi:'—',ju:'—',vi:390,sa:450,do:'—'},
+  ],
+  especiales: [
+    {celebracion:'Año Nuevo',        dia:'01/01',horario:'12h–19h',precio:310},
+    {celebracion:'Reyes',            dia:'06/01',horario:'12h–19h',precio:310},
+    {celebracion:'Carnaval',         dia:'',     horario:'20h–02h',precio:280},
+    {celebracion:'Verbena St. Joan', dia:'23/06',horario:'20h–02h',precio:280},
+    {celebracion:'Castañada',        dia:'31/10',horario:'20h–02h',precio:280},
+    {celebracion:'Nochebuena',       dia:'24/12',horario:'20h–02h',precio:350},
+    {celebracion:'Navidad mediodía', dia:'25/12',horario:'12h–19h',precio:310},
+    {celebracion:'Navidad noche',    dia:'25/12',horario:'20h–02h',precio:310},
+    {celebracion:'Sant Esteve',      dia:'26/12',horario:'12h–19h',precio:310},
+    {celebracion:'Fin de Año',       dia:'31/12',horario:'20h–03h',precio:350},
+  ],
+  extras: [
+    {concepto:'Limpieza',   turno:'Mañana (9h–15h)',  precio:30},
+    {concepto:'Limpieza',   turno:'Tarde (15h–22h)',   precio:30},
+    {concepto:'Limpieza',   turno:'Noche (22h–03h)',   precio:50},
+    {concepto:'Limpieza',   turno:'Todo el día',       precio:50},
+    {concepto:'Hora extra', turno:'Mañana (9h–15h)',   precio:20},
+    {concepto:'Hora extra', turno:'Tarde (15h–22h)',   precio:25},
+    {concepto:'Hora extra', turno:'Noche (22h–03h)',   precio:40},
+    {concepto:'Hora extra', turno:'Todo el día',       precio:30},
+  ]
+};
+let indexTarifas = JSON.parse(JSON.stringify(TARIFAS_FB_DEFAULT));
+
+// Tab switch
+function prcSwitch(tipo, btn) {
+  document.querySelectorAll('.prc-tab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.prc-panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('prc-'+tipo)?.classList.add('on');
+}
+window.prcSwitch = prcSwitch;
+
+// Render tablas
+function renderPreciosTablaSemana(tipo) {
+  const tbody = document.getElementById('prc-body-'+tipo);
+  const load  = document.getElementById('prc-load-'+tipo);
+  const wrap  = document.getElementById('prc-wrap-'+tipo);
+  if(!tbody) return;
+  const filas = indexTarifas[tipo] || [];
+  const DLAB = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+  tbody.innerHTML = filas.map(row => {
+    const celdas = DIAS_IDX.map((d,i) => {
+      const v = row[d];
+      const isDash = v==='—'||v===''||v==null;
+      if(isDash) return `<td class="prc-cell-dash">—</td>`;
+      const esAlto = typeof v==='number' && v>=170;
+      return `<td${esAlto?' class="prc-cell-hi"':''}>${v}€</td>`;
+    }).join('');
+    return `<tr><td>${row.turno}</td><td style="white-space:nowrap">${row.horario}</td>${celdas}</tr>`;
+  }).join('');
+  if(load) load.style.display='none';
+  if(wrap) wrap.style.display='';
+}
+
+function renderPreciosEspeciales() {
+  const grid = document.getElementById('prc-grid-especiales');
+  const load = document.getElementById('prc-load-especiales');
+  if(!grid) return;
+  const filas = indexTarifas.especiales || [];
+  grid.innerHTML = filas.map(r => `
+    <div class="prc-esp-card">
+      <div class="prc-esp-name">${r.celebracion}</div>
+      <div class="prc-esp-meta">${r.dia ? r.dia+' · ':'' }${r.horario}</div>
+      <div class="prc-esp-price"><sup>€</sup>${r.precio}</div>
+    </div>`).join('');
+  if(load) load.style.display='none';
+  grid.style.display='';
+}
+
+function renderPreciosExtras() {
+  const grid = document.getElementById('prc-grid-extras');
+  const load = document.getElementById('prc-load-extras');
+  if(!grid) return;
+  const filas = indexTarifas.extras || [];
+  grid.innerHTML = filas.map(r => `
+    <div class="prc-extra-card">
+      <div class="prc-extra-left">
+        <div class="prc-extra-concepto">${r.concepto}</div>
+        <div class="prc-extra-turno">${r.turno}</div>
+      </div>
+      <div class="prc-extra-price">${r.precio}€</div>
+    </div>`).join('');
+  if(load) load.style.display='none';
+  grid.style.display='';
+}
+
+function renderTodosPreciosIndex() {
+  renderPreciosTablaSemana('estandar');
+  renderPreciosTablaSemana('ampliados');
+  renderPreciosEspeciales();
+  renderPreciosExtras();
+}
+
 // ── CALENDAR ──────────────────────────────────────────────────
 let calYear=null, calMonth=null, calSelected=null, calSelectedSlot=null;
-let CAL_DATA = {}; // { '2026-05-10': { mananaOcupada: true, tardeOcupada: false } }
+let CAL_DATA = {};
 
-const SLOTS_MANANA  = ['10:00–14:00','11:00–15:00'];
-const SLOTS_TARDE   = ['16:30–20:30'];
-const SLOTS_DIACOMP = ['10:00–20:00'];
+// Se construyen dinámicamente desde indexTarifas
+function getSlotsPorDia(diaSemanaIdx) {
+  const diaKey = DIAS_IDX[diaSemanaIdx];
+  const todas = [...(indexTarifas.estandar||[]), ...(indexTarifas.ampliados||[])];
+  return todas.filter(f => {
+    const v = f[diaKey];
+    return v !== '—' && v !== '' && v != null;
+  }).map(f => ({
+    label: f.horario,
+    precio: f[diaKey],
+    turno: f.turno,
+    grupo: clasificarTurno(f.turno)
+  }));
+}
 
-// Se llama desde el módulo Firebase con los datos de calendario_publico
+function clasificarTurno(turno) {
+  const t = turno.toLowerCase();
+  if(t.includes('noche') || (t.includes('tarde') && t.includes('noche'))) return 'noche';
+  if(t.includes('todo')) return 'diacomp';
+  if(t.includes('tarde')) return 'tarde';
+  return 'manana';
+}
+
 function updateCalOccupied(data) {
-  CAL_DATA = data; // objeto indexado por fecha
+  CAL_DATA = data;
   renderCal();
 }
 
 function renderFranjas(ds) {
-  const franjas  = document.getElementById('cal-franjas');
-  const elM      = document.getElementById('cf-manana');
-  const elT      = document.getElementById('cf-tarde');
-  const elD      = document.getElementById('cf-diacomp');
-  if (!franjas || !elM || !elT || !elD) return;
+  const franjas = document.getElementById('cal-franjas');
+  if(!franjas) return;
 
-  const info          = CAL_DATA[ds] || {};
-  const mañanaOcupada = info.mananaOcupada  || false;
-  const tardeOcupada  = info.tardeOcupada   || false;
-  const diaOcupado    = info.diaOcupado     || (mañanaOcupada && tardeOcupada);
-  // Todo el día solo disponible si ambas franjas están libres
-  const diaDisponible = !mañanaOcupada && !tardeOcupada && !diaOcupado;
+  const d = new Date(ds+'T12:00:00');
+  const diaSemanaIdx = (d.getDay()+6)%7;
+  const info = CAL_DATA[ds] || {};
+  const mananaOcupada = info.mananaOcupada || false;
+  const tardeOcupada  = info.tardeOcupada  || false;
+  const nocheOcupada  = info.nocheOcupada  || false;
+  const diaOcupado    = info.diaOcupado    || (mananaOcupada && tardeOcupada);
 
-  elM.innerHTML = SLOTS_MANANA.map(s => {
-    const occ   = (mañanaOcupada || diaOcupado) ? 'ocupado' : '';
-    const sel   = calSelectedSlot === s ? 'selected' : '';
-    const click = (!mañanaOcupada && !diaOcupado) ? `onclick="selectSlot('${s}','manana')"` : '';
-    return `<div class="cf-slot ${occ} ${sel}" ${click}>${s}</div>`;
-  }).join('');
+  const slots = getSlotsPorDia(diaSemanaIdx);
+  const grupos = {manana:[],tarde:[],noche:[],diacomp:[]};
+  slots.forEach(s => grupos[s.grupo]?.push(s));
 
-  elT.innerHTML = SLOTS_TARDE.map(s => {
-    const occ   = (tardeOcupada || diaOcupado) ? 'ocupado' : '';
-    const sel   = calSelectedSlot === s ? 'selected' : '';
-    const click = (!tardeOcupada && !diaOcupado) ? `onclick="selectSlot('${s}','tarde')"` : '';
-    return `<div class="cf-slot ${occ} ${sel}" ${click}>${s}</div>`;
-  }).join('');
+  const renderGrupo = (elId, grupoSlots, ocupado) => {
+    const el = document.getElementById(elId);
+    if(!el) return;
+    el.innerHTML = grupoSlots.map(s => {
+      const occ = (ocupado||diaOcupado) ? 'ocupado' : '';
+      const sel = calSelectedSlot === s.label ? 'selected' : '';
+      const click = (!ocupado && !diaOcupado) ? `onclick="selectSlot('${s.label}','${s.grupo}',${s.precio})"` : '';
+      return `<div class="cf-slot ${occ} ${sel}" ${click}>
+        <div>${s.label}</div>
+        <div class="cf-slot-precio">${s.precio}€</div>
+      </div>`;
+    }).join('');
+  };
 
-  elD.innerHTML = SLOTS_DIACOMP.map(s => {
-    const occ   = !diaDisponible ? 'ocupado' : '';
-    const sel   = calSelectedSlot === s ? 'selected' : '';
-    const click = diaDisponible ? `onclick="selectSlot('${s}','diacomp')"` : '';
-    return `<div class="cf-slot ${occ} ${sel}" ${click}>${s} · 130€</div>`;
-  }).join('');
+  renderGrupo('cf-manana', grupos.manana, mananaOcupada);
+  renderGrupo('cf-tarde', grupos.tarde, tardeOcupada);
+  renderGrupo('cf-noche', grupos.noche, nocheOcupada);
+  renderGrupo('cf-diacomp', grupos.diacomp, diaOcupado);
+
+  // Mostrar/ocultar grupo noche
+  const gNoche = document.getElementById('cf-grupo-noche');
+  if(gNoche) gNoche.style.display = grupos.noche.length ? '' : 'none';
 
   franjas.classList.add('visible');
 }
 
-function selectSlot(slot, grupo) {
+function selectSlot(slot, grupo, precio) {
   calSelectedSlot = slot;
   renderFranjas(calSelected);
 
-  // Mapear slot del calendario → valor exacto del <select> del formulario
-  const SLOT_MAP = {
-    '10:00–14:00': 'Mañana (10:00-14:00) — 85€',
-    '11:00–15:00': 'Mañana (11:00-15:00) — 85€',
-    '16:30–20:30': 'Tarde (16:30-20:30) — 85€',
-    '10:00–20:00': 'Todo el día (10:00-20:00) — 130€'
-  };
-
   // Rellenar fecha en el formulario
   const fiEl = document.getElementById('r-f');
-  if (fiEl && calSelected) fiEl.value = calSelected;
+  if(fiEl && calSelected) fiEl.value = calSelected;
 
-  // Seleccionar la opción correcta en el <select> de franja horaria
-  const selEl = document.getElementById('r-horario');
-  if (selEl) {
-    const targetVal = SLOT_MAP[slot];
-    if (targetVal) {
-      Array.from(selEl.options).forEach(opt => {
-        opt.selected = opt.value === targetVal;
-      });
-      selEl.dispatchEvent(new Event('change'));
-    }
-  }
+  // Disparar carga de franjas dinámicas en el form si existe la función
+  if(typeof loadFranjasByDate === 'function') loadFranjasByDate(calSelected, slot);
 
   // Nota en el textarea
   const noEl = document.getElementById('r-no');
-  if (noEl) {
-    const baseNote = noEl.value.replace(/^Franja horaria: .+\n?/,'');
-    noEl.value = 'Franja horaria: ' + slot + (baseNote ? '\n' + baseNote : '');
+  if(noEl) {
+    const base = noEl.value.replace(/^Franja horaria: .+\n?/,'');
+    noEl.value = 'Franja horaria: '+slot+(base?'\n'+base:'');
   }
 
-  const label = grupo === 'diacomp' ? slot + ' (Todo el día · 130€)' : slot;
-  showToast('Franja seleccionada: ' + label + ' — Rellena el formulario ↓');
-
-  // Scroll suave al formulario
-  setTimeout(() => {
-    document.getElementById('reservas')?.scrollIntoView({behavior:'smooth', block:'start'});
-  }, 300);
+  showToast(`${slot} · ${precio}€ — Rellena el formulario ↓`);
+  setTimeout(()=>{ document.getElementById('reservas')?.scrollIntoView({behavior:'smooth',block:'start'}); },300);
 }
+
 const DAY_NAMES = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
 
 function renderCal() {
@@ -3108,6 +3283,26 @@ async function loadBlogPosts() {
   }
 }
 
+// ══ TARIFAS DESDE FIRESTORE → PRECIOS INDEX + CALENDARIO ════
+async function loadTarifasIndex() {
+  try {
+    const tipos = ['estandar','ampliados','especiales','extras'];
+    const snaps = await Promise.all(tipos.map(t => getDocs(query(collection(_db,'tarifas')))));
+    // getDocs colección completa
+    const snap = await getDocs(collection(_db,'tarifas'));
+    if(!snap.empty) {
+      snap.forEach(d => {
+        if(indexTarifas[d.id] !== undefined && d.data().filas) {
+          indexTarifas[d.id] = d.data().filas;
+        }
+      });
+    }
+  } catch(e) { console.warn('Tarifas index: usando defaults',e); }
+  renderTodosPreciosIndex();
+  // Re-renderizar franjas del calendario si hay día seleccionado
+  if(calSelected) renderFranjas(calSelected);
+}
+
 // ══ FECHAS OCUPADAS — CALENDARIO ═════════════════════════════
 async function loadFechasOcupadas() {
   try {
@@ -3205,6 +3400,7 @@ loadFechasOcupadas();
 loadServiciosWeb();
 loadPromocionesWeb();
 loadFidelizacionWeb();
+loadTarifasIndex();
 loadKits();
 
 // ── FIDELIZACIÓN DESDE FIRESTORE (config/niveles) ─────────────
