@@ -2858,43 +2858,14 @@ function renderFranjas(ds) {
   const mananaOcupada = info.mananaOcupada || false;
   const tardeOcupada  = info.tardeOcupada  || false;
   const nocheOcupada  = info.nocheOcupada  || false;
-  const diaOcupado    = info.diaOcupado    || (mananaOcupada && tardeOcupada);
+  const diaOcupado    = info.diaOcupado    || false;
 
-  // ── Día especial → mostrar solo su tarifa ──
-  if(info.esDiaEspecial) {
-    const esp = (indexTarifas?.especiales||[]).find(e => {
-      if(!e.dia) return false;
-      const [dd,mm] = e.dia.split('/');
-      const fechaDs = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
-      return e.dia === fechaDs;
-    });
-    if(esp) {
-      const ocupado = diaOcupado;
-      const sel = calSelectedSlot === esp.horario ? 'selected' : '';
-      const click = !ocupado ? `onclick="selectSlot('${esp.horario}','especial',${esp.precio})"` : '';
-      document.getElementById('cf-manana').innerHTML = '';
-      document.getElementById('cf-tarde').innerHTML = '';
-      document.getElementById('cf-noche').innerHTML = `
-        <div class="cf-slot${ocupado?' ocupado':''} ${sel}" ${click} style="border-color:oklch(66% .24 355/.4)">
-          <div style="font-weight:700">${esp.celebracion}</div>
-          <div>${esp.horario}</div>
-          <div class="cf-slot-precio" style="color:oklch(66% .24 355)">${esp.precio}€ · Tarifa especial</div>
-        </div>`;
-      document.getElementById('cf-diacomp').innerHTML = '';
-      document.getElementById('cf-grupo-noche').style.display = '';
-      document.getElementById('cf-grupo-manana').style.display = 'none';
-      document.getElementById('cf-grupo-tarde').style.display = 'none';
-      document.getElementById('cf-grupo-diacomp').style.display = 'none';
-      franjas.classList.add('visible');
-      return;
-    }
-  }
-
-  // ── Día normal → mostrar franjas por grupo ──
+  // Mostrar siempre todos los grupos
   document.getElementById('cf-grupo-manana').style.display = '';
   document.getElementById('cf-grupo-tarde').style.display = '';
   document.getElementById('cf-grupo-diacomp').style.display = '';
 
+  // Franjas normales según día de semana
   const slots = getSlotsPorDia(diaSemanaIdx);
   const grupos = {manana:[],tarde:[],noche:[],diacomp:[]};
   slots.forEach(s => grupos[s.grupo]?.push(s));
@@ -2915,11 +2886,40 @@ function renderFranjas(ds) {
 
   renderGrupo('cf-manana', grupos.manana, mananaOcupada);
   renderGrupo('cf-tarde', grupos.tarde, tardeOcupada);
-  renderGrupo('cf-noche', grupos.noche, nocheOcupada);
   renderGrupo('cf-diacomp', grupos.diacomp, diaOcupado);
 
+  // Grupo noche — franjas normales + franja especial si la hay
   const gNoche = document.getElementById('cf-grupo-noche');
-  if(gNoche) gNoche.style.display = grupos.noche.length ? '' : 'none';
+  const elNoche = document.getElementById('cf-noche');
+
+  let nocheHtml = grupos.noche.map(s => {
+    const occ = (nocheOcupada||diaOcupado) ? 'ocupado' : '';
+    const sel = calSelectedSlot === s.label ? 'selected' : '';
+    const click = (!nocheOcupada && !diaOcupado) ? `onclick="selectSlot('${s.label}','noche',${s.precio})"` : '';
+    return `<div class="cf-slot ${occ} ${sel}" ${click}>
+      <div>${s.label}</div>
+      <div class="cf-slot-precio">${s.precio}€</div>
+    </div>`;
+  }).join('');
+
+  // Si es día especial, añadir la franja especial en el grupo noche
+  if(info.esDiaEspecial) {
+    const ddmm = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+    const esp = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
+    if(esp) {
+      const occ = nocheOcupada ? 'ocupado' : '';
+      const sel = calSelectedSlot === esp.horario ? 'selected' : '';
+      const click = !nocheOcupada ? `onclick="selectSlot('${esp.horario}','noche',${esp.precio})"` : '';
+      nocheHtml += `<div class="cf-slot ${occ} ${sel}" ${click} style="border-color:oklch(66% .24 355/.4);background:oklch(66% .24 355/.05)">
+        <div style="font-size:11px;font-weight:700;color:oklch(66% .24 355);margin-bottom:2px">${esp.celebracion}</div>
+        <div>${esp.horario}</div>
+        <div class="cf-slot-precio" style="color:oklch(66% .24 355)">${esp.precio}€ · especial</div>
+      </div>`;
+    }
+  }
+
+  if(elNoche) elNoche.innerHTML = nocheHtml;
+  if(gNoche) gNoche.style.display = (grupos.noche.length || info.esDiaEspecial) ? '' : 'none';
 
   franjas.classList.add('visible');
 }
