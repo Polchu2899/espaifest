@@ -1313,6 +1313,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 .cf-slot.ocupado:hover{border-color:var(--bd);color:var(--tx3);}
 .cal-day.partial{background:oklch(87% .19 90/.08);}
 .dot-partial{width:6px;height:6px;border-radius:50%;background:oklch(87% .19 90);}
+.cal-day.dia-especial{background:oklch(66% .24 355/.08);border-color:oklch(66% .24 355/.3);cursor:pointer;}
+.cal-day.dia-especial:hover{background:oklch(66% .24 355/.15);}
+.dot-esp{width:6px;height:6px;border-radius:50%;background:oklch(66% .24 355);}
 
 /* ══ MODAL BLOG POST ════════════════════════════════════ */
 .blog-modal-ov{
@@ -1723,6 +1726,13 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
         </div>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
+      <!-- Leyenda -->
+      <div style="display:flex;gap:16px;flex-wrap:wrap;padding:12px 20px;border-top:1px solid var(--bd);font-size:11px;color:var(--tx2);align-items:center;">
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--ct);display:inline-block;"></span><span data-es="Disponible" data-ca="Disponible">Disponible</span></span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:oklch(87% .19 90);display:inline-block;"></span><span data-es="Parcial" data-ca="Parcial">Parcial</span></span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:oklch(66% .24 355);display:inline-block;"></span><span data-es="Día especial" data-ca="Dia especial">Día especial</span></span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--co);display:inline-block;"></span><span data-es="Ocupado" data-ca="Ocupat">Ocupado</span></span>
+      </div>
         <div class="cal-franjas" id="cal-franjas">
           <div class="cf-titulo" data-es="Franjas disponibles" data-ca="Franges disponibles">Franjas disponibles</div>
           <div class="cf-grupo" id="cf-grupo-manana">
@@ -2934,24 +2944,45 @@ function renderCal() {
     const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isPast  = new Date(ds)<new Date(now.toDateString());
     const info    = CAL_DATA[ds] || {};
-    const isFullOcc = info.mananaOcupada && info.tardeOcupada;
-    const isPartial = (info.mananaOcupada || info.tardeOcupada) && !isFullOcc;
+    const diaSemIdx = (new Date(ds+'T12:00:00').getDay()+6)%7;
+    const slotsDisp = getSlotsPorDia(diaSemIdx);
+
+    // Ocupación real considerando todos los grupos
+    const isFullOcc = info.diaOcupado ||
+      (info.mananaOcupada && info.tardeOcupada && info.nocheOcupada) ||
+      (slotsDisp.length > 0 && slotsDisp.every(s => {
+        if(s.grupo==='manana') return info.mananaOcupada;
+        if(s.grupo==='tarde')  return info.tardeOcupada;
+        if(s.grupo==='noche')  return info.nocheOcupada;
+        if(s.grupo==='diacomp') return info.diaOcupado;
+        return false;
+      }));
+    const isPartial = !isFullOcc && (info.mananaOcupada || info.tardeOcupada || info.nocheOcupada);
+    const isDiaEsp  = info.esDiaEspecial && !isFullOcc;
+    const noHayFranjas = !isPast && slotsDisp.length === 0 && !isDiaEsp;
     const isToday = ds===todayStr;
     const isSel   = ds===calSelected;
+
     let cls = 'cal-day';
-    if(isPast)       cls+=' empty';
-    else if(isFullOcc) cls+=' occupied';
-    else if(isPartial) cls+=' partial';
-    else if(isSel)   cls+=' selected';
-    else if(isToday) cls+=' today';
+    if(isPast || noHayFranjas) cls+=' empty';
+    else if(isFullOcc)  cls+=' occupied';
+    else if(isDiaEsp)   cls+=' dia-especial';
+    else if(isPartial)  cls+=' partial';
+    else if(isSel)      cls+=' selected';
+    else if(isToday)    cls+=' today';
+
     let dot = '';
-    if(!isPast){
-      if(isFullOcc)   dot='<div class="dot-occ"></div>';
-      else if(isPartial) dot='<div class="dot-partial"></div>';
-      else            dot='<div class="dot-free"></div>';
+    if(!isPast && !noHayFranjas){
+      if(isFullOcc)       dot='<div class="dot-occ"></div>';
+      else if(isDiaEsp)   dot='<div class="dot-esp"></div>';
+      else if(isPartial)  dot='<div class="dot-partial"></div>';
+      else                dot='<div class="dot-free"></div>';
     }
-    const click = (!isPast && !isFullOcc) ? `onclick="selectDate('${ds}')"` : '';
-    html+=`<div class="${cls}" ${click}>${d}${dot}</div>`;
+
+    const canClick = !isPast && !isFullOcc && !noHayFranjas;
+    const click = canClick ? `onclick="selectDate('${ds}')"` : '';
+    const title = isDiaEsp ? `title="${info.celebracion} · ${info.precioEsp}€"` : '';
+    html+=`<div class="${cls}" ${click} ${title}>${d}${dot}</div>`;
   }
   grid.innerHTML = html;
 }
@@ -3532,6 +3563,8 @@ async function loadTarifasIndex() {
     }
   } catch(e) { console.warn('Tarifas index: usando defaults',e); }
   renderTodosPreciosIndex();
+  // Recargar fechas para que los días especiales se reflejen en el calendario
+  loadFechasOcupadas();
   // Re-renderizar franjas del calendario si hay día seleccionado
   if(calSelected) renderFranjas(calSelected);
 }
@@ -3544,7 +3577,6 @@ async function loadFechasOcupadas() {
       collection(_db, 'calendario_publico'),
       where('fecha', '>=', hoy)
     );
-    // onSnapshot: tiempo real — si Laura confirma en Reservify, el calendario se actualiza solo
     onSnapshot(q, (snap) => {
       const data = {};
       snap.docs.forEach(d => {
@@ -3552,7 +3584,25 @@ async function loadFechasOcupadas() {
         if(fd.fecha) data[fd.fecha] = {
           mananaOcupada: fd.mananaOcupada || false,
           tardeOcupada:  fd.tardeOcupada  || false,
+          nocheOcupada:  fd.nocheOcupada  || false,
+          diaOcupado:    fd.diaOcupado    || false,
         };
+      });
+      // Marcar días especiales en CAL_DATA con flag para pintarlos diferente
+      (indexTarifas?.especiales || []).forEach(esp => {
+        if(!esp.dia) return; // festivos sin fecha fija (Carnaval) se omiten
+        const [dd, mm] = esp.dia.split('/');
+        const anyo = new Date().getFullYear();
+        // Marcar para el año actual y el siguiente
+        [anyo, anyo+1].forEach(y => {
+          const ds = `${y}-${mm}-${dd}`;
+          if(ds >= hoy) {
+            if(!data[ds]) data[ds] = {};
+            data[ds].esDiaEspecial = true;
+            data[ds].celebracion = esp.celebracion;
+            data[ds].precioEsp = esp.precio;
+          }
+        });
       });
       if(typeof updateCalOccupied === 'function') updateCalOccupied(data);
     });
