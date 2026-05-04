@@ -654,10 +654,30 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 .toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--s2);color:var(--tx1);border:1px solid var(--bd);padding:11px 20px;border-radius:40px;font:600 .85rem var(--fb);opacity:0;transition:all .32s var(--ease-b);z-index:999;white-space:nowrap;box-shadow:0 6px 28px oklch(0% 0 0/.4);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
+/* ══ EQUIPAMIENTO ════════════════════════════════ */
+#equipamiento{background:var(--s1);}
+.eq-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:44px;}
+.eq-card{background:var(--s0);border:1px solid var(--bd);border-radius:20px;overflow:hidden;transition:transform .25s var(--ease-s),box-shadow .25s var(--ease-s);}
+.eq-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px oklch(0% 0 0/.25);}
+.eq-card-head{padding:22px 22px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:14px;}
+.eq-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.eq-ico svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.eq-card-title{font:700 1rem var(--fd);color:var(--tx1);margin:0 0 2px;}
+.eq-card-sub{font-size:.72rem;color:var(--tx3);}
+.eq-items{padding:16px 22px 22px;display:flex;flex-direction:column;gap:10px;}
+.eq-item{display:flex;align-items:center;gap:10px;font-size:.83rem;color:var(--tx2);}
+.eq-item svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;flex-shrink:0;}
+.eq-pill{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:auto;white-space:nowrap;}
+.eq-notice{display:flex;align-items:center;gap:12px;margin-top:28px;background:var(--s0);border:1px solid var(--bd);border-radius:14px;padding:14px 20px;}
+.eq-notice svg{width:16px;height:16px;stroke:var(--ct);fill:none;stroke-width:1.8;stroke-linecap:round;flex-shrink:0;}
+.eq-notice p{font-size:.8rem;color:var(--tx2);margin:0;}
+.eq-notice strong{color:var(--tx1);}
+
 /* ═══ RESPONSIVE ═════════════════════════════════ */
 @media(max-width:1024px){
   .hero{grid-template-columns:1fr;}.h-side{min-height:58vh;}.h-div{display:none;}
   .split,.biz-grid,.res-grid,.fid-grid{grid-template-columns:1fr;}
+  .eq-grid{grid-template-columns:1fr 1fr;}
   .stats{grid-template-columns:1fr 1fr;}
   .gal{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto;}
   .gc{grid-column:span 1!important;grid-row:span 1!important;aspect-ratio:4/3;}
@@ -799,6 +819,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   .ham-btn{display:flex;}
   .mob-drawer-logo img{height:52px;width:auto;}
   .cards3,.price-grid,.manu-grid,.blog-grid{grid-template-columns:1fr;}
+  .eq-grid{grid-template-columns:1fr;}
   footer{padding:2.5rem 1rem 1.5rem;}.ft-grid{grid-template-columns:1fr;gap:24px;}
   .biz-imgs{grid-template-rows:180px 150px;}
   .h-title{font-size:clamp(1.8rem,8vw,2.8rem);}
@@ -1245,6 +1266,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <a href="#adultos" data-es="Celebraciones" data-ca="Celebracions">Celebraciones</a>
     <a href="#business" data-es="Business" data-ca="Business">Business</a>
     <a href="#precios" data-es="Precios" data-ca="Preus">Precios</a>
+    <a href="#equipamiento" data-es="Equipamiento" data-ca="Equipament">Equipamiento</a>
     <a href="#galeria" data-es="Galería" data-ca="Galeria">Galería</a>
     <a href="#calendario" data-es="Calendario" data-ca="Calendari">Calendario</a>
     <a href="#blog" data-es="Blog" data-ca="Blog">Blog</a>
@@ -1279,6 +1301,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <a href="#adultos"   onclick="closeMobMenu()" data-es="🎉 Celebraciones adultos" data-ca="🎉 Celebracions adults">🎉 Celebraciones adultos</a>
     <a href="#business"  onclick="closeMobMenu()" data-es="💼 Business" data-ca="💼 Business">💼 Business</a>
     <a href="#precios"   onclick="closeMobMenu()" data-es="💰 Precios" data-ca="💰 Preus">💰 Precios</a>
+    <a href="#equipamiento" onclick="closeMobMenu()" data-es="🎪 Equipamiento" data-ca="🎪 Equipament">🎪 Equipamiento</a>
     <a href="#galeria"   onclick="closeMobMenu()" data-es="📷 Galería" data-ca="📷 Galeria">📷 Galería</a>
     <a href="#calendario" onclick="closeMobMenu()" data-es="📅 Calendario" data-ca="📅 Calendari">📅 Calendario</a>
     <a href="#blog"      onclick="closeMobMenu()" data-es="✍️ Blog" data-ca="✍️ Blog">✍️ Blog</a>
@@ -1700,6 +1723,173 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
         </div>
         <a href="#reservas" class="btn btn-primary" data-es="Empezar a acumular" data-ca="Començar a acumular">Empezar a acumular <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ EQUIPAMIENTO ════════════════════════════════════ -->
+<section id="equipamiento">
+  <div class="container">
+    <div class="tc" data-a="up">
+      <div class="eyebrow ew-f" style="justify-content:center"><div class="ew-dot"></div><span data-es="Todo incluido en el precio" data-ca="Tot inclòs en el preu">Todo incluido en el precio</span></div>
+      <h2 class="sec-h2" data-es="Todo lo que necesitas, ya está aquí" data-ca="Tot el que necessites, ja hi és">Todo lo que necesitas, ya está aquí</h2>
+      <p class="sec-lead" data-es="No tienes que traer nada extra. EspaiFest cuenta con equipamiento completo para que tu celebración sea perfecta desde el primer momento." data-ca="No has de portar res extra. EspaiFest compta amb equipament complet perquè la teva celebració sigui perfecta des del primer moment.">No tienes que traer nada extra. EspaiFest cuenta con equipamiento completo para que tu celebración sea perfecta desde el primer momento.</p>
+    </div>
+
+    <div class="eq-grid">
+
+      <!-- Zona infantil -->
+      <div class="eq-card" data-a="up" data-d="0">
+        <div class="eq-card-head">
+          <div class="eq-ico" style="background:oklch(73% .14 190/.12)">
+            <svg viewBox="0 0 24 24" stroke="var(--ct)"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div>
+            <div class="eq-card-title" data-es="Zona infantil" data-ca="Zona infantil">Zona infantil</div>
+            <div class="eq-card-sub" data-es="Para los más pequeños" data-ca="Per als més petits">Para los más pequeños</div>
+          </div>
+        </div>
+        <div class="eq-items">
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Parque de bolas homologado" data-ca="Parc de boles homologat">Parque de bolas homologado</span>
+            <span class="eq-pill" style="background:oklch(73% .14 190/.12);color:var(--ct)" data-es="3–10 años" data-ca="3–10 anys">3–10 años</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Zona baby" data-ca="Zona baby">Zona baby</span>
+            <span class="eq-pill" style="background:oklch(73% .14 190/.12);color:var(--ct)" data-es="6m–3 años" data-ca="6m–3 anys">6m–3 años</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Mini piscina de bolas" data-ca="Mini piscina de boles">Mini piscina de bolas</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Juguetes de madera" data-ca="Joguines de fusta">Juguetes de madera</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Pizarra" data-ca="Pissarra">Pizarra</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tecnología -->
+      <div class="eq-card" data-a="up" data-d="1">
+        <div class="eq-card-head">
+          <div class="eq-ico" style="background:oklch(66% .24 355/.1)">
+            <svg viewBox="0 0 24 24" stroke="var(--cp)"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div>
+            <div class="eq-card-title" data-es="Tecnología" data-ca="Tecnologia">Tecnología</div>
+            <div class="eq-card-sub" data-es="Conectividad total" data-ca="Connectivitat total">Conectividad total</div>
+          </div>
+        </div>
+        <div class="eq-items">
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Proyector HD" data-ca="Projector HD">Proyector HD</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>WiFi</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Equipo de audio" data-ca="Equip d'àudio">Equipo de audio</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>TV Full HD</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Chromecast</span>
+          </div>
+          <div class="eq-item" style="color:var(--tx3)">
+            <svg viewBox="0 0 24 24" stroke="var(--tx3)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span data-es="Wii (bajo petición)" data-ca="Wii (sota petició)">Wii (bajo petición)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cocina -->
+      <div class="eq-card" data-a="up" data-d="2">
+        <div class="eq-card-head">
+          <div class="eq-ico" style="background:oklch(87% .19 90/.12)">
+            <svg viewBox="0 0 24 24" stroke="var(--cy)"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          </div>
+          <div>
+            <div class="eq-card-title" data-es="Cocina office" data-ca="Cuina office">Cocina office</div>
+            <div class="eq-card-sub" data-es="Todo lo necesario" data-ca="Tot el necessari">Todo lo necesario</div>
+          </div>
+        </div>
+        <div class="eq-items">
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Horno" data-ca="Forn">Horno</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Microondas" data-ca="Microones">Microondas</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Cafetera Nespresso</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Nevera combi" data-ca="Nevera combi">Nevera combi</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Utensilios básicos" data-ca="Utensilis bàsics">Utensilios básicos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobiliario -->
+      <div class="eq-card" data-a="up" data-d="3">
+        <div class="eq-card-head">
+          <div class="eq-ico" style="background:oklch(68% .22 38/.1)">
+            <svg viewBox="0 0 24 24" stroke="var(--co)"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </div>
+          <div>
+            <div class="eq-card-title" data-es="Mobiliario" data-ca="Mobiliari">Mobiliario</div>
+            <div class="eq-card-sub" data-es="Cómodo para todos" data-ca="Còmode per a tothom">Cómodo para todos</div>
+          </div>
+        </div>
+        <div class="eq-items">
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Mesas y sillas" data-ca="Taules i cadires">Mesas y sillas</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Tronas" data-ca="Trones">Tronas</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Zona de pufs" data-ca="Zona de poufs">Zona de pufs</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Cambiador de bebés" data-ca="Canviador de nadons">Cambiador de bebés</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-es="Futbolín" data-ca="Futbolí">Futbolín</span>
+            <span class="eq-pill" style="background:oklch(68% .22 38/.1);color:var(--co)" data-es="gratis" data-ca="gratis">gratis</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="eq-notice" data-a="up">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <p data-es="Todo el equipamiento está <strong>incluido en el precio del alquiler</strong>. Sin costes adicionales ni sorpresas." data-ca="Tot l'equipament està <strong>inclòs en el preu del lloguer</strong>. Sense costos addicionals ni sorpreses.">Todo el equipamiento está <strong>incluido en el precio del alquiler</strong>. Sin costes adicionales ni sorpresas.</p>
     </div>
   </div>
 </section>
