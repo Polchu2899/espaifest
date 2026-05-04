@@ -3677,13 +3677,12 @@ async function loadKits() {
   }
 }
 
-// Cargar al iniciar
+// Cargar al iniciar — tarifas primero, luego fechas (dependen de los días especiales)
 loadBlogPosts();
-loadFechasOcupadas();
 loadServiciosWeb();
 loadPromocionesWeb();
 loadFidelizacionWeb();
-loadTarifasIndex();
+loadTarifasIndex(); // loadFechasOcupadas se llama dentro tras cargar tarifas
 loadKits();
 
 // ── FIDELIZACIÓN DESDE FIRESTORE (config/niveles) ─────────────
