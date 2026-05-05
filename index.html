@@ -2905,9 +2905,12 @@ async function enviarReserva() {
   const hor    = horRaw?.includes('|') ? horRaw.split('|')[0] : horRaw || '';
   const no   = document.getElementById('r-no')?.value.trim();
 
+  console.log('enviarReserva campos:', {n,ap,dni,dir,loc,cp,t,e,tipo,pers,f,hor});
   if(!n||!ap||!dni||!dir||!loc||!cp||!t||!e||!tipo||!pers||!f||!hor){
+    console.warn('Campo vacío detectado — abortando');
     showToast('Rellena todos los campos obligatorios'); return;
   }
+  console.log('Validación OK — procediendo a guardar');
 
   const servicioLabel = _TIPO_MAP[tipo] || tipo;
 
@@ -2939,8 +2942,10 @@ async function enviarReserva() {
     : 'Ninguno';
 
   // ── Guardar en Firestore ─────────────────────────────────────
+  console.log('_fsDB disponible:', !!window._fsDB, '| _fsAddDoc:', !!window._fsAddDoc);
   if(window._fsDB && window._fsAddDoc) {
     try {
+      console.log('Intentando guardar en Firestore...');
       await window._fsAddDoc(window._fsCollection(window._fsDB, 'reservas'), {
         nombre:     `${n} ${ap}`, apellidos: ap, dni, fechaNac: fnac,
         direccion:  dir, localidad: loc, cp, telefono: t, email: e,
@@ -2952,7 +2957,10 @@ async function enviarReserva() {
         notas:      no || '', origen: 'web', estado: 'Pendiente',
         createdAt:  window._fsServerTimestamp()
       });
-    } catch(err) { console.warn('Firestore error:', err.message); }
+      console.log('✅ Guardado en Firestore OK');
+    } catch(err) { console.error('❌ Firestore error:', err.code, err.message); }
+  } else {
+    console.warn('⚠️ Firebase no disponible — no se guarda');
   }
 
   // ── Construir y enviar email CLIENTE ─────────────────────────
