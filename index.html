@@ -175,171 +175,32 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400..800&family=DM+Sans:ital,opsz,wght@0,9..40,300..700&display=swap" rel="stylesheet">
 <script>
-  // ── RESEND CONFIG (via Cloudflare Worker — sin API key en el código) ──
-  const _MAIL = {
-    workerUrl:  'https://espaifest-brevo.lucasyleodigital.workers.dev',
-    emailLaura: 'laurarmarin81@gmail.com',
-    emailFrom:  'EspaiFest'
+  // ── BREVO CONFIG (via Cloudflare Worker — sin API key en el código) ──
+  const _BREVO = {
+    workerUrl:   'https://espaifest-brevo.lucasyleodigital.workers.dev',
+    tplCliente:  1,   // ID plantilla Confirmacion-Cliente
+    tplLaura:    3,   // ID plantilla Aviso-Laura
+    emailLaura:  'laurarmarin81@gmail.com',
+    emailFrom:   'info@espaifest.com',
+    nombreFrom:  'EspaiFest'
   };
 
-  // Detecta el idioma activo en la web
-  function getLang() {
-    return document.documentElement.lang === 'ca' ? 'ca' : 'es';
-  }
-
-  // Construye el HTML del email del cliente interpolando los params
-  function buildEmailCliente(params, lang) {
-    const ca = lang === 'ca';
-    const heroTitol  = ca ? 'Reserva rebuda!'         : '¡Reserva recibida!';
-    const heroSub    = ca ? 'En breu la Laura es posarà en contacte amb tu per confirmar-la.'
-                          : 'En breve Laura se pondrá en contacto contigo para confirmar.';
-    const salut      = ca ? `Hola <strong>${params.to_name}</strong>,`
-                          : `Hola <strong>${params.to_name}</strong>,`;
-    const intro      = ca ? 'Hem rebut la teva sol·licitud de reserva. Aquí tens el resum complet:'
-                          : 'Hemos recibido tu solicitud de reserva. Aquí tienes el resumen completo:';
-    const tDetalls   = ca ? 'Detalls de la reserva'   : 'Detalles de la reserva';
-    const lData      = ca ? '📅 Data'                  : '📅 Fecha';
-    const lFranja    = ca ? '🕐 Franja horària'         : '🕐 Franja horaria';
-    const lEsdev     = ca ? "🎊 Tipus d'esdeveniment"  : '🎊 Tipo de evento';
-    const lPers      = ca ? '👥 Persones'               : '👥 Personas';
-    const tPres      = ca ? 'Pressupost estimat'        : 'Presupuesto estimado';
-    const lSala      = ca ? 'Lloguer sala'              : 'Alquiler sala';
-    const lTotal     = ca ? 'TOTAL ESTIMAT'             : 'TOTAL ESTIMADO';
-    const lSenyal    = ca ? 'Senyal 50% (per confirmar)': 'Señal 50% (para confirmar)';
-    const tExtres    = ca ? 'Extres seleccionats'       : 'Extras seleccionados';
-    const lHext      = ca ? '⏱️ Hora extra:'             : '⏱️ Hora extra:';
-    const tComent    = ca ? '📝 Els teus comentaris:'   : '📝 Tus comentarios:';
-    const tPag       = ca ? 'Com confirmar la teva reserva' : 'Cómo confirmar tu reserva';
-    const txtPag     = ca
-      ? `Realitza el pagament de la senyal del 50% (<strong>${params.senal_50}</strong>) per:<br><br><strong>Bizum:</strong> 674 379 709<br><strong>Transferència:</strong> Indica el teu nom i data de reserva<br><br>Un cop rebut el pagament, la Laura confirmarà la teva reserva per WhatsApp.`
-      : `Realiza el pago de la señal del 50% (<strong>${params.senal_50}</strong>) por:<br><br><strong>Bizum:</strong> 674 379 709<br><strong>Transferencia:</strong> Indica tu nombre y fecha de reserva<br><br>Una vez recibido el pago, Laura confirmará tu reserva por WhatsApp.`;
-    const lDubtes    = ca ? 'Tens dubtes? Escriu-nos a' : '¿Tienes dudas? Escríbenos a';
-    const lFooter    = ca ? "Aquest email és una confirmació automàtica de la teva sol·licitud de reserva."
-                          : "Este email es una confirmación automática de tu solicitud de reserva.";
-
-    return `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#f4f4f4;font-family:'Helvetica Neue',Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 16px;"><tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08);">
-<tr><td style="background:#0d0f14;padding:28px 40px;text-align:center;">
-  <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest" style="height:64px;width:auto;display:block;margin:0 auto;">
-</td></tr>
-<tr><td style="background:linear-gradient(135deg,#0fd4c4,#06b6d4);padding:28px 40px;text-align:center;">
-  <div style="font-size:36px;margin-bottom:8px;">🎉</div>
-  <div style="font-size:22px;font-weight:800;color:#000;">${heroTitol}</div>
-  <div style="font-size:14px;color:#003333;margin-top:6px;">${heroSub}</div>
-</td></tr>
-<tr><td style="padding:36px 40px;">
-  <p style="font-size:16px;color:#374151;margin:0 0 24px;">${salut}</p>
-  <p style="font-size:14px;color:#6b7280;margin:0 0 28px;">${intro}</p>
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:24px;">
-    <tr><td colspan="2" style="background:#e5e7eb;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;">${tDetalls}</td></tr>
-    <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:45%;">${lData}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.fecha_reserva}</td></tr>
-    <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">${lFranja}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.horario}</td></tr>
-    <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">${lEsdev}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.evento}</td></tr>
-    <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;">${lPers}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;">${params.personas}</td></tr>
-  </table>
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:24px;">
-    <tr><td colspan="2" style="background:#e5e7eb;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;">${tPres}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">${lSala}</td><td style="padding:10px 20px;font-size:13px;color:#111827;text-align:right;border-bottom:1px solid #e5e7eb;">${params.precio_sala}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Hora extra</td><td style="padding:10px 20px;font-size:13px;color:#111827;text-align:right;border-bottom:1px solid #e5e7eb;">${params.precio_horaext}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">${ca?'Extres':'Extras'}</td><td style="padding:10px 20px;font-size:13px;color:#111827;text-align:right;border-bottom:1px solid #e5e7eb;">${params.precio_extras}</td></tr>
-    <tr style="background:#0d0f14;"><td style="padding:14px 20px;font-size:14px;font-weight:800;color:#fff;">${lTotal}</td><td style="padding:14px 20px;font-size:18px;font-weight:900;color:#0fd4c4;text-align:right;">${params.total_estimado}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;">${lSenyal}</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#f97316;text-align:right;">${params.senal_50}</td></tr>
-  </table>
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:24px;">
-    <tr><td style="background:#e5e7eb;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;">${tExtres}</td></tr>
-    <tr><td style="padding:12px 20px;font-size:13px;color:#374151;">${params.extras_lista}</td></tr>
-    <tr><td style="padding:0 20px 12px;font-size:12px;color:#6b7280;">${lHext} ${params.hora_extra}</td></tr>
-  </table>
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;margin-bottom:32px;">
-    <tr><td style="padding:16px 20px;font-size:13px;color:#92400e;"><strong>${tComent}</strong><br><span style="color:#374151;">${params.comentarios}</span></td></tr>
-  </table>
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#ecfdf5;border:1px solid #6ee7b7;border-radius:12px;margin-bottom:32px;">
-    <tr><td style="padding:20px 24px;">
-      <div style="font-size:14px;font-weight:700;color:#065f46;margin-bottom:8px;">💳 ${tPag}</div>
-      <div style="font-size:13px;color:#374151;line-height:1.6;">${txtPag}</div>
-    </td></tr>
-  </table>
-  <p style="font-size:13px;color:#9ca3af;text-align:center;margin:0;">${lDubtes} <a href="mailto:info@espaifest.com" style="color:#0fd4c4;">info@espaifest.com</a></p>
-</td></tr>
-<tr><td style="background:#0d0f14;padding:24px 40px;text-align:center;">
-  <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;">EspaiFest Martorell</div>
-  <div style="font-size:12px;color:#6b7280;">C/ Francesc Macià, 37 · Martorell</div>
-  <div style="font-size:12px;color:#6b7280;margin-top:4px;"><a href="tel:+34674379709" style="color:#0fd4c4;text-decoration:none;">674 379 709</a> · <a href="mailto:info@espaifest.com" style="color:#0fd4c4;text-decoration:none;">info@espaifest.com</a></div>
-  <div style="font-size:11px;color:#374151;margin-top:14px;">${lFooter}</div>
-</td></tr>
-</table></td></tr></table></body></html>`;
-  }
-
-  // Construye el HTML del email de Laura (siempre en català)
-  function buildEmailLaura(params) {
-    return `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#f4f4f4;font-family:'Helvetica Neue',Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 16px;"><tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08);">
-<tr><td style="background:#0d0f14;padding:24px 40px;text-align:center;">
-  <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest" style="height:54px;width:auto;display:block;margin:0 auto 10px;">
-  <div style="font-size:11px;color:#f97316;letter-spacing:3px;text-transform:uppercase;font-weight:700;">Administració</div>
-</td></tr>
-<tr><td style="background:#f97316;padding:20px 40px;text-align:center;">
-  <div style="font-size:20px;font-weight:800;color:#fff;">🎉 Nova sol·licitud de reserva</div>
-  <div style="font-size:13px;color:#fff7ed;margin-top:4px;">${params.fecha_reserva} · ${params.horario}</div>
-</td></tr>
-<tr><td style="padding:32px 40px;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:20px;">
-    <tr><td colspan="2" style="background:#e5e7eb;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;">👤 Dades del client</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:40%;">Nom</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.cliente_nombre}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">DNI</td><td style="padding:10px 20px;font-size:13px;color:#111827;border-bottom:1px solid #e5e7eb;">${params.cliente_dni}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Data naix.</td><td style="padding:10px 20px;font-size:13px;color:#111827;border-bottom:1px solid #e5e7eb;">${params.cliente_fnac}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Adreça</td><td style="padding:10px 20px;font-size:13px;color:#111827;border-bottom:1px solid #e5e7eb;">${params.cliente_dir}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Telèfon</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#0fd4c4;border-bottom:1px solid #e5e7eb;">${params.cliente_tel}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;">Email</td><td style="padding:10px 20px;font-size:13px;color:#0fd4c4;">${params.cliente_email}</td></tr>
-  </table>
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:20px;">
-    <tr><td colspan="2" style="background:#e5e7eb;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;">📅 Detalls de la reserva</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:40%;">Data</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.fecha_reserva}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Franja</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.horario}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Esdeveniment</td><td style="padding:10px 20px;font-size:13px;color:#111827;border-bottom:1px solid #e5e7eb;">${params.evento}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Persones</td><td style="padding:10px 20px;font-size:13px;color:#111827;border-bottom:1px solid #e5e7eb;">${params.personas}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Hora extra</td><td style="padding:10px 20px;font-size:13px;color:#111827;border-bottom:1px solid #e5e7eb;">${params.hora_extra}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;">Extres</td><td style="padding:10px 20px;font-size:13px;color:#111827;">${params.extras_lista}</td></tr>
-  </table>
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:20px;">
-    <tr><td colspan="2" style="background:#e5e7eb;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;">💶 Pressupost</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:40%;">Sala</td><td style="padding:10px 20px;font-size:13px;color:#111827;text-align:right;border-bottom:1px solid #e5e7eb;">${params.precio_sala}</td></tr>
-    <tr style="background:#0d0f14;"><td style="padding:14px 20px;font-size:14px;font-weight:800;color:#fff;">TOTAL ESTIMAT</td><td style="padding:14px 20px;font-size:18px;font-weight:900;color:#0fd4c4;text-align:right;">${params.total_estimado}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;">Senyal 50%</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#f97316;text-align:right;">${params.senal_50}</td></tr>
-  </table>
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;margin-bottom:24px;">
-    <tr><td style="padding:16px 20px;font-size:13px;color:#92400e;"><strong>📝 Comentaris:</strong><br><span style="color:#374151;">${params.comentarios}</span></td></tr>
-  </table>
-  <table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-      <td style="padding:0 8px 0 0;" width="50%"><a href="https://wa.me/34${params.cliente_tel}" style="display:block;background:#25d366;color:#fff;text-align:center;padding:14px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;">💬 WhatsApp client</a></td>
-      <td style="padding:0 0 0 8px;" width="50%"><a href="mailto:${params.cliente_email}" style="display:block;background:#0fd4c4;color:#000;text-align:center;padding:14px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;">✉️ Email client</a></td>
-    </tr>
-  </table>
-</td></tr>
-<tr><td style="background:#0d0f14;padding:20px 40px;text-align:center;">
-  <div style="font-size:11px;color:#6b7280;">EspaiFest · Panell d'administració · ${params.fecha_envio}</div>
-</td></tr>
-</table></td></tr></table></body></html>`;
-  }
-
-  // Función de envío via Worker → Resend
-  async function resendSend(to, subject, html) {
+  async function brevoSend(templateId, toEmail, toName, params) {
     try {
-      const res = await fetch(_MAIL.workerUrl, {
+      const res = await fetch(_BREVO.workerUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to, subject, html, from_name: _MAIL.emailFrom })
+        body: JSON.stringify({
+          templateId: templateId,
+          to: [{ email: toEmail, name: toName }],
+          sender: { email: _BREVO.emailFrom, name: _BREVO.nombreFrom },
+          params: params
+        })
       });
-      if(!res.ok) { const e = await res.json(); console.warn('Resend Worker error:', e); return false; }
+      if(!res.ok) { const e = await res.json(); console.warn('Brevo Worker error:', e); return false; }
       return true;
-    } catch(err) { console.warn('Resend Worker fetch error:', err); return false; }
+    } catch(err) { console.warn('Brevo Worker fetch error:', err); return false; }
   }
-
 </script>
 <style>
 
@@ -711,7 +572,7 @@ section{padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem);}
 .fid-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cp),var(--co),var(--cy));}
 .fid-logo-area{text-align:center;margin-bottom:24px;}
 .fid-logo-area img{height:160px;width:auto;max-width:360px;margin:0 auto;display:block;transition:opacity .3s;content:url('https://i.ibb.co/45PMbq8/Dise-o-sin-t-tulo-1.png');}
-[data-theme="light"] .fid-logo-area img{content:url('https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png');height:160px;width:auto;max-width:360px;}
+[data-theme="light"] .fid-logo-area img{content:url('https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png');height:160px;width:auto;max-width:360px;}
 .fid-levels{display:flex;flex-direction:column;gap:12px;}
 .fid-level{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:14px;background:var(--s1);border:1px solid var(--bd);transition:all .2s;}
 .fid-level:hover{border-color:oklch(68% .22 38/.3);background:var(--s2);}
@@ -793,75 +654,10 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 .toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--s2);color:var(--tx1);border:1px solid var(--bd);padding:11px 20px;border-radius:40px;font:600 .85rem var(--fb);opacity:0;transition:all .32s var(--ease-b);z-index:999;white-space:nowrap;box-shadow:0 6px 28px oklch(0% 0 0/.4);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ══ EQUIPAMIENTO ════════════════════════════════ */
-#equipamiento{background:var(--s1);}
-.eq-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:44px;}
-.eq-card{background:var(--s0);border:1px solid var(--bd);border-radius:20px;overflow:hidden;transition:transform .25s var(--ease-s),box-shadow .25s var(--ease-s);}
-.eq-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px oklch(0% 0 0/.25);}
-.eq-card-head{padding:22px 22px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:14px;}
-.eq-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.eq-ico svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-.eq-card-title{font:700 1rem var(--fd);color:var(--tx1);margin:0 0 2px;}
-.eq-card-sub{font-size:.72rem;color:var(--tx3);}
-.eq-items{padding:16px 22px 22px;display:flex;flex-direction:column;gap:10px;}
-.eq-item{display:flex;align-items:center;gap:10px;font-size:.83rem;color:var(--tx2);}
-.eq-item svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;flex-shrink:0;}
-.eq-pill{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:auto;white-space:nowrap;}
-.eq-notice{display:flex;align-items:center;gap:12px;margin-top:28px;background:var(--s0);border:1px solid var(--bd);border-radius:14px;padding:14px 20px;}
-.eq-notice svg{width:16px;height:16px;stroke:var(--ct);fill:none;stroke-width:1.8;stroke-linecap:round;flex-shrink:0;}
-.eq-notice p{font-size:.8rem;color:var(--tx2);margin:0;}
-.eq-notice strong{color:var(--tx1);}
-
-/* ══ PRECIOS ACORDEÓN ═══════════════════════════════ */
-.prc-tabs{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;justify-content:center;}
-.prc-tab{padding:8px 20px;border-radius:40px;border:1px solid var(--bd);background:transparent;color:var(--tx2);font:600 .82rem var(--fb);cursor:pointer;transition:all .2s;}
-.prc-tab.on{background:var(--co);color:#fff;border-color:var(--co);box-shadow:0 4px 16px oklch(68% .22 38/.3);}
-.prc-panel{display:none;animation:fu .2s ease;}.prc-panel.on{display:block;}
-/* Tabla de precios */
-.prc-table-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--bd);margin-bottom:12px;}
-.prc-table{width:100%;border-collapse:collapse;font-size:.82rem;min-width:520px;}
-.prc-table th{background:var(--s1);color:var(--tx2);font:700 .7rem var(--fb);text-transform:uppercase;letter-spacing:.07em;padding:11px 14px;text-align:center;border-bottom:1px solid var(--bd);}
-.prc-table th:first-child,.prc-table th:nth-child(2){text-align:left;}
-.prc-table td{padding:11px 14px;border-bottom:1px solid var(--bd);text-align:center;color:var(--tx1);font-weight:500;}
-.prc-table tr:last-child td{border-bottom:none;}
-.prc-table tr:hover td{background:var(--s2);}
-.prc-table td:first-child{text-align:left;font-weight:700;color:var(--tx1);}
-.prc-table td:nth-child(2){text-align:left;color:var(--tx2);font-weight:400;font-size:.78rem;}
-.prc-cell-dash{color:var(--bd);font-size:1.1rem;}
-.prc-cell-hi{font-weight:800;color:var(--co);}
-.prc-esp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:12px;}
-.prc-esp-card{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;transition:border-color .2s;}
-.prc-esp-card:hover{border-color:oklch(87% .19 90/.4);}
-.prc-esp-name{font-size:.85rem;font-weight:700;margin-bottom:4px;}
-.prc-esp-meta{font-size:.75rem;color:var(--tx2);margin-bottom:8px;}
-.prc-esp-price{font:800 1.3rem var(--fd);color:var(--cy);}
-.prc-esp-price sup{font-size:.7rem;font-weight:700;vertical-align:super;}
-.prc-extras-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
-.prc-extra-card{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.prc-extra-left{font-size:.82rem;}
-.prc-extra-concepto{font-weight:700;color:var(--tx1);}
-.prc-extra-turno{font-size:.72rem;color:var(--tx2);margin-top:2px;}
-.prc-extra-price{font:800 1rem var(--fd);color:var(--ct);white-space:nowrap;}
-.prc-loading{text-align:center;padding:40px;color:var(--tx2);font-size:.85rem;}
-/* Responsive móvil — tablas → cards apiladas */
-@media(max-width:640px){
-  .prc-table-wrap{border:none;border-radius:0;margin:0 -1rem 12px;}
-  .prc-table{font-size:.78rem;}
-  .prc-tabs{gap:6px;}
-  .prc-tab{padding:7px 14px;font-size:.75rem;}
-  .prc-esp-grid{grid-template-columns:1fr 1fr;}
-  .prc-extras-grid{grid-template-columns:1fr;}
-}
-/* ── CALENDARIO FRANJAS EXTENDIDO ── */
-.cf-grupo-noche .cf-grupo-label{color:oklch(66% .24 355);}
-.cf-grupo-diacomp .cf-grupo-label{color:var(--cy);}
-.cf-slot-precio{font-size:.68rem;color:var(--tx3);margin-top:1px;}
-
 /* ═══ RESPONSIVE ═════════════════════════════════ */
 @media(max-width:1024px){
   .hero{grid-template-columns:1fr;}.h-side{min-height:58vh;}.h-div{display:none;}
   .split,.biz-grid,.res-grid,.fid-grid{grid-template-columns:1fr;}
-  .eq-grid{grid-template-columns:1fr 1fr;}
   .stats{grid-template-columns:1fr 1fr;}
   .gal{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto;}
   .gc{grid-column:span 1!important;grid-row:span 1!important;aspect-ratio:4/3;}
@@ -1003,7 +799,6 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   .ham-btn{display:flex;}
   .mob-drawer-logo img{height:52px;width:auto;}
   .cards3,.price-grid,.manu-grid,.blog-grid{grid-template-columns:1fr;}
-  .eq-grid{grid-template-columns:1fr;}
   footer{padding:2.5rem 1rem 1.5rem;}.ft-grid{grid-template-columns:1fr;gap:24px;}
   .biz-imgs{grid-template-rows:180px 150px;}
   .h-title{font-size:clamp(1.8rem,8vw,2.8rem);}
@@ -1313,9 +1108,6 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 .cf-slot.ocupado:hover{border-color:var(--bd);color:var(--tx3);}
 .cal-day.partial{background:oklch(87% .19 90/.08);}
 .dot-partial{width:6px;height:6px;border-radius:50%;background:oklch(87% .19 90);}
-.cal-day.dia-especial{background:oklch(66% .24 355/.08);border-color:oklch(66% .24 355/.3);cursor:pointer;}
-.cal-day.dia-especial:hover{background:oklch(66% .24 355/.15);}
-.dot-esp{width:6px;height:6px;border-radius:50%;background:oklch(66% .24 355);}
 
 /* ══ MODAL BLOG POST ════════════════════════════════════ */
 .blog-modal-ov{
@@ -1453,7 +1245,6 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <a href="#adultos" data-es="Celebraciones" data-ca="Celebracions">Celebraciones</a>
     <a href="#business" data-es="Business" data-ca="Business">Business</a>
     <a href="#precios" data-es="Precios" data-ca="Preus">Precios</a>
-    <a href="#equipamiento" data-es="Equipamiento" data-ca="Equipament">Equipamiento</a>
     <a href="#galeria" data-es="Galería" data-ca="Galeria">Galería</a>
     <a href="#calendario" data-es="Calendario" data-ca="Calendari">Calendario</a>
     <a href="#blog" data-es="Blog" data-ca="Blog">Blog</a>
@@ -1488,7 +1279,6 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <a href="#adultos"   onclick="closeMobMenu()" data-es="🎉 Celebraciones adultos" data-ca="🎉 Celebracions adults">🎉 Celebraciones adultos</a>
     <a href="#business"  onclick="closeMobMenu()" data-es="💼 Business" data-ca="💼 Business">💼 Business</a>
     <a href="#precios"   onclick="closeMobMenu()" data-es="💰 Precios" data-ca="💰 Preus">💰 Precios</a>
-    <a href="#equipamiento" onclick="closeMobMenu()" data-es="🎪 Equipamiento" data-ca="🎪 Equipament">🎪 Equipamiento</a>
     <a href="#galeria"   onclick="closeMobMenu()" data-es="📷 Galería" data-ca="📷 Galeria">📷 Galería</a>
     <a href="#calendario" onclick="closeMobMenu()" data-es="📅 Calendario" data-ca="📅 Calendari">📅 Calendario</a>
     <a href="#blog"      onclick="closeMobMenu()" data-es="✍️ Blog" data-ca="✍️ Blog">✍️ Blog</a>
@@ -1726,28 +1516,17 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
         </div>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
-      <!-- Leyenda -->
-      <div style="display:flex;gap:16px;flex-wrap:wrap;padding:12px 20px;border-top:1px solid var(--bd);font-size:11px;color:var(--tx2);align-items:center;">
-        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--ct);display:inline-block;"></span><span data-es="Disponible" data-ca="Disponible">Disponible</span></span>
-        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:oklch(87% .19 90);display:inline-block;"></span><span data-es="Parcial" data-ca="Parcial">Parcial</span></span>
-        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:oklch(66% .24 355);display:inline-block;"></span><span data-es="Día especial" data-ca="Dia especial">Día especial</span></span>
-        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--co);display:inline-block;"></span><span data-es="Ocupado" data-ca="Ocupat">Ocupado</span></span>
-      </div>
         <div class="cal-franjas" id="cal-franjas">
           <div class="cf-titulo" data-es="Franjas disponibles" data-ca="Franges disponibles">Franjas disponibles</div>
-          <div class="cf-grupo" id="cf-grupo-manana">
+          <div class="cf-grupo">
             <div class="cf-grupo-label" data-es="Mañana" data-ca="Matí">Mañana</div>
             <div class="cf-slots" id="cf-manana"></div>
           </div>
-          <div class="cf-grupo" id="cf-grupo-tarde">
+          <div class="cf-grupo">
             <div class="cf-grupo-label" data-es="Tarde" data-ca="Tarda">Tarde</div>
             <div class="cf-slots" id="cf-tarde"></div>
           </div>
-          <div class="cf-grupo cf-grupo-noche" id="cf-grupo-noche" style="display:none">
-            <div class="cf-grupo-label" data-es="Tarde-Noche / Noche" data-ca="Tarda-Nit / Nit">Tarde-Noche / Noche</div>
-            <div class="cf-slots" id="cf-noche"></div>
-          </div>
-          <div class="cf-grupo cf-grupo-diacomp" id="cf-grupo-diacomp">
+          <div class="cf-grupo">
             <div class="cf-grupo-label" data-es="Todo el día" data-ca="Tot el dia">Todo el día</div>
             <div class="cf-slots" id="cf-diacomp"></div>
           </div>
@@ -1810,68 +1589,53 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <div class="tc" data-a="up">
       <div class="eyebrow ew-b" style="justify-content:center"><div class="ew-dot"></div><span data-es="Precios transparentes" data-ca="Preus transparents">Precios transparentes</span></div>
       <h2 class="sec-h2" data-es="Sin letra pequeña" data-blur="top" data-ca="Sense lletra petita">Sin letra pequeña</h2>
-      <p class="sec-lead" data-es="Todas las franjas, todos los precios. Sin sorpresas. Desde 85€ por 4 horas de espacio privado exclusivo." data-ca="Totes les franges, tots els preus. Sense sorpreses. Des de 85€ per 4 hores d'espai privat exclusiu.">Todas las franjas, todos los precios. Sin sorpresas. Desde 85€ por 4 horas de espacio privado exclusivo.</p>
+      <p class="sec-lead" data-es="Un precio claro por 4 horas de espacio privado exclusivo. Todo lo que necesitas incluido desde el primer momento." data-ca="Un preu clar per 4 hores d'espai privat exclusiu. Tot inclòs des del primer moment.">Un precio claro por 4 horas de espacio privado exclusivo. Todo incluido.</p>
     </div>
-
-    <!-- Tabs -->
-    <div class="prc-tabs" data-a="up" role="tablist">
-      <button class="prc-tab on" onclick="prcSwitch('estandar',this)" role="tab" data-es="Turnos 4h" data-ca="Torns 4h">Turnos 4h</button>
-      <button class="prc-tab" onclick="prcSwitch('ampliados',this)" role="tab" data-es="Día completo" data-ca="Dia complet">Día completo</button>
-      <button class="prc-tab" onclick="prcSwitch('especiales',this)" role="tab" data-es="Días especiales" data-ca="Dies especials">Días especiales</button>
-      <button class="prc-tab" onclick="prcSwitch('extras',this)" role="tab" data-es="Extras" data-ca="Extres">Extras</button>
-    </div>
-
-    <!-- Panel Turnos estándar -->
-    <div class="prc-panel on" id="prc-estandar" data-a="up">
-      <div class="prc-loading" id="prc-load-estandar">Cargando tarifas...</div>
-      <div class="prc-table-wrap" id="prc-wrap-estandar" style="display:none">
-        <table class="prc-table" id="prc-tbl-estandar">
-          <thead><tr>
-            <th data-es="Turno" data-ca="Torn">Turno</th>
-            <th data-es="Horario" data-ca="Horari">Horario</th>
-            <th>Lu</th><th>Ma</th><th>Mi</th><th>Ju</th><th>Vi</th><th>Sá</th><th>Do</th>
-          </tr></thead>
-          <tbody id="prc-body-estandar"></tbody>
-        </table>
+    <div class="price-grid">
+      <div class="pc pc-1" data-a="up" data-d="0">
+        <div class="pc-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="oklch(66% .24 355)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <div class="pc-name" data-es="FIESTA INFANTIL" data-ca="FESTA INFANTIL">FIESTA INFANTIL</div>
+        <div class="pc-amount"><sup>€</sup>85</div>
+        <div class="pc-period" data-es="por 4 horas · espacio exclusivo" data-ca="per 4 hores · espai exclusiu">por 4 horas · espacio exclusivo</div>
+        <div class="pc-items">
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Sala completa de 115m²" data-ca="Sala completa de 115m²">Sala completa de 115m²</span></div>
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="2 zonas infantiles diferenciadas" data-ca="2 zones infantils diferenciades">2 zonas infantiles diferenciadas</span></div>
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Zona adultos TV y futbolín" data-ca="Zona adults TV i futbolí">Zona adultos: TV y futbolín</span></div>
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Cocina office completa" data-ca="Cuina office completa">Cocina office completa</span></div>
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Equipo música y proyector" data-ca="Equip música i projector">Equipo de música y proyector</span></div>
+        </div>
+        <button class="pc-btn pb-ghost" onclick="document.getElementById('reservas').scrollIntoView({behavior:'smooth'})" data-es="Reservar" data-ca="Reservar">Reservar</button>
       </div>
-      <p style="font-size:.75rem;color:var(--tx2);margin-top:10px;text-align:center" data-es="Precios en € por sesión · IVA no incluido" data-ca="Preus en € per sessió · IVA no inclòs">Precios en € por sesión · IVA no incluido</p>
-    </div>
-
-    <!-- Panel Ampliados -->
-    <div class="prc-panel" id="prc-ampliados" data-a="up">
-      <div class="prc-loading" id="prc-load-ampliados">Cargando tarifas...</div>
-      <div class="prc-table-wrap" id="prc-wrap-ampliados" style="display:none">
-        <table class="prc-table" id="prc-tbl-ampliados">
-          <thead><tr>
-            <th data-es="Turno" data-ca="Torn">Turno</th>
-            <th data-es="Horario" data-ca="Horari">Horario</th>
-            <th>Lu</th><th>Ma</th><th>Mi</th><th>Ju</th><th>Vi</th><th>Sá</th><th>Do</th>
-          </tr></thead>
-          <tbody id="prc-body-ampliados"></tbody>
-        </table>
+      <div class="pc pc-2 feat" data-a="up" data-d="100">
+        <div class="pc-badge" data-es="Más popular" data-ca="Més popular">Más popular</div>
+        <div class="pc-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="oklch(68% .22 38)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <div class="pc-name" data-es="ADULTOS & FAMILIAR" data-ca="ADULTS & FAMILIAR">ADULTOS & FAMILIAR</div>
+        <div class="pc-amount"><sup>€</sup>85</div>
+        <div class="pc-period" data-es="por 4 horas · hasta 50 personas" data-ca="per 4 hores · fins a 50 persones">por 4 horas · hasta 50 personas</div>
+        <div class="pc-items">
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Sala completa exclusiva" data-ca="Sala completa exclusiva">Sala completa exclusiva</span></div>
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Proyector HD incluido" data-ca="Projector HD inclòs">Proyector HD incluido</span></div>
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Tu playlist en el equipo música" data-ca="La teva playlist a l'equip de música">Tu playlist en el equipo de música</span></div>
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Cafetera Nespresso" data-ca="Cafetera Nespresso">Cafetera Nespresso</span></div>
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Servicio hora extra disponible" data-ca="Servei hora extra disponible">Servicio hora extra disponible</span></div>
+        </div>
+        <button class="pc-btn pb-pri" onclick="document.getElementById('reservas').scrollIntoView({behavior:'smooth'})" data-es="Reservar ahora" data-ca="Reservar ara">Reservar ahora</button>
+      </div>
+      <div class="pc pc-3" data-a="up" data-d="200">
+        <div class="pc-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="32" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <div class="pc-name" data-es="BUSINESS / CLASES" data-ca="BUSINESS / CLASSES">BUSINESS / CLASES</div>
+        <div class="pc-amount"><sup>€</sup>85</div>
+        <div class="pc-period" data-es="por 4 horas · tarifas mensuales" data-ca="per 4 hores · tarifes mensuals">por 4 horas · tarifas mensuales</div>
+        <div class="pc-items">
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="WiFi fibra óptica ultrarrápido" data-ca="WiFi fibra òptica ultraràpid">WiFi fibra óptica ultrarrápido</span></div>
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Proyector HD" data-ca="Projector HD">Proyector HD</span></div>
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Coffee break Nespresso" data-ca="Coffee break Nespresso">Coffee break Nespresso</span></div>
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Sala insonorizada" data-ca="Sala insonoritzada">Sala insonorizada</span></div>
+          <div class="pc-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Factura para empresa" data-ca="Factura per a empresa">Factura para empresa</span></div>
+        </div>
+        <button class="pc-btn pb-ghost" onclick="document.getElementById('reservas').scrollIntoView({behavior:'smooth'})" data-es="Consultar" data-ca="Consultar">Consultar</button>
       </div>
     </div>
-
-    <!-- Panel Especiales -->
-    <div class="prc-panel" id="prc-especiales" data-a="up">
-      <div class="prc-loading" id="prc-load-especiales">Cargando tarifas...</div>
-      <div class="prc-esp-grid" id="prc-grid-especiales" style="display:none"></div>
-    </div>
-
-    <!-- Panel Extras -->
-    <div class="prc-panel" id="prc-extras" data-a="up">
-      <div class="prc-loading" id="prc-load-extras">Cargando tarifas...</div>
-      <div class="prc-extras-grid" id="prc-grid-extras" style="display:none"></div>
-    </div>
-
-    <!-- CTA -->
-    <div style="text-align:center;margin-top:36px" data-a="up">
-      <a href="#reservas" class="btn btn-primary" data-es="Reservar ahora" data-ca="Reservar ara">Reservar ahora
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-      <p style="font-size:.78rem;color:var(--tx2);margin-top:12px" data-es="¿Necesitas un horario diferente? Escríbenos y lo buscamos." data-ca="Necessites un horari diferent? Escriu-nos i ho busquem.">¿Necesitas un horario diferente? <a href="https://api.whatsapp.com/send?phone=34674379709" target="_blank" rel="noopener" style="color:var(--ct);text-decoration:none">Escríbenos y lo buscamos →</a></p>
-    </div>
-
     <!-- Servicios adicionales desde Firestore -->
     <div class="svc-extra" id="svc-extra-wrap">
       <div class="svc-extra-title" data-es="Servicios adicionales disponibles" data-ca="Serveis addicionals disponibles">Servicios adicionales disponibles</div>
@@ -1881,7 +1645,6 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 </section>
 
 <!-- ══ FIDELIZACIÓN ══════════════════════════════════ -->
-<section id="fidelizacion">
   <div class="container">
     <div class="tc" data-a="up">
       <div class="eyebrow ew-p" style="justify-content:center"><div class="ew-dot"></div><span data-es="Programa de fidelización" data-ca="Programa de fidelització">Programa de fidelización</span></div>
@@ -1937,173 +1700,6 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
         </div>
         <a href="#reservas" class="btn btn-primary" data-es="Empezar a acumular" data-ca="Començar a acumular">Empezar a acumular <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ EQUIPAMIENTO ════════════════════════════════════ -->
-<section id="equipamiento">
-  <div class="container">
-    <div class="tc" data-a="up">
-      <div class="eyebrow ew-f" style="justify-content:center"><div class="ew-dot"></div><span data-es="Todo incluido en el precio" data-ca="Tot inclòs en el preu">Todo incluido en el precio</span></div>
-      <h2 class="sec-h2" data-es="Todo lo que necesitas, ya está aquí" data-ca="Tot el que necessites, ja hi és">Todo lo que necesitas, ya está aquí</h2>
-      <p class="sec-lead" data-es="No tienes que traer nada extra. EspaiFest cuenta con equipamiento completo para que tu celebración sea perfecta desde el primer momento." data-ca="No has de portar res extra. EspaiFest compta amb equipament complet perquè la teva celebració sigui perfecta des del primer moment.">No tienes que traer nada extra. EspaiFest cuenta con equipamiento completo para que tu celebración sea perfecta desde el primer momento.</p>
-    </div>
-
-    <div class="eq-grid">
-
-      <!-- Zona infantil -->
-      <div class="eq-card" data-a="up" data-d="0">
-        <div class="eq-card-head">
-          <div class="eq-ico" style="background:oklch(73% .14 190/.12)">
-            <svg viewBox="0 0 24 24" stroke="var(--ct)"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          </div>
-          <div>
-            <div class="eq-card-title" data-es="Zona infantil" data-ca="Zona infantil">Zona infantil</div>
-            <div class="eq-card-sub" data-es="Para los más pequeños" data-ca="Per als més petits">Para los más pequeños</div>
-          </div>
-        </div>
-        <div class="eq-items">
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Parque de bolas homologado" data-ca="Parc de boles homologat">Parque de bolas homologado</span>
-            <span class="eq-pill" style="background:oklch(73% .14 190/.12);color:var(--ct)" data-es="3–10 años" data-ca="3–10 anys">3–10 años</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Zona baby" data-ca="Zona baby">Zona baby</span>
-            <span class="eq-pill" style="background:oklch(73% .14 190/.12);color:var(--ct)" data-es="6m–3 años" data-ca="6m–3 anys">6m–3 años</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Mini piscina de bolas" data-ca="Mini piscina de boles">Mini piscina de bolas</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Juguetes de madera" data-ca="Joguines de fusta">Juguetes de madera</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Pizarra" data-ca="Pissarra">Pizarra</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tecnología -->
-      <div class="eq-card" data-a="up" data-d="1">
-        <div class="eq-card-head">
-          <div class="eq-ico" style="background:oklch(66% .24 355/.1)">
-            <svg viewBox="0 0 24 24" stroke="var(--cp)"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          </div>
-          <div>
-            <div class="eq-card-title" data-es="Tecnología" data-ca="Tecnologia">Tecnología</div>
-            <div class="eq-card-sub" data-es="Conectividad total" data-ca="Connectivitat total">Conectividad total</div>
-          </div>
-        </div>
-        <div class="eq-items">
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Proyector HD" data-ca="Projector HD">Proyector HD</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>WiFi</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Equipo de audio" data-ca="Equip d'àudio">Equipo de audio</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>TV Full HD</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Chromecast</span>
-          </div>
-          <div class="eq-item" style="color:var(--tx3)">
-            <svg viewBox="0 0 24 24" stroke="var(--tx3)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span data-es="Wii (bajo petición)" data-ca="Wii (sota petició)">Wii (bajo petición)</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Cocina -->
-      <div class="eq-card" data-a="up" data-d="2">
-        <div class="eq-card-head">
-          <div class="eq-ico" style="background:oklch(87% .19 90/.12)">
-            <svg viewBox="0 0 24 24" stroke="var(--cy)"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-          </div>
-          <div>
-            <div class="eq-card-title" data-es="Cocina office" data-ca="Cuina office">Cocina office</div>
-            <div class="eq-card-sub" data-es="Todo lo necesario" data-ca="Tot el necessari">Todo lo necesario</div>
-          </div>
-        </div>
-        <div class="eq-items">
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Horno" data-ca="Forn">Horno</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Microondas" data-ca="Microones">Microondas</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Cafetera Nespresso</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Nevera combi" data-ca="Nevera combi">Nevera combi</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Utensilios básicos" data-ca="Utensilis bàsics">Utensilios básicos</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mobiliario -->
-      <div class="eq-card" data-a="up" data-d="3">
-        <div class="eq-card-head">
-          <div class="eq-ico" style="background:oklch(68% .22 38/.1)">
-            <svg viewBox="0 0 24 24" stroke="var(--co)"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-          </div>
-          <div>
-            <div class="eq-card-title" data-es="Mobiliario" data-ca="Mobiliari">Mobiliario</div>
-            <div class="eq-card-sub" data-es="Cómodo para todos" data-ca="Còmode per a tothom">Cómodo para todos</div>
-          </div>
-        </div>
-        <div class="eq-items">
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Mesas y sillas" data-ca="Taules i cadires">Mesas y sillas</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Tronas" data-ca="Trones">Tronas</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Zona de pufs" data-ca="Zona de poufs">Zona de pufs</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Cambiador de bebés" data-ca="Canviador de nadons">Cambiador de bebés</span>
-          </div>
-          <div class="eq-item">
-            <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span data-es="Futbolín" data-ca="Futbolí">Futbolín</span>
-            <span class="eq-pill" style="background:oklch(68% .22 38/.1);color:var(--co)" data-es="gratis" data-ca="gratis">gratis</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="eq-notice" data-a="up">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <p data-es="Todo el equipamiento está <strong>incluido en el precio del alquiler</strong>. Sin costes adicionales ni sorpresas." data-ca="Tot l'equipament està <strong>inclòs en el preu del lloguer</strong>. Sense costos addicionals ni sorpreses.">Todo el equipamiento está <strong>incluido en el precio del alquiler</strong>. Sin costes adicionales ni sorpresas.</p>
     </div>
   </div>
 </section>
@@ -2193,15 +1789,11 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             </div>
           </div>
           <div class="fr2">
-            <div class="fg"><label class="fl" data-es="Fecha deseada *" data-ca="Data desitjada *">Fecha deseada *</label><input type="date" class="fi" id="r-f" required onchange="webLoadFranjasPorFecha(this.value)"></div>
+            <div class="fg"><label class="fl" data-es="Fecha deseada *" data-ca="Data desitjada *">Fecha deseada *</label><input type="date" class="fi" id="r-f" required></div>
             <div class="fg"><label class="fl" data-es="Franja horaria *" data-ca="Franja horària *">Franja horaria *</label>
-              <select class="fsel" id="r-horario" required onchange="calcularTotal()">
-                <option value="">— Elige fecha primero —</option>
+              <select class="fsel" id="r-horario" required>
+                <option value="" data-es="← Elige primero la fecha" data-ca="← Tria primer la data">← Elige primero la fecha</option>
               </select>
-              <div id="web-price-preview" style="display:none;margin-top:7px;padding:9px 13px;background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:10px;display:none;font-size:.8rem;align-items:center;justify-content:space-between;gap:8px;">
-                <span id="web-price-label" style="color:var(--tx2)">Precio sala</span>
-                <strong id="web-price-val" style="color:var(--co);font-size:1rem;font-weight:800">—</strong>
-              </div>
             </div>
           </div>
           <div class="fg"><label class="fl" data-es="Cuéntanos más" data-ca="Explica'ns més">Cuéntanos más</label><textarea class="fta" id="r-no" placeholder="Número de personas, necesidades especiales, decoración..."></textarea></div>
@@ -2324,7 +1916,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <div class="ft-grid">
     <div>
       <div class="ft-logo">
-  <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest" style="height: 120px; width: auto;">
+  <img src="https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png" alt="EspaiFest" style="height: 120px; width: auto;">
 </div>
     </div>
     <div class="ft-col">
@@ -2565,11 +2157,6 @@ function setLang(lang, btn) {
   // Al volver a ES, restaurar texto original
   if(lang === 'es') restaurarContenidoES();
 
-  // Regenerar calendario con el nuevo idioma (días de semana y mes)
-  if(typeof renderCal === 'function') renderCal();
-  // Si hay franja seleccionada, re-renderizarla también
-  if(calSelected && typeof renderFranjas === 'function') renderFranjas(calSelected);
-
   showToast(lang==='es'?'Castellano activado':'Català activat');
 }
 
@@ -2712,275 +2299,106 @@ function toggleTheme() {
   }
 })();
 
-// ── PRECIOS INDEX — datos compartidos con Firestore ──────────
-const DIAS_IDX = ['lu','ma','mi','ju','vi','sa','do'];
-const TARIFAS_FB_DEFAULT = {
-  estandar: [
-    {turno:'Mañana', horario:'10h–14h', lu:85,ma:85,mi:85,ju:85,vi:90,sa:130,do:130},
-    {turno:'Mañana', horario:'11h–15h', lu:85,ma:85,mi:85,ju:85,vi:90,sa:130,do:130},
-    {turno:'Tarde',  horario:'16:30h–20:30h', lu:85,ma:85,mi:85,ju:85,vi:100,sa:140,do:140},
-    {turno:'Tarde-Noche',horario:'19:30h–23:30h',lu:'—',ma:'—',mi:'—',ju:'—',vi:170,sa:185,do:'—'},
-    {turno:'Noche',  horario:'21:15h–01:30h', lu:'—',ma:'—',mi:'—',ju:'—',vi:200,sa:200,do:'—'},
-  ],
-  ampliados: [
-    {turno:'Todo el día', horario:'10h–20h', lu:150,ma:150,mi:150,ju:150,vi:170,sa:250,do:270},
-    {turno:'Tarde-Noche', horario:'16:30h–01:30h',lu:'—',ma:'—',mi:'—',ju:'—',vi:390,sa:450,do:'—'},
-  ],
-  especiales: [
-    {celebracion:'Año Nuevo',        dia:'01/01',horario:'12h–19h',precio:310},
-    {celebracion:'Reyes',            dia:'06/01',horario:'12h–19h',precio:310},
-    {celebracion:'Carnaval',         dia:'',     horario:'20h–02h',precio:280},
-    {celebracion:'Verbena St. Joan', dia:'23/06',horario:'20h–02h',precio:280},
-    {celebracion:'Castañada',        dia:'31/10',horario:'20h–02h',precio:280},
-    {celebracion:'Nochebuena',       dia:'24/12',horario:'20h–02h',precio:350},
-    {celebracion:'Navidad mediodía', dia:'25/12',horario:'12h–19h',precio:310},
-    {celebracion:'Navidad noche',    dia:'25/12',horario:'20h–02h',precio:310},
-    {celebracion:'Sant Esteve',      dia:'26/12',horario:'12h–19h',precio:310},
-    {celebracion:'Fin de Año',       dia:'31/12',horario:'20h–03h',precio:350},
-  ],
-  extras: [
-    {concepto:'Limpieza',   turno:'Mañana (9h–15h)',  precio:30},
-    {concepto:'Limpieza',   turno:'Tarde (15h–22h)',   precio:30},
-    {concepto:'Limpieza',   turno:'Noche (22h–03h)',   precio:50},
-    {concepto:'Limpieza',   turno:'Todo el día',       precio:50},
-    {concepto:'Hora extra', turno:'Mañana (9h–15h)',   precio:20},
-    {concepto:'Hora extra', turno:'Tarde (15h–22h)',   precio:25},
-    {concepto:'Hora extra', turno:'Noche (22h–03h)',   precio:40},
-    {concepto:'Hora extra', turno:'Todo el día',       precio:30},
-  ]
-};
-let indexTarifas = JSON.parse(JSON.stringify(TARIFAS_FB_DEFAULT));
-
-// Tab switch
-function prcSwitch(tipo, btn) {
-  document.querySelectorAll('.prc-tab').forEach(b=>b.classList.remove('on'));
-  document.querySelectorAll('.prc-panel').forEach(p=>p.classList.remove('on'));
-  btn.classList.add('on');
-  document.getElementById('prc-'+tipo)?.classList.add('on');
-}
-window.prcSwitch = prcSwitch;
-
-// Render tablas
-function renderPreciosTablaSemana(tipo) {
-  const tbody = document.getElementById('prc-body-'+tipo);
-  const load  = document.getElementById('prc-load-'+tipo);
-  const wrap  = document.getElementById('prc-wrap-'+tipo);
-  if(!tbody) return;
-  const filas = indexTarifas[tipo] || [];
-  const DLAB = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
-  tbody.innerHTML = filas.map(row => {
-    const celdas = DIAS_IDX.map((d,i) => {
-      const v = row[d];
-      const isDash = v==='—'||v===''||v==null;
-      if(isDash) return `<td class="prc-cell-dash">—</td>`;
-      const esAlto = typeof v==='number' && v>=170;
-      return `<td${esAlto?' class="prc-cell-hi"':''}>${v}€</td>`;
-    }).join('');
-    return `<tr><td>${row.turno}</td><td style="white-space:nowrap">${row.horario}</td>${celdas}</tr>`;
-  }).join('');
-  if(load) load.style.display='none';
-  if(wrap) wrap.style.display='';
-}
-
-function renderPreciosEspeciales() {
-  const grid = document.getElementById('prc-grid-especiales');
-  const load = document.getElementById('prc-load-especiales');
-  if(!grid) return;
-  const filas = indexTarifas.especiales || [];
-  grid.innerHTML = filas.map(r => `
-    <div class="prc-esp-card">
-      <div class="prc-esp-name">${r.celebracion}</div>
-      <div class="prc-esp-meta">${r.dia ? r.dia+' · ':'' }${r.horario}</div>
-      <div class="prc-esp-price"><sup>€</sup>${r.precio}</div>
-    </div>`).join('');
-  if(load) load.style.display='none';
-  grid.style.display='';
-}
-
-function renderPreciosExtras() {
-  const grid = document.getElementById('prc-grid-extras');
-  const load = document.getElementById('prc-load-extras');
-  if(!grid) return;
-  const filas = indexTarifas.extras || [];
-  grid.innerHTML = filas.map(r => `
-    <div class="prc-extra-card">
-      <div class="prc-extra-left">
-        <div class="prc-extra-concepto">${r.concepto}</div>
-        <div class="prc-extra-turno">${r.turno}</div>
-      </div>
-      <div class="prc-extra-price">${r.precio}€</div>
-    </div>`).join('');
-  if(load) load.style.display='none';
-  grid.style.display='';
-}
-
-function renderTodosPreciosIndex() {
-  renderPreciosTablaSemana('estandar');
-  renderPreciosTablaSemana('ampliados');
-  renderPreciosEspeciales();
-  renderPreciosExtras();
-}
-
 // ── CALENDAR ──────────────────────────────────────────────────
 let calYear=null, calMonth=null, calSelected=null, calSelectedSlot=null;
-let CAL_DATA = {};
+let CAL_DATA = {}; // { '2026-05-10': { mananaOcupada: true, tardeOcupada: false } }
 
-// Se construyen dinámicamente desde indexTarifas
-function getSlotsPorDia(diaSemanaIdx) {
-  const diaKey = DIAS_IDX[diaSemanaIdx];
-  const todas = [...(indexTarifas.estandar||[]), ...(indexTarifas.ampliados||[])];
-  return todas.filter(f => {
-    const v = f[diaKey];
-    return v !== '—' && v !== '' && v != null;
-  }).map(f => ({
-    label: f.horario,
-    precio: f[diaKey],
-    turno: f.turno,
-    grupo: clasificarTurno(f.turno)
-  }));
-}
+const SLOTS_MANANA  = ['10:00–14:00','11:00–15:00'];
+const SLOTS_TARDE   = ['16:30–20:30'];
+const SLOTS_DIACOMP = ['10:00–20:00'];
 
-function clasificarTurno(turno) {
-  const t = turno.toLowerCase();
-  if(t.includes('noche') || (t.includes('tarde') && t.includes('noche'))) return 'noche';
-  if(t.includes('todo')) return 'diacomp';
-  if(t.includes('tarde')) return 'tarde';
-  return 'manana';
-}
-
+// Se llama desde el módulo Firebase con los datos de calendario_publico
 function updateCalOccupied(data) {
-  CAL_DATA = data;
+  CAL_DATA = data; // objeto indexado por fecha
   renderCal();
 }
 
 function renderFranjas(ds) {
-  const franjas = document.getElementById('cal-franjas');
-  if(!franjas) return;
+  const franjas  = document.getElementById('cal-franjas');
+  const elM      = document.getElementById('cf-manana');
+  const elT      = document.getElementById('cf-tarde');
+  const elD      = document.getElementById('cf-diacomp');
+  if (!franjas || !elM || !elT || !elD) return;
 
-  const d = new Date(ds+'T12:00:00');
-  const diaSemanaIdx = (d.getDay()+6)%7;
-  const info = CAL_DATA[ds] || {};
-  const mananaOcupada = info.mananaOcupada || false;
-  const tardeOcupada  = info.tardeOcupada  || false;
-  const nocheOcupada  = info.nocheOcupada  || false;
-  const diaOcupado    = info.diaOcupado    || false;
+  const info          = CAL_DATA[ds] || {};
+  const mañanaOcupada = info.mananaOcupada  || false;
+  const tardeOcupada  = info.tardeOcupada   || false;
+  const diaOcupado    = info.diaOcupado     || (mañanaOcupada && tardeOcupada);
+  // Todo el día solo disponible si ambas franjas están libres
+  const diaDisponible = !mañanaOcupada && !tardeOcupada && !diaOcupado;
 
-  // Mostrar siempre todos los grupos
-  document.getElementById('cf-grupo-manana').style.display = '';
-  document.getElementById('cf-grupo-tarde').style.display = '';
-  document.getElementById('cf-grupo-diacomp').style.display = '';
-
-  // Franjas normales según día de semana
-  const slots = getSlotsPorDia(diaSemanaIdx);
-  const grupos = {manana:[],tarde:[],noche:[],diacomp:[]};
-  slots.forEach(s => grupos[s.grupo]?.push(s));
-
-  const renderGrupo = (elId, grupoSlots, ocupado) => {
-    const el = document.getElementById(elId);
-    if(!el) return;
-    el.innerHTML = grupoSlots.map(s => {
-      const occ = (ocupado||diaOcupado) ? 'ocupado' : '';
-      const sel = calSelectedSlot === s.label ? 'selected' : '';
-      const click = (!ocupado && !diaOcupado) ? `onclick="selectSlot('${s.label}','${s.grupo}',${s.precio})"` : '';
-      return `<div class="cf-slot ${occ} ${sel}" ${click}>
-        <div>${s.label}</div>
-        <div class="cf-slot-precio">${s.precio}€</div>
-      </div>`;
-    }).join('');
-  };
-
-  renderGrupo('cf-manana', grupos.manana, mananaOcupada);
-  renderGrupo('cf-tarde', grupos.tarde, tardeOcupada);
-  renderGrupo('cf-diacomp', grupos.diacomp, diaOcupado);
-
-  // Grupo noche — franjas normales + franja especial si la hay
-  const gNoche = document.getElementById('cf-grupo-noche');
-  const elNoche = document.getElementById('cf-noche');
-
-  let nocheHtml = grupos.noche.map(s => {
-    const occ = (nocheOcupada||diaOcupado) ? 'ocupado' : '';
-    const sel = calSelectedSlot === s.label ? 'selected' : '';
-    const click = (!nocheOcupada && !diaOcupado) ? `onclick="selectSlot('${s.label}','noche',${s.precio})"` : '';
-    return `<div class="cf-slot ${occ} ${sel}" ${click}>
-      <div>${s.label}</div>
-      <div class="cf-slot-precio">${s.precio}€</div>
-    </div>`;
+  elM.innerHTML = SLOTS_MANANA.map(s => {
+    const occ   = (mañanaOcupada || diaOcupado) ? 'ocupado' : '';
+    const sel   = calSelectedSlot === s ? 'selected' : '';
+    const click = (!mañanaOcupada && !diaOcupado) ? `onclick="selectSlot('${s}','manana')"` : '';
+    return `<div class="cf-slot ${occ} ${sel}" ${click}>${s}</div>`;
   }).join('');
 
-  // Si es día especial, añadir la franja especial en el grupo noche
-  if(info.esDiaEspecial) {
-    const ddmm = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
-    const esp = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
-    if(esp) {
-      const occ = nocheOcupada ? 'ocupado' : '';
-      const sel = calSelectedSlot === esp.horario ? 'selected' : '';
-      const click = !nocheOcupada ? `onclick="selectSlot('${esp.horario}','noche',${esp.precio})"` : '';
-      nocheHtml += `<div class="cf-slot ${occ} ${sel}" ${click} style="border-color:oklch(66% .24 355/.4);background:oklch(66% .24 355/.05)">
-        <div style="font-size:11px;font-weight:700;color:oklch(66% .24 355);margin-bottom:2px">${esp.celebracion}</div>
-        <div>${esp.horario}</div>
-        <div class="cf-slot-precio" style="color:oklch(66% .24 355)">${esp.precio}€ · especial</div>
-      </div>`;
-    }
-  }
+  elT.innerHTML = SLOTS_TARDE.map(s => {
+    const occ   = (tardeOcupada || diaOcupado) ? 'ocupado' : '';
+    const sel   = calSelectedSlot === s ? 'selected' : '';
+    const click = (!tardeOcupada && !diaOcupado) ? `onclick="selectSlot('${s}','tarde')"` : '';
+    return `<div class="cf-slot ${occ} ${sel}" ${click}>${s}</div>`;
+  }).join('');
 
-  if(elNoche) elNoche.innerHTML = nocheHtml;
-  if(gNoche) gNoche.style.display = (grupos.noche.length || info.esDiaEspecial) ? '' : 'none';
+  elD.innerHTML = SLOTS_DIACOMP.map(s => {
+    const occ   = !diaDisponible ? 'ocupado' : '';
+    const sel   = calSelectedSlot === s ? 'selected' : '';
+    const click = diaDisponible ? `onclick="selectSlot('${s}','diacomp')"` : '';
+    return `<div class="cf-slot ${occ} ${sel}" ${click}>${s} · 130€</div>`;
+  }).join('');
 
   franjas.classList.add('visible');
 }
 
-function selectSlot(slot, grupo, precio) {
+function selectSlot(slot, grupo) {
   calSelectedSlot = slot;
   renderFranjas(calSelected);
 
-  // Rellenar fecha en el formulario
+  // Rellenar fecha en el formulario y cargar sus franjas dinámicas
   const fiEl = document.getElementById('r-f');
-  if(fiEl && calSelected) {
+  if (fiEl && calSelected) {
     fiEl.value = calSelected;
-    webLoadFranjasPorFecha(calSelected);
-    // Seleccionar el slot correcto en el select tras cargarlo
-    setTimeout(() => {
-      const selEl = document.getElementById('r-horario');
-      if(selEl) {
-        Array.from(selEl.options).forEach(opt => {
-          if(opt.textContent.includes(slot)) opt.selected = true;
-        });
-        calcularTotal();
-      }
-    }, 50);
+    actualizarFranjasForm(calSelected); // regenera las opciones del select con precios reales
+  }
+
+  // Seleccionar la opción cuyo label incluye el horario del slot (e.g. '10:00–14:00')
+  const selEl = document.getElementById('r-horario');
+  if (selEl && slot) {
+    const matchOpt = Array.from(selEl.options).find(o => o.value.includes(slot));
+    if (matchOpt) {
+      selEl.value = matchOpt.value;
+      selEl.dispatchEvent(new Event('change'));
+    }
   }
 
   // Nota en el textarea
   const noEl = document.getElementById('r-no');
-  if(noEl) {
-    const base = noEl.value.replace(/^Franja horaria: .+\n?/,'');
-    noEl.value = 'Franja horaria: '+slot+(base?'\n'+base:'');
+  if (noEl) {
+    const baseNote = noEl.value.replace(/^Franja horaria: .+\n?/,'');
+    noEl.value = 'Franja horaria: ' + slot + (baseNote ? '\n' + baseNote : '');
   }
 
-  showToast(`${slot} · ${precio}€ — Rellena el formulario ↓`);
-  setTimeout(()=>{ document.getElementById('reservas')?.scrollIntoView({behavior:'smooth',block:'start'}); },300);
+  showToast('Franja seleccionada: ' + slot + ' — Rellena el formulario ↓');
+
+  // Scroll suave al formulario
+  setTimeout(() => {
+    document.getElementById('reservas')?.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 300);
 }
-
-const DAY_NAMES_ES = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
-const DAY_NAMES_CA = ['Dl','Dm','Dc','Dj','Dv','Ds','Dg'];
-const DAY_NAMES = DAY_NAMES_ES; // alias por compatibilidad
-
-function getCalLang() { return document.documentElement.lang === 'ca' ? 'ca' : 'es'; }
+const DAY_NAMES = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
 
 function renderCal() {
   const now = new Date();
   if(!calYear){ calYear=now.getFullYear(); calMonth=now.getMonth(); }
-  const lang = getCalLang();
-  const locale = lang === 'ca' ? 'ca-ES' : 'es-ES';
   const titleEl = document.getElementById('cal-month-title');
   if(titleEl) {
-    const t = new Date(calYear,calMonth,1).toLocaleString(locale,{month:'long',year:'numeric'});
+    const t = new Date(calYear,calMonth,1).toLocaleString('es-ES',{month:'long',year:'numeric'});
     titleEl.textContent = t.charAt(0).toUpperCase()+t.slice(1);
   }
   const grid = document.getElementById('cal-grid');
   if(!grid) return;
-  const dayNames = lang === 'ca' ? DAY_NAMES_CA : DAY_NAMES_ES;
-  let html = dayNames.map(d=>`<div class="cal-day-hdr">${d}</div>`).join('');
+  let html = DAY_NAMES.map(d=>`<div class="cal-day-hdr">${d}</div>`).join('');
   let dow = new Date(calYear,calMonth,1).getDay();
   dow = dow===0?6:dow-1;
   for(let i=0;i<dow;i++) html+='<div class="cal-day empty"></div>';
@@ -2990,45 +2408,24 @@ function renderCal() {
     const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isPast  = new Date(ds)<new Date(now.toDateString());
     const info    = CAL_DATA[ds] || {};
-    const diaSemIdx = (new Date(ds+'T12:00:00').getDay()+6)%7;
-    const slotsDisp = getSlotsPorDia(diaSemIdx);
-
-    // Ocupación real considerando todos los grupos
-    const isFullOcc = info.diaOcupado ||
-      (info.mananaOcupada && info.tardeOcupada && info.nocheOcupada) ||
-      (slotsDisp.length > 0 && slotsDisp.every(s => {
-        if(s.grupo==='manana') return info.mananaOcupada;
-        if(s.grupo==='tarde')  return info.tardeOcupada;
-        if(s.grupo==='noche')  return info.nocheOcupada;
-        if(s.grupo==='diacomp') return info.diaOcupado;
-        return false;
-      }));
-    const isPartial = !isFullOcc && (info.mananaOcupada || info.tardeOcupada || info.nocheOcupada);
-    const isDiaEsp  = info.esDiaEspecial && !isFullOcc;
-    const noHayFranjas = !isPast && slotsDisp.length === 0 && !isDiaEsp;
+    const isFullOcc = info.mananaOcupada && info.tardeOcupada;
+    const isPartial = (info.mananaOcupada || info.tardeOcupada) && !isFullOcc;
     const isToday = ds===todayStr;
     const isSel   = ds===calSelected;
-
     let cls = 'cal-day';
-    if(isPast || noHayFranjas) cls+=' empty';
-    else if(isFullOcc)  cls+=' occupied';
-    else if(isDiaEsp)   cls+=' dia-especial';
-    else if(isPartial)  cls+=' partial';
-    else if(isSel)      cls+=' selected';
-    else if(isToday)    cls+=' today';
-
+    if(isPast)       cls+=' empty';
+    else if(isFullOcc) cls+=' occupied';
+    else if(isPartial) cls+=' partial';
+    else if(isSel)   cls+=' selected';
+    else if(isToday) cls+=' today';
     let dot = '';
-    if(!isPast && !noHayFranjas){
-      if(isFullOcc)       dot='<div class="dot-occ"></div>';
-      else if(isDiaEsp)   dot='<div class="dot-esp"></div>';
-      else if(isPartial)  dot='<div class="dot-partial"></div>';
-      else                dot='<div class="dot-free"></div>';
+    if(!isPast){
+      if(isFullOcc)   dot='<div class="dot-occ"></div>';
+      else if(isPartial) dot='<div class="dot-partial"></div>';
+      else            dot='<div class="dot-free"></div>';
     }
-
-    const canClick = !isPast && !isFullOcc && !noHayFranjas;
-    const click = canClick ? `onclick="selectDate('${ds}')"` : '';
-    const title = isDiaEsp ? `title="${info.celebracion} · ${info.precioEsp}€"` : '';
-    html+=`<div class="${cls}" ${click} ${title}>${d}${dot}</div>`;
+    const click = (!isPast && !isFullOcc) ? `onclick="selectDate('${ds}')"` : '';
+    html+=`<div class="${cls}" ${click}>${d}${dot}</div>`;
   }
   grid.innerHTML = html;
 }
@@ -3039,7 +2436,7 @@ function selectDate(ds) {
   renderFranjas(ds);
   const [y,m,d] = ds.split('-');
   const fi = document.getElementById('r-f');
-  if(fi) fi.value = ds;
+  if(fi) { fi.value = ds; actualizarFranjasForm(ds); }
   showToast(`${d}/${m}/${y} — Elige tu franja horaria ↓`);
 }
 function calPrev(){ if(calMonth===0){calMonth=11;calYear--;}else calMonth--; renderCal(); }
@@ -3070,98 +2467,131 @@ const _TIPO_MAP = {
   otro:      'Otro'
 };
 
-// ── TOTAL EN TIEMPO REAL ──────────────────────────────────────
+// ── FRANJAS DINÁMICAS EN FORMULARIO ──────────────────────────
+// Tabla de franjas y precios por día de semana (0=Dom,1=Lun,...,6=Sáb)
+const _FRANJAS_DIA = {
+  // Lu-Ju (días 1-4)
+  luju: [
+    { label: 'Mañana (10:00–14:00)', horario: '10:00–14:00', precio: 85 },
+    { label: 'Mañana (11:00–15:00)', horario: '11:00–15:00', precio: 85 },
+    { label: 'Tarde (16:30–20:30)',  horario: '16:30–20:30', precio: 85 },
+    { label: 'Todo el día (10:00–20:00)', horario: '10:00–20:00', precio: 150, diacomp: true },
+  ],
+  // Viernes (día 5)
+  vi: [
+    { label: 'Mañana (10:00–14:00)', horario: '10:00–14:00', precio: 90 },
+    { label: 'Mañana (11:00–15:00)', horario: '11:00–15:00', precio: 90 },
+    { label: 'Tarde (16:30–20:30)',  horario: '16:30–20:30', precio: 100 },
+    { label: 'Tarde-Noche (19:30–23:30)', horario: '19:30–23:30', precio: 170 },
+    { label: 'Noche (21:15–01:30)', horario: '21:15–01:30', precio: 200 },
+    { label: 'Todo el día (10:00–20:00)', horario: '10:00–20:00', precio: 170, diacomp: true },
+    { label: 'Tarde-Noche completa (16:30–01:30)', horario: '16:30–01:30', precio: 390, diacomp: true },
+  ],
+  // Sábado (día 6)
+  sa: [
+    { label: 'Mañana (10:00–14:00)', horario: '10:00–14:00', precio: 130 },
+    { label: 'Mañana (11:00–15:00)', horario: '11:00–15:00', precio: 130 },
+    { label: 'Tarde (16:30–20:30)',  horario: '16:30–20:30', precio: 140 },
+    { label: 'Tarde-Noche (19:30–23:30)', horario: '19:30–23:30', precio: 185 },
+    { label: 'Noche (21:15–01:30)', horario: '21:15–01:30', precio: 200 },
+    { label: 'Todo el día (10:00–20:00)', horario: '10:00–20:00', precio: 250, diacomp: true },
+    { label: 'Tarde-Noche completa (16:30–01:30)', horario: '16:30–01:30', precio: 450, diacomp: true },
+  ],
+  // Domingo (día 0)
+  do: [
+    { label: 'Mañana (10:00–14:00)', horario: '10:00–14:00', precio: 130 },
+    { label: 'Mañana (11:00–15:00)', horario: '11:00–15:00', precio: 130 },
+    { label: 'Tarde (16:30–20:30)',  horario: '16:30–20:30', precio: 140 },
+    { label: 'Todo el día (10:00–20:00)', horario: '10:00–20:00', precio: 270, diacomp: true },
+  ],
+};
 
-// Carga las franjas del formulario web según la fecha elegida
-function webLoadFranjasPorFecha(fechaStr) {
-  const sel  = document.getElementById('r-horario');
-  const prev = document.getElementById('web-price-preview');
-  if(!sel) return;
-  sel.innerHTML = '';
-  if(prev) prev.style.display = 'none';
+// Días especiales: clave = 'MM-DD', valor = array de franjas adicionales
+const _DIAS_ESPECIALES = {
+  '01-01': [{ label: 'Año Nuevo (12:00–19:00)', horario: '12:00–19:00', precio: 310 }],
+  '01-06': [{ label: 'Reyes (12:00–19:00)', horario: '12:00–19:00', precio: 310 }],
+  '06-23': [{ label: 'Verbena St. Joan (20:00–02:00)', horario: '20:00–02:00', precio: 280 }],
+  '10-31': [{ label: 'Castañada (20:00–02:00)', horario: '20:00–02:00', precio: 280 }],
+  '12-24': [{ label: 'Nochebuena (20:00–02:00)', horario: '20:00–02:00', precio: 350 }],
+  '12-25': [
+    { label: 'Navidad mediodía (12:00–19:00)', horario: '12:00–19:00', precio: 310 },
+    { label: 'Navidad noche (20:00–02:00)', horario: '20:00–02:00', precio: 310 },
+  ],
+  '12-26': [{ label: 'Sant Esteve (12:00–19:00)', horario: '12:00–19:00', precio: 310 }],
+  '12-31': [{ label: 'Fin de Año (20:00–03:00)', horario: '20:00–03:00', precio: 350 }],
+};
 
-  if(!fechaStr) {
-    sel.innerHTML = '<option value="">— Elige fecha primero —</option>';
-    return;
-  }
+function actualizarFranjasForm(fechaISO) {
+  const sel = document.getElementById('r-horario');
+  if (!sel) return;
+  const lang = document.documentElement.lang || 'es';
 
-  // Detectar día especial
-  const d = new Date(fechaStr+'T12:00:00');
-  const ddmm = String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
-  const esp = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
-  if(esp) {
-    const opt = document.createElement('option');
-    opt.value = `${esp.celebracion} · ${esp.horario}`;
-    opt.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
-    opt.dataset.precio = esp.precio;
-    opt.dataset.esDiaEsp = '1';
-    sel.appendChild(opt);
-    webUpdatePricePreview(esp.precio, true);
+  if (!fechaISO) {
+    sel.innerHTML = `<option value="">${lang==='ca'?'← Tria primer la data':'← Elige primero la fecha'}</option>`;
     calcularTotal();
     return;
   }
 
-  // Franjas normales según día de semana
-  const diaSemIdx = (d.getDay()+6)%7;
-  const diaKey = ['lu','ma','mi','ju','vi','sa','do'][diaSemIdx];
-  const todas = [...(indexTarifas?.estandar||[]), ...(indexTarifas?.ampliados||[])];
-  const disponibles = todas.filter(f => {
-    const v = f[diaKey];
-    return v !== '—' && v !== '' && v != null;
-  });
+  const d = new Date(fechaISO + 'T12:00:00'); // T12 evita desfases UTC
+  const dow = d.getDay(); // 0=Dom,1=Lun,...,6=Sáb
+  const mmdd = fechaISO.slice(5); // 'MM-DD'
 
-  if(!disponibles.length) {
-    sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
-    return;
+  let franjas;
+  if      (dow === 5) franjas = _FRANJAS_DIA.vi;
+  else if (dow === 6) franjas = _FRANJAS_DIA.sa;
+  else if (dow === 0) franjas = _FRANJAS_DIA.do;
+  else                franjas = _FRANJAS_DIA.luju;
+
+  // Añadir franjas de días especiales si existe
+  const especiales = _DIAS_ESPECIALES[mmdd] || [];
+
+  const placeholder = lang === 'ca' ? 'Tria una franja...' : 'Elige una franja...';
+  let opts = `<option value="">${placeholder}</option>`;
+
+  // Franjas normales del día
+  if (franjas.length) {
+    const grpLabel = lang === 'ca' ? 'Franges estàndard' : 'Franjas estándar';
+    opts += `<optgroup label="${grpLabel}">`;
+    franjas.forEach(f => {
+      opts += `<option value="${f.label}|${f.precio}">${f.label} — ${f.precio} €</option>`;
+    });
+    opts += `</optgroup>`;
   }
 
-  const opt0 = document.createElement('option');
-  opt0.value = '';
-  opt0.textContent = '— Selecciona franja —';
-  sel.appendChild(opt0);
+  // Franjas especiales del día
+  if (especiales.length) {
+    const grpLabel = lang === 'ca' ? 'Franja especial del dia' : 'Franja especial del día';
+    opts += `<optgroup label="${grpLabel}" style="color:oklch(72% .2 350)">`;
+    especiales.forEach(f => {
+      opts += `<option value="${f.label}|${f.precio}">${f.label} — ${f.precio} €</option>`;
+    });
+    opts += `</optgroup>`;
+  }
 
-  disponibles.forEach(f => {
-    const precio = f[diaKey];
-    const opt = document.createElement('option');
-    opt.value = `${f.turno} (${f.horario})`;
-    opt.textContent = `${f.turno} · ${f.horario} — ${precio} €`;
-    opt.dataset.precio = precio;
-    sel.appendChild(opt);
-  });
+  sel.innerHTML = opts;
+  // Actualizar placeholder bilingüe en el atributo también
+  sel.querySelector('option[value=""]')?.setAttribute('data-es','Elige una franja...');
+  sel.querySelector('option[value=""]')?.setAttribute('data-ca','Tria una franja...');
 
   calcularTotal();
 }
 
-function webUpdatePricePreview(precio, esDiaEsp) {
-  const prev  = document.getElementById('web-price-preview');
-  const val   = document.getElementById('web-price-val');
-  const label = document.getElementById('web-price-label');
-  if(!prev) return;
-  if(precio > 0) {
-    prev.style.display = 'flex';
-    val.textContent = precio + ' €';
-    label.textContent = esDiaEsp ? '⭐ Tarifa día especial' : 'Precio sala';
-  } else {
-    prev.style.display = 'none';
-  }
-}
+// Listener: al cambiar la fecha en el formulario, actualizar franjas
+document.getElementById('r-f')?.addEventListener('change', function() {
+  actualizarFranjasForm(this.value);
+});
 
-// Obtiene el precio de sala desde el option seleccionado
-function getPrecioSalaWeb() {
-  const sel = document.getElementById('r-horario');
-  if(!sel) return 0;
-  const opt = sel.options[sel.selectedIndex];
-  return opt?.dataset.precio ? parseFloat(opt.dataset.precio) : 0;
-}
+// Inicializar el select con placeholder correcto
+actualizarFranjasForm('');
 
+// ── TOTAL EN TIEMPO REAL ──────────────────────────────────────
 function calcularTotal() {
-  const hor   = document.getElementById('r-horario')?.value || '';
-  const pSala = getPrecioSalaWeb();
-
-  // Actualizar preview de precio sala
-  webUpdatePricePreview(pSala, document.getElementById('r-horario')?.options[document.getElementById('r-horario')?.selectedIndex]?.dataset.esDiaEsp === '1');
-
-  if(!pSala || !hor) { document.getElementById('resumen-total').style.display='none'; return; }
+  const hor  = document.getElementById('r-horario')?.value || '';
+  // El precio viene codificado en el value: "Label del turno|precio"
+  const pSala = hor.includes('|') ? parseFloat(hor.split('|')[1]) || 0 : 0;
+  if(!pSala) { document.getElementById('resumen-total').style.display='none'; return; }
+  // Etiqueta legible sin el precio
+  const horLabel = hor.includes('|') ? hor.split('|')[0] : hor;
 
   const horaExtRaw = document.querySelector('input[name="r-horaext"]:checked')?.value || 'ninguna|0';
   const pHora = parseFloat(horaExtRaw.split('|')[1]) || 0;
@@ -3176,7 +2606,7 @@ function calcularTotal() {
 
   // Construir líneas
   const lineas = [];
-  lineas.push(`<div style="display:flex;justify-content:space-between;"><span>Sala — ${hor}</span><span style="font-weight:700;color:var(--tx1)">${pSala.toFixed(2)} €</span></div>`);
+  lineas.push(`<div style="display:flex;justify-content:space-between;"><span>Sala — ${horLabel}</span><span style="font-weight:700;color:var(--tx1)">${pSala.toFixed(2)} €</span></div>`);
   if(pHora > 0) lineas.push(`<div style="display:flex;justify-content:space-between;"><span>${horaLabel}</span><span style="font-weight:700;color:var(--tx1)">${pHora.toFixed(2)} €</span></div>`);
   if(pExtras > 0) lineas.push(`<div style="display:flex;justify-content:space-between;"><span>Extras (${extChecked.filter(cb=>parseFloat(cb.dataset.precio)>0).length} seleccionados)</span><span style="font-weight:700;color:var(--tx1)">${pExtras.toFixed(2)} €</span></div>`);
   if(hasConsulta) lineas.push(`<div style="color:var(--tx3);font-size:.78rem;">+ artículos a consultar</div>`);
@@ -3226,7 +2656,8 @@ async function enviarReserva() {
   const tipo = document.getElementById('r-tipo')?.value;
   const pers = document.getElementById('r-personas')?.value;
   const f    = document.getElementById('r-f')?.value;
-  const hor  = document.getElementById('r-horario')?.value;
+  const horRaw = document.getElementById('r-horario')?.value; // formato "Label del turno|precio"
+  const hor    = horRaw?.includes('|') ? horRaw.split('|')[0] : horRaw || '';
   const no   = document.getElementById('r-no')?.value.trim();
 
   if(!n||!ap||!dni||!dir||!loc||!cp||!t||!e||!tipo||!pers||!f||!hor){
@@ -3236,7 +2667,7 @@ async function enviarReserva() {
   const servicioLabel = _TIPO_MAP[tipo] || tipo;
 
   // ── Calcular precio sala ─────────────────────────────────────
-  const precioSala = getPrecioSalaWeb() || 85;
+  const precioSala = horRaw?.includes('|') ? parseFloat(horRaw.split('|')[1]) || 85 : 85;
 
   // ── Extras seleccionados ─────────────────────────────────────
   const extObjs = Array.from(document.querySelectorAll('.r-ext:checked')).map(cb => ({
@@ -3284,7 +2715,7 @@ async function enviarReserva() {
 
   // ── Construir parámetros email LAURA ─────────────────────────
   const paramsLaura = {
-    to_email:      _MAIL.emailLaura,
+    to_email:      _BREVO.emailLaura,
     cliente_nombre:`${n} ${ap}`,
     cliente_dni:   dni,
     cliente_fnac:  fnac ? fmtFecha(fnac) : '—',
@@ -3322,14 +2753,10 @@ async function enviarReserva() {
   }
 
   // ── Email al CLIENTE ─────────────────────────────────────────
-  const lang = getLang();
-  const subCliente = lang === 'ca' ? '✅ Reserva rebuda a EspaiFest' : '✅ Reserva recibida en EspaiFest';
-  const htmlCliente = buildEmailCliente(paramsCliente, lang);
-  const okCliente = await resendSend(e, subCliente, htmlCliente);
+  const okCliente = await brevoSend(_BREVO.tplCliente, e, `${n} ${ap}`, paramsCliente);
 
   // ── Email a LAURA ─────────────────────────────────────────────
-  const htmlLaura = buildEmailLaura(paramsLaura);
-  const okLaura = await resendSend(_MAIL.emailLaura, `🎉 Nova reserva — ${n} ${ap}`, htmlLaura);
+  const okLaura = await brevoSend(_BREVO.tplLaura, _BREVO.emailLaura, 'Laura EspaiFest', paramsLaura);
 
   // ── WhatsApp a LAURA ─────────────────────────────────────────
   const linDni   = `\n🪪 DNI: ${dni}${fnac?' · Nac: '+fmtFecha(fnac):''}`;
@@ -3342,7 +2769,7 @@ async function enviarReserva() {
     `👤 ${n} ${ap}${linDni}${linDir}\n` +
     `📞 ${t} · ✉️ ${e}\n` +
     `🎊 ${servicioLabel} · ${pers}\n` +
-    `📅 ${fmtFecha(f)} · 🕐 ${hor}` +
+    `📅 ${fmtFecha(f)} · 🕐 ${hor.replace(/ — \d+€/,'')}` +
     `${linHrExt}${linExt}${linNota}\n\n` +
     `💶 Total estimado: ${fmtEur(totalEstimado)}\n` +
     `💳 Señal 50%: ${fmtEur(senalPago)}`
@@ -3593,23 +3020,6 @@ async function loadBlogPosts() {
   }
 }
 
-// ══ TARIFAS DESDE FIRESTORE → PRECIOS INDEX + CALENDARIO ════
-async function loadTarifasIndex() {
-  try {
-    const snap = await getDocs(collection(_db,'tarifas'));
-    if(!snap.empty) {
-      snap.forEach(d => {
-        if(indexTarifas[d.id] !== undefined && d.data().filas) {
-          indexTarifas[d.id] = d.data().filas;
-        }
-      });
-    }
-  } catch(e) { console.warn('Tarifas index: usando defaults',e); }
-  renderTodosPreciosIndex();
-  loadFechasOcupadas();
-  if(calSelected) renderFranjas(calSelected);
-}
-
 // ══ FECHAS OCUPADAS — CALENDARIO ═════════════════════════════
 async function loadFechasOcupadas() {
   try {
@@ -3618,6 +3028,7 @@ async function loadFechasOcupadas() {
       collection(_db, 'calendario_publico'),
       where('fecha', '>=', hoy)
     );
+    // onSnapshot: tiempo real — si Laura confirma en Reservify, el calendario se actualiza solo
     onSnapshot(q, (snap) => {
       const data = {};
       snap.docs.forEach(d => {
@@ -3625,25 +3036,7 @@ async function loadFechasOcupadas() {
         if(fd.fecha) data[fd.fecha] = {
           mananaOcupada: fd.mananaOcupada || false,
           tardeOcupada:  fd.tardeOcupada  || false,
-          nocheOcupada:  fd.nocheOcupada  || false,
-          diaOcupado:    fd.diaOcupado    || false,
         };
-      });
-      // Marcar días especiales en CAL_DATA con flag para pintarlos diferente
-      (indexTarifas?.especiales || []).forEach(esp => {
-        if(!esp.dia) return; // festivos sin fecha fija (Carnaval) se omiten
-        const [dd, mm] = esp.dia.split('/');
-        const anyo = new Date().getFullYear();
-        // Marcar para el año actual y el siguiente
-        [anyo, anyo+1].forEach(y => {
-          const ds = `${y}-${mm}-${dd}`;
-          if(ds >= hoy) {
-            if(!data[ds]) data[ds] = {};
-            data[ds].esDiaEspecial = true;
-            data[ds].celebracion = esp.celebracion;
-            data[ds].precioEsp = esp.precio;
-          }
-        });
       });
       if(typeof updateCalOccupied === 'function') updateCalOccupied(data);
     });
@@ -3718,12 +3111,12 @@ async function loadKits() {
   }
 }
 
-// Cargar al iniciar — tarifas primero, luego fechas (dependen de los días especiales)
+// Cargar al iniciar
 loadBlogPosts();
+loadFechasOcupadas();
 loadServiciosWeb();
 loadPromocionesWeb();
 loadFidelizacionWeb();
-loadTarifasIndex(); // loadFechasOcupadas se llama dentro tras cargar tarifas
 loadKits();
 
 // ── FIDELIZACIÓN DESDE FIRESTORE (config/niveles) ─────────────
