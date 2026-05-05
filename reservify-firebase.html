@@ -1421,7 +1421,7 @@ async function loadReservas() {
     renderReservas(allReservas);
     updateDashboard();
   } catch(e) {
-    document.getElementById("reservas-list").innerHTML = "<div class="empty">Error al cargar reservas. Verifica los permisos de Firestore.</div>";
+    document.getElementById("reservas-list").innerHTML = '<div class="empty">Error al cargar reservas. Verifica los permisos de Firestore.</div>';
     console.error("loadReservas error:", e);
   }
 }
