@@ -3089,19 +3089,8 @@ function webLoadFranjasPorFecha(fechaStr) {
   const d = new Date(fechaStr+'T12:00:00');
   const ddmm = String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
   const esp = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
-  if(esp) {
-    const opt = document.createElement('option');
-    opt.value = `${esp.celebracion} · ${esp.horario}`;
-    opt.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
-    opt.dataset.precio = esp.precio;
-    opt.dataset.esDiaEsp = '1';
-    sel.appendChild(opt);
-    webUpdatePricePreview(esp.precio, true);
-    calcularTotal();
-    return;
-  }
 
-  // Franjas normales según día de semana
+  // Franjas normales según día de semana (siempre se calculan)
   const diaSemIdx = (d.getDay()+6)%7;
   const diaKey = ['lu','ma','mi','ju','vi','sa','do'][diaSemIdx];
   const todas = [...(indexTarifas?.estandar||[]), ...(indexTarifas?.ampliados||[])];
@@ -3110,16 +3099,22 @@ function webLoadFranjasPorFecha(fechaStr) {
     return v !== '—' && v !== '' && v != null;
   });
 
-  if(!disponibles.length) {
-    sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
-    return;
-  }
-
   const opt0 = document.createElement('option');
   opt0.value = '';
   opt0.textContent = '— Selecciona franja —';
   sel.appendChild(opt0);
 
+  // Si es día especial: añadir su franja primero, destacada
+  if(esp) {
+    const opt = document.createElement('option');
+    opt.value = `${esp.celebracion} · ${esp.horario}`;
+    opt.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
+    opt.dataset.precio = esp.precio;
+    opt.dataset.esDiaEsp = '1';
+    sel.appendChild(opt);
+  }
+
+  // Franjas normales del día (siempre, también en días especiales)
   disponibles.forEach(f => {
     const precio = f[diaKey];
     const opt = document.createElement('option');
@@ -3128,6 +3123,11 @@ function webLoadFranjasPorFecha(fechaStr) {
     opt.dataset.precio = precio;
     sel.appendChild(opt);
   });
+
+  if(!esp && !disponibles.length) {
+    sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
+    return;
+  }
 
   calcularTotal();
 }
