@@ -1077,7 +1077,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="det-field"><div class="det-label">Email</div><div class="det-value" id="det-email">—</div></div>
       <!-- Reserva -->
       <div class="det-field full" style="grid-column:1/-1;font:700 .65rem var(--t2);text-transform:uppercase;letter-spacing:.08em;padding-bottom:4px;border-bottom:1px solid var(--b2);margin-bottom:4px;margin-top:8px;">Detalles de la reserva</div>
-      <div class="det-field"><div class="det-label">Núm. Reserva</div><div class="det-value" id="det-numreserva" style="font-family:monospace;color:var(--teal);font-weight:700;">—</div></div>
       <div class="det-field"><div class="det-label">Fecha</div><div class="det-value" id="det-fecha">—</div></div>
       <div class="det-field"><div class="det-label">Franja horaria</div><div class="det-value" id="det-horario">—</div></div>
       <div class="det-field"><div class="det-label">Tipo de evento</div><div class="det-value" id="det-servicio">—</div></div>
@@ -1088,8 +1087,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="det-field full" style="grid-column:1/-1;font:700 .65rem var(--t2);text-transform:uppercase;letter-spacing:.08em;padding-bottom:4px;border-bottom:1px solid var(--b2);margin-bottom:4px;margin-top:8px;">Extras y pago</div>
       <div class="det-field full"><div class="det-label">Extras seleccionados</div><div class="det-value" id="det-extras" style="white-space:pre-wrap">—</div></div>
       <div class="det-field"><div class="det-label">Método pago</div><div class="det-value" id="det-pago">—</div></div>
-      <div class="det-field"><div class="det-label">Base imponible (BI)</div><div class="det-value" id="det-bi" style="color:var(--t2)">—</div></div>
-      <div class="det-field"><div class="det-label">IVA 21%</div><div class="det-value" id="det-iva" style="color:var(--t2)">—</div></div>
       <div class="det-field"><div class="det-label">Importe total</div><div class="det-value" id="det-importe" style="font-size:1.1rem;font-weight:800;color:var(--teal)">—</div></div>
       <div class="det-field"><div class="det-label">Señal cobrada</div><div class="det-value" id="det-senal" style="color:var(--green);font-weight:700">—</div></div>
       <div class="det-field"><div class="det-label">Pendiente de pago</div><div class="det-value" id="det-pendiente" style="color:var(--amber);font-weight:700">—</div></div>
@@ -1481,7 +1478,7 @@ function renderReservas(list) {
       : '';
     return `
     <div class="trow rc" onclick="openDet('${r.id}')">
-      <div><div class="c cs">${r.nombre||'—'}${notasIcon}</div><div class="cx cm" style="font-size:11px;color:var(--t3)">${r.numReserva ? `<span style="font-family:monospace;color:var(--teal);font-weight:600;">${r.numReserva}</span> · ` : ''}${subInfo}</div></div>
+      <div><div class="c cs">${r.nombre||'—'}${notasIcon}</div><div class="cx cm" style="font-size:11px;color:var(--t3)">${subInfo}</div></div>
       <div class="c cm">${r.fecha||'—'}</div>
       <div><span class="badge bg-t">${r.servicio||'—'}</span></div>
       <div>${origenBadge}</div>
@@ -1659,7 +1656,7 @@ window.openDet = function(id) {
   const nombreCompleto = r.nombre || '—';
 
   document.getElementById('det-nombre').textContent        = nombreCompleto;
-  document.getElementById('det-sub').textContent           = r.numReserva ? `${r.numReserva} · ${r.origen === 'web' ? 'Solicitud web' : 'Creada en panel'}` : `Reserva · ${r.origen === 'web' ? 'Solicitud web' : 'Creada en panel'}`;
+  document.getElementById('det-sub').textContent           = `Reserva · ${r.origen === 'web' ? 'Solicitud web' : 'Creada en panel'}`;
   document.getElementById('det-nombre-completo').textContent = nombreCompleto;
   document.getElementById('det-dni').textContent           = r.dni || '—';
   document.getElementById('det-fnac').textContent          = r.fechaNac || r.fechaNacimiento || '—';
@@ -1668,7 +1665,6 @@ window.openDet = function(id) {
   document.getElementById('det-loc').textContent           = [r.localidad, r.cp].filter(Boolean).join(' · ') || '—';
   document.getElementById('det-tel').textContent           = r.telefono || '—';
   document.getElementById('det-email').textContent         = r.email || '—';
-  document.getElementById('det-numreserva').textContent    = r.numReserva || '(sin número)';
   document.getElementById('det-fecha').textContent         = r.fecha || '—';
   document.getElementById('det-horario').textContent       = horario || r.horario || '—';
   document.getElementById('det-servicio').textContent      = r.servicio || '—';
@@ -1677,14 +1673,7 @@ window.openDet = function(id) {
   document.getElementById('det-estado').innerHTML          = estadoBadge(r.estado);
   document.getElementById('det-extras').textContent        = r.extras || '—';
   document.getElementById('det-pago').textContent          = r.metodoPago || '—';
-  // BI e IVA — usa los guardados en Firestore o los calcula
-  const IVA_R = 0.21;
-  const imp = parseFloat(r.importe) || 0;
-  const bi  = r.bi  ?? parseFloat((imp / (1 + IVA_R)).toFixed(2));
-  const iva = r.iva ?? parseFloat((imp - bi).toFixed(2));
-  document.getElementById('det-bi').textContent            = bi  ? fmtMoney(bi)  : '—';
-  document.getElementById('det-iva').textContent           = iva ? fmtMoney(iva) : '—';
-  document.getElementById('det-importe').textContent       = fmtMoney(imp || 85);
+  document.getElementById('det-importe').textContent       = fmtMoney(r.importe || 85);
   document.getElementById('det-senal').textContent    = r.senal ? fmtMoney(r.senal) : (r.senal50 ? fmtMoney(r.senal50) : (r.cobrado ? fmtMoney(r.cobrado) : '—'));
   const cobrado = r.cobrado || r.senal || r.senal50 || 0;
   const pendiente = Math.max(0, (r.importe||0) - cobrado);
@@ -3876,62 +3865,40 @@ window.exportarGestoria = async () => {
     });
   }
 
-  const IVA = 0.21;
   const wb = window.XLSX.utils.book_new();
 
   if (incIngresos) {
-    // Cabecera exacta que pide el gestor
-    const rows = [['Núm. Reserva', 'Fecha Reserva', 'Código Postal', 'Nombre Cliente', 'BI', '21% IVA', 'Total']];
-
+    const rows = [['Fecha', 'Servicio', 'Personas', 'Importe (€)', 'Señal cobrada (€)', 'Estado pago', 'Estado reserva']];
     reservasFiltradas.forEach(r => {
-      const total = parseFloat(r.importe) || 0;
-      const bi    = r.bi  ?? parseFloat((total / (1 + IVA)).toFixed(2));
-      const iva   = r.iva ?? parseFloat((total - bi).toFixed(2));
       rows.push([
-        r.numReserva || '—',
-        r.fecha      || '—',
-        r.cp         || '—',
-        r.nombre     || '—',
-        bi,
-        iva,
-        total
+        r.fecha || '—',
+        r.servicio || '—',
+        r.personas || '—',
+        parseFloat(r.importe) || 0,
+        parseFloat(r.senal) || 0,
+        r.estadoPago || 'Pendiente',
+        r.estado || '—'
       ]);
     });
-
-    // Fila de sumatorios
-    const sumBI    = reservasFiltradas.reduce((s,r) => { const t=parseFloat(r.importe)||0; return s+(r.bi ?? t/(1+IVA)); }, 0);
-    const sumIVA   = reservasFiltradas.reduce((s,r) => { const t=parseFloat(r.importe)||0; const bi=r.bi??t/(1+IVA); return s+(r.iva??(t-bi)); }, 0);
-    const sumTotal = reservasFiltradas.reduce((s,r) => s+(parseFloat(r.importe)||0), 0);
-    rows.push(['', '', '', 'TOTAL', parseFloat(sumBI.toFixed(2)), parseFloat(sumIVA.toFixed(2)), parseFloat(sumTotal.toFixed(2))]);
+    // Fila de totales
+    const totalImp  = reservasFiltradas.reduce((s,r) => s+(parseFloat(r.importe)||0), 0);
+    const totalSen  = reservasFiltradas.reduce((s,r) => s+(parseFloat(r.senal)||0), 0);
+    rows.push(['', '', 'TOTAL', totalImp, totalSen, '', '']);
 
     const ws = window.XLSX.utils.aoa_to_sheet(rows);
-
-    // Formato numérico € en columnas BI, IVA, Total (E, F, G = índices 4,5,6)
-    const fmt = '#,##0.00 €';
-    const lastRow = rows.length;
-    for (let r = 2; r <= lastRow; r++) {
-      ['E','F','G'].forEach(col => {
-        const cell = ws[`${col}${r}`];
-        if (cell) { cell.t = 'n'; cell.z = fmt; }
-      });
-    }
-    // Negrita en cabecera y totales
-    ['A1','B1','C1','D1','E1','F1','G1'].forEach(ref => {
-      if (ws[ref]) ws[ref].s = { font: { bold: true } };
-    });
-
-    ws['!cols'] = [{wch:14},{wch:14},{wch:14},{wch:28},{wch:12},{wch:12},{wch:12}];
+    ws['!cols'] = [{wch:12},{wch:22},{wch:10},{wch:14},{wch:18},{wch:16},{wch:16}];
     window.XLSX.utils.book_append_sheet(wb, ws, 'Ingresos');
   }
 
   if (incClientes) {
+    // Clientes únicos del período (deduplicados por DNI)
     const vistos = new Set();
     const clientesRows = [['Nombre completo', 'DNI / NIE', 'Dirección']];
     reservasFiltradas.forEach(r => {
       const dni = (r.dni || '').trim();
       if (dni && vistos.has(dni)) return;
       if (dni) vistos.add(dni);
-      const dir = [r.direccion, r.cp, r.localidad].filter(Boolean).join(', ') || '—';
+      const dir = [r.direccion, r.cp, r.localidad].filter(Boolean).join(', ') || r.direccion || '—';
       clientesRows.push([r.nombre || '—', dni || '—', dir]);
     });
     const wsCli = window.XLSX.utils.aoa_to_sheet(clientesRows);
