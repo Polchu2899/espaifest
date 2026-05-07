@@ -4014,11 +4014,11 @@ function renderTarTabla(tipo) {
 
 function tarCellChange(inp, tipo, i, dia) {
   const v = inp.value.trim();
-  window.window.tarifasData[tipo][i][dia] = (v === '—' || v === '') ? '—' : parseFloat(v)||v;
+  window.tarifasData[tipo][i][dia] = (v === '—' || v === '') ? '—' : parseFloat(v)||v;
 }
 
 window.tarDelRow = function(tipo, i) {
-  window.window.tarifasData[tipo].splice(i,1);
+  window.tarifasData[tipo].splice(i,1);
   if(tipo==='estandar'||tipo==='ampliados') renderTarTabla(tipo);
   else if(tipo==='especiales') renderTarTablaEspeciales();
   else renderTarTablaExtras();
@@ -4042,10 +4042,10 @@ function renderTarTablaEspeciales() {
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData.especiales||[]).map((row,i) => `
     <tr>
-      <td><input class="tar-inp wide" value="${row.celebracion}" onchange="window.window.tarifasData.especiales[${i}].celebracion=this.value"></td>
-      <td><input class="tar-inp" value="${row.dia}" placeholder="DD/MM" onchange="window.window.tarifasData.especiales[${i}].dia=this.value"></td>
-      <td><input class="tar-inp wide" value="${row.horario}" onchange="window.window.tarifasData.especiales[${i}].horario=this.value"></td>
-      <td><input class="tar-inp" type="number" value="${row.precio}" onchange="window.window.tarifasData.especiales[${i}].precio=parseFloat(this.value)||0"></td>
+      <td><input class="tar-inp wide" value="${row.celebracion}" onchange="window.tarifasData.especiales[${i}].celebracion=this.value"></td>
+      <td><input class="tar-inp" value="${row.dia}" placeholder="DD/MM" onchange="window.tarifasData.especiales[${i}].dia=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.horario}" onchange="window.tarifasData.especiales[${i}].horario=this.value"></td>
+      <td><input class="tar-inp" type="number" value="${row.precio}" onchange="window.tarifasData.especiales[${i}].precio=parseFloat(this.value)||0"></td>
       <td><button class="tar-row-del" onclick="tarDelRow('especiales',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
     </tr>`).join('');
 }
@@ -4067,9 +4067,9 @@ function renderTarTablaExtras() {
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData.extras||[]).map((row,i) => `
     <tr>
-      <td><input class="tar-inp wide" value="${row.concepto}" onchange="window.window.tarifasData.extras[${i}].concepto=this.value"></td>
-      <td><input class="tar-inp wide" value="${row.turno}" onchange="window.window.tarifasData.extras[${i}].turno=this.value"></td>
-      <td><input class="tar-inp" type="number" value="${row.precio}" onchange="window.window.tarifasData.extras[${i}].precio=parseFloat(this.value)||0"></td>
+      <td><input class="tar-inp wide" value="${row.concepto}" onchange="window.tarifasData.extras[${i}].concepto=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.turno}" onchange="window.tarifasData.extras[${i}].turno=this.value"></td>
+      <td><input class="tar-inp" type="number" value="${row.precio}" onchange="window.tarifasData.extras[${i}].precio=parseFloat(this.value)||0"></td>
       <td><button class="tar-row-del" onclick="tarDelRow('extras',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
     </tr>`).join('');
 }
