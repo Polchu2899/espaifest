@@ -458,7 +458,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="ni" onclick="showPanel('fidelizacion',this)"><span class="ni-ico"><svg><use href="#i-star"/></svg></span>Fidelización</div>
       <div class="ni" onclick="showPanel('recordatorios',this);loadRecordatorios()"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Recordatorios<span class="nbadge" id="badge-rec" style="display:none">0</span></div>
       <div class="ng" style="margin-top:8px">Ajustes</div>
-      <div class="ni" onclick="showPanel('configuracion',this)"><span class="ni-ico"><svg><use href="#i-gear"/></svg></span>Mi negocio</div>
+      <div class="ni" onclick="showPanel('gestoria',this);loadGestoria()"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Gestoría</div>
       <div class="ni" onclick="showPanel('migracion',this)"><span class="ni-ico"><svg><use href="#i-import"/></svg></span>Migración histórica<span class="stag">XLS</span></div>
       <div class="ng" style="margin-top:8px;opacity:.35">Próximamente</div>
       <div class="ni" onclick="showPanel('informes',this)"><span class="ni-ico"><svg><use href="#i-trending"/></svg></span>Informes</div>
@@ -1017,7 +1017,69 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
       </div><!-- /panel-migracion -->
 
-      <div class="panel" id="panel-configuracion">
+      <div class="panel" id="panel-gestoria">
+        <div class="card">
+          <div class="chead">
+            <div>
+              <div class="ctitle">Gestoría — Informe trimestral</div>
+              <div class="csub">Reservas confirmadas listas para el gestor · IVA 21% incluido en precios</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <select id="ges-trim" class="fsel" style="font-size:.8rem;padding:6px 10px;" onchange="loadGestoria()">
+                <option value="T1">T1 — Ene·Feb·Mar</option>
+                <option value="T2">T2 — Abr·May·Jun</option>
+                <option value="T3">T3 — Jul·Ago·Sep</option>
+                <option value="T4">T4 — Oct·Nov·Dic</option>
+              </select>
+              <select id="ges-year" class="fsel" style="font-size:.8rem;padding:6px 10px;" onchange="loadGestoria()"></select>
+              <button class="btn bp sm" onclick="exportGestoriaExcel()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Exportar Excel
+              </button>
+            </div>
+          </div>
+
+          <!-- Filtro estado -->
+          <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+            <button class="btn bg sm ges-est-btn active" data-estado="todos" onclick="gesFilterEstado(this)">Todas</button>
+            <button class="btn bg sm ges-est-btn" data-estado="Confirmada" onclick="gesFilterEstado(this)">Confirmadas</button>
+            <button class="btn bg sm ges-est-btn" data-estado="Pendiente" onclick="gesFilterEstado(this)">Pendientes</button>
+            <button class="btn bg sm ges-est-btn" data-estado="Completada" onclick="gesFilterEstado(this)">Completadas</button>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="res-table" id="ges-table" style="font-size:.78rem;min-width:900px;">
+              <thead>
+                <tr>
+                  <th style="text-align:left;padding:10px 12px;">Fecha reserva</th>
+                  <th style="text-align:left;padding:10px 12px;">Núm. reserva</th>
+                  <th style="text-align:left;padding:10px 12px;">CP</th>
+                  <th style="text-align:left;padding:10px 12px;">Cliente</th>
+                  <th style="text-align:right;padding:10px 12px;">BI (€)</th>
+                  <th style="text-align:right;padding:10px 12px;">IVA 21% (€)</th>
+                  <th style="text-align:right;padding:10px 12px;">Total (€)</th>
+                  <th style="text-align:center;padding:10px 12px;">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="ges-tbody">
+                <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--tx3);">Selecciona trimestre y año</td></tr>
+              </tbody>
+              <tfoot id="ges-tfoot" style="display:none;">
+                <tr style="background:var(--s2);font-weight:700;border-top:2px solid var(--co);">
+                  <td colspan="4" style="padding:12px 16px;color:var(--tx1);">TOTAL TRIMESTRE</td>
+                  <td style="padding:12px 16px;text-align:right;color:var(--co);" id="ges-sum-bi">—</td>
+                  <td style="padding:12px 16px;text-align:right;color:var(--co);" id="ges-sum-iva">—</td>
+                  <td style="padding:12px 16px;text-align:right;color:var(--co);" id="ges-sum-tot">—</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <p id="ges-empty" style="text-align:center;padding:40px;color:var(--tx3);display:none;">No hay reservas en este trimestre.</p>
+        </div>
+      </div><!-- /panel-gestoria -->
+
+
         <div class="g2">
           <div class="card"><div class="chead"><div><div class="ctitle">Datos del negocio</div></div><button class="btn bg sm" onclick="showToast('Editar próximamente')"><svg width="13" height="13" stroke="currentColor"><use href="#i-edit"/></svg>Editar</button></div>
           <div class="cfgrid" id="cfg-datos"></div></div>
@@ -2306,6 +2368,7 @@ window.showPanel = (id, el) => {
   if(id === 'informes')  renderInformes();
   if(id === 'pagos')     renderPagos();
   if(id === 'tarifas')   loadTarifas();
+  if(id === 'gestoria')  loadGestoria();
 };
 
 function updateCrumb() {
@@ -3993,75 +4056,32 @@ window.tarSwitch = function(sec, btn) {
 };
 
 // ── Render tabla estándar / ampliados ──
-// Sin onchange — saveTarifas lee el DOM directamente al guardar
 function renderTarTabla(tipo) {
   const tbody = document.getElementById('tar-body-'+tipo);
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData[tipo]||[]).map((row,i) => `
-    <tr data-row="${i}">
-      <td><input class="tar-inp wide" data-field="turno" value="${row.turno||''}"></td>
-      <td><input class="tar-inp wide" data-field="horario" value="${row.horario||''}"></td>
+    <tr>
+      <td><input class="tar-inp wide" value="${row.turno}" onchange="window.tarifasData['${tipo}'][${i}].turno=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.horario}" onchange="window.tarifasData['${tipo}'][${i}].horario=this.value"></td>
       ${DIAS.map(d => {
         const val = row[d];
         const isDash = val === '—' || val === '' || val == null;
-        return `<td><input class="tar-inp${isDash?' dash':''}" data-field="${d}" value="${isDash?'—':val}"
-          onfocus="if(this.value==='—'){this.value='';this.classList.remove('dash')}"
-          onblur="if(!this.value.trim()){this.value='—';this.classList.add('dash')}"></td>`;
+        return `<td><input class="tar-inp${isDash?' dash':''}" value="${isDash?'—':val}"
+          onchange="tarCellChange(this,'${tipo}',${i},'${d}')"
+          onfocus="if(this.value==='—')this.value='';this.classList.remove('dash')"
+          onblur="if(!this.value){this.value='—';this.classList.add('dash')}"></td>`;
       }).join('')}
       <td><button class="tar-row-del" onclick="tarDelRow('${tipo}',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
     </tr>`).join('');
 }
 
-// Lee la tabla del DOM y devuelve array de filas actualizado
-function leerTablaDOM(tipo) {
-  const tbody = document.getElementById('tar-body-'+tipo);
-  if(!tbody) return window.tarifasData[tipo]||[];
-  return Array.from(tbody.querySelectorAll('tr[data-row]')).map(tr => {
-    const get = f => { const el = tr.querySelector(`[data-field="${f}"]`); return el ? el.value.trim() : ''; };
-    const row = { turno: get('turno'), horario: get('horario') };
-    DIAS.forEach(d => {
-      const v = get(d);
-      row[d] = (v === '—' || v === '') ? '—' : (parseFloat(v) || v);
-    });
-    return row;
-  });
-}
-
-function leerEspecialesDOM() {
-  const tbody = document.getElementById('tar-body-especiales');
-  if(!tbody) return window.tarifasData.especiales||[];
-  return Array.from(tbody.querySelectorAll('tr[data-row]')).map(tr => {
-    const get = f => { const el = tr.querySelector(`[data-field="${f}"]`); return el ? el.value.trim() : ''; };
-    return {
-      celebracion: get('celebracion'),
-      dia:         get('dia'),
-      horario:     get('horario'),
-      precio:      parseFloat(get('precio')) || 0
-    };
-  });
-}
-
-function leerExtrasDOM() {
-  const tbody = document.getElementById('tar-body-extras');
-  if(!tbody) return window.tarifasData.extras||[];
-  return Array.from(tbody.querySelectorAll('tr[data-row]')).map(tr => {
-    const get = f => { const el = tr.querySelector(`[data-field="${f}"]`); return el ? el.value.trim() : ''; };
-    return {
-      concepto: get('concepto'),
-      turno:    get('turno'),
-      precio:   parseFloat(get('precio')) || 0
-    };
-  });
+function tarCellChange(inp, tipo, i, dia) {
+  const v = inp.value.trim();
+  window.tarifasData[tipo][i][dia] = (v === '—' || v === '') ? '—' : parseFloat(v)||v;
 }
 
 window.tarDelRow = function(tipo, i) {
-  // Sincronizar desde DOM antes de eliminar
-  if(tipo==='estandar'||tipo==='ampliados') window.tarifasData[tipo] = leerTablaDOM(tipo);
-  else if(tipo==='especiales') window.tarifasData.especiales = leerEspecialesDOM();
-  else window.tarifasData.extras = leerExtrasDOM();
-
   window.tarifasData[tipo].splice(i,1);
-
   if(tipo==='estandar'||tipo==='ampliados') renderTarTabla(tipo);
   else if(tipo==='especiales') renderTarTablaEspeciales();
   else renderTarTablaExtras();
@@ -4071,8 +4091,6 @@ window.tarAddRow = function(tipo) {
   const t = document.getElementById(`tar-${tipo==='estandar'?'e':'a'}-turno`).value.trim();
   const h = document.getElementById(`tar-${tipo==='estandar'?'e':'a'}-hora`).value.trim();
   if(!t||!h){showToast('Rellena turno y horario');return;}
-  // Sincronizar DOM antes de añadir
-  window.tarifasData[tipo] = leerTablaDOM(tipo);
   const row = {turno:t, horario:h};
   DIAS.forEach(d => row[d]='—');
   window.tarifasData[tipo].push(row);
@@ -4086,11 +4104,11 @@ function renderTarTablaEspeciales() {
   const tbody = document.getElementById('tar-body-especiales');
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData.especiales||[]).map((row,i) => `
-    <tr data-row="${i}">
-      <td><input class="tar-inp wide" data-field="celebracion" value="${row.celebracion||''}"></td>
-      <td><input class="tar-inp" data-field="dia" value="${row.dia||''}" placeholder="DD/MM"></td>
-      <td><input class="tar-inp wide" data-field="horario" value="${row.horario||''}"></td>
-      <td><input class="tar-inp" data-field="precio" type="number" value="${row.precio||0}"></td>
+    <tr>
+      <td><input class="tar-inp wide" value="${row.celebracion}" onchange="window.tarifasData.especiales[${i}].celebracion=this.value"></td>
+      <td><input class="tar-inp" value="${row.dia}" placeholder="DD/MM" onchange="window.tarifasData.especiales[${i}].dia=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.horario}" onchange="window.tarifasData.especiales[${i}].horario=this.value"></td>
+      <td><input class="tar-inp" type="number" value="${row.precio}" onchange="window.tarifasData.especiales[${i}].precio=parseFloat(this.value)||0"></td>
       <td><button class="tar-row-del" onclick="tarDelRow('especiales',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
     </tr>`).join('');
 }
@@ -4101,7 +4119,6 @@ window.tarAddEspecial = function() {
   const hora  = document.getElementById('tar-es-hora').value.trim();
   const prec  = parseFloat(document.getElementById('tar-es-precio').value)||0;
   if(!nom){showToast('Rellena el nombre de la celebración');return;}
-  window.tarifasData.especiales = leerEspecialesDOM();
   window.tarifasData.especiales.push({celebracion:nom,dia,horario:hora,precio:prec});
   renderTarTablaEspeciales();
   ['tar-es-nom','tar-es-dia','tar-es-hora','tar-es-precio'].forEach(id=>{document.getElementById(id).value='';});
@@ -4112,10 +4129,10 @@ function renderTarTablaExtras() {
   const tbody = document.getElementById('tar-body-extras');
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData.extras||[]).map((row,i) => `
-    <tr data-row="${i}">
-      <td><input class="tar-inp wide" data-field="concepto" value="${row.concepto||''}"></td>
-      <td><input class="tar-inp wide" data-field="turno" value="${row.turno||''}"></td>
-      <td><input class="tar-inp" data-field="precio" type="number" value="${row.precio||0}"></td>
+    <tr>
+      <td><input class="tar-inp wide" value="${row.concepto}" onchange="window.tarifasData.extras[${i}].concepto=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.turno}" onchange="window.tarifasData.extras[${i}].turno=this.value"></td>
+      <td><input class="tar-inp" type="number" value="${row.precio}" onchange="window.tarifasData.extras[${i}].precio=parseFloat(this.value)||0"></td>
       <td><button class="tar-row-del" onclick="tarDelRow('extras',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
     </tr>`).join('');
 }
@@ -4125,27 +4142,17 @@ window.tarAddExtra = function() {
   const tur  = document.getElementById('tar-ex-turno').value.trim();
   const prec = parseFloat(document.getElementById('tar-ex-precio').value)||0;
   if(!con||!tur){showToast('Rellena concepto y turno');return;}
-  window.tarifasData.extras = leerExtrasDOM();
   window.tarifasData.extras.push({concepto:con,turno:tur,precio:prec});
   renderTarTablaExtras();
   ['tar-ex-concepto','tar-ex-turno','tar-ex-precio'].forEach(id=>{document.getElementById(id).value='';});
 };
 
-// ── Guardar en Firestore — lee directamente del DOM, sin depender de onchange ──
+// ── Guardar en Firestore ──
 window.saveTarifas = async function(tipo) {
   try {
-    let filas;
-    if(tipo==='estandar'||tipo==='ampliados') filas = leerTablaDOM(tipo);
-    else if(tipo==='especiales') filas = leerEspecialesDOM();
-    else filas = leerExtrasDOM();
-
-    // Actualizar objeto en memoria también
-    window.tarifasData[tipo] = filas;
-
-    await setDoc(doc(db,'tarifas',tipo), { filas, updatedAt: serverTimestamp() });
-    showToast('✓ Tarifas guardadas correctamente');
+    await setDoc(doc(db,'tarifas',tipo), { filas: window.tarifasData[tipo], updatedAt: serverTimestamp() });
+    showToast('Tarifas guardadas en Firestore ✓');
   } catch(e) {
-    console.error('saveTarifas error:', e);
     showToast('Error al guardar: '+e.message);
   }
 };
@@ -4264,6 +4271,176 @@ window.calcPrecioAuto = function() {
 
 // Login con Enter
 document.getElementById('login-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+
+// ══ GESTORÍA ══════════════════════════════════════════════════
+
+// Poblar selector de años al cargar
+(function initGesAnios() {
+  const sel = document.getElementById('ges-year');
+  if(!sel) return;
+  const anioActual = new Date().getFullYear();
+  for(let y = anioActual; y >= anioActual - 3; y--) {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = y;
+    if(y === anioActual) opt.selected = true;
+    sel.appendChild(opt);
+  }
+  // Seleccionar trimestre actual por defecto
+  const mesActual = new Date().getMonth(); // 0-11
+  const trimActual = mesActual < 3 ? 'T1' : mesActual < 6 ? 'T2' : mesActual < 9 ? 'T3' : 'T4';
+  const selTrim = document.getElementById('ges-trim');
+  if(selTrim) selTrim.value = trimActual;
+})();
+
+let _gesRows = []; // todas las filas del trimestre cargado
+let _gesEstado = 'todos'; // filtro activo
+
+window.loadGestoria = async function() {
+  const trim  = document.getElementById('ges-trim')?.value || 'T1';
+  const anio  = parseInt(document.getElementById('ges-year')?.value) || new Date().getFullYear();
+  const tbody = document.getElementById('ges-tbody');
+  const tfoot = document.getElementById('ges-tfoot');
+  const empty = document.getElementById('ges-empty');
+  if(!tbody) return;
+
+  tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--tx3);">Cargando...</td></tr>`;
+  tfoot.style.display = 'none';
+  empty.style.display = 'none';
+
+  // Rango de meses por trimestre
+  const rangos = { T1:[0,2], T2:[3,5], T3:[6,8], T4:[9,11] };
+  const [mesIni, mesFin] = rangos[trim];
+  const fechaIni = `${anio}-${String(mesIni+1).padStart(2,'0')}-01`;
+  const fechaFin = `${anio}-${String(mesFin+1).padStart(2,'0')}-${mesFin===1?'28':'31'}`;
+
+  try {
+    const q = query(
+      collection(db, 'reservas'),
+      where('fecha', '>=', fechaIni),
+      where('fecha', '<=', fechaFin),
+      orderBy('fecha', 'asc')
+    );
+    const snap = await getDocs(q);
+
+    _gesRows = snap.docs.map((d, idx) => {
+      const r = d.data();
+      const total = parseFloat(r.importe) || 0;
+      const bi    = parseFloat((total / 1.21).toFixed(2));
+      const iva   = parseFloat((total - bi).toFixed(2));
+      // Extraer CP de direccion o campo cp
+      const cp = r.cp || (r.direccion ? (r.direccion.match(/\b\d{5}\b/)||['—'])[0] : '—');
+      return {
+        id:     d.id,
+        numRes: `EF-${anio}-${String(idx+1).padStart(4,'0')}`,
+        fecha:  r.fecha || '',
+        cp,
+        cliente: r.nombre || `${r.nombre||''} ${r.apellidos||''}`.trim() || '—',
+        bi, iva, total,
+        estado: r.estado || 'Pendiente'
+      };
+    });
+
+    renderGestoriaTabla();
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--tx3);">Error al cargar: ${e.message}</td></tr>`;
+  }
+};
+
+window.gesFilterEstado = function(btn) {
+  document.querySelectorAll('.ges-est-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  _gesEstado = btn.dataset.estado;
+  renderGestoriaTabla();
+};
+
+function renderGestoriaTabla() {
+  const tbody = document.getElementById('ges-tbody');
+  const tfoot = document.getElementById('ges-tfoot');
+  const empty = document.getElementById('ges-empty');
+  if(!tbody) return;
+
+  const filas = _gesEstado === 'todos'
+    ? _gesRows
+    : _gesRows.filter(r => r.estado === _gesEstado);
+
+  if(!filas.length) {
+    tbody.innerHTML = '';
+    tfoot.style.display = 'none';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const fmtN = n => n.toLocaleString('es-ES', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const fmtD = s => { if(!s) return '—'; const [y,m,d] = s.split('-'); return `${d}/${m}/${y}`; };
+  const estadoColor = {
+    'Confirmada':  'color:oklch(73% .14 190);font-weight:700;',
+    'Pendiente':   'color:oklch(75% .18 60);font-weight:700;',
+    'Completada':  'color:oklch(65% .15 145);font-weight:700;',
+    'Cancelada':   'color:oklch(60% .2 25);font-weight:700;'
+  };
+
+  tbody.innerHTML = filas.map(r => `
+    <tr style="border-bottom:1px solid var(--bd);">
+      <td style="padding:10px 12px;">${fmtD(r.fecha)}</td>
+      <td style="padding:10px 12px;font-family:monospace;font-size:.75rem;color:var(--tx2);">${r.numRes}</td>
+      <td style="padding:10px 12px;">${r.cp}</td>
+      <td style="padding:10px 12px;font-weight:600;">${r.cliente}</td>
+      <td style="padding:10px 12px;text-align:right;">${fmtN(r.bi)}</td>
+      <td style="padding:10px 12px;text-align:right;color:var(--tx2);">${fmtN(r.iva)}</td>
+      <td style="padding:10px 12px;text-align:right;font-weight:700;">${fmtN(r.total)}</td>
+      <td style="padding:10px 12px;text-align:center;font-size:.75rem;${estadoColor[r.estado]||''}">${r.estado}</td>
+    </tr>`).join('');
+
+  // Sumatorios
+  const sumBI  = filas.reduce((s,r)=>s+r.bi, 0);
+  const sumIVA = filas.reduce((s,r)=>s+r.iva, 0);
+  const sumTot = filas.reduce((s,r)=>s+r.total, 0);
+  document.getElementById('ges-sum-bi').textContent  = fmtN(sumBI);
+  document.getElementById('ges-sum-iva').textContent = fmtN(sumIVA);
+  document.getElementById('ges-sum-tot').textContent = fmtN(sumTot);
+  tfoot.style.display = '';
+}
+
+window.exportGestoriaExcel = function() {
+  const trim  = document.getElementById('ges-trim')?.value || 'T1';
+  const anio  = document.getElementById('ges-year')?.value || new Date().getFullYear();
+  const filas = _gesEstado === 'todos' ? _gesRows : _gesRows.filter(r => r.estado === _gesEstado);
+
+  if(!filas.length) { showToast('No hay datos para exportar'); return; }
+
+  const fmtD = s => { if(!s) return ''; const [y,m,d] = s.split('-'); return `${d}/${m}/${y}`; };
+
+  // Cabeceras
+  let csv = 'Fecha reserva\tNúm. reserva\tCódigo postal\tNombre cliente\tBase imponible (€)\tIVA 21% (€)\tTotal (€)\tEstado\n';
+
+  // Filas
+  filas.forEach(r => {
+    const bi  = r.bi.toFixed(2).replace('.',',');
+    const iva = r.iva.toFixed(2).replace('.',',');
+    const tot = r.total.toFixed(2).replace('.',',');
+    csv += `${fmtD(r.fecha)}\t${r.numRes}\t${r.cp}\t${r.cliente}\t${bi}\t${iva}\t${tot}\t${r.estado}\n`;
+  });
+
+  // Fila sumatorio
+  const sumBI  = filas.reduce((s,r)=>s+r.bi,0).toFixed(2).replace('.',',');
+  const sumIVA = filas.reduce((s,r)=>s+r.iva,0).toFixed(2).replace('.',',');
+  const sumTot = filas.reduce((s,r)=>s+r.total,0).toFixed(2).replace('.',',');
+  csv += `TOTAL\t\t\t\t${sumBI}\t${sumIVA}\t${sumTot}\t\n`;
+
+  // Descargar como .tsv que Excel abre directamente con separadores correctos
+  const bom  = '\uFEFF'; // BOM para que Excel reconozca UTF-8
+  const blob = new Blob([bom + csv], { type: 'text/tab-separated-values;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `EspaiFest_Gestoria_${trim}_${anio}.xls`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`✓ Exportado ${filas.length} reserva${filas.length!==1?'s':''} — ${trim} ${anio}`);
+};
 </script>
 </body>
 </html>
