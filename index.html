@@ -197,6 +197,7 @@
                           : `Hola <strong>${params.to_name}</strong>,`;
     const intro      = ca ? 'Hem rebut la teva sol·licitud de reserva. Aquí tens el resum complet:'
                           : 'Hemos recibido tu solicitud de reserva. Aquí tienes el resumen completo:';
+    const lNumRes    = ca ? '🔖 Núm. reserva'          : '🔖 Núm. reserva';
     const tDetalls   = ca ? 'Detalls de la reserva'   : 'Detalles de la reserva';
     const lData      = ca ? '📅 Data'                  : '📅 Fecha';
     const lFranja    = ca ? '🕐 Franja horària'         : '🕐 Franja horaria';
@@ -234,7 +235,8 @@
   <p style="font-size:14px;color:#6b7280;margin:0 0 28px;">${intro}</p>
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:24px;">
     <tr><td colspan="2" style="background:#e5e7eb;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;">${tDetalls}</td></tr>
-    <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:45%;">${lData}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.fecha_reserva}</td></tr>
+    <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:45%;">${lNumRes}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#0fd4c4;border-bottom:1px solid #e5e7eb;font-family:monospace;">${params.num_reserva}</td></tr>
+    <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">${lData}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.fecha_reserva}</td></tr>
     <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">${lFranja}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.horario}</td></tr>
     <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">${lEsdev}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.evento}</td></tr>
     <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;">${lPers}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;">${params.personas}</td></tr>
@@ -300,7 +302,8 @@
   </table>
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:20px;">
     <tr><td colspan="2" style="background:#e5e7eb;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;">📅 Detalls de la reserva</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:40%;">Data</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.fecha_reserva}</td></tr>
+    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:40%;">Núm. reserva</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#0fd4c4;border-bottom:1px solid #e5e7eb;font-family:monospace;">${params.num_reserva}</td></tr>
+    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Data</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.fecha_reserva}</td></tr>
     <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Franja</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.horario}</td></tr>
     <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Esdeveniment</td><td style="padding:10px 20px;font-size:13px;color:#111827;border-bottom:1px solid #e5e7eb;">${params.evento}</td></tr>
     <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Persones</td><td style="padding:10px 20px;font-size:13px;color:#111827;border-bottom:1px solid #e5e7eb;">${params.personas}</td></tr>
@@ -3258,10 +3261,8 @@ async function enviarReserva() {
   const horaExtStr = horaExtLabel !== 'ninguna' ? `+1h ${horaExtLabel}` : 'Sin horas extra';
 
   // ── Cálculo totales ──────────────────────────────────────────
-  const totalEstimado  = precioSala + horaExtPrecio + extrasPrecio;
-  const senalPago      = totalEstimado * 0.5;
-  const baseImponible  = totalEstimado / 1.21;
-  const cuotaIva       = totalEstimado - baseImponible;
+  const totalEstimado = precioSala + horaExtPrecio + extrasPrecio;
+  const senalPago     = totalEstimado * 0.5;
 
   // ── Línea extras para emails ─────────────────────────────────
   const extrasLinea = extObjs.length
@@ -3282,8 +3283,6 @@ async function enviarReserva() {
     precio_sala:   fmtEur(precioSala),
     precio_horaext: horaExtPrecio > 0 ? fmtEur(horaExtPrecio) : '—',
     precio_extras: extrasPrecio > 0 ? fmtEur(extrasPrecio) : '—',
-    base_imponible: fmtEur(baseImponible),
-    cuota_iva:     fmtEur(cuotaIva),
     total_estimado: fmtEur(totalEstimado),
     senal_50:      fmtEur(senalPago),
     comentarios:   no || 'Ninguno',
@@ -3306,18 +3305,46 @@ async function enviarReserva() {
     hora_extra:    horaExtStr,
     extras_lista:  extObjs.length ? extrasNombres.join(', ') : 'Ninguno',
     precio_sala:   fmtEur(precioSala),
-    base_imponible: fmtEur(baseImponible),
-    cuota_iva:     fmtEur(cuotaIva),
     total_estimado: fmtEur(totalEstimado),
     senal_50:      fmtEur(senalPago),
     comentarios:   no || 'Ninguno',
     fecha_envio:   fechaHoy
   };
 
+  // ── Número de reserva — contador atómico en Firestore ────────
+  const anioReserva  = f ? f.substring(0,4) : new Date().getFullYear().toString();
+  const fechaCompacta = f ? f.replace(/-/g,'') : new Date().toISOString().slice(0,10).replace(/-/g,'');
+  let numReserva = '';
+  if(window._fsDB && window._fsRunTransaction && window._fsDoc) {
+    try {
+      const contadorRef = window._fsDoc(window._fsDB, 'config', 'contadores');
+      const campo = `reservas_${anioReserva}`;
+      const nuevoNum = await window._fsRunTransaction(window._fsDB, async tx => {
+        const snap = await tx.get(contadorRef);
+        const actual = snap.exists() ? (snap.data()[campo] || 0) : 0;
+        const siguiente = actual + 1;
+        tx.set(contadorRef, { [campo]: siguiente }, { merge: true });
+        return siguiente;
+      });
+      numReserva = `EF-${fechaCompacta}-${String(nuevoNum).padStart(4,'0')}`;
+    } catch(err) {
+      console.warn('Contador reservas error:', err.message);
+      // Fallback con timestamp si falla la transacción
+      numReserva = `EF-${fechaCompacta}-${Date.now().toString().slice(-4)}`;
+    }
+  } else {
+    numReserva = `EF-${fechaCompacta}-${Date.now().toString().slice(-4)}`;
+  }
+
+  // ── Cálculo IVA ───────────────────────────────────────────────
+  const baseImponible = totalEstimado / 1.21;
+  const cuotaIva      = totalEstimado - baseImponible;
+
   // ── Guardar en Firestore ─────────────────────────────────────
   if(window._fsDB && window._fsAddDoc) {
     try {
       await window._fsAddDoc(window._fsCollection(window._fsDB, 'reservas'), {
+        numReserva,
         nombre:     `${n} ${ap}`, apellidos: ap, dni, fechaNac: fnac,
         direccion:  dir, localidad: loc, cp, telefono: t, email: e,
         servicio:   servicioLabel, personas: pers, fecha: f,
@@ -3333,15 +3360,25 @@ async function enviarReserva() {
     } catch(err) { console.warn('Firestore error:', err.message); }
   }
 
+  // ── Añadir número de reserva a los params de email ───────────
+  paramsCliente.num_reserva  = numReserva;
+  paramsLaura.num_reserva    = numReserva;
+  paramsCliente.base_imponible = fmtEur(baseImponible);
+  paramsCliente.cuota_iva      = fmtEur(cuotaIva);
+  paramsLaura.base_imponible   = fmtEur(baseImponible);
+  paramsLaura.cuota_iva        = fmtEur(cuotaIva);
+
   // ── Email al CLIENTE ─────────────────────────────────────────
   const lang = getLang();
-  const subCliente = lang === 'ca' ? '✅ Reserva rebuda a EspaiFest' : '✅ Reserva recibida en EspaiFest';
+  const subCliente = lang === 'ca'
+    ? `✅ Reserva ${numReserva} rebuda a EspaiFest`
+    : `✅ Reserva ${numReserva} recibida en EspaiFest`;
   const htmlCliente = buildEmailCliente(paramsCliente, lang);
   const okCliente = await resendSend(e, subCliente, htmlCliente);
 
   // ── Email a LAURA ─────────────────────────────────────────────
   const htmlLaura = buildEmailLaura(paramsLaura);
-  const okLaura = await resendSend(_MAIL.emailLaura, `🎉 Nova reserva — ${n} ${ap}`, htmlLaura);
+  const okLaura = await resendSend(_MAIL.emailLaura, `🎉 Nova reserva ${numReserva} — ${n} ${ap}`, htmlLaura);
 
   // ── WhatsApp a LAURA ─────────────────────────────────────────
   const linDni   = `\n🪪 DNI: ${dni}${fnac?' · Nac: '+fmtFecha(fnac):''}`;
@@ -3466,7 +3503,7 @@ function showToast(msg) {
 
 // ══ BLOG — FIREBASE ══════════════════════════════════════
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, getDocs, addDoc, query, orderBy, where, limit, serverTimestamp, onSnapshot }
+import { getFirestore, collection, getDocs, addDoc, doc, runTransaction, query, orderBy, where, limit, serverTimestamp, onSnapshot }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const _fbConfig = {
@@ -3488,6 +3525,8 @@ let _allBlogPosts = [];
 window._fsDB = _db;
 window._fsAddDoc = addDoc;
 window._fsCollection = collection;
+window._fsDoc = doc;
+window._fsRunTransaction = runTransaction;
 window._fsServerTimestamp = serverTimestamp;
 
 const CAT_LABELS = {
