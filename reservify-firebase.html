@@ -3993,32 +3993,75 @@ window.tarSwitch = function(sec, btn) {
 };
 
 // ── Render tabla estándar / ampliados ──
+// Sin onchange — saveTarifas lee el DOM directamente al guardar
 function renderTarTabla(tipo) {
   const tbody = document.getElementById('tar-body-'+tipo);
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData[tipo]||[]).map((row,i) => `
-    <tr>
-      <td><input class="tar-inp wide" value="${row.turno}" onchange="window.tarifasData['${tipo}'][${i}].turno=this.value"></td>
-      <td><input class="tar-inp wide" value="${row.horario}" onchange="window.tarifasData['${tipo}'][${i}].horario=this.value"></td>
+    <tr data-row="${i}">
+      <td><input class="tar-inp wide" data-field="turno" value="${row.turno||''}"></td>
+      <td><input class="tar-inp wide" data-field="horario" value="${row.horario||''}"></td>
       ${DIAS.map(d => {
         const val = row[d];
         const isDash = val === '—' || val === '' || val == null;
-        return `<td><input class="tar-inp${isDash?' dash':''}" value="${isDash?'—':val}"
-          onchange="tarCellChange(this,'${tipo}',${i},'${d}')"
-          onfocus="if(this.value==='—')this.value='';this.classList.remove('dash')"
-          onblur="if(!this.value){this.value='—';this.classList.add('dash')}"></td>`;
+        return `<td><input class="tar-inp${isDash?' dash':''}" data-field="${d}" value="${isDash?'—':val}"
+          onfocus="if(this.value==='—'){this.value='';this.classList.remove('dash')}"
+          onblur="if(!this.value.trim()){this.value='—';this.classList.add('dash')}"></td>`;
       }).join('')}
       <td><button class="tar-row-del" onclick="tarDelRow('${tipo}',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
     </tr>`).join('');
 }
 
-function tarCellChange(inp, tipo, i, dia) {
-  const v = inp.value.trim();
-  window.tarifasData[tipo][i][dia] = (v === '—' || v === '') ? '—' : parseFloat(v)||v;
+// Lee la tabla del DOM y devuelve array de filas actualizado
+function leerTablaDOM(tipo) {
+  const tbody = document.getElementById('tar-body-'+tipo);
+  if(!tbody) return window.tarifasData[tipo]||[];
+  return Array.from(tbody.querySelectorAll('tr[data-row]')).map(tr => {
+    const get = f => { const el = tr.querySelector(`[data-field="${f}"]`); return el ? el.value.trim() : ''; };
+    const row = { turno: get('turno'), horario: get('horario') };
+    DIAS.forEach(d => {
+      const v = get(d);
+      row[d] = (v === '—' || v === '') ? '—' : (parseFloat(v) || v);
+    });
+    return row;
+  });
+}
+
+function leerEspecialesDOM() {
+  const tbody = document.getElementById('tar-body-especiales');
+  if(!tbody) return window.tarifasData.especiales||[];
+  return Array.from(tbody.querySelectorAll('tr[data-row]')).map(tr => {
+    const get = f => { const el = tr.querySelector(`[data-field="${f}"]`); return el ? el.value.trim() : ''; };
+    return {
+      celebracion: get('celebracion'),
+      dia:         get('dia'),
+      horario:     get('horario'),
+      precio:      parseFloat(get('precio')) || 0
+    };
+  });
+}
+
+function leerExtrasDOM() {
+  const tbody = document.getElementById('tar-body-extras');
+  if(!tbody) return window.tarifasData.extras||[];
+  return Array.from(tbody.querySelectorAll('tr[data-row]')).map(tr => {
+    const get = f => { const el = tr.querySelector(`[data-field="${f}"]`); return el ? el.value.trim() : ''; };
+    return {
+      concepto: get('concepto'),
+      turno:    get('turno'),
+      precio:   parseFloat(get('precio')) || 0
+    };
+  });
 }
 
 window.tarDelRow = function(tipo, i) {
+  // Sincronizar desde DOM antes de eliminar
+  if(tipo==='estandar'||tipo==='ampliados') window.tarifasData[tipo] = leerTablaDOM(tipo);
+  else if(tipo==='especiales') window.tarifasData.especiales = leerEspecialesDOM();
+  else window.tarifasData.extras = leerExtrasDOM();
+
   window.tarifasData[tipo].splice(i,1);
+
   if(tipo==='estandar'||tipo==='ampliados') renderTarTabla(tipo);
   else if(tipo==='especiales') renderTarTablaEspeciales();
   else renderTarTablaExtras();
@@ -4028,6 +4071,8 @@ window.tarAddRow = function(tipo) {
   const t = document.getElementById(`tar-${tipo==='estandar'?'e':'a'}-turno`).value.trim();
   const h = document.getElementById(`tar-${tipo==='estandar'?'e':'a'}-hora`).value.trim();
   if(!t||!h){showToast('Rellena turno y horario');return;}
+  // Sincronizar DOM antes de añadir
+  window.tarifasData[tipo] = leerTablaDOM(tipo);
   const row = {turno:t, horario:h};
   DIAS.forEach(d => row[d]='—');
   window.tarifasData[tipo].push(row);
@@ -4041,11 +4086,11 @@ function renderTarTablaEspeciales() {
   const tbody = document.getElementById('tar-body-especiales');
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData.especiales||[]).map((row,i) => `
-    <tr>
-      <td><input class="tar-inp wide" value="${row.celebracion}" onchange="window.tarifasData.especiales[${i}].celebracion=this.value"></td>
-      <td><input class="tar-inp" value="${row.dia}" placeholder="DD/MM" onchange="window.tarifasData.especiales[${i}].dia=this.value"></td>
-      <td><input class="tar-inp wide" value="${row.horario}" onchange="window.tarifasData.especiales[${i}].horario=this.value"></td>
-      <td><input class="tar-inp" type="number" value="${row.precio}" onchange="window.tarifasData.especiales[${i}].precio=parseFloat(this.value)||0"></td>
+    <tr data-row="${i}">
+      <td><input class="tar-inp wide" data-field="celebracion" value="${row.celebracion||''}"></td>
+      <td><input class="tar-inp" data-field="dia" value="${row.dia||''}" placeholder="DD/MM"></td>
+      <td><input class="tar-inp wide" data-field="horario" value="${row.horario||''}"></td>
+      <td><input class="tar-inp" data-field="precio" type="number" value="${row.precio||0}"></td>
       <td><button class="tar-row-del" onclick="tarDelRow('especiales',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
     </tr>`).join('');
 }
@@ -4056,6 +4101,7 @@ window.tarAddEspecial = function() {
   const hora  = document.getElementById('tar-es-hora').value.trim();
   const prec  = parseFloat(document.getElementById('tar-es-precio').value)||0;
   if(!nom){showToast('Rellena el nombre de la celebración');return;}
+  window.tarifasData.especiales = leerEspecialesDOM();
   window.tarifasData.especiales.push({celebracion:nom,dia,horario:hora,precio:prec});
   renderTarTablaEspeciales();
   ['tar-es-nom','tar-es-dia','tar-es-hora','tar-es-precio'].forEach(id=>{document.getElementById(id).value='';});
@@ -4066,10 +4112,10 @@ function renderTarTablaExtras() {
   const tbody = document.getElementById('tar-body-extras');
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData.extras||[]).map((row,i) => `
-    <tr>
-      <td><input class="tar-inp wide" value="${row.concepto}" onchange="window.tarifasData.extras[${i}].concepto=this.value"></td>
-      <td><input class="tar-inp wide" value="${row.turno}" onchange="window.tarifasData.extras[${i}].turno=this.value"></td>
-      <td><input class="tar-inp" type="number" value="${row.precio}" onchange="window.tarifasData.extras[${i}].precio=parseFloat(this.value)||0"></td>
+    <tr data-row="${i}">
+      <td><input class="tar-inp wide" data-field="concepto" value="${row.concepto||''}"></td>
+      <td><input class="tar-inp wide" data-field="turno" value="${row.turno||''}"></td>
+      <td><input class="tar-inp" data-field="precio" type="number" value="${row.precio||0}"></td>
       <td><button class="tar-row-del" onclick="tarDelRow('extras',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
     </tr>`).join('');
 }
@@ -4079,17 +4125,27 @@ window.tarAddExtra = function() {
   const tur  = document.getElementById('tar-ex-turno').value.trim();
   const prec = parseFloat(document.getElementById('tar-ex-precio').value)||0;
   if(!con||!tur){showToast('Rellena concepto y turno');return;}
+  window.tarifasData.extras = leerExtrasDOM();
   window.tarifasData.extras.push({concepto:con,turno:tur,precio:prec});
   renderTarTablaExtras();
   ['tar-ex-concepto','tar-ex-turno','tar-ex-precio'].forEach(id=>{document.getElementById(id).value='';});
 };
 
-// ── Guardar en Firestore ──
+// ── Guardar en Firestore — lee directamente del DOM, sin depender de onchange ──
 window.saveTarifas = async function(tipo) {
   try {
-    await setDoc(doc(db,'tarifas',tipo), { filas: window.tarifasData[tipo], updatedAt: serverTimestamp() });
-    showToast('Tarifas guardadas en Firestore ✓');
+    let filas;
+    if(tipo==='estandar'||tipo==='ampliados') filas = leerTablaDOM(tipo);
+    else if(tipo==='especiales') filas = leerEspecialesDOM();
+    else filas = leerExtrasDOM();
+
+    // Actualizar objeto en memoria también
+    window.tarifasData[tipo] = filas;
+
+    await setDoc(doc(db,'tarifas',tipo), { filas, updatedAt: serverTimestamp() });
+    showToast('✓ Tarifas guardadas correctamente');
   } catch(e) {
+    console.error('saveTarifas error:', e);
     showToast('Error al guardar: '+e.message);
   }
 };
