@@ -176,275 +176,30 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400..800&family=DM+Sans:ital,opsz,wght@0,9..40,300..700&display=swap" rel="stylesheet">
 <script>
   // ── BREVO CONFIG (via Cloudflare Worker — sin API key en el código) ──
-  // ── CONFIG RESEND ─────────────────────────────────────────────
-  const _MAIL = {
-    workerUrl:  'https://espaifest-brevo.lucasyleodigital.workers.dev',
-    emailLaura: 'laurarmarin81@gmail.com',
-    emailFrom:  'info@espaifest.com',
-    nombreFrom: 'EspaiFest'
+  const _BREVO = {
+    workerUrl:   'https://espaifest-brevo.lucasyleodigital.workers.dev',
+    tplCliente:  1,   // ID plantilla Confirmacion-Cliente
+    tplLaura:    3,   // ID plantilla Aviso-Laura
+    emailLaura:  'laurarmarin81@gmail.com',
+    emailFrom:   'info@espaifest.com',
+    nombreFrom:  'EspaiFest'
   };
 
-  // ── ENVÍO VÍA WORKER (Resend) ─────────────────────────────────
-  async function resendSend(toEmail, subject, html) {
+  async function brevoSend(templateId, toEmail, toName, params) {
     try {
-      const res = await fetch(_MAIL.workerUrl, {
+      const res = await fetch(_BREVO.workerUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: toEmail, subject, html })
+        body: JSON.stringify({
+          templateId: templateId,
+          to: [{ email: toEmail, name: toName }],
+          sender: { email: _BREVO.emailFrom, name: _BREVO.nombreFrom },
+          params: params
+        })
       });
-      if (!res.ok) { console.warn('Resend Worker error:', await res.text()); return false; }
+      if(!res.ok) { const e = await res.json(); console.warn('Brevo Worker error:', e); return false; }
       return true;
-    } catch(err) { console.warn('Resend fetch error:', err); return false; }
-  }
-
-  // ── EMAIL CLIENTE ─────────────────────────────────────────────
-  function buildEmailCliente(p, lang) {
-    const isCA = lang === 'ca';
-    const t = {
-      asunto:      isCA ? `Sol·licitud de reserva rebuda — EspaiFest` : `Solicitud de reserva recibida — EspaiFest`,
-      saludo:      isCA ? `Hola, ${p.nombre}!` : `¡Hola, ${p.nombre}!`,
-      intro:       isCA ? `Hem rebut la teva sol·licitud de reserva a <strong>EspaiFest</strong>. Confirmarem la disponibilitat en menys de <strong>24 hores</strong> i ens posarem en contacte amb tu.` : `Hemos recibido tu solicitud de reserva en <strong>EspaiFest</strong>. Confirmaremos la disponibilidad en menos de <strong>24 horas</strong> y nos pondremos en contacto contigo.`,
-      tituloDatos: isCA ? `Detalls de la teva sol·licitud` : `Detalles de tu solicitud`,
-      fecha:       isCA ? `Data` : `Fecha`,
-      franja:      isCA ? `Franja horària` : `Franja horaria`,
-      evento:      isCA ? `Tipus d'esdeveniment` : `Tipo de evento`,
-      personas:    isCA ? `Assistents` : `Asistentes`,
-      horaExtra:   isCA ? `Hora extra` : `Hora extra`,
-      extras:      isCA ? `Extres` : `Extras`,
-      tituloPresu: isCA ? `Pressupost estimat` : `Presupuesto estimado`,
-      sala:        isCA ? `Sala` : `Sala`,
-      total:       isCA ? `TOTAL ESTIMAT` : `TOTAL ESTIMADO`,
-      senal:       isCA ? `Senyal a pagar (50%)` : `Señal a pagar (50%)`,
-      tituloPago:  isCA ? `Com pagar la senyal` : `Cómo pagar la señal`,
-      pagoIntro:   isCA ? `Per confirmar la reserva, cal pagar la senyal del 50%. Pots fer-ho per:` : `Para confirmar la reserva, es necesario pagar la señal del 50%. Puedes hacerlo por:`,
-      bizumLabel:  isCA ? `Bizum` : `Bizum`,
-      bizumNum:    `674 379 709`,
-      transLabel:  isCA ? `Transferència bancària` : `Transferencia bancaria`,
-      ibanLabel:   `IBAN`,
-      titular:     isCA ? `Titular` : `Titular`,
-      concepto:    isCA ? `Concepte` : `Concepto`,
-      conceptoVal: isCA ? `${p.nombre} ${p.apellidos} - Reserva` : `${p.nombre} ${p.apellidos} - Reserva`,
-      pagoNota:    isCA ? `Un cop rebut el pagament, et confirmarem la reserva per email.` : `Una vez recibido el pago, confirmaremos la reserva por email.`,
-      contacto:    isCA ? `Contacte` : `Contacto`,
-      footer:      isCA ? `Gràcies per confiar en EspaiFest. Estem encantats de celebrar amb tu!` : `Gracias por confiar en EspaiFest. ¡Estamos encantados de celebrar contigo!`,
-      noReply:     isCA ? `Aquest correu és informatiu. Per a qualsevol consulta escriu a` : `Este correo es informativo. Para cualquier consulta escribe a`
-    };
-
-    const rowStyle = `style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #2a2a2a;font-size:14px;"`;
-    const labelStyle = `style="color:#888;font-weight:500;"`;
-    const valStyle = `style="color:#fff;font-weight:600;text-align:right;"`;
-
-    const extrasRow = p.extrasLista && p.extrasLista !== 'Ninguno' && p.extrasLista !== 'Cap'
-      ? `<div ${rowStyle}><span ${labelStyle}>${t.extras}</span><span ${valStyle}>${p.extrasLista}</span></div>` : '';
-    const horaExtRow = p.horaExtra && p.horaExtra !== 'Sin horas extra' && p.horaExtra !== 'Sense hores extra'
-      ? `<div ${rowStyle}><span ${labelStyle}>${t.horaExtra}</span><span ${valStyle}>${p.horaExtra} (${p.precioHoraExt})</span></div>` : '';
-    const extrasPresRow = p.precioExtras && p.precioExtras !== '—'
-      ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;"><span style="color:#888;">${t.extras}</span><span style="color:#fff;">${p.precioExtras}</span></div>` : '';
-    const horaExtPresRow = p.precioHoraExt && p.precioHoraExt !== '—'
-      ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;"><span style="color:#888;">${t.horaExtra}</span><span style="color:#fff;">${p.precioHoraExt}</span></div>` : '';
-
-    return {
-      subject: t.asunto,
-      html: `<!DOCTYPE html><html lang="${lang}"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${t.asunto}</title></head>
-<body style="margin:0;padding:0;background:#0d0f14;font-family:'Helvetica Neue',Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#0d0f14;padding:32px 16px;">
-<tr><td align="center">
-<table width="100%" style="max-width:560px;background:#141720;border-radius:16px;overflow:hidden;border:1px solid #1e2130;">
-
-  <!-- HEADER -->
-  <tr><td style="background:linear-gradient(135deg,#1a1d28,#0d0f14);padding:32px 32px 24px;text-align:center;border-bottom:1px solid #1e2130;">
-    <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest" width="140" style="display:block;margin:0 auto 16px;">
-    <div style="display:inline-block;background:rgba(229,115,32,0.12);border:1px solid rgba(229,115,32,0.3);border-radius:20px;padding:5px 16px;font-size:12px;font-weight:700;color:#e57320;letter-spacing:0.1em;text-transform:uppercase;">${isCA ? 'Sol·licitud rebuda' : 'Solicitud recibida'}</div>
-  </td></tr>
-
-  <!-- SALUDO -->
-  <tr><td style="padding:28px 32px 0;">
-    <p style="margin:0 0 12px;font-size:22px;font-weight:700;color:#fff;">${t.saludo}</p>
-    <p style="margin:0;font-size:15px;line-height:1.7;color:#aaa;">${t.intro}</p>
-  </td></tr>
-
-  <!-- DATOS RESERVA -->
-  <tr><td style="padding:24px 32px 0;">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#e57320;margin-bottom:12px;">${t.tituloDatos}</div>
-    <div style="background:#0d0f14;border-radius:12px;padding:16px 20px;border:1px solid #1e2130;">
-      <div ${rowStyle}><span ${labelStyle}>${t.fecha}</span><span ${valStyle}>${p.fechaReserva}</span></div>
-      <div ${rowStyle}><span ${labelStyle}>${t.franja}</span><span ${valStyle}>${p.horario}</span></div>
-      <div ${rowStyle}><span ${labelStyle}>${t.evento}</span><span ${valStyle}>${p.evento}</span></div>
-      <div ${rowStyle}><span ${labelStyle}>${t.personas}</span><span ${valStyle}>${p.personas}</span></div>
-      ${horaExtRow}
-      ${extrasRow}
-    </div>
-  </td></tr>
-
-  <!-- PRESUPUESTO -->
-  <tr><td style="padding:20px 32px 0;">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#e57320;margin-bottom:12px;">${t.tituloPresu}</div>
-    <div style="background:#0d0f14;border-radius:12px;padding:16px 20px;border:1px solid #1e2130;">
-      <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;"><span style="color:#888;">${t.sala}</span><span style="color:#fff;">${p.precioSala}</span></div>
-      ${horaExtPresRow}
-      ${extrasPresRow}
-      <div style="display:flex;justify-content:space-between;padding:12px 0 6px;border-top:1px solid #2a2a2a;margin-top:6px;">
-        <span style="font-size:13px;font-weight:700;color:#fff;">${t.total}</span>
-        <span style="font-size:20px;font-weight:800;color:#e57320;">${p.totalEstimado}</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:6px 0 0;">
-        <span style="font-size:13px;color:#888;">${t.senal}</span>
-        <span style="font-size:16px;font-weight:700;color:#4ade80;">${p.senal50}</span>
-      </div>
-    </div>
-  </td></tr>
-
-  <!-- PAGO -->
-  <tr><td style="padding:20px 32px 0;">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#e57320;margin-bottom:12px;">${t.tituloPago}</div>
-    <div style="background:#0d0f14;border-radius:12px;padding:20px;border:1px solid #1e2130;">
-      <p style="margin:0 0 16px;font-size:14px;color:#aaa;">${t.pagoIntro}</p>
-
-      <!-- Bizum -->
-      <div style="background:#141720;border-radius:10px;padding:14px 16px;margin-bottom:12px;border:1px solid #1e2130;">
-        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#888;margin-bottom:6px;">${t.bizumLabel}</div>
-        <div style="font-size:22px;font-weight:800;color:#4ade80;letter-spacing:0.05em;">${t.bizumNum}</div>
-        <div style="font-size:12px;color:#666;margin-top:4px;">Laura Ribó Marín</div>
-      </div>
-
-      <!-- Transferencia -->
-      <div style="background:#141720;border-radius:10px;padding:14px 16px;border:1px solid #1e2130;">
-        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#888;margin-bottom:10px;">${t.transLabel}</div>
-        <div style="font-size:12px;color:#aaa;margin-bottom:4px;"><span style="color:#666;">${t.titular}:</span> <strong style="color:#fff;">Laura Ribó Marín</strong></div>
-        <div style="font-size:12px;color:#aaa;margin-bottom:4px;"><span style="color:#666;">${t.ibanLabel}:</span> <strong style="color:#fff;font-family:monospace;letter-spacing:0.05em;">ES91 9008 1270 6130 0087 8569 2</strong></div>
-        <div style="font-size:12px;color:#aaa;"><span style="color:#666;">${t.concepto}:</span> <strong style="color:#e57320;">${t.conceptoVal}</strong></div>
-      </div>
-
-      <p style="margin:14px 0 0;font-size:13px;color:#666;font-style:italic;">${t.pagoNota}</p>
-    </div>
-  </td></tr>
-
-  <!-- CONTACTO -->
-  <tr><td style="padding:20px 32px 0;">
-    <div style="background:rgba(229,115,32,0.06);border:1px solid rgba(229,115,32,0.2);border-radius:12px;padding:16px 20px;">
-      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#e57320;margin-bottom:8px;">${t.contacto}</div>
-      <div style="font-size:13px;color:#aaa;line-height:1.8;">
-        📞 <a href="tel:+34674379709" style="color:#e57320;text-decoration:none;">674 379 709</a><br>
-        ✉️ <a href="mailto:info@espaifest.com" style="color:#e57320;text-decoration:none;">info@espaifest.com</a><br>
-        📍 C/ Francesc Macià, 37 · 08760 Martorell
-      </div>
-    </div>
-  </td></tr>
-
-  <!-- FOOTER -->
-  <tr><td style="padding:28px 32px 32px;text-align:center;border-top:1px solid #1e2130;margin-top:24px;">
-    <p style="margin:0 0 8px;font-size:14px;color:#aaa;">${t.footer}</p>
-    <p style="margin:0;font-size:12px;color:#555;">${t.noReply} <a href="mailto:info@espaifest.com" style="color:#666;">info@espaifest.com</a></p>
-    <p style="margin:16px 0 0;font-size:11px;color:#444;">© ${new Date().getFullYear()} EspaiFest · Martorell</p>
-  </td></tr>
-
-</table>
-</td></tr>
-</table>
-</body></html>`
-    };
-  }
-
-  // ── EMAIL LAURA (aviso interno) ───────────────────────────────
-  function buildEmailLaura(p) {
-    const rowStyle = `style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #2a2a2a;font-size:14px;"`;
-    const labelStyle = `style="color:#888;font-weight:500;min-width:140px;"`;
-    const valStyle = `style="color:#fff;font-weight:600;text-align:right;"`;
-
-    const extrasRow = p.extrasLista && p.extrasLista !== 'Ninguno'
-      ? `<div ${rowStyle}><span ${labelStyle}>Extres</span><span ${valStyle}>${p.extrasLista}</span></div>` : '';
-    const horaExtRow = p.horaExtra && p.horaExtra !== 'Sin horas extra'
-      ? `<div ${rowStyle}><span ${labelStyle}>Hora extra</span><span ${valStyle}>${p.horaExtra}</span></div>` : '';
-    const notesRow = p.comentarios && p.comentarios !== 'Ninguno'
-      ? `<div style="padding:10px 0;font-size:13px;color:#aaa;border-bottom:1px solid #2a2a2a;"><span style="color:#666;display:block;margin-bottom:4px;">Notes:</span>${p.comentarios}</div>` : '';
-
-    return {
-      subject: `🎉 Nova reserva — ${p.clienteNombre} · ${p.fechaReserva}`,
-      html: `<!DOCTYPE html><html lang="ca"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nova reserva EspaiFest</title></head>
-<body style="margin:0;padding:0;background:#0d0f14;font-family:'Helvetica Neue',Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#0d0f14;padding:32px 16px;">
-<tr><td align="center">
-<table width="100%" style="max-width:580px;background:#141720;border-radius:16px;overflow:hidden;border:1px solid #1e2130;">
-
-  <!-- HEADER -->
-  <tr><td style="background:linear-gradient(135deg,#0f1a12,#0d0f14);padding:28px 32px;border-bottom:1px solid #1e2130;">
-    <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest" width="120" style="display:block;margin:0 auto 14px;">
-    <div style="text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#4ade80;">Nova sol·licitud de reserva</div>
-  </td></tr>
-
-  <!-- ALERT BADGE -->
-  <tr><td style="padding:20px 32px 0;">
-    <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:14px 20px;text-align:center;">
-      <div style="font-size:13px;color:#4ade80;font-weight:600;">📅 ${p.fechaReserva} · ${p.horario}</div>
-      <div style="font-size:16px;font-weight:800;color:#fff;margin-top:4px;">${p.evento} · ${p.personas}</div>
-    </div>
-  </td></tr>
-
-  <!-- DADES CLIENT -->
-  <tr><td style="padding:20px 32px 0;">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#4ade80;margin-bottom:12px;">Dades del client</div>
-    <div style="background:#0d0f14;border-radius:12px;padding:16px 20px;border:1px solid #1e2130;">
-      <div ${rowStyle}><span ${labelStyle}>Nom complet</span><span ${valStyle}>${p.clienteNombre}</span></div>
-      <div ${rowStyle}><span ${labelStyle}>DNI / NIE</span><span ${valStyle}>${p.clienteDni}</span></div>
-      <div ${rowStyle}><span ${labelStyle}>Data naixement</span><span ${valStyle}>${p.clienteFnac}</span></div>
-      <div ${rowStyle}><span ${labelStyle}>Adreça</span><span ${valStyle}>${p.clienteDir}</span></div>
-      <div ${rowStyle}><span ${labelStyle}>Telèfon</span><span ${valStyle}><a href="tel:${p.clienteTel}" style="color:#e57320;text-decoration:none;">${p.clienteTel}</a></span></div>
-      <div style="display:flex;justify-content:space-between;padding:7px 0;font-size:14px;"><span ${labelStyle}>Email</span><span style="color:#e57320;font-weight:600;text-align:right;"><a href="mailto:${p.clienteEmail}" style="color:#e57320;text-decoration:none;">${p.clienteEmail}</a></span></div>
-    </div>
-  </td></tr>
-
-  <!-- DETALLS RESERVA -->
-  <tr><td style="padding:20px 32px 0;">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#4ade80;margin-bottom:12px;">Detalls de la reserva</div>
-    <div style="background:#0d0f14;border-radius:12px;padding:16px 20px;border:1px solid #1e2130;">
-      <div ${rowStyle}><span ${labelStyle}>Data</span><span ${valStyle}>${p.fechaReserva}</span></div>
-      <div ${rowStyle}><span ${labelStyle}>Franja horària</span><span ${valStyle}>${p.horario}</span></div>
-      <div ${rowStyle}><span ${labelStyle}>Tipus d'event</span><span ${valStyle}>${p.evento}</span></div>
-      <div ${rowStyle}><span ${labelStyle}>Assistents</span><span ${valStyle}>${p.personas}</span></div>
-      ${horaExtRow}
-      ${extrasRow}
-      ${notesRow}
-    </div>
-  </td></tr>
-
-  <!-- ECONÒMIC -->
-  <tr><td style="padding:20px 32px 0;">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#4ade80;margin-bottom:12px;">Resum econòmic</div>
-    <div style="background:#0d0f14;border-radius:12px;padding:16px 20px;border:1px solid #1e2130;">
-      <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;"><span style="color:#888;">Sala</span><span style="color:#fff;">${p.precioSala}</span></div>
-      ${p.precioHoraExt && p.precioHoraExt !== '—' ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;"><span style="color:#888;">Hora extra</span><span style="color:#fff;">${p.precioHoraExt}</span></div>` : ''}
-      ${p.precioExtras && p.precioExtras !== '—' ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;"><span style="color:#888;">Extres</span><span style="color:#fff;">${p.precioExtras}</span></div>` : ''}
-      <div style="display:flex;justify-content:space-between;padding:12px 0 6px;border-top:1px solid #2a2a2a;margin-top:6px;">
-        <span style="font-size:14px;font-weight:700;color:#fff;">TOTAL ESTIMAT</span>
-        <span style="font-size:22px;font-weight:800;color:#e57320;">${p.totalEstimado}</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:6px 0 0;">
-        <span style="font-size:13px;color:#888;">Senyal (50%)</span>
-        <span style="font-size:17px;font-weight:700;color:#4ade80;">${p.senal50}</span>
-      </div>
-    </div>
-  </td></tr>
-
-  <!-- CONCEPTE TRANSFERÈNCIA -->
-  <tr><td style="padding:16px 32px 0;">
-    <div style="background:rgba(229,115,32,0.06);border:1px solid rgba(229,115,32,0.2);border-radius:12px;padding:14px 20px;">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#e57320;margin-bottom:8px;">Concepte esperat a la transferència</div>
-      <div style="font-size:16px;font-weight:700;color:#fff;">${p.clienteNombre} - Reserva</div>
-      <div style="font-size:12px;color:#666;margin-top:4px;">Bizum o transferència al 674 379 709 / IBAN ES91 9008 1270 6130 0087 8569 2</div>
-    </div>
-  </td></tr>
-
-  <!-- FOOTER -->
-  <tr><td style="padding:24px 32px 28px;text-align:center;border-top:1px solid #1e2130;margin-top:20px;">
-    <p style="margin:0;font-size:12px;color:#555;">EspaiFest · Panel de gestió: reservify</p>
-    <p style="margin:6px 0 0;font-size:11px;color:#444;">© ${new Date().getFullYear()} EspaiFest · Martorell</p>
-  </td></tr>
-
-</table>
-</td></tr>
-</table>
-</body></html>`
-    };
+    } catch(err) { console.warn('Brevo Worker fetch error:', err); return false; }
   }
 </script>
 <style>
@@ -2905,12 +2660,9 @@ async function enviarReserva() {
   const hor    = horRaw?.includes('|') ? horRaw.split('|')[0] : horRaw || '';
   const no   = document.getElementById('r-no')?.value.trim();
 
-  console.log('enviarReserva campos:', {n,ap,dni,dir,loc,cp,t,e,tipo,pers,f,hor});
   if(!n||!ap||!dni||!dir||!loc||!cp||!t||!e||!tipo||!pers||!f||!hor){
-    console.warn('Campo vacío detectado — abortando');
     showToast('Rellena todos los campos obligatorios'); return;
   }
-  console.log('Validación OK — procediendo a guardar');
 
   const servicioLabel = _TIPO_MAP[tipo] || tipo;
 
@@ -2941,11 +2693,51 @@ async function enviarReserva() {
     ? extrasNombres.join('\n    ')
     : 'Ninguno';
 
+  // ── Construir parámetros email CLIENTE ───────────────────────
+  const fechaHoy = new Date().toLocaleDateString('es-ES');
+  const paramsCliente = {
+    to_email:      e,
+    to_name:       `${n} ${ap}`,
+    fecha_reserva: fmtFecha(f),
+    horario:       hor,
+    evento:        servicioLabel,
+    personas:      pers,
+    hora_extra:    horaExtStr,
+    extras_lista:  extObjs.length ? extrasNombres.join(', ') : 'Ninguno',
+    precio_sala:   fmtEur(precioSala),
+    precio_horaext: horaExtPrecio > 0 ? fmtEur(horaExtPrecio) : '—',
+    precio_extras: extrasPrecio > 0 ? fmtEur(extrasPrecio) : '—',
+    total_estimado: fmtEur(totalEstimado),
+    senal_50:      fmtEur(senalPago),
+    comentarios:   no || 'Ninguno',
+    fecha_envio:   fechaHoy
+  };
+
+  // ── Construir parámetros email LAURA ─────────────────────────
+  const paramsLaura = {
+    to_email:      _BREVO.emailLaura,
+    cliente_nombre:`${n} ${ap}`,
+    cliente_dni:   dni,
+    cliente_fnac:  fnac ? fmtFecha(fnac) : '—',
+    cliente_dir:   `${dir}, ${cp} ${loc}`,
+    cliente_tel:   t,
+    cliente_email: e,
+    fecha_reserva: fmtFecha(f),
+    horario:       hor,
+    evento:        servicioLabel,
+    personas:      pers,
+    hora_extra:    horaExtStr,
+    extras_lista:  extObjs.length ? extrasNombres.join(', ') : 'Ninguno',
+    precio_sala:   fmtEur(precioSala),
+    total_estimado: fmtEur(totalEstimado),
+    senal_50:      fmtEur(senalPago),
+    comentarios:   no || 'Ninguno',
+    fecha_envio:   fechaHoy
+  };
+
   // ── Guardar en Firestore ─────────────────────────────────────
-  console.log('_fsDB disponible:', !!window._fsDB, '| _fsAddDoc:', !!window._fsAddDoc);
   if(window._fsDB && window._fsAddDoc) {
     try {
-      console.log('Intentando guardar en Firestore...');
       await window._fsAddDoc(window._fsCollection(window._fsDB, 'reservas'), {
         nombre:     `${n} ${ap}`, apellidos: ap, dni, fechaNac: fnac,
         direccion:  dir, localidad: loc, cp, telefono: t, email: e,
@@ -2957,54 +2749,14 @@ async function enviarReserva() {
         notas:      no || '', origen: 'web', estado: 'Pendiente',
         createdAt:  window._fsServerTimestamp()
       });
-      console.log('✅ Guardado en Firestore OK');
-    } catch(err) { console.error('❌ Firestore error:', err.code, err.message); }
-  } else {
-    console.warn('⚠️ Firebase no disponible — no se guarda');
+    } catch(err) { console.warn('Firestore error:', err.message); }
   }
 
-  // ── Construir y enviar email CLIENTE ─────────────────────────
-  const lang = document.documentElement.lang || 'es';
-  const emailClienteData = buildEmailCliente({
-    nombre:        n,
-    apellidos:     ap,
-    fechaReserva:  fmtFecha(f),
-    horario:       hor,
-    evento:        servicioLabel,
-    personas:      pers,
-    horaExtra:     horaExtStr,
-    extrasLista:   extObjs.length ? extrasNombres.join(', ') : (lang==='ca'?'Cap':'Ninguno'),
-    precioSala:    fmtEur(precioSala),
-    precioHoraExt: horaExtPrecio > 0 ? fmtEur(horaExtPrecio) : '—',
-    precioExtras:  extrasPrecio > 0 ? fmtEur(extrasPrecio) : '—',
-    totalEstimado: fmtEur(totalEstimado),
-    senal50:       fmtEur(senalPago),
-    comentarios:   no || (lang==='ca'?'Cap':'Ninguno')
-  }, lang);
-  const okCliente = await resendSend(e, emailClienteData.subject, emailClienteData.html);
+  // ── Email al CLIENTE ─────────────────────────────────────────
+  const okCliente = await brevoSend(_BREVO.tplCliente, e, `${n} ${ap}`, paramsCliente);
 
-  // ── Construir y enviar email LAURA ────────────────────────────
-  const emailLauraData = buildEmailLaura({
-    clienteNombre: `${n} ${ap}`,
-    clienteDni:    dni,
-    clienteFnac:   fnac ? fmtFecha(fnac) : '—',
-    clienteDir:    `${dir}, ${cp} ${loc}`,
-    clienteTel:    t,
-    clienteEmail:  e,
-    fechaReserva:  fmtFecha(f),
-    horario:       hor,
-    evento:        servicioLabel,
-    personas:      pers,
-    horaExtra:     horaExtStr,
-    extrasLista:   extObjs.length ? extrasNombres.join(', ') : 'Ninguno',
-    precioSala:    fmtEur(precioSala),
-    precioHoraExt: horaExtPrecio > 0 ? fmtEur(horaExtPrecio) : '—',
-    precioExtras:  extrasPrecio > 0 ? fmtEur(extrasPrecio) : '—',
-    totalEstimado: fmtEur(totalEstimado),
-    senal50:       fmtEur(senalPago),
-    comentarios:   no || 'Ninguno'
-  });
-  await resendSend(_MAIL.emailLaura, emailLauraData.subject, emailLauraData.html);
+  // ── Email a LAURA ─────────────────────────────────────────────
+  const okLaura = await brevoSend(_BREVO.tplLaura, _BREVO.emailLaura, 'Laura EspaiFest', paramsLaura);
 
   // ── WhatsApp a LAURA ─────────────────────────────────────────
   const linDni   = `\n🪪 DNI: ${dni}${fnac?' · Nac: '+fmtFecha(fnac):''}`;
@@ -3013,17 +2765,17 @@ async function enviarReserva() {
   const linHrExt = horaExtLabel !== 'ninguna' ? `\n⏱️ Hora extra: ${horaExtStr} (${fmtEur(horaExtPrecio)})` : '';
   const linNota  = no ? `\n📝 ${no}` : '';
   const msg = encodeURIComponent(
-    `🎉 NOVA RESERVA — EspaiFest\n\n` +
+    `🎉 NUEVA RESERVA — EspaiFest\n\n` +
     `👤 ${n} ${ap}${linDni}${linDir}\n` +
     `📞 ${t} · ✉️ ${e}\n` +
     `🎊 ${servicioLabel} · ${pers}\n` +
-    `📅 ${fmtFecha(f)} · 🕐 ${hor}` +
+    `📅 ${fmtFecha(f)} · 🕐 ${hor.replace(/ — \d+€/,'')}` +
     `${linHrExt}${linExt}${linNota}\n\n` +
-    `💶 Total estimat: ${fmtEur(totalEstimado)}\n` +
-    `💳 Senyal 50%: ${fmtEur(senalPago)}`
+    `💶 Total estimado: ${fmtEur(totalEstimado)}\n` +
+    `💳 Señal 50%: ${fmtEur(senalPago)}`
   );
   window.open(`https://api.whatsapp.com/send?phone=34674379709&text=${msg}`,'_blank','noopener');
-  showToast(okCliente ? '✓ Email enviat · Obrint WhatsApp...' : 'WhatsApp obert · Comprova el teu email');
+  showToast(okCliente ? '✓ Email enviado · Abriendo WhatsApp...' : 'WhatsApp abierto · Revisa tu email');
 }
 
 // ── COPY BIZUM ────────────────────────────────────────────────
