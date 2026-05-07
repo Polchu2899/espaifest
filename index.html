@@ -363,8 +363,8 @@
   --s2:   oklch(17% 0.02 260);
   --s3:   oklch(22% 0.02 260);
   --tx:   oklch(96% 0.005 260);
-  --tx2:  oklch(62% 0.01 260);
-  --tx3:  oklch(38% 0.01 260);
+  --tx2:  oklch(78% 0.01 260);
+  --tx3:  oklch(58% 0.01 260);
   --bd:   oklch(28% 0.02 260);
   --glass:      oklch(100% 0 0 / 0.055);
   --glass-b:    oklch(100% 0 0 / 0.10);
@@ -572,7 +572,7 @@ section{padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem);}
 .cal-btn:hover{border-color:var(--co);color:var(--co);}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
 .cal-day-hdr{padding:10px;text-align:center;font-size:.72rem;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--bd);}
-.cal-day{padding:10px 8px;text-align:center;font-size:.88rem;cursor:pointer;transition:all .15s;border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);min-height:52px;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.cal-day{padding:10px 8px;text-align:center;font-size:.88rem;cursor:pointer;transition:all .15s;border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);min-height:52px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--tx);}
 .cal-day:nth-child(7n){border-right:none;}
 .cal-day:hover:not(.empty){background:var(--s2);}
 .cal-day.today{color:var(--co);font-weight:700;}
