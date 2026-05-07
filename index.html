@@ -416,12 +416,14 @@ nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%
 .n-logo img {
   height: 160px;
   width: auto;
-  transition: transform .3s;
+  transition: transform .3s, filter .3s;
   content: url('https://i.ibb.co/7J43XDW2/Dise-o-sin-t-tulo.png');
+  filter: invert(1);
 }
 
 [data-theme="light"] .n-logo img {
   content: url('https://i.ibb.co/7J43XDW2/Dise-o-sin-t-tulo.png');
+  filter: none;
 }
 
 .n-logo img:hover{transform:scale(1.04);}
@@ -963,7 +965,8 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   display:flex;align-items:center;justify-content:space-between;
   padding:20px 20px 16px;border-bottom:1px solid var(--bd);
 }
-.mob-drawer-logo img{height:36px;width:auto;}
+.mob-drawer-logo img{height:36px;width:auto;filter:invert(1);}
+[data-theme="light"] .mob-drawer-logo img{filter:none;}
 .mob-close{
   width:36px;height:36px;border-radius:8px;border:1px solid var(--bd);
   background:var(--s2);color:var(--tx2);cursor:pointer;
