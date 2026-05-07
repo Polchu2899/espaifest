@@ -431,7 +431,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="ni" onclick="showPanel('migracion',this)"><span class="ni-ico"><svg><use href="#i-import"/></svg></span>Migración histórica<span class="stag">XLS</span></div>
       <div class="ng" style="margin-top:8px;opacity:.35">Próximamente</div>
       <div class="ni" onclick="showPanel('informes',this)"><span class="ni-ico"><svg><use href="#i-trending"/></svg></span>Informes</div>
-      <div class="ni" onclick="showPanel('gestoria',this)"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Gestoría</div>
     </nav>
     <div class="sfooter">
       <div class="ucard">
@@ -638,34 +637,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </div>
       </div>
 
-      </div>
-
-      <!-- PANEL GESTORÍA -->
-      <div class="panel" id="panel-gestoria">
-        <div class="card" style="max-width:680px;">
-          <div class="chead"><div><div class="ctitle">Exportar para el gestor</div><div class="csub">Selecciona el período y la información a incluir</div></div></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
-            <div><label class="ll">Desde</label><input type="date" class="li" id="gest-desde"></div>
-            <div><label class="ll">Hasta</label><input type="date" class="li" id="gest-hasta"></div>
-          </div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
-            <button class="btn bg sm" onclick="gestPeriodo('t1')">T1 (Ene–Mar)</button>
-            <button class="btn bg sm" onclick="gestPeriodo('t2')">T2 (Abr–Jun)</button>
-            <button class="btn bg sm" onclick="gestPeriodo('t3')">T3 (Jul–Sep)</button>
-            <button class="btn bg sm" onclick="gestPeriodo('t4')">T4 (Oct–Dic)</button>
-            <button class="btn bg sm" onclick="gestPeriodo('mes')">Este mes</button>
-            <button class="btn bg sm" onclick="gestPeriodo('ano')">Este año</button>
-          </div>
-          <div style="margin-bottom:24px;">
-            <div class="ll" style="margin-bottom:10px;">Información a exportar</div>
-            <div style="display:flex;flex-direction:column;gap:10px;">
-              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;"><input type="checkbox" id="gest-ingresos" checked style="width:16px;height:16px;accent-color:var(--teal);"><div><div style="font-size:13px;font-weight:600;">Ingresos</div><div style="font-size:12px;color:var(--t2);">Fecha, servicio, importe, señal cobrada, estado de pago</div></div></label>
-              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;"><input type="checkbox" id="gest-clientes" checked style="width:16px;height:16px;accent-color:var(--teal);"><div><div style="font-size:13px;font-weight:600;">Clientes</div><div style="font-size:12px;color:var(--t2);">Nombre completo, DNI, dirección fiscal</div></div></label>
-            </div>
-          </div>
-          <div id="gest-preview" style="background:var(--s3);border-radius:var(--rs);padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--t2);display:none;"><span id="gest-preview-txt"></span></div>
-          <button class="btn bp" style="width:100%;padding:14px;font-size:15px;font-weight:700;" onclick="exportarGestoria()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;vertical-align:middle"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar Excel</button>
-        </div>
       </div>
 
       <!-- RECORDATORIOS WHATSAPP -->
@@ -2173,7 +2144,7 @@ function updateDashboard() {
 }
 
 // ── UTILS ─────────────────────────────────────────────────────
-const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],promociones:['Promociones'],fidelizacion:['Fidelización'],recordatorios:['Recordatorios WhatsApp'],configuracion:['Configuración'],migracion:['Migración histórica'],informes:['Informes'],gestoria:['Gestoría — Exportación']};
+const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],promociones:['Promociones'],fidelizacion:['Fidelización'],recordatorios:['Recordatorios WhatsApp'],configuracion:['Configuración'],migracion:['Migración histórica'],informes:['Informes']};
 
 window.showPanel = (id, el) => {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -3805,117 +3776,6 @@ window.recEnviar = function(id, tel) {
 };
 
 // Login con Enter
-
-// ── GESTORÍA ──────────────────────────────────────────────────
-window.gestPeriodo = (tipo) => {
-  const now = new Date();
-  const y = now.getFullYear();
-  let desde, hasta;
-  if (tipo === 't1') { desde = `${y}-01-01`; hasta = `${y}-03-31`; }
-  else if (tipo === 't2') { desde = `${y}-04-01`; hasta = `${y}-06-30`; }
-  else if (tipo === 't3') { desde = `${y}-07-01`; hasta = `${y}-09-30`; }
-  else if (tipo === 't4') { desde = `${y}-10-01`; hasta = `${y}-12-31`; }
-  else if (tipo === 'mes') {
-    const m = String(now.getMonth()+1).padStart(2,'0');
-    const ult = new Date(y, now.getMonth()+1, 0).getDate();
-    desde = `${y}-${m}-01`; hasta = `${y}-${m}-${ult}`;
-  } else {
-    desde = `${y}-01-01`; hasta = `${y}-12-31`;
-  }
-  document.getElementById('gest-desde').value = desde;
-  document.getElementById('gest-hasta').value = hasta;
-  gestActualizarPreview();
-};
-
-function gestActualizarPreview() {
-  const desde = document.getElementById('gest-desde').value;
-  const hasta = document.getElementById('gest-hasta').value;
-  if (!desde || !hasta) return;
-  const reservasFiltradas = allReservas.filter(r => r.fecha >= desde && r.fecha <= hasta && (r.estado||'').toLowerCase() !== 'cancelada');
-  const total = reservasFiltradas.reduce((s,r) => s + (parseFloat(r.importe)||0), 0);
-  const prev = document.getElementById('gest-preview');
-  const txt  = document.getElementById('gest-preview-txt');
-  prev.style.display = 'block';
-  txt.innerHTML = `<strong style="color:var(--tx)">${reservasFiltradas.length} reservas</strong> en el período seleccionado &nbsp;·&nbsp; Total: <strong style="color:var(--teal)">${total.toLocaleString('es-ES',{style:'currency',currency:'EUR'})}</strong>`;
-}
-
-window.exportarGestoria = async () => {
-  const desde = document.getElementById('gest-desde').value;
-  const hasta = document.getElementById('gest-hasta').value;
-  const incIngresos = document.getElementById('gest-ingresos').checked;
-  const incClientes = document.getElementById('gest-clientes').checked;
-
-  if (!desde || !hasta) { showToast('Selecciona el período primero'); return; }
-  if (!incIngresos && !incClientes) { showToast('Marca al menos una opción'); return; }
-
-  const reservasFiltradas = allReservas.filter(r =>
-    r.fecha >= desde && r.fecha <= hasta &&
-    (r.estado||'').toLowerCase() !== 'cancelada'
-  );
-
-  if (!reservasFiltradas.length) { showToast('No hay reservas en ese período'); return; }
-
-  // Cargar SheetJS dinámicamente
-  if (!window.XLSX) {
-    await new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-      s.onload = res; s.onerror = rej;
-      document.head.appendChild(s);
-    });
-  }
-
-  const wb = window.XLSX.utils.book_new();
-
-  if (incIngresos) {
-    const rows = [['Fecha', 'Servicio', 'Personas', 'Importe (€)', 'Señal cobrada (€)', 'Estado pago', 'Estado reserva']];
-    reservasFiltradas.forEach(r => {
-      rows.push([
-        r.fecha || '—',
-        r.servicio || '—',
-        r.personas || '—',
-        parseFloat(r.importe) || 0,
-        parseFloat(r.senal) || 0,
-        r.estadoPago || 'Pendiente',
-        r.estado || '—'
-      ]);
-    });
-    // Fila de totales
-    const totalImp  = reservasFiltradas.reduce((s,r) => s+(parseFloat(r.importe)||0), 0);
-    const totalSen  = reservasFiltradas.reduce((s,r) => s+(parseFloat(r.senal)||0), 0);
-    rows.push(['', '', 'TOTAL', totalImp, totalSen, '', '']);
-
-    const ws = window.XLSX.utils.aoa_to_sheet(rows);
-    ws['!cols'] = [{wch:12},{wch:22},{wch:10},{wch:14},{wch:18},{wch:16},{wch:16}];
-    window.XLSX.utils.book_append_sheet(wb, ws, 'Ingresos');
-  }
-
-  if (incClientes) {
-    // Clientes únicos del período (deduplicados por DNI)
-    const vistos = new Set();
-    const clientesRows = [['Nombre completo', 'DNI / NIE', 'Dirección']];
-    reservasFiltradas.forEach(r => {
-      const dni = (r.dni || '').trim();
-      if (dni && vistos.has(dni)) return;
-      if (dni) vistos.add(dni);
-      const dir = [r.direccion, r.cp, r.localidad].filter(Boolean).join(', ') || r.direccion || '—';
-      clientesRows.push([r.nombre || '—', dni || '—', dir]);
-    });
-    const wsCli = window.XLSX.utils.aoa_to_sheet(clientesRows);
-    wsCli['!cols'] = [{wch:28},{wch:14},{wch:40}];
-    window.XLSX.utils.book_append_sheet(wb, wsCli, 'Clientes');
-  }
-
-  const nombreArchivo = `EspaiFest_Gestoria_${desde}_${hasta}.xlsx`;
-  window.XLSX.writeFile(wb, nombreArchivo);
-  showToast('Excel descargado correctamente');
-};
-
-// Actualizar preview al cambiar fechas manualmente
-document.addEventListener('change', e => {
-  if (e.target.id === 'gest-desde' || e.target.id === 'gest-hasta') gestActualizarPreview();
-});
-
 document.getElementById('login-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
 </script>
 </body>
