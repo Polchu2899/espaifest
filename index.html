@@ -255,7 +255,6 @@
   <tr><td style="background:linear-gradient(135deg,#1a1d28,#0d0f14);padding:32px 32px 24px;text-align:center;border-bottom:1px solid #1e2130;">
     <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest" width="140" style="display:block;margin:0 auto 16px;">
     <div style="display:inline-block;background:rgba(229,115,32,0.12);border:1px solid rgba(229,115,32,0.3);border-radius:20px;padding:5px 16px;font-size:12px;font-weight:700;color:#e57320;letter-spacing:0.1em;text-transform:uppercase;">${isCA ? 'Sol·licitud rebuda' : 'Solicitud recibida'}</div>
-    ${p.numReserva && p.numReserva !== '—' ? `<div style="margin-top:10px;font-size:13px;color:#666;">${isCA?'Núm. reserva':'Núm. reserva'}: <strong style="color:#aaa;font-family:monospace;">${p.numReserva}</strong></div>` : ''}
   </td></tr>
 
   <!-- SALUDO -->
@@ -284,9 +283,6 @@
       <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;"><span style="color:#888;">${t.sala}</span><span style="color:#fff;">${p.precioSala}</span></div>
       ${horaExtPresRow}
       ${extrasPresRow}
-      <div style="border-top:1px dashed #2a2a2a;margin:8px 0;"></div>
-      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;"><span style="color:#666;">${isCA?'Base imposable (BI)':'Base imponible (BI)'}</span><span style="color:#888;">${p.bi}</span></div>
-      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;"><span style="color:#666;">IVA 21%</span><span style="color:#888;">${p.iva21}</span></div>
       <div style="display:flex;justify-content:space-between;padding:12px 0 6px;border-top:1px solid #2a2a2a;margin-top:6px;">
         <span style="font-size:13px;font-weight:700;color:#fff;">${t.total}</span>
         <span style="font-size:20px;font-weight:800;color:#e57320;">${p.totalEstimado}</span>
@@ -374,7 +370,6 @@
   <tr><td style="background:linear-gradient(135deg,#0f1a12,#0d0f14);padding:28px 32px;border-bottom:1px solid #1e2130;">
     <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest" width="120" style="display:block;margin:0 auto 14px;">
     <div style="text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#4ade80;">Nova sol·licitud de reserva</div>
-    <div style="text-align:center;font-size:13px;font-family:monospace;font-weight:700;color:#4ade80;margin-top:6px;">${p.numReserva || '—'}</div>
   </td></tr>
 
   <!-- ALERT BADGE -->
@@ -419,9 +414,6 @@
       <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;"><span style="color:#888;">Sala</span><span style="color:#fff;">${p.precioSala}</span></div>
       ${p.precioHoraExt && p.precioHoraExt !== '—' ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;"><span style="color:#888;">Hora extra</span><span style="color:#fff;">${p.precioHoraExt}</span></div>` : ''}
       ${p.precioExtras && p.precioExtras !== '—' ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;"><span style="color:#888;">Extres</span><span style="color:#fff;">${p.precioExtras}</span></div>` : ''}
-      <div style="border-top:1px dashed #2a2a2a;margin:8px 0;"></div>
-      <div style="display:flex;justify-content:space-between;padding:3px 0;font-size:12px;"><span style="color:#666;">Base imposable (BI)</span><span style="color:#888;">${p.bi}</span></div>
-      <div style="display:flex;justify-content:space-between;padding:3px 0;font-size:12px;"><span style="color:#666;">IVA 21%</span><span style="color:#888;">${p.iva21}</span></div>
       <div style="display:flex;justify-content:space-between;padding:12px 0 6px;border-top:1px solid #2a2a2a;margin-top:6px;">
         <span style="font-size:14px;font-weight:700;color:#fff;">TOTAL ESTIMAT</span>
         <span style="font-size:22px;font-weight:800;color:#e57320;">${p.totalEstimado}</span>
@@ -2949,34 +2941,12 @@ async function enviarReserva() {
     ? extrasNombres.join('\n    ')
     : 'Ninguno';
 
-  // ── Calcular BI e IVA (precios con IVA incluido al 21%) ──────
-  const IVA_RATE   = 0.21;
-  const biTotal    = totalEstimado / (1 + IVA_RATE);
-  const ivaTotal   = totalEstimado - biTotal;
-  const biSenal    = senalPago / (1 + IVA_RATE);
-  const ivaSenal   = senalPago - biSenal;
-
-  // ── Generar número de reserva (transacción atómica) ──────────
-  let numReserva = null;
-  if(window._fsDB && window._fsRunTransaction) {
-    try {
-      const year = new Date().getFullYear();
-      const contRef = window._fsDoc(window._fsDB, 'config', `contador_${year}`);
-      numReserva = await window._fsRunTransaction(window._fsDB, async (tx) => {
-        const snap = await tx.get(contRef);
-        const actual = snap.exists() ? snap.data().ultimo : 0;
-        const nuevo  = actual + 1;
-        tx.set(contRef, { ultimo: nuevo, year });
-        return `EF-${year}-${String(nuevo).padStart(3,'0')}`;
-      });
-    } catch(err) { console.warn('Contador error:', err.message); }
-  }
-
   // ── Guardar en Firestore ─────────────────────────────────────
+  console.log('_fsDB disponible:', !!window._fsDB, '| _fsAddDoc:', !!window._fsAddDoc);
   if(window._fsDB && window._fsAddDoc) {
     try {
+      console.log('Intentando guardar en Firestore...');
       await window._fsAddDoc(window._fsCollection(window._fsDB, 'reservas'), {
-        numReserva,
         nombre:     `${n} ${ap}`, apellidos: ap, dni, fechaNac: fnac,
         direccion:  dir, localidad: loc, cp, telefono: t, email: e,
         servicio:   servicioLabel, personas: pers, fecha: f,
@@ -2984,18 +2954,18 @@ async function enviarReserva() {
         extras:     extObjs.length ? extrasNombres.join(', ') : 'Ninguno',
         metodoPago: 'Transferencia bancaria / Bizum',
         importe:    totalEstimado, senal: senalPago,
-        bi:         parseFloat(biTotal.toFixed(2)),
-        iva:        parseFloat(ivaTotal.toFixed(2)),
         notas:      no || '', origen: 'web', estado: 'Pendiente',
         createdAt:  window._fsServerTimestamp()
       });
+      console.log('✅ Guardado en Firestore OK');
     } catch(err) { console.error('❌ Firestore error:', err.code, err.message); }
+  } else {
+    console.warn('⚠️ Firebase no disponible — no se guarda');
   }
 
   // ── Construir y enviar email CLIENTE ─────────────────────────
   const lang = document.documentElement.lang || 'es';
   const emailClienteData = buildEmailCliente({
-    numReserva:    numReserva || '—',
     nombre:        n,
     apellidos:     ap,
     fechaReserva:  fmtFecha(f),
@@ -3007,8 +2977,6 @@ async function enviarReserva() {
     precioSala:    fmtEur(precioSala),
     precioHoraExt: horaExtPrecio > 0 ? fmtEur(horaExtPrecio) : '—',
     precioExtras:  extrasPrecio > 0 ? fmtEur(extrasPrecio) : '—',
-    bi:            fmtEur(biTotal),
-    iva21:         fmtEur(ivaTotal),
     totalEstimado: fmtEur(totalEstimado),
     senal50:       fmtEur(senalPago),
     comentarios:   no || (lang==='ca'?'Cap':'Ninguno')
@@ -3017,7 +2985,6 @@ async function enviarReserva() {
 
   // ── Construir y enviar email LAURA ────────────────────────────
   const emailLauraData = buildEmailLaura({
-    numReserva:    numReserva || '—',
     clienteNombre: `${n} ${ap}`,
     clienteDni:    dni,
     clienteFnac:   fnac ? fmtFecha(fnac) : '—',
@@ -3033,8 +3000,6 @@ async function enviarReserva() {
     precioSala:    fmtEur(precioSala),
     precioHoraExt: horaExtPrecio > 0 ? fmtEur(horaExtPrecio) : '—',
     precioExtras:  extrasPrecio > 0 ? fmtEur(extrasPrecio) : '—',
-    bi:            fmtEur(biTotal),
-    iva21:         fmtEur(ivaTotal),
     totalEstimado: fmtEur(totalEstimado),
     senal50:       fmtEur(senalPago),
     comentarios:   no || 'Ninguno'
@@ -3048,14 +3013,13 @@ async function enviarReserva() {
   const linHrExt = horaExtLabel !== 'ninguna' ? `\n⏱️ Hora extra: ${horaExtStr} (${fmtEur(horaExtPrecio)})` : '';
   const linNota  = no ? `\n📝 ${no}` : '';
   const msg = encodeURIComponent(
-    `🎉 NOVA RESERVA — EspaiFest\n` +
-    `🔖 ${numReserva || 'Sense núm.'}\n\n` +
+    `🎉 NOVA RESERVA — EspaiFest\n\n` +
     `👤 ${n} ${ap}${linDni}${linDir}\n` +
     `📞 ${t} · ✉️ ${e}\n` +
     `🎊 ${servicioLabel} · ${pers}\n` +
     `📅 ${fmtFecha(f)} · 🕐 ${hor}` +
     `${linHrExt}${linExt}${linNota}\n\n` +
-    `💶 Total: ${fmtEur(totalEstimado)} (BI: ${fmtEur(biTotal)} + IVA: ${fmtEur(ivaTotal)})\n` +
+    `💶 Total estimat: ${fmtEur(totalEstimado)}\n` +
     `💳 Senyal 50%: ${fmtEur(senalPago)}`
   );
   window.open(`https://api.whatsapp.com/send?phone=34674379709&text=${msg}`,'_blank','noopener');
@@ -3165,7 +3129,7 @@ function showToast(msg) {
 
 // ══ BLOG — FIREBASE ══════════════════════════════════════
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, getDocs, addDoc, doc, getDoc, setDoc, runTransaction, query, orderBy, where, limit, serverTimestamp, onSnapshot }
+import { getFirestore, collection, getDocs, addDoc, query, orderBy, where, limit, serverTimestamp, onSnapshot }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const _fbConfig = {
@@ -3188,10 +3152,6 @@ window._fsDB = _db;
 window._fsAddDoc = addDoc;
 window._fsCollection = collection;
 window._fsServerTimestamp = serverTimestamp;
-window._fsRunTransaction = runTransaction;
-window._fsDoc = doc;
-window._fsGetDoc = getDoc;
-window._fsSetDoc = setDoc;
 
 const CAT_LABELS = {
   'fiestas-infantiles': 'Fiestas infantiles',
