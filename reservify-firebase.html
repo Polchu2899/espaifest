@@ -1263,6 +1263,15 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="fg"><label class="fl">Señal cobrada (€)</label><input type="number" class="fi" id="r-senal" value="0"></div>
     <div class="fg"><label class="fl">Notas / Comentarios</label><textarea class="fi" id="r-notas" placeholder="Observaciones, necesidades especiales..." style="min-height:60px;resize:vertical;"></textarea></div>
 
+    <div class="fr2" style="margin-bottom:0">
+      <div class="fg"><label class="fl">Estado de la reserva</label>
+        <select class="fsi" id="r-estado">
+          <option value="Pendiente">Pendiente — espera confirmación</option>
+          <option value="Confirmada">Confirmada — bloquea la web ahora</option>
+        </select>
+      </div>
+    </div>
+
     <div class="mfoot">
       <button class="btn bg" onclick="closeModal('res')">Cancelar</button>
       <button class="btn bp" onclick="saveReserva()">Guardar reserva</button>
@@ -1907,6 +1916,75 @@ window.filterReservas = () => {
   renderReservas(filtered);
 };
 
+// ── FRANJAS + HELPERS DE CALENDARIO ──────────────────────────
+const FRANJAS_MANANA = ['10h–14h','11h–15h','10:00–14:00','11:00–15:00','Mañana (10:00-14:00)'];
+const FRANJAS_TARDE  = ['16:30h–20:30h','16:30–20:30','Tarde (16:30-20:30)'];
+const FRANJAS_NOCHE  = ['19:30h–23:30h','21:15h–01:30h','16:30h–01:30h'];
+const FRANJAS_DIA    = ['10h–20h','10:00–20:00','Todo el día'];
+
+function getHorario(r) {
+  if (r.horario && r.horario.trim()) return r.horario.trim();
+  if (r.notas) {
+    const linea = r.notas.split('\n').find(l => l.startsWith('Franja horaria:'));
+    if (linea) return linea.replace('Franja horaria:', '').trim();
+  }
+  return '';
+}
+function getTurno(horario) {
+  if (!horario) return null;
+  if (FRANJAS_MANANA.includes(horario)) return 'manana';
+  if (FRANJAS_TARDE.includes(horario))  return 'tarde';
+  return null;
+}
+
+function calcOcupacionCalendario(reservasConfirmadas) {
+  const porFecha = {};
+  for (const r of reservasConfirmadas) {
+    if (!r.fecha) continue;
+    if (!porFecha[r.fecha]) porFecha[r.fecha] = [];
+    porFecha[r.fecha].push(r);
+  }
+  const resultado = {};
+  for (const [fecha, reservas] of Object.entries(porFecha)) {
+    let mananaOcupada = false, tardeOcupada = false, nocheOcupada = false, diaOcupado = false;
+    for (const r of reservas) {
+      const hor = getHorario(r);
+      const turno = getTurno(hor);
+      const horaExt = (r.horaExtra || '').toLowerCase();
+      if (turno === 'manana') mananaOcupada = true;
+      if (turno === 'tarde')  tardeOcupada  = true;
+      if (FRANJAS_NOCHE.includes(hor)) nocheOcupada = true;
+      if (FRANJAS_DIA.includes(hor))   diaOcupado   = true;
+      if (turno === 'manana' && (horaExt.includes('después') || horaExt.includes('despues'))) tardeOcupada = true;
+      if (turno === 'tarde'  && horaExt.includes('antes')) mananaOcupada = true;
+      if (turno === 'tarde'  && (horaExt.includes('después') || horaExt.includes('despues'))) nocheOcupada = true;
+    }
+    if (mananaOcupada && tardeOcupada) diaOcupado = true;
+    resultado[fecha] = { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado };
+  }
+  return resultado;
+}
+
+async function actualizarCalendarioFecha(fecha) {
+  const confirmadas = allReservas.filter(r =>
+    r.fecha === fecha && (r.estado||'').toLowerCase() === 'confirmada'
+  );
+  if (confirmadas.length === 0) {
+    await deleteDoc(doc(db, 'calendario_publico', fecha)).catch(()=>{});
+    return;
+  }
+  const oc   = calcOcupacionCalendario(confirmadas);
+  const info = oc[fecha] || {};
+  await setDoc(doc(db, 'calendario_publico', fecha), {
+    fecha,
+    mananaOcupada: info.mananaOcupada || false,
+    tardeOcupada:  info.tardeOcupada  || false,
+    nocheOcupada:  info.nocheOcupada  || false,
+    diaOcupado:    info.diaOcupado    || false,
+    updatedAt:     serverTimestamp()
+  }, { merge: true });
+}
+
 // ── ALTA AUTOMÁTICA DE CLIENTE ────────────────────────────────
 async function upsertCliente(data) {
   try {
@@ -1966,6 +2044,8 @@ window.saveReserva = async () => {
 
   if(!nombre || !fecha) { showToast('Rellena al menos nombre y fecha'); return; }
 
+  const estadoElegido = document.getElementById('r-estado')?.value || 'Pendiente';
+
   const data = {
     nombre: `${nombre} ${apellidos}`.trim(),
     apellidos, dni, fechaNac: fnac,
@@ -1978,15 +2058,23 @@ window.saveReserva = async () => {
     importe, senal,
     notas: notas || '',
     origen: 'panel',
-    estado: 'Pendiente',
+    estado: estadoElegido,
     createdAt: serverTimestamp()
   };
 
-  await addDoc(collection(db,'reservas'), data);
+  const newDoc = await addDoc(collection(db,'reservas'), data);
   await upsertCliente({ nombre, apellidos, dni, fechaNac: fnac, direccion: dir, localidad: loc, cp, telefono: tel, email });
 
+  // Si se guarda como Confirmada, bloquear calendario inmediatamente
+  if (estadoElegido === 'Confirmada' && fecha) {
+    // Añadir a allReservas temporalmente para el cálculo
+    allReservas.push({ id: newDoc.id, ...data });
+    await actualizarCalendarioFecha(fecha);
+    showToast('Reserva confirmada ✓ — Calendario bloqueado en la web');
+  } else {
+    showToast('Reserva guardada ✓ — Pendiente de confirmación');
+  }
   closeModal('res');
-  showToast('Reserva y cliente guardados ✓');
   loadReservas();
   loadClientes();
 
@@ -2004,29 +2092,6 @@ window.saveReserva = async () => {
   const resEl2 = document.getElementById('r-cliente-resultados'); if(resEl2) resEl2.style.display='none';
   const selEl = document.getElementById('r-cliente-seleccionado'); if(selEl) selEl.style.display='none';
 };
-
-const FRANJAS_MANANA = ['10h–14h','11h–15h','10:00–14:00','11:00–15:00','Mañana (10:00-14:00)'];
-const FRANJAS_TARDE  = ['16:30h–20:30h','16:30–20:30','Tarde (16:30-20:30)'];
-const FRANJAS_NOCHE  = ['19:30h–23:30h','21:15h–01:30h','16:30h–01:30h'];
-const FRANJAS_DIA    = ['10h–20h','10:00–20:00','Todo el día'];
-
-function getHorario(r) {
-  // Prioridad: campo horario directo, luego extraer de notas
-  if (r.horario && r.horario.trim()) return r.horario.trim();
-  if (r.notas) {
-    // Buscar línea "Franja horaria: HH:MM–HH:MM"
-    const linea = r.notas.split('\n').find(l => l.startsWith('Franja horaria:'));
-    if (linea) return linea.replace('Franja horaria:', '').trim();
-  }
-  return '';
-}
-
-function getTurno(horario) {
-  if (!horario) return null;
-  if (FRANJAS_MANANA.includes(horario)) return 'manana';
-  if (FRANJAS_TARDE.includes(horario))  return 'tarde';
-  return null;
-}
 
 // ── MODAL DETALLE RESERVA ─────────────────────────────────────
 window.openDet = function(id) {
@@ -2110,66 +2175,7 @@ window.cancelarDesdeModal = async function(id) {
   }
 };
 
-window.confirmarReserva = async (id) => {
-  const reserva = allReservas.find(r => r.id === id);
-  if (!reserva) return;
-  // 1. Actualizar estado en Firestore
-  await updateDoc(doc(db,'reservas',id), {estado:'Confirmada'});
-  // 2. Calcular turnos ocupados ese día (incluir esta reserva ya como confirmada)
-  if (reserva.fecha) {
-    const horarioEsta = getHorario(reserva);
-    const turnoEsta   = getTurno(horarioEsta);
-    // Reservas ya confirmadas ese día (sin contar la actual)
-    const otrasConfirmadas = allReservas.filter(r =>
-      r.id !== id &&
-      r.fecha === reserva.fecha &&
-      (r.estado||'').toLowerCase() === 'confirmada'
-    );
-    // Incluir la actual como confirmada para calcular bien
-    const todasConfirmadas = [...otrasConfirmadas, {...reserva, estado:'Confirmada'}];
-    const mananaOcupada = todasConfirmadas.some(r => getTurno(getHorario(r)) === 'manana');
-    const tardeOcupada  = todasConfirmadas.some(r => getTurno(getHorario(r)) === 'tarde');
-    console.log('Confirmando:', reserva.fecha, horarioEsta, 'turno:', turnoEsta, 'mañana:', mananaOcupada, 'tarde:', tardeOcupada);
-    await setDoc(doc(db, 'calendario_publico', reserva.fecha), {
-      fecha: reserva.fecha,
-      mananaOcupada,
-      tardeOcupada,
-      updatedAt: serverTimestamp()
-    });
-    showToast('Reserva confirmada ✓ — Calendario actualizado');
-  } else {
-    showToast('Reserva confirmada ✓');
-  }
-  loadReservas();
-};
-
-window.cancelarReserva = async (id) => {
-  if(!confirm('¿Cancelar esta reserva?')) return;
-  const reserva = allReservas.find(r => r.id === id);
-  await updateDoc(doc(db,'reservas',id), {estado:'Cancelada'});
-  if (reserva?.fecha) {
-    // Recalcular turnos que quedan ocupados ese día (excluyendo la cancelada)
-    const confirmadasHoy = allReservas.filter(r =>
-      r.id !== id &&
-      r.fecha === reserva.fecha &&
-      (r.estado||'').toLowerCase() === 'confirmada'
-    );
-    if (confirmadasHoy.length === 0) {
-      await deleteDoc(doc(db, 'calendario_publico', reserva.fecha));
-    } else {
-      const mananaOcupada = confirmadasHoy.some(r => getTurno(getHorario(r)) === 'manana');
-      const tardeOcupada  = confirmadasHoy.some(r => getTurno(getHorario(r)) === 'tarde');
-      await setDoc(doc(db, 'calendario_publico', reserva.fecha), {
-        fecha: reserva.fecha,
-        mananaOcupada,
-        tardeOcupada,
-        updatedAt: serverTimestamp()
-      });
-    }
-  }
-  showToast('Reserva cancelada');
-  loadReservas();
-};
+// confirmarReserva y cancelarReserva definidas abajo con lógica completa de hora extra
 
 window.eliminarReserva = async (id) => {
   await deleteDoc(doc(db,'reservas',id));
@@ -2491,12 +2497,7 @@ function limpiarModalPromo() {
 }
 
 // Limpiar modal al abrir desde "Nueva promoción"
-const _origOpenModal = window.openModal;
-window.openModal = function(id) {
-  if(id === 'promo' && !document.getElementById('p-edit-id').value) limpiarModalPromo();
-  if(id === 'bloqueo') { _bloqueoFechas = new Set(); initBloqueoCalendario(); }
-  _origOpenModal(id);
-};
+// openModal se define abajo junto con la lógica de bloqueo y promo
 
 window.eliminarPromo = async (id) => {
   if(!confirm('¿Eliminar esta promoción? Esta acción no se puede deshacer.')) return;
@@ -2579,7 +2580,13 @@ function updateCrumb() {
   document.getElementById('pcrumb').textContent = now.toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
 
-window.openModal = id => document.getElementById('modal-'+id).classList.add('open');
+window.openModal = function(id) {
+  document.getElementById('modal-'+id).classList.add('open');
+  // Lógica extra por modal
+  if (id === 'promo') { const pe = document.getElementById('p-edit-id'); if(pe && !pe.value) limpiarModalPromo(); }
+  if (id === 'bloqueo') { _bloqueoFechas = new Set(); initBloqueoCalendario(); }
+  if (id === 'aviso') { setTimeout(previewAviso, 50); }
+};
 window.closeModal = id => document.getElementById('modal-'+id).classList.remove('open');
 document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 
@@ -4935,82 +4942,33 @@ window.eliminarCliente=async function(id,nombre){
   }catch(e){console.error(e);showToast('Error al eliminar el cliente');}
 };
 
-// ── CALENDARIO: calcOcupacionCalendario CON HORA EXTRA ────────
-function calcOcupacionCalendario(reservasConfirmadas){
-  const porFecha={};
-  for(const r of reservasConfirmadas){
-    if(!r.fecha)continue;
-    if(!porFecha[r.fecha])porFecha[r.fecha]=[];
-    porFecha[r.fecha].push(r);
-  }
-  const resultado={};
-  for(const[fecha,reservas]of Object.entries(porFecha)){
-    let mananaOcupada=false,tardeOcupada=false,nocheOcupada=false,diaOcupado=false;
-    for(const r of reservas){
-      const hor=getHorario(r);
-      const turno=getTurno(hor);
-      const horaExt=(r.horaExtra||'').toLowerCase();
-      if(turno==='manana')mananaOcupada=true;
-      if(turno==='tarde')tardeOcupada=true;
-      if(FRANJAS_NOCHE.includes(hor))nocheOcupada=true;
-      if(FRANJAS_DIA.includes(hor))diaOcupado=true;
-      if(turno==='manana'&&(horaExt.includes('después')||horaExt.includes('despues')))tardeOcupada=true;
-      if(turno==='tarde'&&horaExt.includes('antes'))mananaOcupada=true;
-      if(turno==='tarde'&&(horaExt.includes('después')||horaExt.includes('despues')))nocheOcupada=true;
-    }
-    if(mananaOcupada&&tardeOcupada)diaOcupado=true;
-    resultado[fecha]={mananaOcupada,tardeOcupada,nocheOcupada,diaOcupado};
-  }
-  return resultado;
-}
-
-// ── confirmarReserva MEJORADA ─────────────────────────────────
-window.confirmarReserva=async(id)=>{
-  const reserva=allReservas.find(r=>r.id===id);if(!reserva)return;
-  await updateDoc(doc(db,'reservas',id),{estado:'Confirmada'});
-  if(reserva.fecha){
-    const todas=allReservas
-      .filter(r=>r.fecha===reserva.fecha&&(r.estado||'').toLowerCase()==='confirmada'&&r.id!==id)
-      .concat([{...reserva,estado:'Confirmada'}]);
-    const oc=calcOcupacionCalendario(todas);
-    const info=oc[reserva.fecha]||{};
-    await setDoc(doc(db,'calendario_publico',reserva.fecha),{
-      fecha:reserva.fecha,
-      mananaOcupada:info.mananaOcupada||false,
-      tardeOcupada:info.tardeOcupada||false,
-      nocheOcupada:info.nocheOcupada||false,
-      diaOcupado:info.diaOcupado||false,
-      updatedAt:serverTimestamp()
-    });
+// ── confirmarReserva ──────────────────────────────────────────
+window.confirmarReserva = async (id) => {
+  const reserva = allReservas.find(r => r.id === id);
+  if (!reserva) return;
+  await updateDoc(doc(db,'reservas',id), {estado:'Confirmada'});
+  // Actualizar allReservas local antes del cálculo
+  const idx = allReservas.findIndex(r => r.id === id);
+  if (idx !== -1) allReservas[idx] = {...allReservas[idx], estado:'Confirmada'};
+  if (reserva.fecha) {
+    await actualizarCalendarioFecha(reserva.fecha);
     showToast('Reserva confirmada ✓ — Calendario actualizado');
-  }else{showToast('Reserva confirmada ✓');}
+  } else {
+    showToast('Reserva confirmada ✓');
+  }
   loadReservas();
 };
 
-// ── cancelarReserva MEJORADA ──────────────────────────────────
-window.cancelarReserva=async(id)=>{
-  if(!confirm('¿Cancelar esta reserva?'))return;
-  const reserva=allReservas.find(r=>r.id===id);
-  await updateDoc(doc(db,'reservas',id),{estado:'Cancelada'});
-  if(reserva?.fecha){
-    const restantes=allReservas.filter(r=>r.id!==id&&r.fecha===reserva.fecha&&(r.estado||'').toLowerCase()==='confirmada');
-    if(restantes.length===0){
-      // Mantener bloqueos manuales si existen
-      const calSnap=await getDocs(query(collection(db,'bloqueos'),where('fecha','==',reserva.fecha)));
-      if(calSnap.empty) await deleteDoc(doc(db,'calendario_publico',reserva.fecha));
-      else recalcCalendarioFecha(reserva.fecha,[]);
-    }else{
-      const oc=calcOcupacionCalendario(restantes);
-      const info=oc[reserva.fecha]||{};
-      await setDoc(doc(db,'calendario_publico',reserva.fecha),{
-        fecha:reserva.fecha,
-        mananaOcupada:info.mananaOcupada||false,
-        tardeOcupada:info.tardeOcupada||false,
-        nocheOcupada:info.nocheOcupada||false,
-        diaOcupado:info.diaOcupado||false,
-        updatedAt:serverTimestamp()
-      });
-    }
+// ── cancelarReserva ───────────────────────────────────────────
+window.cancelarReserva = async (id) => {
+  if (!confirm('¿Cancelar esta reserva?')) return;
+  const reserva = allReservas.find(r => r.id === id);
+  await updateDoc(doc(db,'reservas',id), {estado:'Cancelada'});
+  // Actualizar allReservas local antes del cálculo
+  const idx = allReservas.findIndex(r => r.id === id);
+  if (idx !== -1) allReservas[idx] = {...allReservas[idx], estado:'Cancelada'};
+  if (reserva?.fecha) {
+    await actualizarCalendarioFecha(reserva.fecha);
   }
   showToast('Reserva cancelada');
   loadReservas();
@@ -5064,29 +5022,50 @@ function initBloqueoCalendario() {
 }
 
 function renderBloqueoCalendario() {
+  if (_bloqueoCalYear === undefined) initBloqueoCalendario();
   const y = _bloqueoCalYear, m = _bloqueoCalMonth;
   const label = new Date(y, m, 1).toLocaleDateString('es-ES', {month:'long', year:'numeric'});
-  document.getElementById('bloqueo-cal-label').textContent = label.charAt(0).toUpperCase() + label.slice(1);
+  const labelEl = document.getElementById('bloqueo-cal-label');
+  if (!labelEl) return;
+  labelEl.textContent = label.charAt(0).toUpperCase() + label.slice(1);
 
   const dias = document.getElementById('bloqueo-cal-days');
-  const primerDia = new Date(y, m, 1).getDay(); // 0=dom
-  const offset = (primerDia === 0 ? 6 : primerDia - 1); // lun=0
+  if (!dias) return;
+
+  const primerDia = new Date(y, m, 1).getDay();
+  const offset = (primerDia === 0 ? 6 : primerDia - 1);
   const totalDias = new Date(y, m+1, 0).getDate();
   const hoy = new Date().toISOString().split('T')[0];
 
-  let html = Array(offset).fill('<div></div>').join('');
+  // Construir HTML sin eventos inline
+  let html = '';
+  for (let i = 0; i < offset; i++) html += '<div></div>';
   for (let d = 1; d <= totalDias; d++) {
     const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isPast = ds < hoy;
     const isSel  = _bloqueoFechas.has(ds);
-    const style  = isPast
-      ? 'opacity:.3;pointer-events:none;'
+    const base = 'padding:6px 4px;font-size:12px;border-radius:6px;text-align:center;user-select:none;';
+    const extra = isPast
+      ? 'opacity:.3;'
       : isSel
-        ? 'background:var(--teal);color:#080c14;font-weight:700;border-radius:6px;cursor:pointer;'
-        : 'cursor:pointer;border-radius:6px;';
-    html += `<div onclick="toggleBloqueoFecha('${ds}')" style="padding:6px 4px;font-size:12px;transition:background .1s;${style}" onmouseover="if(!${isSel}&&!${isPast})this.style.background='var(--s3)'" onmouseout="if(!${isSel})this.style.background=''">${d}</div>`;
+        ? 'background:var(--teal);color:#080c14;font-weight:700;cursor:pointer;'
+        : 'cursor:pointer;';
+    html += `<div data-ds="${ds}" data-past="${isPast}" style="${base}${extra}">${d}</div>`;
   }
   dias.innerHTML = html;
+
+  // Añadir eventos via JS (sin atributos onclick inline)
+  dias.querySelectorAll('[data-ds]').forEach(el => {
+    if (el.dataset.past === 'true') return;
+    el.addEventListener('click', () => toggleBloqueoFecha(el.dataset.ds));
+    el.addEventListener('mouseover', () => {
+      if (!_bloqueoFechas.has(el.dataset.ds)) el.style.background = 'var(--s3)';
+    });
+    el.addEventListener('mouseout', () => {
+      if (!_bloqueoFechas.has(el.dataset.ds)) el.style.background = '';
+    });
+  });
+
   renderBloqueoFechasSel();
 }
 
@@ -5136,36 +5115,66 @@ window.guardarBloqueo = async function() {
   const btn    = document.querySelector('#modal-bloqueo .btn.bp');
   if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
 
+  const franjaHorario = {
+    manana: '10h–14h',
+    tarde:  '16:30h–20:30h',
+    ambas:  '10h–14h / 16:30h–20:30h',
+    dia:    '10h–20h'
+  };
+
   try {
-    for (const fecha of _bloqueoFechas) {
+    for (const fecha of [..._bloqueoFechas].sort()) {
       const mananaOcupada = franja === 'manana' || franja === 'ambas' || franja === 'dia';
       const tardeOcupada  = franja === 'tarde'  || franja === 'ambas' || franja === 'dia';
       const diaOcupado    = franja === 'dia';
 
-      // Guardar bloqueo en colección separada
+      // 1. Crear reserva real en colección "reservas" como Confirmada
+      const reservaRef = await addDoc(collection(db, 'reservas'), {
+        nombre:      `🔒 Bloqueo — ${nota}`,
+        apellidos:   '',
+        servicio:    nota,
+        personas:    '—',
+        fecha,
+        horario:     franjaHorario[franja] || franja,
+        horaExtra:   'Sin horas extra',
+        extras:      'Ninguno',
+        metodoPago:  '—',
+        importe:     0,
+        senal:       0,
+        notas:       `Bloqueo manual · Franja: ${franja}`,
+        origen:      'bloqueo',
+        estado:      'Confirmada',
+        esBloqueo:   true,
+        notaBloqueo: nota,
+        createdAt:   serverTimestamp()
+      });
+
+      // 2. Registrar en colección bloqueos (para poder desbloquear)
       await addDoc(collection(db, 'bloqueos'), {
         fecha, franja, nota,
+        reservaId: reservaRef.id,
         mananaOcupada, tardeOcupada, diaOcupado,
         createdAt: serverTimestamp()
       });
 
-      // Actualizar calendario_publico (merge con lo que ya haya)
-      const calRef = doc(db, 'calendario_publico', fecha);
-      await setDoc(calRef, {
+      // 3. Bloquear en calendario_publico
+      await setDoc(doc(db, 'calendario_publico', fecha), {
         fecha,
         mananaOcupada,
         tardeOcupada,
         nocheOcupada: diaOcupado,
         diaOcupado,
-        bloqueado: true,
-        notaBloqueo: nota,
-        updatedAt: serverTimestamp()
+        bloqueado:    true,
+        notaBloqueo:  nota,
+        updatedAt:    serverTimestamp()
       }, { merge: true });
     }
+
     closeModal('bloqueo');
     resetBloqueoModal();
     showToast(`${_bloqueoFechas.size} fecha(s) bloqueada(s) en la web ✓`);
     loadBloqueos();
+    loadReservas();
   } catch(e) {
     console.error('guardarBloqueo error:', e);
     showToast('Error al guardar bloqueo');
@@ -5210,12 +5219,29 @@ async function loadBloqueos() {
 }
 
 window.desbloquearFecha = async function(bloqueoId, fecha) {
-  if (!confirm(`¿Desbloquear ${fecha} de la web?`)) return;
+  if (!confirm(`¿Desbloquear ${fecha} de la web?\n\nSe eliminará la reserva de bloqueo correspondiente.`)) return;
   try {
+    // 1. Leer el bloqueo para obtener el reservaId
+    const bloqueoSnap = await getDocs(collection(db, 'bloqueos'));
+    const bloqueoDoc  = bloqueoSnap.docs.find(d => d.id === bloqueoId);
+    const reservaId   = bloqueoDoc?.data()?.reservaId;
+
+    // 2. Eliminar reserva de bloqueo si existe
+    if (reservaId) {
+      await deleteDoc(doc(db, 'reservas', reservaId));
+    }
+
+    // 3. Eliminar el bloqueo
     await deleteDoc(doc(db, 'bloqueos', bloqueoId));
 
-    // Recalcular si hay reservas confirmadas ese día
-    const reservasDia = allReservas.filter(r => r.fecha === fecha && (r.estado||'').toLowerCase() === 'confirmada');
+    // 4. Recalcular calendario con reservas reales que queden
+    const reservasDia = allReservas.filter(r =>
+      r.fecha === fecha &&
+      (r.estado||'').toLowerCase() === 'confirmada' &&
+      !r.esBloqueo &&
+      r.id !== reservaId
+    );
+
     if (reservasDia.length === 0) {
       await deleteDoc(doc(db, 'calendario_publico', fecha));
     } else {
@@ -5233,6 +5259,7 @@ window.desbloquearFecha = async function(bloqueoId, fecha) {
     }
     showToast('Fecha desbloqueada ✓ — Calendario actualizado');
     loadBloqueos();
+    loadReservas();
   } catch(e) {
     console.error('desbloquearFecha error:', e);
     showToast('Error al desbloquear');
