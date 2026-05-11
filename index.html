@@ -465,14 +465,14 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9997;o
 @keyframes pdot{0%,100%{transform:scale(1)}50%{transform:scale(1.4);opacity:.6}}
 
 /* ═══ NAV ════════════════════════════════════════ */
-nav{position:fixed;top:0;left:0;right:0;z-index:800;height:130px;padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease-s);}
+nav{position:fixed;top:0;left:0;right:0;z-index:800;height:180px;padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease-s);}
 nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--bd);box-shadow:0 2px 24px oklch(0% 0 0/.25);}
 [data-theme="light"] nav.up{background:oklch(99% .003 260/.9);}
 
 /* --- LOGO GIGANTE Y DINÁMICO --- */
 .n-logo{display:flex;align-items:center;}
 .n-logo img {
-  height: 120px;
+  height: 160px;
   width: auto;
   transition: transform .3s;
   content: url('https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png');
@@ -844,7 +844,10 @@ section{padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem);}
 footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,6vw,4.5rem) clamp(1rem,4vw,3rem) clamp(1.2rem,3vw,2rem);}
 .ft-grid{display:grid;grid-template-columns:2.2fr 1fr 1fr 1.2fr;gap:44px;margin-bottom:44px;}
 .ft-logo{margin-bottom:14px;}
-.ft-logo img{height:40px;}
+.ft-logo-img{height:80px;width:auto;display:block;
+  content:url('https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png');}
+[data-theme="light"] .ft-logo-img{
+  content:url('https://i.ibb.co/p9z8mfx/Espai-Fest-Negre.png');}
 .ft-desc{font-size:.82rem;color:var(--tx3);line-height:1.75;max-width:250px;margin-bottom:18px;}
 .ft-soc{display:flex;gap:9px;}
 .soc{width:36px;height:36px;border-radius:9px;background:var(--s2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;color:var(--tx3);transition:all .2s;text-decoration:none;}
@@ -1022,7 +1025,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   display:flex;align-items:center;justify-content:space-between;
   padding:20px 20px 16px;border-bottom:1px solid var(--bd);
 }
-.mob-drawer-logo img{height:36px;width:auto;}
+.mob-drawer-logo img{height:52px;width:auto;}
 .mob-close{
   width:36px;height:36px;border-radius:8px;border:1px solid var(--bd);
   background:var(--s2);color:var(--tx2);cursor:pointer;
@@ -1045,13 +1048,14 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   padding:16px 20px;border-top:1px solid var(--bd);
   display:flex;align-items:center;justify-content:space-between;
 }
-.mob-lang{display:flex;background:var(--s3);border-radius:30px;padding:3px;gap:2px;}
-.mob-lang button{
-  padding:6px 14px;border-radius:24px;border:none;
-  font:700 .78rem var(--fb);cursor:pointer;background:transparent;
-  color:var(--tx3);transition:all .2s;
+.mob-lang{display:flex;background:var(--s3);border-radius:14px;padding:5px;gap:6px;}
+.mob-lang a, .mob-lang span{
+  padding:10px 22px;border-radius:10px;
+  font:700 .85rem var(--fb);background:transparent;
+  color:var(--tx3);transition:all .2s;text-decoration:none;
+  display:inline-flex;align-items:center;justify-content:center;
 }
-.mob-lang button.on{background:var(--s1);color:var(--tx1);box-shadow:0 1px 6px oklch(0% 0 0/.2);}
+.mob-lang .on{background:var(--s1);color:var(--tx1);box-shadow:0 2px 8px oklch(0% 0 0/.25);border-radius:10px;}
 .mob-theme{
   width:38px;height:38px;border-radius:50%;border:1px solid var(--bd);
   background:var(--s2);color:var(--tx2);cursor:pointer;
@@ -1061,15 +1065,15 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
 @media(max-width:768px){
   nav{
-    padding:0 1rem;height:80px;
+    padding:0 1rem;height:110px;
     background:var(--s0) !important;
     backdrop-filter:blur(12px);
     border-bottom:1px solid var(--bd);
   }
   .n-links{display:none;}
-  .n-logo img{height:60px;width:auto;}
+  .n-logo img{height:90px;width:auto;}
   .ham-btn{display:flex;}
-  .mob-drawer-logo img{height:52px;width:auto;}
+  .mob-drawer-logo img{height:72px;width:auto;}
   .cards3,.price-grid,.manu-grid,.blog-grid{grid-template-columns:1fr;}
   .eq-grid{grid-template-columns:1fr;}
   footer{padding:2.5rem 1rem 1.5rem;}.ft-grid{grid-template-columns:1fr;gap:24px;}
@@ -1232,6 +1236,11 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   0%   { opacity:0; filter:blur(12px); }
   60%  { opacity:.85; filter:blur(2px); }
   100% { opacity:1;  filter:blur(0px); transform:translateY(0); }
+}
+@media(max-width:768px){
+  .blur-word{filter:blur(8px);transform:translateY(-10px);}
+  .blur-word.from-bottom{transform:translateY(10px);}
+  .h-title > span{filter:blur(8px);transform:translateY(-10px);}
 }
 
 /* ══ HERO TITLE SPAN ANIMATIONS ══════════════════════════ */
@@ -2392,7 +2401,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <div class="ft-grid">
     <div>
       <div class="ft-logo">
-  <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest" style="height: 120px; width: auto;">
+  <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest" class="ft-logo-img">
 </div>
     </div>
     <div class="ft-col">
@@ -2489,7 +2498,7 @@ const scrollObs = new IntersectionObserver(entries => {
       scrollObs.unobserve(el.target);
     }
   });
-}, {threshold:0.05, rootMargin:'0px 0px -20px 0px'});
+}, {threshold:0.01, rootMargin:'0px 0px 0px 0px'});
 document.querySelectorAll('[data-a]').forEach(el=>scrollObs.observe(el));
 setTimeout(()=>document.querySelectorAll('[data-a]').forEach(el=>el.classList.add('vis')), 1800);
 
@@ -2515,15 +2524,17 @@ const blurObs = new IntersectionObserver(entries => {
       blurObs.unobserve(e.target);
     }
   });
-}, {threshold:0.05, rootMargin:'0px 0px -20px 0px'});
+}, {threshold:0.01, rootMargin:'0px 0px 0px 0px'});
 const blurEls = document.querySelectorAll('[data-blur]');
 blurEls.forEach(el => blurObs.observe(el));
 // Safety timeout: si el observer no dispara en 2s, forzar visibilidad
+// Safety blur: 1200ms mobile-first, 2200ms desktop
+const _blurDelay = window.innerWidth < 768 ? 1200 : 2200;
 setTimeout(() => {
   blurEls.forEach(el => {
     if(!el.dataset.blurDone) applyBlurText(el, 0, el.dataset.blur || 'top');
   });
-}, 2000);
+}, _blurDelay);
 
 // ── STAT COUNTERS ─────────────────────────────────────────────
 function animCount(el, target, plus) {
