@@ -1155,15 +1155,18 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 .blur-word {
   display: inline-block;
   opacity: 0;
-  filter: blur(14px);
-  transform: translateY(-22px);
-  animation: blur-in .7s cubic-bezier(.25,.46,.45,.94) forwards;
+  filter: blur(12px);
+  transform: translateY(-18px);
+  animation: blur-in .65s cubic-bezier(.25,.46,.45,.94) forwards;
+  will-change: opacity, filter, transform;
 }
 .blur-word.from-bottom {
-  transform: translateY(22px);
+  transform: translateY(18px);
 }
 @keyframes blur-in {
-  to { opacity:1; filter:blur(0px); transform:translateY(0); }
+  0%   { opacity:0; filter:blur(12px); }
+  60%  { opacity:.85; filter:blur(2px); }
+  100% { opacity:1;  filter:blur(0px); transform:translateY(0); }
 }
 
 /* ══ HERO TITLE SPAN ANIMATIONS ══════════════════════════ */
@@ -1615,7 +1618,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
       </div>
       <div data-a="left">
         <div class="eyebrow ew-f"><div class="ew-dot"></div><span data-es="Fiestas infantiles en Martorell" data-ca="Festes infantils a Martorell">Fiestas infantiles en Martorell</span></div>
-        <h2 class="sec-h2" data-es="El cumpleaños que siempre soñaron" data-blur="top" data-blur="top" data-ca="L'aniversari que sempre van somiar">El cumpleaños que siempre soñaron</h2>
+        <h2 class="sec-h2" data-es="El cumpleaños que siempre soñaron" data-blur="top" data-ca="L'aniversari que sempre van somiar">El cumpleaños que siempre soñaron</h2>
         <p class="sec-lead" data-es="Espacio privado de 115m² con dos zonas infantiles diferenciadas por edades. Zona bebés con rincón acolchado y zona niños con castillo hinchable, tobogán y piscina de bolas." data-ca="Espai privat de 115m² amb dues zones infantils diferenciades per edats. Zona bebès amb racó encoixinat i zona nens amb castell inflable, tobogan i piscina de boles.">Espacio privado de 115m² con dos zonas infantiles diferenciadas por edades. Zona bebés con rincón acolchado y zona niños con castillo hinchable, tobogán y piscina de bolas.</p>
         <div class="feat-list">
           <div class="feat-item"><div class="feat-ico fi-o"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="oklch(68% .22 38)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div><div class="feat-title" data-es="Espacio 100% privado y exclusivo" data-ca="Espai 100% privat i exclusiu">Espacio 100% privado y exclusivo</div><div class="feat-desc" data-es="Solo tus invitados durante las 4 horas. Sin compartir con extraños." data-ca="Només els teus convidats durant les 4 hores.">Solo tus invitados durante las 4 horas. Sin compartir con extraños.</div></div></div>
@@ -1636,7 +1639,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <div class="container">
     <div class="tc" data-a="up">
       <div class="eyebrow ew-f" style="justify-content:center"><div class="ew-dot"></div><span data-es="Para todas las edades" data-ca="Per a totes les edats">Para todas las edades</span></div>
-      <h2 class="sec-h2" data-es="No solo para los peques" data-blur="top" data-blur="top" data-ca="No només per als petits">No solo para los peques</h2>
+      <h2 class="sec-h2" data-es="No solo para los peques" data-blur="top" data-ca="No només per als petits">No solo para los peques</h2>
       <p class="sec-lead" data-es="EspaiFest es el local de fiestas en Martorell para cualquier celebración. Cumpleaños de adultos, baby showers, despedidas, encuentros familiares y mucho más." data-ca="EspaiFest és el local de festes a Martorell per a qualsevol celebració.">EspaiFest es el local de fiestas en Martorell para cualquier celebración familiar o de adultos.</p>
     </div>
     <div class="cards3">
@@ -1680,7 +1683,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <div class="biz-grid">
       <div data-a="right">
         <div class="eyebrow ew-b"><div class="ew-dot"></div><span data-es="Espacio profesional en Martorell" data-ca="Espai professional a Martorell">Espacio profesional en Martorell</span></div>
-        <h2 class="sec-h2" data-es="Tu sala de reuniones y formaciones" data-blur="top" data-blur="top" data-ca="La teva sala de reunions i formacions">Tu sala de reuniones y formaciones</h2>
+        <h2 class="sec-h2" data-es="Tu sala de reuniones y formaciones" data-blur="top" data-ca="La teva sala de reunions i formacions">Tu sala de reuniones y formaciones</h2>
         <p class="sec-lead" data-es="Alquila un espacio profesional totalmente equipado en el Baix Llobregat. Ideal para reuniones, formaciones, presentaciones, clases de pilates y yoga, charlas y talleres. Tarifas mensuales disponibles." data-ca="Lloga un espai professional totalment equipat al Baix Llobregat.">Alquila un espacio profesional totalmente equipado en el Baix Llobregat. Ideal para reuniones, formaciones y clases.</p>
         <div class="biz-chips">
           <div class="biz-chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg><span data-es="WiFi fibra óptica" data-ca="WiFi fibra òptica">WiFi fibra óptica</span></div>
@@ -1949,7 +1952,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <div class="container">
     <div class="tc" data-a="up">
       <div class="eyebrow ew-f" style="justify-content:center"><div class="ew-dot"></div><span data-es="Todo incluido en el precio" data-ca="Tot inclòs en el preu">Todo incluido en el precio</span></div>
-      <h2 class="sec-h2" data-es="Todo lo que necesitas, ya está aquí" data-ca="Tot el que necessites, ja hi és">Todo lo que necesitas, ya está aquí</h2>
+      <h2 class="sec-h2" data-es="Todo lo que necesitas, ya está aquí" data-blur="top" data-ca="Tot el que necessites, ja hi és">Todo lo que necesitas, ya está aquí</h2>
       <p class="sec-lead" data-es="No tienes que traer nada extra. EspaiFest cuenta con equipamiento completo para que tu celebración sea perfecta desde el primer momento." data-ca="No has de portar res extra. EspaiFest compta amb equipament complet perquè la teva celebració sigui perfecta des del primer moment.">No tienes que traer nada extra. EspaiFest cuenta con equipamiento completo para que tu celebración sea perfecta desde el primer momento.</p>
     </div>
 
@@ -2117,7 +2120,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <div class="promo-section" style="padding:0">
       <div class="tc" data-a="up">
         <div class="eyebrow ew-b" style="justify-content:center"><div class="ew-dot"></div><span data-es="Ofertas especiales" data-ca="Ofertes especials">Ofertas especiales</span></div>
-        <h2 class="sec-h2" data-es="Promociones activas" data-ca="Promocions actives">Promociones activas</h2>
+        <h2 class="sec-h2" data-es="Promociones activas" data-blur="top" data-ca="Promocions actives">Promociones activas</h2>
         <p class="sec-lead" data-es="Aprovecha nuestros descuentos exclusivos por tiempo limitado." data-ca="Aprofita els nostres descomptes exclusius per temps limitat.">Aprovecha nuestros descuentos exclusivos por tiempo limitado.</p>
       </div>
       <div class="promo-grid" id="promo-grid-web"></div>
@@ -2284,7 +2287,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <div class="blog-head" data-a="up">
       <div>
         <div class="eyebrow ew-y"><div class="ew-dot"></div><span data-es="Blog e inspiración" data-ca="Blog i inspiració">Blog e inspiración</span></div>
-        <h2 class="sec-h2" data-es="Ideas para tu próxima celebración" data-ca="Idees per a la teva propera celebració" data-blur="top">Ideas para tu próxima celebración</h2>
+        <h2 class="sec-h2" data-es="Ideas para tu próxima celebración" data-blur="top" data-ca="Idees per a la teva propera celebració">Ideas para tu próxima celebración</h2>
       </div>
       <a href="#" onclick="event.preventDefault();abrirVerTodos()" style="font:700 .875rem var(--fd);color:var(--co);white-space:nowrap" data-es="Ver todos →" data-ca="Veure tots →">Ver todos →</a>
     </div>
@@ -2450,7 +2453,7 @@ const blurObs = new IntersectionObserver(entries => {
       blurObs.unobserve(e.target);
     }
   });
-}, {threshold:0.05, rootMargin:'0px 0px -40px 0px'});
+}, {threshold:0.05, rootMargin:'0px 0px -20px 0px'});
 const blurEls = document.querySelectorAll('[data-blur]');
 blurEls.forEach(el => blurObs.observe(el));
 // Safety timeout: si el observer no dispara en 2s, forzar visibilidad
