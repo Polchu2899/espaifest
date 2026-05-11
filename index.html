@@ -22,7 +22,7 @@
 <meta property="og:title" content="EspaiFest Martorell | La sala de tots i totes">
 <meta property="og:description" content="Sala privada e insonorizada de 115m² en Martorell. Fiestas infantiles, cumpleaños, baby showers, reuniones de empresa. Hasta 50 personas · 85€/4h.">
 <meta property="og:url" content="https://espaifest.com/">
-<meta property="og:image" content="https://i.ibb.co/LdCpc8Mz/Panoramica-Espai-Fest-Martorell-1024x375.jpg">
+<meta property="og:image" content="https://i.ibb.co/v699pDng/Panoramica-Espai-Fest-Martorell-1024x375.jpg">
 <meta property="og:image:width" content="1024">
 <meta property="og:image:height" content="375">
 <meta property="og:image:alt" content="EspaiFest — Sala de fiestas y eventos en Martorell">
@@ -33,7 +33,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="EspaiFest Martorell | La sala de tots i totes">
 <meta name="twitter:description" content="Sala privada de 115m² en Martorell. Fiestas infantiles, eventos adultos y espacios business. 85€/4h.">
-<meta name="twitter:image" content="https://i.ibb.co/LdCpc8Mz/Panoramica-Espai-Fest-Martorell-1024x375.jpg">
+<meta name="twitter:image" content="https://i.ibb.co/v699pDng/Panoramica-Espai-Fest-Martorell-1024x375.jpg">
 <meta name="twitter:image:alt" content="EspaiFest Martorell">
 
 <!-- ══ FAVICONS ══════════════════════════════════════════ -->
@@ -197,7 +197,6 @@
                           : `Hola <strong>${params.to_name}</strong>,`;
     const intro      = ca ? 'Hem rebut la teva sol·licitud de reserva. Aquí tens el resum complet:'
                           : 'Hemos recibido tu solicitud de reserva. Aquí tienes el resumen completo:';
-    const lNumRes    = ca ? '🔖 Núm. reserva'          : '🔖 Núm. reserva';
     const tDetalls   = ca ? 'Detalls de la reserva'   : 'Detalles de la reserva';
     const lData      = ca ? '📅 Data'                  : '📅 Fecha';
     const lFranja    = ca ? '🕐 Franja horària'         : '🕐 Franja horaria';
@@ -223,7 +222,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 16px;"><tr><td align="center">
 <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08);">
 <tr><td style="background:#0d0f14;padding:28px 40px;text-align:center;">
-  <img src="https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png" alt="EspaiFest" style="height:64px;width:auto;display:block;margin:0 auto;">
+  <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest" style="height:64px;width:auto;display:block;margin:0 auto;">
 </td></tr>
 <tr><td style="background:linear-gradient(135deg,#0fd4c4,#06b6d4);padding:28px 40px;text-align:center;">
   <div style="font-size:36px;margin-bottom:8px;">🎉</div>
@@ -235,8 +234,7 @@
   <p style="font-size:14px;color:#6b7280;margin:0 0 28px;">${intro}</p>
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:24px;">
     <tr><td colspan="2" style="background:#e5e7eb;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;">${tDetalls}</td></tr>
-    <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:45%;">${lNumRes}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#0fd4c4;border-bottom:1px solid #e5e7eb;font-family:monospace;">${params.num_reserva}</td></tr>
-    <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">${lData}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.fecha_reserva}</td></tr>
+    <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:45%;">${lData}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.fecha_reserva}</td></tr>
     <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">${lFranja}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.horario}</td></tr>
     <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">${lEsdev}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.evento}</td></tr>
     <tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;">${lPers}</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;">${params.personas}</td></tr>
@@ -246,8 +244,6 @@
     <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">${lSala}</td><td style="padding:10px 20px;font-size:13px;color:#111827;text-align:right;border-bottom:1px solid #e5e7eb;">${params.precio_sala}</td></tr>
     <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Hora extra</td><td style="padding:10px 20px;font-size:13px;color:#111827;text-align:right;border-bottom:1px solid #e5e7eb;">${params.precio_horaext}</td></tr>
     <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">${ca?'Extres':'Extras'}</td><td style="padding:10px 20px;font-size:13px;color:#111827;text-align:right;border-bottom:1px solid #e5e7eb;">${params.precio_extras}</td></tr>
-    <tr><td style="padding:8px 20px;font-size:12px;color:#9ca3af;border-bottom:1px solid #e5e7eb;">${ca?'Base imposable':'Base imponible'}</td><td style="padding:8px 20px;font-size:12px;color:#9ca3af;text-align:right;border-bottom:1px solid #e5e7eb;">${params.base_imponible}</td></tr>
-    <tr><td style="padding:8px 20px;font-size:12px;color:#9ca3af;border-bottom:1px solid #e5e7eb;">IVA 21%</td><td style="padding:8px 20px;font-size:12px;color:#9ca3af;text-align:right;border-bottom:1px solid #e5e7eb;">${params.cuota_iva}</td></tr>
     <tr style="background:#0d0f14;"><td style="padding:14px 20px;font-size:14px;font-weight:800;color:#fff;">${lTotal}</td><td style="padding:14px 20px;font-size:18px;font-weight:900;color:#0fd4c4;text-align:right;">${params.total_estimado}</td></tr>
     <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;">${lSenyal}</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#f97316;text-align:right;">${params.senal_50}</td></tr>
   </table>
@@ -283,7 +279,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 16px;"><tr><td align="center">
 <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08);">
 <tr><td style="background:#0d0f14;padding:24px 40px;text-align:center;">
-  <img src="https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png" alt="EspaiFest" style="height:54px;width:auto;display:block;margin:0 auto 10px;">
+  <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest" style="height:54px;width:auto;display:block;margin:0 auto 10px;">
   <div style="font-size:11px;color:#f97316;letter-spacing:3px;text-transform:uppercase;font-weight:700;">Administració</div>
 </td></tr>
 <tr><td style="background:#f97316;padding:20px 40px;text-align:center;">
@@ -302,8 +298,7 @@
   </table>
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:20px;">
     <tr><td colspan="2" style="background:#e5e7eb;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;">📅 Detalls de la reserva</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:40%;">Núm. reserva</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#0fd4c4;border-bottom:1px solid #e5e7eb;font-family:monospace;">${params.num_reserva}</td></tr>
-    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Data</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.fecha_reserva}</td></tr>
+    <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:40%;">Data</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.fecha_reserva}</td></tr>
     <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Franja</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${params.horario}</td></tr>
     <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Esdeveniment</td><td style="padding:10px 20px;font-size:13px;color:#111827;border-bottom:1px solid #e5e7eb;">${params.evento}</td></tr>
     <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">Persones</td><td style="padding:10px 20px;font-size:13px;color:#111827;border-bottom:1px solid #e5e7eb;">${params.personas}</td></tr>
@@ -313,8 +308,6 @@
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:20px;">
     <tr><td colspan="2" style="background:#e5e7eb;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;">💶 Pressupost</td></tr>
     <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:40%;">Sala</td><td style="padding:10px 20px;font-size:13px;color:#111827;text-align:right;border-bottom:1px solid #e5e7eb;">${params.precio_sala}</td></tr>
-    <tr><td style="padding:8px 20px;font-size:12px;color:#9ca3af;border-bottom:1px solid #e5e7eb;">Base imposable</td><td style="padding:8px 20px;font-size:12px;color:#9ca3af;text-align:right;border-bottom:1px solid #e5e7eb;">${params.base_imponible}</td></tr>
-    <tr><td style="padding:8px 20px;font-size:12px;color:#9ca3af;border-bottom:1px solid #e5e7eb;">IVA 21%</td><td style="padding:8px 20px;font-size:12px;color:#9ca3af;text-align:right;border-bottom:1px solid #e5e7eb;">${params.cuota_iva}</td></tr>
     <tr style="background:#0d0f14;"><td style="padding:14px 20px;font-size:14px;font-weight:800;color:#fff;">TOTAL ESTIMAT</td><td style="padding:14px 20px;font-size:18px;font-weight:900;color:#0fd4c4;text-align:right;">${params.total_estimado}</td></tr>
     <tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;">Senyal 50%</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#f97316;text-align:right;">${params.senal_50}</td></tr>
   </table>
@@ -363,9 +356,8 @@
   --s2:   oklch(17% 0.02 260);
   --s3:   oklch(22% 0.02 260);
   --tx:   oklch(96% 0.005 260);
-  --tx1:  oklch(96% 0.005 260);
-  --tx2:  oklch(78% 0.01 260);
-  --tx3:  oklch(58% 0.01 260);
+  --tx2:  oklch(62% 0.01 260);
+  --tx3:  oklch(38% 0.01 260);
   --bd:   oklch(28% 0.02 260);
   --glass:      oklch(100% 0 0 / 0.055);
   --glass-b:    oklch(100% 0 0 / 0.10);
@@ -380,7 +372,6 @@
   --s2:  oklch(91% 0.008 260);
   --s3:  oklch(86% 0.01 260);
   --tx:  oklch(10% 0.02 260);
-  --tx1: oklch(10% 0.02 260);
   --tx2: oklch(42% 0.02 260);
   --tx3: oklch(62% 0.015 260);
   --bd:  oklch(82% 0.015 260);
@@ -407,21 +398,21 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9997;o
 @keyframes pdot{0%,100%{transform:scale(1)}50%{transform:scale(1.4);opacity:.6}}
 
 /* ═══ NAV ════════════════════════════════════════ */
-nav{position:fixed;top:0;left:0;right:0;z-index:800;height:170px;padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease-s);}
+nav{position:fixed;top:0;left:0;right:0;z-index:800;height:130px;padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease-s);}
 nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--bd);box-shadow:0 2px 24px oklch(0% 0 0/.25);}
 [data-theme="light"] nav.up{background:oklch(99% .003 260/.9);}
 
 /* --- LOGO GIGANTE Y DINÁMICO --- */
 .n-logo{display:flex;align-items:center;}
 .n-logo img {
-  height: 160px;
+  height: 120px;
   width: auto;
   transition: transform .3s;
-  content: url('https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png');
+  content: url('https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png');
 }
 
 [data-theme="light"] .n-logo img {
-  content: url('https://i.ibb.co/7J43XDW2/Dise-o-sin-t-tulo.png');
+  content: url('https://i.ibb.co/p9z8mfx/Espai-Fest-Negre.png');
 }
 
 .n-logo img:hover{transform:scale(1.04);}
@@ -438,7 +429,7 @@ nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%
 .n-cta{background:var(--co);color:#fff;padding:9px 20px!important;font-weight:700!important;box-shadow:0 3px 16px oklch(68% .22 38/.4);transition:all .25s var(--ease-b);}
 .n-cta:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 7px 24px oklch(68% .22 38/.5)!important;}
 /* ═══ HERO ════════════════════════════════════════ */
-.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:170px;overflow:hidden;position:relative;}
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:130px;overflow:hidden;position:relative;}
 .h-side{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:clamp(2rem,4vw,3.5rem);min-height:calc(100vh - 68px);cursor:pointer;}
 .h-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .9s var(--ease-s);will-change:transform;}
 .h-side:hover .h-bg{transform:scale(1.05);}
@@ -574,7 +565,7 @@ section{padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem);}
 .cal-btn:hover{border-color:var(--co);color:var(--co);}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
 .cal-day-hdr{padding:10px;text-align:center;font-size:.72rem;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--bd);}
-.cal-day{padding:10px 8px;text-align:center;font-size:.88rem;cursor:pointer;transition:all .15s;border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);min-height:52px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--tx);}
+.cal-day{padding:10px 8px;text-align:center;font-size:.88rem;cursor:pointer;transition:all .15s;border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);min-height:52px;display:flex;flex-direction:column;align-items:center;gap:4px;}
 .cal-day:nth-child(7n){border-right:none;}
 .cal-day:hover:not(.empty){background:var(--s2);}
 .cal-day.today{color:var(--co);font-weight:700;}
@@ -590,15 +581,16 @@ section{padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem);}
 
 /* ═══ GALERÍA ════════════════════════════════════ */
 #galeria{background:var(--s0);}
-.gal{display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:260px 260px;gap:9px;margin-top:44px;}
+.gal{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:44px;}
 .gc{border-radius:16px;overflow:hidden;position:relative;cursor:pointer;}
 .gc img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease-s);}
 .gc:hover img{transform:scale(1.06);}
-.gc-1{grid-column:span 5;grid-row:span 2;}
-.gc-2{grid-column:span 4;}
-.gc-3{grid-column:span 3;}
-.gc-4{grid-column:span 3;}
-.gc-5{grid-column:span 4;}
+.gc-1{grid-column:1/-1;aspect-ratio:1024/375;object-position:center;}
+.gc-2,.gc-3,.gc-4,.gc-5{aspect-ratio:4/3;}
+.gc-2{grid-column:span 1;}
+.gc-3{grid-column:span 1;}
+.gc-4{grid-column:span 1;}
+.gc-5{grid-column:span 1;}
 .gc-ov{position:absolute;inset:0;background:linear-gradient(to top,oklch(5% 0 0/.7),transparent 50%);opacity:0;transition:opacity .3s;display:flex;align-items:flex-end;padding:14px;}
 .gc:hover .gc-ov{opacity:1;}
 .gc-lbl{font:600 .75rem var(--fb);background:oklch(0% 0 0/.45);backdrop-filter:blur(8px);padding:4px 11px;border-radius:20px;color:#fff;transform:translateY(5px);transition:transform .3s;}
@@ -874,7 +866,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   .stats{grid-template-columns:1fr 1fr;}
   .gal{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto;}
   .gc{grid-column:span 1!important;grid-row:span 1!important;aspect-ratio:4/3;}
-  .gc-1{grid-column:span 2!important;}
+  .gc-1{grid-column:1/-1!important;aspect-ratio:16/7!important;}
   .ft-grid{grid-template-columns:1fr 1fr;gap:28px;}
 }
 
@@ -964,7 +956,6 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   padding:20px 20px 16px;border-bottom:1px solid var(--bd);
 }
 .mob-drawer-logo img{height:36px;width:auto;}
-
 .mob-close{
   width:36px;height:36px;border-radius:8px;border:1px solid var(--bd);
   background:var(--s2);color:var(--tx2);cursor:pointer;
@@ -1003,13 +994,13 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
 @media(max-width:768px){
   nav{
-    padding:0 1rem;height:100px;
+    padding:0 1rem;height:80px;
     background:var(--s0) !important;
     backdrop-filter:blur(12px);
     border-bottom:1px solid var(--bd);
   }
   .n-links{display:none;}
-  .n-logo img{height:80px;width:auto;}
+  .n-logo img{height:60px;width:auto;}
   .ham-btn{display:flex;}
   .mob-drawer-logo img{height:52px;width:auto;}
   .cards3,.price-grid,.manu-grid,.blog-grid{grid-template-columns:1fr;}
@@ -1028,7 +1019,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   .fid-grid{gap:24px;}
   .fid-card{padding:20px;}
   .gal{grid-template-columns:1fr;}
-  .gc-1{grid-column:span 1!important;}
+  .gc-1{grid-column:1/-1!important;aspect-ratio:16/6!important;}
   .blog-grid{gap:16px;}
   .stats{grid-template-columns:1fr 1fr;gap:10px;}
   .res-form{padding:20px;}
@@ -1039,7 +1030,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
 /* Hero padding ajustado al alto del nav en móvil */
 @media(max-width:768px){
-  .hero{padding-top:100px;}
+  .hero{padding-top:80px;}
 }
 
 /* ══ VIEW TRANSITIONS API ══════════════════════════════ */
@@ -1455,7 +1446,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 <nav id="nav" role="navigation" aria-label="Navegación principal">
   <div class="n-logo">
   <a href="#hero">
-    <img src="https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png" alt="EspaiFest Logo">
+    <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest Logo">
   </a>
 </div>
   <div class="n-links" role="menubar">
@@ -1487,7 +1478,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 <div class="mob-drawer" id="mob-drawer" role="dialog" aria-modal="true" aria-label="Menú de navegación">
   <div class="mob-drawer-head">
     <div class="mob-drawer-logo">
-      <img src="https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png" alt="EspaiFest">
+      <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest">
     </div>
     <button class="mob-close" onclick="closeMobMenu()" aria-label="Cerrar menú">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -1784,7 +1775,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
       <p class="sec-lead" data-es="115m² diseñados para que cada celebración sea perfecta. El espacio favorito de Martorell desde hace 10 años." data-ca="115m² dissenyats perquè cada celebració sigui perfecta.">115m² diseñados para que cada celebración sea perfecta.</p>
     </div>
     <div class="gal" data-a="up">
-      <div class="gc gc-1"><img src="https://i.ibb.co/LdCpc8Mz/Panoramica-Espai-Fest-Martorell-1024x375.jpg" alt="Vista panorámica sala EspaiFest Martorell" loading="lazy"><div class="gc-ov"><span class="gc-lbl" data-es="Vista panorámica" data-ca="Vista panoràmica">Vista panorámica</span></div></div>
+      <div class="gc gc-1"><img src="https://i.ibb.co/v699pDng/Panoramica-Espai-Fest-Martorell-1024x375.jpg" alt="Vista panorámica sala EspaiFest Martorell" loading="lazy"><div class="gc-ov"><span class="gc-lbl" data-es="Vista panorámica" data-ca="Vista panoràmica">Vista panorámica</span></div></div>
       <div class="gc gc-2"><img src="https://i.ibb.co/Pv7PT6KQ/raconet1-1024x832.jpg" alt="Zona bebés EspaiFest" loading="lazy"><div class="gc-ov"><span class="gc-lbl" data-es="Zona bebés" data-ca="Zona bebès">Zona bebés</span></div></div>
       <div class="gc gc-3"><img src="https://i.ibb.co/Nd08hnHh/Tobogan-y-piscina-de-bolas-1024x768.jpg" alt="Tobogán zona infantil" loading="lazy"><div class="gc-ov"><span class="gc-lbl" data-es="Zona niños" data-ca="Zona nens">Zona niños</span></div></div>
       <div class="gc gc-4"><img src="https://i.ibb.co/S744Qc8k/Zona-Adultos-1-1024x768.jpg" alt="Zona adultos EspaiFest" loading="lazy"><div class="gc-ov"><span class="gc-lbl" data-es="Zona adultos" data-ca="Zona adults">Zona adultos</span></div></div>
@@ -1844,7 +1835,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
           <tbody id="prc-body-estandar"></tbody>
         </table>
       </div>
-      <p style="font-size:.75rem;color:var(--tx2);margin-top:10px;text-align:center" data-es="Precios en € por sesión · IVA incluido (21%)" data-ca="Preus en € per sessió · IVA inclòs (21%)">Precios en € por sesión · IVA incluido (21%)</p>
+      <p style="font-size:.75rem;color:var(--tx2);margin-top:10px;text-align:center" data-es="Precios en € por sesión · IVA no incluido" data-ca="Preus en € per sessió · IVA no inclòs">Precios en € por sesión · IVA no incluido</p>
     </div>
 
     <!-- Panel Ampliados -->
@@ -2334,7 +2325,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <div class="ft-grid">
     <div>
       <div class="ft-logo">
-  <img src="https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png" alt="EspaiFest" style="height: 120px; width: auto;">
+  <img src="https://i.ibb.co/QFT9cPSg/Espai-Fest-Blanc.png" alt="EspaiFest" style="height: 120px; width: auto;">
 </div>
     </div>
     <div class="ft-col">
@@ -3095,11 +3086,23 @@ function webLoadFranjasPorFecha(fechaStr) {
     return;
   }
 
-  // Detectar día especial y franjas normales (siempre ambas)
+  // Detectar día especial
   const d = new Date(fechaStr+'T12:00:00');
   const ddmm = String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
   const esp = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
+  if(esp) {
+    const opt = document.createElement('option');
+    opt.value = `${esp.celebracion} · ${esp.horario}`;
+    opt.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
+    opt.dataset.precio = esp.precio;
+    opt.dataset.esDiaEsp = '1';
+    sel.appendChild(opt);
+    webUpdatePricePreview(esp.precio, true);
+    calcularTotal();
+    return;
+  }
 
+  // Franjas normales según día de semana
   const diaSemIdx = (d.getDay()+6)%7;
   const diaKey = ['lu','ma','mi','ju','vi','sa','do'][diaSemIdx];
   const todas = [...(indexTarifas?.estandar||[]), ...(indexTarifas?.ampliados||[])];
@@ -3108,28 +3111,16 @@ function webLoadFranjasPorFecha(fechaStr) {
     return v !== '—' && v !== '' && v != null;
   });
 
-  if(!esp && !disponibles.length) {
+  if(!disponibles.length) {
     sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
     return;
   }
 
-  // Opción placeholder
   const opt0 = document.createElement('option');
   opt0.value = '';
   opt0.textContent = '— Selecciona franja —';
   sel.appendChild(opt0);
 
-  // Si es día especial: su franja primero, destacada con ⭐
-  if(esp) {
-    const opt = document.createElement('option');
-    opt.value = `${esp.celebracion} · ${esp.horario}`;
-    opt.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
-    opt.dataset.precio = esp.precio;
-    opt.dataset.esDiaEsp = '1';
-    sel.appendChild(opt);
-  }
-
-  // Franjas normales del día (siempre, también en días especiales)
   disponibles.forEach(f => {
     const precio = f[diaKey];
     const opt = document.createElement('option');
@@ -3314,40 +3305,10 @@ async function enviarReserva() {
     fecha_envio:   fechaHoy
   };
 
-  // ── Número de reserva — contador atómico en Firestore ────────
-  const anioReserva  = f ? f.substring(0,4) : new Date().getFullYear().toString();
-  const fechaCompacta = f ? f.replace(/-/g,'') : new Date().toISOString().slice(0,10).replace(/-/g,'');
-  let numReserva = '';
-  if(window._fsDB && window._fsRunTransaction && window._fsDoc) {
-    try {
-      const contadorRef = window._fsDoc(window._fsDB, 'config', 'contadores');
-      const campo = `reservas_${anioReserva}`;
-      const nuevoNum = await window._fsRunTransaction(window._fsDB, async tx => {
-        const snap = await tx.get(contadorRef);
-        const actual = snap.exists() ? (snap.data()[campo] || 0) : 0;
-        const siguiente = actual + 1;
-        tx.set(contadorRef, { [campo]: siguiente }, { merge: true });
-        return siguiente;
-      });
-      numReserva = `EF-${fechaCompacta}-${String(nuevoNum).padStart(4,'0')}`;
-    } catch(err) {
-      console.warn('Contador reservas error:', err.message);
-      // Fallback con timestamp si falla la transacción
-      numReserva = `EF-${fechaCompacta}-${Date.now().toString().slice(-4)}`;
-    }
-  } else {
-    numReserva = `EF-${fechaCompacta}-${Date.now().toString().slice(-4)}`;
-  }
-
-  // ── Cálculo IVA ───────────────────────────────────────────────
-  const baseImponible = totalEstimado / 1.21;
-  const cuotaIva      = totalEstimado - baseImponible;
-
   // ── Guardar en Firestore ─────────────────────────────────────
   if(window._fsDB && window._fsAddDoc) {
     try {
       await window._fsAddDoc(window._fsCollection(window._fsDB, 'reservas'), {
-        numReserva,
         nombre:     `${n} ${ap}`, apellidos: ap, dni, fechaNac: fnac,
         direccion:  dir, localidad: loc, cp, telefono: t, email: e,
         servicio:   servicioLabel, personas: pers, fecha: f,
@@ -3355,33 +3316,21 @@ async function enviarReserva() {
         extras:     extObjs.length ? extrasNombres.join(', ') : 'Ninguno',
         metodoPago: 'Transferencia bancaria / Bizum',
         importe:    totalEstimado, senal: senalPago,
-        baseImponible: parseFloat(baseImponible.toFixed(2)),
-        cuotaIva:      parseFloat(cuotaIva.toFixed(2)),
         notas:      no || '', origen: 'web', estado: 'Pendiente',
         createdAt:  window._fsServerTimestamp()
       });
     } catch(err) { console.warn('Firestore error:', err.message); }
   }
 
-  // ── Añadir número de reserva a los params de email ───────────
-  paramsCliente.num_reserva  = numReserva;
-  paramsLaura.num_reserva    = numReserva;
-  paramsCliente.base_imponible = fmtEur(baseImponible);
-  paramsCliente.cuota_iva      = fmtEur(cuotaIva);
-  paramsLaura.base_imponible   = fmtEur(baseImponible);
-  paramsLaura.cuota_iva        = fmtEur(cuotaIva);
-
   // ── Email al CLIENTE ─────────────────────────────────────────
   const lang = getLang();
-  const subCliente = lang === 'ca'
-    ? `✅ Reserva ${numReserva} rebuda a EspaiFest`
-    : `✅ Reserva ${numReserva} recibida en EspaiFest`;
+  const subCliente = lang === 'ca' ? '✅ Reserva rebuda a EspaiFest' : '✅ Reserva recibida en EspaiFest';
   const htmlCliente = buildEmailCliente(paramsCliente, lang);
   const okCliente = await resendSend(e, subCliente, htmlCliente);
 
   // ── Email a LAURA ─────────────────────────────────────────────
   const htmlLaura = buildEmailLaura(paramsLaura);
-  const okLaura = await resendSend(_MAIL.emailLaura, `🎉 Nova reserva ${numReserva} — ${n} ${ap}`, htmlLaura);
+  const okLaura = await resendSend(_MAIL.emailLaura, `🎉 Nova reserva — ${n} ${ap}`, htmlLaura);
 
   // ── WhatsApp a LAURA ─────────────────────────────────────────
   const linDni   = `\n🪪 DNI: ${dni}${fnac?' · Nac: '+fmtFecha(fnac):''}`;
@@ -3506,7 +3455,7 @@ function showToast(msg) {
 
 // ══ BLOG — FIREBASE ══════════════════════════════════════
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, getDocs, addDoc, doc, runTransaction, query, orderBy, where, limit, serverTimestamp, onSnapshot }
+import { getFirestore, collection, getDocs, addDoc, query, orderBy, where, limit, serverTimestamp, onSnapshot }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const _fbConfig = {
@@ -3528,8 +3477,6 @@ let _allBlogPosts = [];
 window._fsDB = _db;
 window._fsAddDoc = addDoc;
 window._fsCollection = collection;
-window._fsDoc = doc;
-window._fsRunTransaction = runTransaction;
 window._fsServerTimestamp = serverTimestamp;
 
 const CAT_LABELS = {
