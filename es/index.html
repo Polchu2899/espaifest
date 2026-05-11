@@ -1900,7 +1900,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
     <!-- Panel Turnos estándar -->
     <div class="prc-panel on" id="prc-estandar" data-a="up">
-      <div class="prc-loading" id="prc-load-estandar">Cargando tarifas...</div>
+      <div class="prc-loading" id="prc-load-estandar" data-es="Cargando tarifas..." data-ca="Carregant tarifes...">Cargando tarifas...</div>
       <div class="prc-table-wrap" id="prc-wrap-estandar" style="display:none">
         <table class="prc-table" id="prc-tbl-estandar">
           <thead><tr>
@@ -1911,12 +1911,12 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
           <tbody id="prc-body-estandar"></tbody>
         </table>
       </div>
-      <p style="font-size:.75rem;color:var(--tx2);margin-top:10px;text-align:center">Precios en € por sesión · IVA no incluido</p>
+      <p style="font-size:.75rem;color:var(--tx2);margin-top:10px;text-align:center" data-es="Precios en € por sesión · IVA no incluido" data-ca="Preus en € per sessió · IVA no inclòs">Precios en € por sesión · IVA no incluido</p>
     </div>
 
     <!-- Panel Ampliados -->
     <div class="prc-panel" id="prc-ampliados" data-a="up">
-      <div class="prc-loading" id="prc-load-ampliados">Cargando tarifas...</div>
+      <div class="prc-loading" id="prc-load-ampliados" data-es="Cargando tarifas..." data-ca="Carregant tarifes...">Cargando tarifas...</div>
       <div class="prc-table-wrap" id="prc-wrap-ampliados" style="display:none">
         <table class="prc-table" id="prc-tbl-ampliados">
           <thead><tr>
@@ -1931,21 +1931,21 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
     <!-- Panel Especiales -->
     <div class="prc-panel" id="prc-especiales" data-a="up">
-      <div class="prc-loading" id="prc-load-especiales">Cargando tarifas...</div>
+      <div class="prc-loading" id="prc-load-especiales" data-es="Cargando tarifas..." data-ca="Carregant tarifes...">Cargando tarifas...</div>
       <div class="prc-esp-grid" id="prc-grid-especiales" style="display:none"></div>
     </div>
 
     <!-- Panel Extras -->
     <div class="prc-panel" id="prc-extras" data-a="up">
-      <div class="prc-loading" id="prc-load-extras">Cargando tarifas...</div>
+      <div class="prc-loading" id="prc-load-extras" data-es="Cargando tarifas..." data-ca="Carregant tarifes...">Cargando tarifas...</div>
       <div class="prc-extras-grid" id="prc-grid-extras" style="display:none"></div>
     </div>
 
     <!-- CTA -->
     <div style="text-align:center;margin-top:36px" data-a="up">
-      <a href="#reservas" class="btn btn-primary">Reservar ara<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <a href="#reservas" class="btn btn-primary" data-es="Reservar ahora" data-ca="Reservar ara">Reservar ahora<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
-      <p style="font-size:.78rem;color:var(--tx2);margin-top:12px">Necessites un horari diferent? Escriu-nos i ho busquem.<a href="https://api.whatsapp.com/send?phone=34674379709" target="_blank" rel="noopener" style="color:var(--ct);text-decoration:none">Escríbenos y lo buscamos →</a></p>
+      <p style="font-size:.78rem;color:var(--tx2);margin-top:12px"><span data-es="¿Necesitas un horario diferente? Escríbenos y lo buscamos." data-ca="Necessites un horari diferent? Escriu-nos i ho busquem.">¿Necesitas un horario diferente? Escríbenos y lo buscamos.</span><a href="https://api.whatsapp.com/send?phone=34674379709" target="_blank" rel="noopener" style="color:var(--ct);text-decoration:none" data-es=" Escríbenos →" data-ca=" Escriu-nos →"> Escríbenos →</a></p>
     </div>
 
     <!-- Servicios adicionales desde Firestore -->
@@ -2179,7 +2179,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
     <div class="eq-notice" data-a="up">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <p>Tot l'equipament està <strong>inclòs en el preu del lloguer</strong>. Sense costos addicionals ni sorpreses.<strong>incluido en el precio del alquiler</strong>. Sin costes adicionales ni sorpresas.</p>
+      <p data-es="Todo el equipamiento está incluido en el precio del alquiler. Sin costes adicionales ni sorpresas." data-ca="Tot l'equipament està inclòs en el preu del lloguer. Sense costos addicionals ni sorpreses.">Todo el equipamiento está <strong>incluido en el precio del alquiler</strong>. Sin costes adicionales ni sorpresas.</p>
     </div>
   </div>
 </section>
