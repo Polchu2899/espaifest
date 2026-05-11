@@ -4115,6 +4115,14 @@ function tarCellChange(inp, tipo, i, dia) {
   const v = inp.value.trim();
   window.tarifasData[tipo][i][dia] = (v === '—' || v === '') ? '—' : parseFloat(v)||v;
 }
+window.tarCellChange = tarCellChange; // ← exponer al scope global (necesario para oninput inline en módulo ES)
+
+// ── Diagnóstico: verificar que tarifasData se actualiza correctamente ──
+window._debugTarifas = function() {
+  console.table(window.tarifasData.estandar);
+  console.table(window.tarifasData.ampliados);
+  alert('Mañana LU: ' + window.tarifasData.estandar?.[0]?.lu + '\nVer consola para detalle completo');
+};
 
 window.tarDelRow = function(tipo, i) {
   window.tarifasData[tipo].splice(i,1);
@@ -4215,7 +4223,8 @@ window.saveTodasTarifas = async function() {
       return setDoc(doc(db,'tarifas',t), { filas: window.tarifasData[t], updatedAt: serverTimestamp() });
     }));
     console.log('[saveTodasTarifas] OK');
-    showToast('✓ Todas las tarifas publicadas en la web');
+    const total = tipos.reduce((s,t) => s+(window.tarifasData[t]?.length||0), 0);
+    showToast(`✓ Publicadas: ${window.tarifasData.estandar?.length||0} franjas estándar · ${window.tarifasData.ampliados?.length||0} ampliadas`);
   } catch(e) {
     console.error('[saveTodasTarifas] ERROR:', e.code, e.message, e);
     showToast('Error: '+e.message);
