@@ -3541,24 +3541,30 @@ async function loadBlogPosts() {
   }
 }
 
-// ══ TARIFAS DESDE FIRESTORE → PRECIOS INDEX + CALENDARIO ════
-async function loadTarifasIndex() {
+/// ══ TARIFAS DESDE FIRESTORE → PRECIOS INDEX + CALENDARIO ════
+// onSnapshot = tiempo real: cuando Laura guarda desde el admin, el index se actualiza solo
+let _tarifasLoaded = false;
+function loadTarifasIndex() {
   try {
-    const snap = await getDocs(collection(_db,'tarifas'));
-    if(!snap.empty) {
+    onSnapshot(collection(_db,'tarifas'), (snap) => {
       snap.forEach(d => {
         if(indexTarifas[d.id] !== undefined && d.data().filas) {
           indexTarifas[d.id] = d.data().filas;
         }
       });
-    }
+      renderTodosPreciosIndex();
+      if(calSelected) renderFranjas(calSelected);
+      if(!_tarifasLoaded) { _tarifasLoaded = true; loadFechasOcupadas(); }
+    }, (e) => {
+      console.error('[Tarifas] Error Firestore:', e.code, e.message);
+      renderTodosPreciosIndex();
+      loadFechasOcupadas();
+    });
   } catch(e) {
-    console.error('[Tarifas] Error leyendo Firestore — posible regla de seguridad bloqueando lectura pública:',e.code, e.message);
-    console.error('[Tarifas] Verifica en Firebase Console → Firestore → Rules que la colección "tarifas" permita: allow read: if true;');
+    console.error('[Tarifas] Error al suscribir:', e);
+    renderTodosPreciosIndex();
+    loadFechasOcupadas();
   }
-  renderTodosPreciosIndex();
-  loadFechasOcupadas();
-  if(calSelected) renderFranjas(calSelected);
 }
 
 // ══ FECHAS OCUPADAS — CALENDARIO ═════════════════════════════
