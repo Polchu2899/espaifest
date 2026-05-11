@@ -488,7 +488,7 @@ nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%
 .n-links a{padding:7px 13px;border-radius:40px;font-size:.875rem;font-weight:500;color:var(--tx2);transition:all .2s;}
 .n-links a:hover{color:var(--tx1);background:var(--glass);}
 .lang-wrap{display:flex;background:var(--s3);border-radius:30px;padding:3px;gap:2px;margin:0 5px;}
-.lang-btn{padding:5px 11px;border-radius:24px;border:none;font:700 .72rem var(--fb);cursor:pointer;background:transparent;color:var(--tx3);transition:all .2s;}
+.lang-btn{padding:5px 11px;border-radius:24px;border:none;font:700 .72rem var(--fb);cursor:pointer;background:transparent;color:var(--tx3);transition:all .2s;display:inline-block;text-decoration:none;line-height:1;}
 .lang-btn.on{background:var(--s1);color:var(--tx1);box-shadow:0 1px 6px oklch(0% 0 0/.2);}
 .theme-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--bd);background:var(--s2);color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:4px;}
 .theme-btn:hover{color:var(--tx1);border-color:var(--co);}
@@ -1519,14 +1519,14 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   </a>
 </div>
   <div class="n-links" role="menubar">
-    <a href="#fiestas">>Fiestas</a>
-    <a href="#adultos">>Celebraciones</a>
-    <a href="#business">>Business</a>
-    <a href="#precios">>Precios</a>
-    <a href="#equipamiento">>Equipamiento</a>
-    <a href="#galeria">>Galería</a>
-    <a href="#calendario">>Calendario</a>
-    <a href="#blog">>Blog</a>
+    <a href="#fiestas">Fiestas</a>
+    <a href="#adultos">Celebraciones</a>
+    <a href="#business">Business</a>
+    <a href="#precios">Precios</a>
+    <a href="#equipamiento">Equipamiento</a>
+    <a href="#galeria">Galería</a>
+    <a href="#calendario">Calendario</a>
+    <a href="#blog">Blog</a>
     <div class="lang-wrap">
       <span class="lang-btn on" aria-current="true">ES</span>
       <a class="lang-btn" href="/" hreflang="ca" aria-label="Versió en català">CA</a>
@@ -1554,18 +1554,18 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     </button>
   </div>
   <nav class="mob-links" aria-label="Menú principal">
-    <a href="#fiestas"   onclick="closeMobMenu()">>🎈 Fiestas infantiles</a>
-    <a href="#adultos"   onclick="closeMobMenu()">>🎉 Celebraciones adultos</a>
-    <a href="#business"  onclick="closeMobMenu()">>💼 Business</a>
-    <a href="#precios"   onclick="closeMobMenu()">>💰 Precios</a>
-    <a href="#equipamiento" onclick="closeMobMenu()">>🎪 Equipamiento</a>
-    <a href="#galeria"   onclick="closeMobMenu()">>📷 Galería</a>
-    <a href="#calendario" onclick="closeMobMenu()">>📅 Calendario</a>
-    <a href="#blog"      onclick="closeMobMenu()">>✍️ Blog</a>
+    <a href="#fiestas"   onclick="closeMobMenu()">🎈 Fiestas infantiles</a>
+    <a href="#adultos"   onclick="closeMobMenu()">🎉 Celebraciones adultos</a>
+    <a href="#business"  onclick="closeMobMenu()">💼 Business</a>
+    <a href="#precios"   onclick="closeMobMenu()">💰 Precios</a>
+    <a href="#equipamiento" onclick="closeMobMenu()">🎪 Equipamiento</a>
+    <a href="#galeria"   onclick="closeMobMenu()">📷 Galería</a>
+    <a href="#calendario" onclick="closeMobMenu()">📅 Calendario</a>
+    <a href="#blog"      onclick="closeMobMenu()">✍️ Blog</a>
   </nav>
   <div class="mob-cta-wrap">
     <a href="#reservas" class="btn btn-primary mob-cta-wrap" onclick="closeMobMenu()"
-       style="display:flex;align-items:center;justify-content:center;padding:14px;border-radius:12px;font-size:.95rem;text-decoration:none;font-weight:700;font-family:var(--fb);background:linear-gradient(135deg,var(--cp),var(--co));color:#fff;">>Reservar ahora</a>
+       style="display:flex;align-items:center;justify-content:center;padding:14px;border-radius:12px;font-size:.95rem;text-decoration:none;font-weight:700;font-family:var(--fb);background:linear-gradient(135deg,var(--cp),var(--co));color:#fff;">Reservar ahora</a>
   </div>
   <div class="mob-footer">
     <div class="mob-lang">
@@ -1584,7 +1584,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <span class="promo-banner-tag">🔥 Oferta</span>
     <span class="promo-banner-txt" id="pb-txt">—</span>
     <button class="promo-banner-code" id="pb-code" onclick="copiarCodigoBanner()" title="Copiar código">—</button>
-    <a href="#reservas" class="promo-banner-cta" id="pb-cta">>Reservar ahora</a>
+    <a href="#reservas" class="promo-banner-cta" id="pb-cta">Reservar ahora</a>
   </div>
   <button class="promo-banner-close" onclick="cerrarBanner()" aria-label="Cerrar banner">×</button>
 </div>
@@ -1597,18 +1597,18 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <div class="h-bg" style="background-image:url('https://i.ibb.co/j93pj9JJ/istockphoto-1271344213-612x612.jpg');" role="img" aria-label="Fiestas EspaiFest"></div>
     <div class="h-ov"></div>
     <div class="h-cont">
-      <div class="h-eyebrow"><div class="h-dot"></div><span>>Fiestas y celebraciones</span></div>
-      <h1 class="h-title"><span>>Tu fiesta</span><br><span class="grd">>perfecta</span></h1>
-      <p class="h-desc">>Fiestas infantiles, cumpleaños de adultos y reuniones familiares en un espacio privado de 115m² insonorizado en Martorell.</p>
+      <div class="h-eyebrow"><div class="h-dot"></div><span>Fiestas y celebraciones</span></div>
+      <h1 class="h-title"><span>Tu fiesta</span><br><span class="grd">perfecta</span></h1>
+      <p class="h-desc">Fiestas infantiles, cumpleaños de adultos y reuniones familiares en un espacio privado de 115m² insonorizado en Martorell.</p>
       <div class="h-pills">
-        <span class="h-pill">>Infantil</span>
-        <span class="h-pill">>Adultos</span>
-        <span class="h-pill">>Familiar</span>
+        <span class="h-pill">Infantil</span>
+        <span class="h-pill">Adultos</span>
+        <span class="h-pill">Familiar</span>
         <span class="h-pill">85€ / 4h</span>
       </div>
       <div class="h-btns">
         <a href="#reservas" class="btn btn-fest">Reservar la meva festa<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-        <a href="#fiestas" class="btn btn-ghost">>Ver la sala</a>
+        <a href="#fiestas" class="btn btn-ghost">Ver la sala</a>
       </div>
     </div>
   </div>
@@ -1619,22 +1619,22 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <div class="h-bg" style="background-image:url('https://i.ibb.co/RkpvQdzw/istockphoto-1325276224-612x612.jpg');" role="img" aria-label="EspaiFest Business"></div>
     <div class="h-ov"></div>
     <div class="h-cont">
-      <div class="h-eyebrow"><div class="h-dot"></div><span>>Espacio profesional</span></div>
-      <h2 class="h-title"><span>>Tu espacio en</span><br><span class="grd">>Martorell</span></h2>
-      <p class="h-desc">>Reuniones de empresa, formaciones, clases de pilates y yoga, charlas y talleres. WiFi fibra, proyector HD y cafetera incluidos.</p>
+      <div class="h-eyebrow"><div class="h-dot"></div><span>Espacio profesional</span></div>
+      <h2 class="h-title"><span>Tu espacio en</span><br><span class="grd">Martorell</span></h2>
+      <p class="h-desc">Reuniones de empresa, formaciones, clases de pilates y yoga, charlas y talleres. WiFi fibra, proyector HD y cafetera incluidos.</p>
       <div class="h-pills">
-        <span class="h-pill">>Empresa</span>
-        <span class="h-pill">>Clases</span>
-        <span class="h-pill">>Talleres</span>
+        <span class="h-pill">Empresa</span>
+        <span class="h-pill">Clases</span>
+        <span class="h-pill">Talleres</span>
       </div>
       <div class="h-btns">
         <a href="#reservas" class="btn btn-biz">Reservar espai<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-        <a href="#business" class="btn btn-ghost">>Ver equipamiento</a>
+        <a href="#business" class="btn btn-ghost">Ver equipamiento</a>
       </div>
     </div>
   </div>
 
-  <div class="scroll-hint" aria-hidden="true"><span>>descubre más</span><div class="sa"></div></div>
+  <div class="scroll-hint" aria-hidden="true"><span>descubre más</span><div class="sa"></div></div>
 </div>
 
 <!-- ══ FIESTAS INFANTILES ═════════════════════════ -->
@@ -1674,19 +1674,19 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
           </div>
           <div class="price-float">
             <div class="pf-num">85€</div>
-            <div class="pf-lbl">>4 horas · todo incluido</div>
+            <div class="pf-lbl">4 horas · todo incluido</div>
           </div>
         </div>
       </div>
       <div data-a="left">
-        <div class="eyebrow ew-f"><div class="ew-dot"></div><span>>Fiestas infantiles en Martorell</span></div>
-        <h2 class="sec-h2" data-blur="top">>El cumpleaños que siempre soñaron</h2>
-        <p class="sec-lead">>Espacio privado de 115m² con dos zonas infantiles diferenciadas por edades. Zona bebés con rincón acolchado y zona niños con castillo hinchable, tobogán y piscina de bolas.</p>
+        <div class="eyebrow ew-f"><div class="ew-dot"></div><span>Fiestas infantiles en Martorell</span></div>
+        <h2 class="sec-h2" data-blur="top">El cumpleaños que siempre soñaron</h2>
+        <p class="sec-lead">Espacio privado de 115m² con dos zonas infantiles diferenciadas por edades. Zona bebés con rincón acolchado y zona niños con castillo hinchable, tobogán y piscina de bolas.</p>
         <div class="feat-list">
-          <div class="feat-item"><div class="feat-ico fi-o"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="oklch(68% .22 38)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div><div class="feat-title">>Espacio 100% privado y exclusivo</div><div class="feat-desc">>Solo tus invitados durante las 4 horas. Sin compartir con extraños.</div></div></div>
-          <div class="feat-item"><div class="feat-ico fi-p"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="oklch(66% .24 355)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="feat-title">>2 zonas infantiles diferenciadas</div><div class="feat-desc">>Zona bebés acolchada y zona niños con castillo, tobogán y piscina de bolas.</div></div></div>
-          <div class="feat-item"><div class="feat-ico fi-t"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div><div class="feat-title">>Equipo multimedia completo</div><div class="feat-desc">>Sistema de música profesional, proyector HD y pantalla. Conecta tu móvil y listo.</div></div></div>
-          <div class="feat-item"><div class="feat-ico fi-y"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="oklch(87% .19 90)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><div><div class="feat-title">>Cocina office completa</div><div class="feat-desc">>Cafetera Nespresso, microondas, horno y nevera. Trae el catering y ponlo cómodo.</div></div></div>
+          <div class="feat-item"><div class="feat-ico fi-o"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="oklch(68% .22 38)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div><div class="feat-title">Espacio 100% privado y exclusivo</div><div class="feat-desc">Solo tus invitados durante las 4 horas. Sin compartir con extraños.</div></div></div>
+          <div class="feat-item"><div class="feat-ico fi-p"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="oklch(66% .24 355)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="feat-title">2 zonas infantiles diferenciadas</div><div class="feat-desc">Zona bebés acolchada y zona niños con castillo, tobogán y piscina de bolas.</div></div></div>
+          <div class="feat-item"><div class="feat-ico fi-t"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div><div class="feat-title">Equipo multimedia completo</div><div class="feat-desc">Sistema de música profesional, proyector HD y pantalla. Conecta tu móvil y listo.</div></div></div>
+          <div class="feat-item"><div class="feat-ico fi-y"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="oklch(87% .19 90)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><div><div class="feat-title">Cocina office completa</div><div class="feat-desc">Cafetera Nespresso, microondas, horno y nevera. Trae el catering y ponlo cómodo.</div></div></div>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <a href="#reservas" class="btn btn-fest">Reservar festa infantil<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
@@ -1700,9 +1700,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 <section id="adultos">
   <div class="container">
     <div class="tc" data-a="up">
-      <div class="eyebrow ew-f" style="justify-content:center"><div class="ew-dot"></div><span>>Para todas las edades</span></div>
-      <h2 class="sec-h2" data-blur="top">>No solo para los peques</h2>
-      <p class="sec-lead">>EspaiFest es el local de fiestas en Martorell para cualquier celebración. Cumpleaños de adultos, baby showers, despedidas, encuentros familiares y mucho más.</p>
+      <div class="eyebrow ew-f" style="justify-content:center"><div class="ew-dot"></div><span>Para todas las edades</span></div>
+      <h2 class="sec-h2" data-blur="top">No solo para los peques</h2>
+      <p class="sec-lead">EspaiFest es el local de fiestas en Martorell para cualquier celebración. Cumpleaños de adultos, baby showers, despedidas, encuentros familiares y mucho más.</p>
     </div>
     <div class="cards3">
   <div class="card" data-a="up" data-d="0">
@@ -1710,9 +1710,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
       <img src="https://i.ibb.co/qHpxy6t/istockphoto-1351477272-612x612.jpg" alt="Fiesta de cumpleaños de adultos en EspaiFest" loading="lazy">
     </div>
     <div class="card-body">
-          <span class="card-tag ct-y">>Hasta 50 personas</span>
-          <div class="card-title">>Cumpleaños adultos</div>
-          <div class="card-desc">>Sala completa con TV, futbolín, proyector HD y equipo de música. Celebra tu cumpleaños de adulto como merece.</div>
+          <span class="card-tag ct-y">Hasta 50 personas</span>
+          <div class="card-title">Cumpleaños adultos</div>
+          <div class="card-desc">Sala completa con TV, futbolín, proyector HD y equipo de música. Celebra tu cumpleaños de adulto como merece.</div>
         </div>
       </div>
       <div class="card" data-a="up" data-d="100">
@@ -1720,9 +1720,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <img src="https://i.ibb.co/Kj1VfGtd/istockphoto-643625256-612x612.jpg" alt="Baby shower y reunión familiar en EspaiFest Martorell" loading="lazy">
   </div>
   <div class="card-body">
-          <span class="card-tag ct-p">>Espacio exclusivo</span>
-          <div class="card-title">>Baby shower & Familiar</div>
-          <div class="card-desc">>El ambiente perfecto para celebrar la llegada de un bebé o reunir a la familia. Íntimo, privado y en el centro de Martorell.</div>
+          <span class="card-tag ct-p">Espacio exclusivo</span>
+          <div class="card-title">Baby shower & Familiar</div>
+          <div class="card-desc">El ambiente perfecto para celebrar la llegada de un bebé o reunir a la familia. Íntimo, privado y en el centro de Martorell.</div>
         </div>
       </div>
       <div class="card" data-a="up" data-d="200">
@@ -1730,9 +1730,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <img src="https://i.ibb.co/VWsZpfjt/istockphoto-2182250916-612x612.jpg" alt="Eventos especiales y teambuilding en EspaiFest Martorell" loading="lazy">
   </div>
   <div class="card-body">
-          <span class="card-tag ct-o">>Personalizable</span>
-          <div class="card-title">>Eventos especiales</div>
-          <div class="card-desc">>Comuniones, bautizos, despedidas de soltera, graduaciones y más. EspaiFest se adapta a tu celebración.</div>
+          <span class="card-tag ct-o">Personalizable</span>
+          <div class="card-title">Eventos especiales</div>
+          <div class="card-desc">Comuniones, bautizos, despedidas de soltera, graduaciones y más. EspaiFest se adapta a tu celebración.</div>
         </div>
       </div>
     </div>
@@ -1744,20 +1744,20 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <div class="container">
     <div class="biz-grid">
       <div data-a="right">
-        <div class="eyebrow ew-b"><div class="ew-dot"></div><span>>Espacio profesional en Martorell</span></div>
-        <h2 class="sec-h2" data-blur="top">>Tu sala de reuniones y formaciones</h2>
-        <p class="sec-lead">>Alquila un espacio profesional totalmente equipado en el Baix Llobregat. Ideal para reuniones, formaciones, presentaciones, clases de pilates y yoga, charlas y talleres. Tarifas mensuales disponibles.</p>
+        <div class="eyebrow ew-b"><div class="ew-dot"></div><span>Espacio profesional en Martorell</span></div>
+        <h2 class="sec-h2" data-blur="top">Tu sala de reuniones y formaciones</h2>
+        <p class="sec-lead">Alquila un espacio profesional totalmente equipado en el Baix Llobregat. Ideal para reuniones, formaciones, presentaciones, clases de pilates y yoga, charlas y talleres. Tarifas mensuales disponibles.</p>
         <div class="biz-chips">
-          <div class="biz-chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg><span>>WiFi fibra óptica</span></div>
-          <div class="biz-chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="16" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>>Proyector HD</span></div>
-          <div class="biz-chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg><span>>Cafetera Nespresso</span></div>
-          <div class="biz-chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg><span>>Insonorizada</span></div>
-          <div class="biz-chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span>>Hasta 50 personas</span></div>
-          <div class="biz-chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><span>>Factura empresa</span></div>
+          <div class="biz-chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg><span>WiFi fibra óptica</span></div>
+          <div class="biz-chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="16" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>Proyector HD</span></div>
+          <div class="biz-chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg><span>Cafetera Nespresso</span></div>
+          <div class="biz-chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg><span>Insonorizada</span></div>
+          <div class="biz-chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span>Hasta 50 personas</span></div>
+          <div class="biz-chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(73% .14 190)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><span>Factura empresa</span></div>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <a href="#reservas" class="btn btn-biz">Reservar sala<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-          <a href="https://api.whatsapp.com/send?phone=34674379709&text=Hola!%20Quiero%20informaci%C3%B3n%20sobre%20el%20espacio%20business" target="_blank" rel="noopener" class="btn btn-outline btn-sm">>Consultar tarifas</a>
+          <a href="https://api.whatsapp.com/send?phone=34674379709&text=Hola!%20Quiero%20informaci%C3%B3n%20sobre%20el%20espacio%20business" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Consultar tarifas</a>
         </div>
       </div>
       <div data-a="left">
@@ -1777,9 +1777,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 <section id="calendario">
   <div class="container">
     <div class="tc" data-a="up">
-      <div class="eyebrow ew-f" style="justify-content:center"><div class="ew-dot"></div><span>>Disponibilidad</span></div>
-      <h2 class="sec-h2" data-blur="top">>Comprueba cuándo está libre</h2>
-      <p class="sec-lead">>Selecciona una fecha disponible y reserva directamente. También puedes reservar por WhatsApp o teléfono.</p>
+      <div class="eyebrow ew-f" style="justify-content:center"><div class="ew-dot"></div><span>Disponibilidad</span></div>
+      <h2 class="sec-h2" data-blur="top">Comprueba cuándo está libre</h2>
+      <p class="sec-lead">Selecciona una fecha disponible y reserva directamente. También puedes reservar por WhatsApp o teléfono.</p>
     </div>
     <div class="cal-wrap" data-a="up">
       <div class="cal-head">
@@ -1796,38 +1796,38 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
       <div class="cal-grid" id="cal-grid"></div>
       <!-- Leyenda -->
       <div style="display:flex;gap:16px;flex-wrap:wrap;padding:12px 20px;border-top:1px solid var(--bd);font-size:11px;color:var(--tx2);align-items:center;">
-        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--ct);display:inline-block;"></span><span>>Disponible</span></span>
-        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:oklch(87% .19 90);display:inline-block;"></span><span>>Parcial</span></span>
-        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:oklch(66% .24 355);display:inline-block;"></span><span>>Día especial</span></span>
-        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--co);display:inline-block;"></span><span>>Ocupado</span></span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--ct);display:inline-block;"></span><span>Disponible</span></span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:oklch(87% .19 90);display:inline-block;"></span><span>Parcial</span></span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:oklch(66% .24 355);display:inline-block;"></span><span>Día especial</span></span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--co);display:inline-block;"></span><span>Ocupado</span></span>
       </div>
         <div class="cal-franjas" id="cal-franjas">
-          <div class="cf-titulo">>Franjas disponibles</div>
+          <div class="cf-titulo">Franjas disponibles</div>
           <div class="cf-grupo" id="cf-grupo-manana">
-            <div class="cf-grupo-label">>Mañana</div>
+            <div class="cf-grupo-label">Mañana</div>
             <div class="cf-slots" id="cf-manana"></div>
           </div>
           <div class="cf-grupo" id="cf-grupo-tarde">
-            <div class="cf-grupo-label">>Tarde</div>
+            <div class="cf-grupo-label">Tarde</div>
             <div class="cf-slots" id="cf-tarde"></div>
           </div>
           <div class="cf-grupo cf-grupo-noche" id="cf-grupo-noche" style="display:none">
-            <div class="cf-grupo-label">>Tarde-Noche / Noche</div>
+            <div class="cf-grupo-label">Tarde-Noche / Noche</div>
             <div class="cf-slots" id="cf-noche"></div>
           </div>
           <div class="cf-grupo cf-grupo-diacomp" id="cf-grupo-diacomp">
-            <div class="cf-grupo-label">>Todo el día</div>
+            <div class="cf-grupo-label">Todo el día</div>
             <div class="cf-slots" id="cf-diacomp"></div>
           </div>
         </div>
       <div class="cal-legend">
-        <span><span class="leg-dot" style="background:var(--ct)"></span><span>>Disponible</span></span>
-        <span><span class="leg-dot" style="background:var(--co)"></span><span>>Reservado</span></span>
-        <span><span class="leg-dot" style="background:var(--bd)"></span><span>>Pasado</span></span>
+        <span><span class="leg-dot" style="background:var(--ct)"></span><span>Disponible</span></span>
+        <span><span class="leg-dot" style="background:var(--co)"></span><span>Reservado</span></span>
+        <span><span class="leg-dot" style="background:var(--bd)"></span><span>Pasado</span></span>
       </div>
       <div class="cal-note">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(68% .22 38)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="16" height="16" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        <span>>Selecciona un día, elige tu franja horaria y rellena el formulario</span>
+        <span>Selecciona un día, elige tu franja horaria y rellena el formulario</span>
       </div>
     </div>
   </div>
@@ -1837,16 +1837,16 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 <section id="galeria">
   <div class="container">
     <div class="tc" data-a="up">
-      <div class="eyebrow ew-y" style="justify-content:center"><div class="ew-dot"></div><span>>Galería del local</span></div>
-      <h2 class="sec-h2" data-blur="top">>Así es EspaiFest</h2>
-      <p class="sec-lead">>115m² diseñados para que cada celebración sea perfecta. El espacio favorito de Martorell desde hace 10 años.</p>
+      <div class="eyebrow ew-y" style="justify-content:center"><div class="ew-dot"></div><span>Galería del local</span></div>
+      <h2 class="sec-h2" data-blur="top">Así es EspaiFest</h2>
+      <p class="sec-lead">115m² diseñados para que cada celebración sea perfecta. El espacio favorito de Martorell desde hace 10 años.</p>
     </div>
     <div class="gal" data-a="up">
-      <div class="gc gc-1"><img src="https://i.ibb.co/v699pDng/Panoramica-Espai-Fest-Martorell-1024x375.jpg" alt="Vista panorámica sala EspaiFest Martorell" loading="lazy"><div class="gc-ov"><span class="gc-lbl">>Vista panorámica</span></div></div>
-      <div class="gc gc-2"><img src="https://i.ibb.co/Pv7PT6KQ/raconet1-1024x832.jpg" alt="Zona bebés EspaiFest" loading="lazy"><div class="gc-ov"><span class="gc-lbl">>Zona bebés</span></div></div>
-      <div class="gc gc-3"><img src="https://i.ibb.co/Nd08hnHh/Tobogan-y-piscina-de-bolas-1024x768.jpg" alt="Tobogán zona infantil" loading="lazy"><div class="gc-ov"><span class="gc-lbl">>Zona niños</span></div></div>
-      <div class="gc gc-4"><img src="https://i.ibb.co/S744Qc8k/Zona-Adultos-1-1024x768.jpg" alt="Zona adultos EspaiFest" loading="lazy"><div class="gc-ov"><span class="gc-lbl">>Zona adultos</span></div></div>
-      <div class="gc gc-5"><img src="https://i.ibb.co/k6krLR78/Sala-1-800x540.jpg" alt="Sala eventos EspaiFest" loading="lazy"><div class="gc-ov"><span class="gc-lbl">>La sala</span></div></div>
+      <div class="gc gc-1"><img src="https://i.ibb.co/v699pDng/Panoramica-Espai-Fest-Martorell-1024x375.jpg" alt="Vista panorámica sala EspaiFest Martorell" loading="lazy"><div class="gc-ov"><span class="gc-lbl">Vista panorámica</span></div></div>
+      <div class="gc gc-2"><img src="https://i.ibb.co/Pv7PT6KQ/raconet1-1024x832.jpg" alt="Zona bebés EspaiFest" loading="lazy"><div class="gc-ov"><span class="gc-lbl">Zona bebés</span></div></div>
+      <div class="gc gc-3"><img src="https://i.ibb.co/Nd08hnHh/Tobogan-y-piscina-de-bolas-1024x768.jpg" alt="Tobogán zona infantil" loading="lazy"><div class="gc-ov"><span class="gc-lbl">Zona niños</span></div></div>
+      <div class="gc gc-4"><img src="https://i.ibb.co/S744Qc8k/Zona-Adultos-1-1024x768.jpg" alt="Zona adultos EspaiFest" loading="lazy"><div class="gc-ov"><span class="gc-lbl">Zona adultos</span></div></div>
+      <div class="gc gc-5"><img src="https://i.ibb.co/k6krLR78/Sala-1-800x540.jpg" alt="Sala eventos EspaiFest" loading="lazy"><div class="gc-ov"><span class="gc-lbl">La sala</span></div></div>
     </div>
   </div>
 </section>
@@ -1855,15 +1855,15 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 <section id="manualidades">
   <div class="container">
     <div class="tc" data-a="up">
-      <div class="eyebrow ew-y" style="justify-content:center"><div class="ew-dot"></div><span>>Kits de manualidades</span></div>
-      <h2 class="sec-h2" data-blur="top">>Crea con tus hijos</h2>
-      <p class="sec-lead">>Kits de materiales por temporada para hacer actividades creativas en casa. Pídelos directamente por WhatsApp.</p>
+      <div class="eyebrow ew-y" style="justify-content:center"><div class="ew-dot"></div><span>Kits de manualidades</span></div>
+      <h2 class="sec-h2" data-blur="top">Crea con tus hijos</h2>
+      <p class="sec-lead">Kits de materiales por temporada para hacer actividades creativas en casa. Pídelos directamente por WhatsApp.</p>
       <div class="manu-filter">
-        <button class="mf-btn on" onclick="filterManu('all',this)">>Todos</button>
-        <button class="mf-btn" onclick="filterManu('verano',this)">>Verano</button>
-        <button class="mf-btn" onclick="filterManu('pascua',this)">>Pascua</button>
-        <button class="mf-btn" onclick="filterManu('navidad',this)">>Navidad</button>
-        <button class="mf-btn" onclick="filterManu('general',this)">>Todo el año</button>
+        <button class="mf-btn on" onclick="filterManu('all',this)">Todos</button>
+        <button class="mf-btn" onclick="filterManu('verano',this)">Verano</button>
+        <button class="mf-btn" onclick="filterManu('pascua',this)">Pascua</button>
+        <button class="mf-btn" onclick="filterManu('navidad',this)">Navidad</button>
+        <button class="mf-btn" onclick="filterManu('general',this)">Todo el año</button>
       </div>
     </div>
     <div class="manu-grid" id="manu-grid">
@@ -1876,17 +1876,17 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 <section id="precios">
   <div class="container">
     <div class="tc" data-a="up">
-      <div class="eyebrow ew-b" style="justify-content:center"><div class="ew-dot"></div><span>>Precios transparentes</span></div>
-      <h2 class="sec-h2" data-blur="top">>Sin letra pequeña</h2>
-      <p class="sec-lead">>Todas las franjas, todos los precios. Sin sorpresas. Desde 85€ por 4 horas de espacio privado exclusivo.</p>
+      <div class="eyebrow ew-b" style="justify-content:center"><div class="ew-dot"></div><span>Precios transparentes</span></div>
+      <h2 class="sec-h2" data-blur="top">Sin letra pequeña</h2>
+      <p class="sec-lead">Todas las franjas, todos los precios. Sin sorpresas. Desde 85€ por 4 horas de espacio privado exclusivo.</p>
     </div>
 
     <!-- Tabs -->
     <div class="prc-tabs" data-a="up" role="tablist">
-      <button class="prc-tab on" onclick="prcSwitch('estandar',this)" role="tab">>Turnos 4h</button>
-      <button class="prc-tab" onclick="prcSwitch('ampliados',this)" role="tab">>Día completo</button>
-      <button class="prc-tab" onclick="prcSwitch('especiales',this)" role="tab">>Días especiales</button>
-      <button class="prc-tab" onclick="prcSwitch('extras',this)" role="tab">>Extras</button>
+      <button class="prc-tab on" onclick="prcSwitch('estandar',this)" role="tab">Turnos 4h</button>
+      <button class="prc-tab" onclick="prcSwitch('ampliados',this)" role="tab">Día completo</button>
+      <button class="prc-tab" onclick="prcSwitch('especiales',this)" role="tab">Días especiales</button>
+      <button class="prc-tab" onclick="prcSwitch('extras',this)" role="tab">Extras</button>
     </div>
 
     <!-- Panel Turnos estándar -->
@@ -1895,14 +1895,14 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
       <div class="prc-table-wrap" id="prc-wrap-estandar" style="display:none">
         <table class="prc-table" id="prc-tbl-estandar">
           <thead><tr>
-            <th>>Turno</th>
-            <th>>Horario</th>
+            <th>Turno</th>
+            <th>Horario</th>
             <th>Lu</th><th>Ma</th><th>Mi</th><th>Ju</th><th>Vi</th><th>Sá</th><th>Do</th>
           </tr></thead>
           <tbody id="prc-body-estandar"></tbody>
         </table>
       </div>
-      <p style="font-size:.75rem;color:var(--tx2);margin-top:10px;text-align:center">>Precios en € por sesión · IVA no incluido</p>
+      <p style="font-size:.75rem;color:var(--tx2);margin-top:10px;text-align:center">Precios en € por sesión · IVA no incluido</p>
     </div>
 
     <!-- Panel Ampliados -->
@@ -1911,8 +1911,8 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
       <div class="prc-table-wrap" id="prc-wrap-ampliados" style="display:none">
         <table class="prc-table" id="prc-tbl-ampliados">
           <thead><tr>
-            <th>>Turno</th>
-            <th>>Horario</th>
+            <th>Turno</th>
+            <th>Horario</th>
             <th>Lu</th><th>Ma</th><th>Mi</th><th>Ju</th><th>Vi</th><th>Sá</th><th>Do</th>
           </tr></thead>
           <tbody id="prc-body-ampliados"></tbody>
@@ -1941,7 +1941,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
     <!-- Servicios adicionales desde Firestore -->
     <div class="svc-extra" id="svc-extra-wrap">
-      <div class="svc-extra-title">>Servicios adicionales disponibles</div>
+      <div class="svc-extra-title">Servicios adicionales disponibles</div>
       <div class="svc-grid" id="svc-extra-grid"></div>
     </div>
   </div>
@@ -1951,9 +1951,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 <section id="fidelizacion">
   <div class="container">
     <div class="tc" data-a="up">
-      <div class="eyebrow ew-p" style="justify-content:center"><div class="ew-dot"></div><span>>Programa de fidelización</span></div>
-      <h2 class="sec-h2" data-blur="top">>Cuanto más vienes, más ahorras</h2>
-      <p class="sec-lead">>EspaiFest premia a sus clientes habituales con descuentos y ventajas exclusivas.</p>
+      <div class="eyebrow ew-p" style="justify-content:center"><div class="ew-dot"></div><span>Programa de fidelización</span></div>
+      <h2 class="sec-h2" data-blur="top">Cuanto más vienes, más ahorras</h2>
+      <p class="sec-lead">EspaiFest premia a sus clientes habituales con descuentos y ventajas exclusivas.</p>
     </div>
     <div class="fid-grid" data-a="up">
       <div class="fid-card">
@@ -1966,8 +1966,8 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15l-2 5L7 9l11 4-5 2z"/></svg>
             </div>
             <div class="fid-meta">
-              <div class="fid-name">>Básico</div>
-              <div class="fid-desc" id="fid-desc-bas">>1–4 reservas · Sin descuento</div>
+              <div class="fid-name">Básico</div>
+              <div class="fid-desc" id="fid-desc-bas">1–4 reservas · Sin descuento</div>
             </div>
             <div class="fid-discount" id="fid-disc-bas" style="color:var(--tx3)">—</div>
           </div>
@@ -1976,8 +1976,8 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="oklch(75% 0 0)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
             </div>
             <div class="fid-meta">
-              <div class="fid-name">>Plata</div>
-              <div class="fid-desc" id="fid-desc-pla">>5–9 reservas</div>
+              <div class="fid-name">Plata</div>
+              <div class="fid-desc" id="fid-desc-pla">5–9 reservas</div>
             </div>
             <div class="fid-discount" id="fid-disc-pla">5%</div>
           </div>
@@ -1986,21 +1986,21 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="oklch(87% .19 90)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
             </div>
             <div class="fid-meta">
-              <div class="fid-name">>Oro</div>
-              <div class="fid-desc" id="fid-desc-oro">>10+ reservas</div>
+              <div class="fid-name">Oro</div>
+              <div class="fid-desc" id="fid-desc-oro">10+ reservas</div>
             </div>
             <div class="fid-discount" id="fid-disc-oro" style="color:var(--cy)">10%</div>
           </div>
         </div>
       </div>
       <div class="fid-info">
-        <h3>>Tu tarjeta EspaiFest</h3>
-        <p>>Cada vez que celebras con nosotros sumas una reserva. A partir de la quinta ya disfrutas de descuento. Automático, sin apps.</p>
+        <h3>Tu tarjeta EspaiFest</h3>
+        <p>Cada vez que celebras con nosotros sumas una reserva. A partir de la quinta ya disfrutas de descuento. Automático, sin apps.</p>
         <div class="fid-perks">
-          <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>>Descuento automático en tu próxima reserva</span></div>
-          <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>>Sorpresas en tu cumpleaños</span></div>
-          <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>>Acceso prioritario en fechas especiales</span></div>
-          <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>>Notificaciones de últimas horas disponibles</span></div>
+          <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Descuento automático en tu próxima reserva</span></div>
+          <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Sorpresas en tu cumpleaños</span></div>
+          <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Acceso prioritario en fechas especiales</span></div>
+          <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Notificaciones de últimas horas disponibles</span></div>
         </div>
         <a href="#reservas" class="btn btn-primary">Començar a acumular<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       </div>
@@ -2012,9 +2012,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 <section id="equipamiento">
   <div class="container">
     <div class="tc" data-a="up">
-      <div class="eyebrow ew-f" style="justify-content:center"><div class="ew-dot"></div><span>>Todo incluido en el precio</span></div>
-      <h2 class="sec-h2" data-blur="top">>Todo lo que necesitas, ya está aquí</h2>
-      <p class="sec-lead">>No tienes que traer nada extra. EspaiFest cuenta con equipamiento completo para que tu celebración sea perfecta desde el primer momento.</p>
+      <div class="eyebrow ew-f" style="justify-content:center"><div class="ew-dot"></div><span>Todo incluido en el precio</span></div>
+      <h2 class="sec-h2" data-blur="top">Todo lo que necesitas, ya está aquí</h2>
+      <p class="sec-lead">No tienes que traer nada extra. EspaiFest cuenta con equipamiento completo para que tu celebración sea perfecta desde el primer momento.</p>
     </div>
 
     <div class="eq-grid">
@@ -2026,32 +2026,32 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             <svg viewBox="0 0 24 24" stroke="var(--ct)"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </div>
           <div>
-            <div class="eq-card-title">>Zona infantil</div>
-            <div class="eq-card-sub">>Para los más pequeños</div>
+            <div class="eq-card-title">Zona infantil</div>
+            <div class="eq-card-sub">Para los más pequeños</div>
           </div>
         </div>
         <div class="eq-items">
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Parque de bolas homologado</span>
-            <span class="eq-pill" style="background:oklch(73% .14 190/.12);color:var(--ct)">>3–10 años</span>
+            <span>Parque de bolas homologado</span>
+            <span class="eq-pill" style="background:oklch(73% .14 190/.12);color:var(--ct)">3–10 años</span>
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Zona baby</span>
-            <span class="eq-pill" style="background:oklch(73% .14 190/.12);color:var(--ct)">>6m–3 años</span>
+            <span>Zona baby</span>
+            <span class="eq-pill" style="background:oklch(73% .14 190/.12);color:var(--ct)">6m–3 años</span>
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Mini piscina de bolas</span>
+            <span>Mini piscina de bolas</span>
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Juguetes de madera</span>
+            <span>Juguetes de madera</span>
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--ct)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Pizarra</span>
+            <span>Pizarra</span>
           </div>
         </div>
       </div>
@@ -2063,14 +2063,14 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             <svg viewBox="0 0 24 24" stroke="var(--cp)"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           </div>
           <div>
-            <div class="eq-card-title">>Tecnología</div>
-            <div class="eq-card-sub">>Conectividad total</div>
+            <div class="eq-card-title">Tecnología</div>
+            <div class="eq-card-sub">Conectividad total</div>
           </div>
         </div>
         <div class="eq-items">
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Proyector HD</span>
+            <span>Proyector HD</span>
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
@@ -2078,7 +2078,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Equipo de audio</span>
+            <span>Equipo de audio</span>
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--cp)"><polyline points="20 6 9 17 4 12"/></svg>
@@ -2090,7 +2090,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
           </div>
           <div class="eq-item" style="color:var(--tx3)">
             <svg viewBox="0 0 24 24" stroke="var(--tx3)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span>>Wii (bajo petición)</span>
+            <span>Wii (bajo petición)</span>
           </div>
         </div>
       </div>
@@ -2102,18 +2102,18 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             <svg viewBox="0 0 24 24" stroke="var(--cy)"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
           </div>
           <div>
-            <div class="eq-card-title">>Cocina office</div>
-            <div class="eq-card-sub">>Todo lo necesario</div>
+            <div class="eq-card-title">Cocina office</div>
+            <div class="eq-card-sub">Todo lo necesario</div>
           </div>
         </div>
         <div class="eq-items">
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Horno</span>
+            <span>Horno</span>
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Microondas</span>
+            <span>Microondas</span>
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
@@ -2121,11 +2121,11 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Nevera combi</span>
+            <span>Nevera combi</span>
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Utensilios básicos</span>
+            <span>Utensilios básicos</span>
           </div>
         </div>
       </div>
@@ -2137,31 +2137,31 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             <svg viewBox="0 0 24 24" stroke="var(--co)"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
           </div>
           <div>
-            <div class="eq-card-title">>Mobiliario</div>
-            <div class="eq-card-sub">>Cómodo para todos</div>
+            <div class="eq-card-title">Mobiliario</div>
+            <div class="eq-card-sub">Cómodo para todos</div>
           </div>
         </div>
         <div class="eq-items">
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Mesas y sillas</span>
+            <span>Mesas y sillas</span>
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Tronas</span>
+            <span>Tronas</span>
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Zona de pufs</span>
+            <span>Zona de pufs</span>
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Cambiador de bebés</span>
+            <span>Cambiador de bebés</span>
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--co)"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>>Futbolín</span>
-            <span class="eq-pill" style="background:oklch(68% .22 38/.1);color:var(--co)">>gratis</span>
+            <span>Futbolín</span>
+            <span class="eq-pill" style="background:oklch(68% .22 38/.1);color:var(--co)">gratis</span>
           </div>
         </div>
       </div>
@@ -2180,9 +2180,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <div class="container">
     <div class="promo-section" style="padding:0">
       <div class="tc" data-a="up">
-        <div class="eyebrow ew-b" style="justify-content:center"><div class="ew-dot"></div><span>>Ofertas especiales</span></div>
-        <h2 class="sec-h2" data-blur="top">>Promociones activas</h2>
-        <p class="sec-lead">>Aprovecha nuestros descuentos exclusivos por tiempo limitado.</p>
+        <div class="eyebrow ew-b" style="justify-content:center"><div class="ew-dot"></div><span>Ofertas especiales</span></div>
+        <h2 class="sec-h2" data-blur="top">Promociones activas</h2>
+        <p class="sec-lead">Aprovecha nuestros descuentos exclusivos por tiempo limitado.</p>
       </div>
       <div class="promo-grid" id="promo-grid-web"></div>
     </div>
@@ -2194,50 +2194,50 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <div class="container">
     <div class="res-grid">
       <div data-a="right">
-        <div class="eyebrow ew-f"><div class="ew-dot"></div><span>>Reservar ahora</span></div>
-        <h2 class="sec-h2" data-blur="top">>Fácil, rápido y sin esperas</h2>
-        <p class="sec-lead">>Rellena el formulario y confirmamos disponibilidad en menos de 24 horas. También puedes reservar directamente en nuestro sistema online.</p>
+        <div class="eyebrow ew-f"><div class="ew-dot"></div><span>Reservar ahora</span></div>
+        <h2 class="sec-h2" data-blur="top">Fácil, rápido y sin esperas</h2>
+        <p class="sec-lead">Rellena el formulario y confirmamos disponibilidad en menos de 24 horas. También puedes reservar directamente en nuestro sistema online.</p>
         <div class="res-perks">
-          <div class="res-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>>Confirmación en menos de 24 horas</span></div>
-          <div class="res-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>>Atención telefónica de 10h a 20h</span></div>
-          <div class="res-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>>Pago de señal por Bizum para confirmar</span></div>
-          <div class="res-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>>Posibilidad de visitar el espacio antes</span></div>
+          <div class="res-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Confirmación en menos de 24 horas</span></div>
+          <div class="res-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Atención telefónica de 10h a 20h</span></div>
+          <div class="res-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Pago de señal por Bizum para confirmar</span></div>
+          <div class="res-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Posibilidad de visitar el espacio antes</span></div>
         </div>
         <div class="res-contact">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> <strong>C/ Francesc Macià, 37 · 08760 Martorell</strong><br>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.07 8.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72A12.84 12.84 0 007.7 4.53a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14h0v2.92z"/></svg> <a href="tel:+34674379709">674 379 709</a> · <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--co)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> <a href="mailto:info@espaifest.com">info@espaifest.com</a><br>
-          <span style="color:var(--tx3);font-size:.78rem">>Atención 10h – 20h todos los días</span>
+          <span style="color:var(--tx3);font-size:.78rem">Atención 10h – 20h todos los días</span>
         </div>
 
       </div>
       <div data-a="left">
         <div class="res-form">
-          <div class="rf-title">>Solicitar disponibilidad</div>
-          <div class="rf-sub">>Te confirmamos en menos de 24 horas</div>
+          <div class="rf-title">Solicitar disponibilidad</div>
+          <div class="rf-sub">Te confirmamos en menos de 24 horas</div>
           <!-- Paso 1: datos personales -->
-          <div style="font:700 .72rem var(--fb);text-transform:uppercase;letter-spacing:.12em;color:var(--co);margin-bottom:14px;padding:10px 14px;background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:10px;display:flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:50%;background:var(--co);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0">1</span><span>>Datos personales</span></div>
+          <div style="font:700 .72rem var(--fb);text-transform:uppercase;letter-spacing:.12em;color:var(--co);margin-bottom:14px;padding:10px 14px;background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:10px;display:flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:50%;background:var(--co);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0">1</span><span>Datos personales</span></div>
           <div class="fr2">
-            <div class="fg"><label class="fl">>Nombre *</label><input type="text" class="fi" id="r-n" placeholder="Tu nombre" required></div>
-            <div class="fg"><label class="fl">>Apellidos *</label><input type="text" class="fi" id="r-apellidos" placeholder="Tus apellidos" required></div>
+            <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="r-n" placeholder="Tu nombre" required></div>
+            <div class="fg"><label class="fl">Apellidos *</label><input type="text" class="fi" id="r-apellidos" placeholder="Tus apellidos" required></div>
           </div>
           <div class="fr2">
-            <div class="fg"><label class="fl">>DNI / NIE *</label><input type="text" class="fi" id="r-dni" placeholder="12345678A" required></div>
-            <div class="fg"><label class="fl">>Fecha de nacimiento</label><input type="date" class="fi" id="r-fnac"></div>
+            <div class="fg"><label class="fl">DNI / NIE *</label><input type="text" class="fi" id="r-dni" placeholder="12345678A" required></div>
+            <div class="fg"><label class="fl">Fecha de nacimiento</label><input type="date" class="fi" id="r-fnac"></div>
           </div>
-          <div class="fg"><label class="fl">>Dirección *</label><input type="text" class="fi" id="r-dir" placeholder="Calle y número" required></div>
+          <div class="fg"><label class="fl">Dirección *</label><input type="text" class="fi" id="r-dir" placeholder="Calle y número" required></div>
           <div class="fr2">
-            <div class="fg"><label class="fl">>Localidad *</label><input type="text" class="fi" id="r-loc" placeholder="Ciudad" required></div>
-            <div class="fg"><label class="fl">>Código postal *</label><input type="text" class="fi" id="r-cp" placeholder="08XXX" required inputmode="numeric" maxlength="5"></div>
+            <div class="fg"><label class="fl">Localidad *</label><input type="text" class="fi" id="r-loc" placeholder="Ciudad" required></div>
+            <div class="fg"><label class="fl">Código postal *</label><input type="text" class="fi" id="r-cp" placeholder="08XXX" required inputmode="numeric" maxlength="5"></div>
           </div>
           <div class="fr2">
-            <div class="fg"><label class="fl">>Teléfono móvil *</label><input type="tel" class="fi" id="r-t" placeholder="6XX XXX XXX" required></div>
-            <div class="fg"><label class="fl">>Email *</label><input type="email" class="fi" id="r-e" placeholder="tu@email.com" required></div>
+            <div class="fg"><label class="fl">Teléfono móvil *</label><input type="tel" class="fi" id="r-t" placeholder="6XX XXX XXX" required></div>
+            <div class="fg"><label class="fl">Email *</label><input type="email" class="fi" id="r-e" placeholder="tu@email.com" required></div>
           </div>
 
           <!-- Paso 2: evento -->
-          <div style="font:700 .72rem var(--fb);text-transform:uppercase;letter-spacing:.12em;color:var(--co);margin-bottom:14px;padding:10px 14px;background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:10px;display:flex;align-items:center;gap:8px;margin-top:10px;"><span style="width:20px;height:20px;border-radius:50%;background:var(--co);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0">2</span><span>>Tu evento</span></div>
+          <div style="font:700 .72rem var(--fb);text-transform:uppercase;letter-spacing:.12em;color:var(--co);margin-bottom:14px;padding:10px 14px;background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:10px;display:flex;align-items:center;gap:8px;margin-top:10px;"><span style="width:20px;height:20px;border-radius:50%;background:var(--co);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0">2</span><span>Tu evento</span></div>
           <div class="fr2">
-            <div class="fg"><label class="fl">>Tipo de evento *</label>
+            <div class="fg"><label class="fl">Tipo de evento *</label>
               <select class="fsel" id="r-tipo" required>
                 <option value="">Selecciona...</option>
                 <option value="infantil">Festa infantil</option>
@@ -2248,7 +2248,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
                 <option value="otro">Altre</option>
               </select>
             </div>
-            <div class="fg"><label class="fl">>Personas (may. 18 años) *</label>
+            <div class="fg"><label class="fl">Personas (may. 18 años) *</label>
               <select class="fsel" id="r-personas" required>
                 <option value="">Selecciona...</option>
                 <option value="Hasta 10 personas">Hasta 10 personas</option>
@@ -2260,8 +2260,8 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             </div>
           </div>
           <div class="fr2">
-            <div class="fg"><label class="fl">>Fecha deseada *</label><input type="date" class="fi" id="r-f" required onchange="webLoadFranjasPorFecha(this.value)"></div>
-            <div class="fg"><label class="fl">>Franja horaria *</label>
+            <div class="fg"><label class="fl">Fecha deseada *</label><input type="date" class="fi" id="r-f" required onchange="webLoadFranjasPorFecha(this.value)"></div>
+            <div class="fg"><label class="fl">Franja horaria *</label>
               <select class="fsel" id="r-horario" required onchange="calcularTotal()">
                 <option value="">— Elige fecha primero —</option>
               </select>
@@ -2271,16 +2271,16 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
               </div>
             </div>
           </div>
-          <div class="fg"><label class="fl">>Cuéntanos más</label><textarea class="fta" id="r-no" placeholder="Número de personas, necesidades especiales, decoración..."></textarea></div>
+          <div class="fg"><label class="fl">Cuéntanos más</label><textarea class="fta" id="r-no" placeholder="Número de personas, necesidades especiales, decoración..."></textarea></div>
 
           <!-- Paso 3: extras — colapsado por defecto -->
           <div style="font:700 .72rem var(--fb);text-transform:uppercase;letter-spacing:.12em;color:var(--ct);margin-bottom:0;padding:10px 14px;background:oklch(73% .14 190/.08);border:1px solid oklch(73% .14 190/.25);border-radius:10px;margin-top:10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="toggleExtras(this)" id="extras-toggle">
-            <span style="display:flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:50%;background:var(--ct);color:#000;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0">3</span><span>>Extras opcionales</span></span>
+            <span style="display:flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:50%;background:var(--ct);color:#000;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0">3</span><span>Extras opcionales</span></span>
             <span id="extras-arrow" style="transition:transform .3s;display:inline-block;">▾</span>
           </div>
           <div id="extras-panel" style="display:none;margin-top:14px;">
             <!-- Catering infantil -->
-            <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;">>Catering · Menú / Snacks Infantil</div>
+            <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;">Catering · Menú / Snacks Infantil</div>
             <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Menú mini" data-precio="8" style="accent-color:var(--co);margin-right:7px;">Menú mini</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">8,00 €</span></label>
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Menú Júnior" data-precio="10" style="accent-color:var(--co);margin-right:7px;">Menú Júnior</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">10,00 €</span></label>
@@ -2288,7 +2288,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Bebidas Junior" data-precio="10" style="accent-color:var(--co);margin-right:7px;">Bebidas Junior</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">10,00 €</span></label>
             </div>
             <!-- Snacks Adultos -->
-            <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;">>Catering · Snacks Adultos</div>
+            <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;">Catering · Snacks Adultos</div>
             <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Bandeja Dulce" data-precio="12" style="accent-color:var(--co);margin-right:7px;">Bandeja Dulce</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">12,00 €</span></label>
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Bandeja Salada" data-precio="12" style="accent-color:var(--co);margin-right:7px;">Bandeja Salada</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">12,00 €</span></label>
@@ -2301,7 +2301,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Limpieza mañana-mediodía" data-precio="30" style="accent-color:var(--co);margin-right:7px;">Limpieza mañana-mediodía</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">30,00 €</span></label>
             </div>
             <!-- Horas extra -->
-            <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;">>Horas extra</div>
+            <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;">Horas extra</div>
             <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px;">
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="radio" name="r-horaext" value="antes|10" style="accent-color:var(--co);margin-right:7px;">+ 1h antes</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">10,00 €</span></label>
               <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="radio" name="r-horaext" value="ninguna|0" checked style="accent-color:var(--co);margin-right:7px;">Sin horas extra</span><span style="color:var(--tx3);font-size:.8rem;">—</span></label>
@@ -2309,25 +2309,25 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             </div>
             <!-- Total en tiempo real -->
           <div id="resumen-total" style="background:oklch(68% .22 38/.08);border:1.5px solid oklch(68% .22 38/.25);border-radius:14px;padding:16px 18px;margin-bottom:14px;display:none;">
-            <div style="font:700 .68rem var(--fb);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:10px;">>Resumen del presupuesto</div>
+            <div style="font:700 .68rem var(--fb);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:10px;">Resumen del presupuesto</div>
             <div id="rt-lineas" style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;font-size:.83rem;color:var(--tx2);"></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid oklch(68% .22 38/.2);">
-              <span style="font:700 .82rem var(--fd);color:var(--tx1);">>TOTAL ESTIMADO</span>
+              <span style="font:700 .82rem var(--fd);color:var(--tx1);">TOTAL ESTIMADO</span>
               <span id="rt-total" style="font:800 1.1rem var(--fd);color:var(--co);">—</span>
             </div>
-            <div style="font-size:.72rem;color:var(--tx3);margin-top:7px;">>* Catering calculado por unidad al confirmar · Señal: 50% del total</div>
+            <div style="font-size:.72rem;color:var(--tx3);margin-top:7px;">* Catering calculado por unidad al confirmar · Señal: 50% del total</div>
           </div>
 
           <button class="submit-btn" onclick="enviarReserva()" type="button">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            <span>>Solicitar reserva</span>
+            <span>Solicitar reserva</span>
           </button>
           <div class="bizum-box">
             <div class="bizum-ico">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
             </div>
             <div class="bizum-txt">
-              <div class="bizum-label">>Señal de reserva por Bizum</div>
+              <div class="bizum-label">Señal de reserva por Bizum</div>
               <div class="bizum-num">674 379 709</div>
             </div>
             <button class="bizum-copy" onclick="copyBizum()" title="Copiar número">
@@ -2335,7 +2335,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
               Copiar
             </button>
           </div>
-          <div class="f-note">>Te confirmamos disponibilidad en menos de 24h y te indicamos la señal a pagar</div>
+          <div class="f-note">Te confirmamos disponibilidad en menos de 24h y te indicamos la señal a pagar</div>
         </div>
       </div>
     </div>
@@ -2347,10 +2347,10 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <div class="container">
     <div class="blog-head" data-a="up">
       <div>
-        <div class="eyebrow ew-y"><div class="ew-dot"></div><span>>Blog e inspiración</span></div>
-        <h2 class="sec-h2" data-blur="top">>Ideas para tu próxima celebración</h2>
+        <div class="eyebrow ew-y"><div class="ew-dot"></div><span>Blog e inspiración</span></div>
+        <h2 class="sec-h2" data-blur="top">Ideas para tu próxima celebración</h2>
       </div>
-      <a href="#" onclick="event.preventDefault();abrirVerTodos()" style="font:700 .875rem var(--fd);color:var(--co);white-space:nowrap">>Ver todos →</a>
+      <a href="#" onclick="event.preventDefault();abrirVerTodos()" style="font:700 .875rem var(--fd);color:var(--co);white-space:nowrap">Ver todos →</a>
     </div>
 
     <!-- Posts cargados dinámicamente desde Firebase -->
@@ -2395,31 +2395,31 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 </div>
     </div>
     <div class="ft-col">
-      <h4>>Servicios</h4>
-      <a href="#fiestas">>Fiestas infantiles</a>
-      <a href="#adultos">>Fiestas adultos</a>
-      <a href="#adultos">>Baby shower</a>
-      <a href="#business">>Business</a>
-      <a href="#manualidades">>Manualidades</a>
+      <h4>Servicios</h4>
+      <a href="#fiestas">Fiestas infantiles</a>
+      <a href="#adultos">Fiestas adultos</a>
+      <a href="#adultos">Baby shower</a>
+      <a href="#business">Business</a>
+      <a href="#manualidades">Manualidades</a>
     </div>
     <div class="ft-col">
-      <h4>>Información</h4>
-      <a href="#precios">>Precios</a>
-      <a href="#galeria">>Galería</a>
-      <a href="#fidelizacion">>Fidelización</a>
-      <a href="#calendario">>Calendario</a>
-      <a href="#blog">>Blog</a>
-      <a href="#reservas">>Reservar</a>
+      <h4>Información</h4>
+      <a href="#precios">Precios</a>
+      <a href="#galeria">Galería</a>
+      <a href="#fidelizacion">Fidelización</a>
+      <a href="#calendario">Calendario</a>
+      <a href="#blog">Blog</a>
+      <a href="#reservas">Reservar</a>
     </div>
     <div class="ft-col">
-      <h4>>Legal</h4>
-      <a href="aviso-legal.html">>Aviso legal</a>
-      <a href="privacidad.html">>Privacidad</a>
-      <a href="cookies.html">>Cookies</a>
-      <a href="condiciones.html">>Condiciones de uso</a>
+      <h4>Legal</h4>
+      <a href="aviso-legal.html">Aviso legal</a>
+      <a href="privacidad.html">Privacidad</a>
+      <a href="cookies.html">Cookies</a>
+      <a href="condiciones.html">Condiciones de uso</a>
     </div>
     <div class="ft-col">
-      <h4>>Contacto</h4>
+      <h4>Contacto</h4>
       <a href="tel:+34674379709">674 379 709</a>
       <a href="mailto:info@espaifest.com">info@espaifest.com</a>
       <a href="https://maps.google.com/?q=C/+Francesc+Macia+37+Martorell" target="_blank" rel="noopener">C/ Francesc Macià, 37</a>
@@ -2427,7 +2427,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     </div>
   </div>
   <div class="ft-bottom">
-    <div class="ft-copy">>© 2026 EspaiFest · Todos los derechos reservados</div>
+    <div class="ft-copy">© 2026 EspaiFest · Todos los derechos reservados</div>
     <div class="ft-legal-links">
       <a href="aviso-legal.html">Aviso legal</a>
       <a href="privacidad.html">Privacidad</a>
@@ -2645,18 +2645,7 @@ function toggleTheme() {
       if(t) el.textContent = t;
     });
   }
-  // Sincronizar botones de idioma con el estado real
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.lang-btn').forEach(b => {
-      const isEs = b.getAttribute('onclick')?.includes("'es'");
-      b.classList.toggle('on', (savedLang === 'es') === isEs);
-      b.setAttribute('aria-pressed', String((savedLang === 'es') === isEs));
-    });
-    const esM = document.getElementById('mob-lang-es');
-    const caM = document.getElementById('mob-lang-ca');
-    if(esM) { esM.classList.toggle('on', savedLang==='es'); esM.setAttribute('aria-pressed', String(savedLang==='es')); }
-    if(caM) { caM.classList.toggle('on', savedLang==='ca'); caM.setAttribute('aria-pressed', String(savedLang==='ca')); }
-  });
+  // Idioma fijo — no necesita sincronización de botones
 })();
 
 // ── PRECIOS INDEX — datos compartidos con Firestore ──────────
@@ -3642,12 +3631,12 @@ async function loadKits() {
       const nombreSafe = (nombre||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
       return `<div class="manu-card" data-a="up" data-d="${delay}" data-season="${season}">
         <div class="manu-cover ${k.imagenURL?'':coverCss}" style="position:relative;overflow:hidden">
-          <span class="manu-season" style="color:${seasonColor};position:absolute;top:10px;left:10px;z-index:2">>${_KIT_SEASON_LABELS[season]||season}</span>
+          <span class="manu-season" style="color:${seasonColor};position:absolute;top:10px;left:10px;z-index:2">${_KIT_SEASON_LABELS[season]||season}</span>
           ${coverContent}
         </div>
         <div class="manu-body">
-          <div class="manu-name">>${k.nombre||''}</div>
-          <div class="manu-desc">>${k.desc||''}</div>
+          <div class="manu-name">${k.nombre||''}</div>
+          <div class="manu-desc">${k.desc||''}</div>
           <div class="manu-foot">
             <div class="manu-price">${precio}</div>
             <button class="btn-wa-sm" onclick="pedirWA('${nombreSafe}')">${waSvg} Pedir</button>
@@ -3770,7 +3759,7 @@ async function loadServiciosWeb() {
           </div>
           <div class="svc-chip-footer">
             ${dur ? `<div class="svc-chip-dur">${clockSvg}<span>${dur}</span></div>` : '<div></div>'}
-            <a href="#reservas" class="svc-chip-cta">>Reservar</a>
+            <a href="#reservas" class="svc-chip-cta">Reservar</a>
           </div>
         </div>`;
     }).join('');
@@ -3829,7 +3818,7 @@ async function loadPromocionesWeb() {
         <div class="promo-footer">
           <span class="promo-code" id="pc-${p.id}">${p.codigo||''}</span>
           <button class="promo-copy" onclick="copiarCodigo('${p.codigo||''}','${p.id}')" title="Copiar código">${copySvg}</button>
-          <span class="promo-valido">>Hasta ${p.hasta}</span>
+          <span class="promo-valido">Hasta ${p.hasta}</span>
         </div>
       </div>`}).join('');
 
@@ -4064,7 +4053,7 @@ document.addEventListener('keydown', e => {
 <div class="blog-todos-ov" id="blog-todos-ov" role="dialog" aria-modal="true" aria-label="Todos los posts">
   <div class="blog-todos-box">
     <div class="blog-todos-head">
-      <div class="blog-todos-titulo">>Todos los posts</div>
+      <div class="blog-todos-titulo">Todos los posts</div>
       <button class="blog-todos-close" onclick="cerrarVerTodos()" aria-label="Cerrar">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
