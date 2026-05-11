@@ -182,7 +182,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .cs{font-weight:600;}
 .cm{color:var(--t2);}
 .cx{font-family:'DM Mono',monospace;font-size:12px;}
-.rc{grid-template-columns:1.4fr .85fr 1fr .65fr .9fr .85fr .75fr;gap:10px;}
+.rc{grid-template-columns:1.4fr .75fr .75fr .75fr .9fr .85fr .75fr;gap:10px;}
+/* Fila nueva (< 24h) */
+.trow.rc.nueva{background:rgba(15,212,196,.045);border-left:3px solid var(--teal);}
+.trow.rc.nueva:hover{background:rgba(15,212,196,.08);}
+.badge-nueva{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--teal);color:#080c14;margin-left:6px;animation:pulse-nueva 2s infinite;}
+@keyframes pulse-nueva{0%,100%{box-shadow:0 0 0 0 rgba(15,212,196,.5);}50%{box-shadow:0 0 0 4px rgba(15,212,196,0);}}
 .pc{grid-template-columns:.6fr 1.3fr .75fr .9fr .9fr .85fr .7fr;gap:10px;}
 .cc{grid-template-columns:1.6fr 1fr .8fr .9fr 1fr .8fr;gap:12px;}
 .sc{grid-template-columns:1.6fr 1fr 1fr .8fr .8fr;gap:12px;}
@@ -525,7 +530,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <button class="btn bp sm" style="margin-left:auto" onclick="openModal('res')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nueva reserva</button>
         </div>
         <div class="card">
-          <div class="thead rc"><span>Cliente</span><span>Fecha</span><span>Servicio</span><span>Origen</span><span>Estado</span><span>Pago</span><span style="text-align:right">Acciones</span></div>
+          <div class="thead rc"><span>Cliente</span><span>Fecha evento</span><span>Reservado el</span><span>Total</span><span>Estado</span><span>Pago</span><span style="text-align:right">Acciones</span></div>
           <div id="reservas-list"><div class="loading"><div class="spinner"></div>Cargando reservas...</div></div>
         </div>
       </div>
@@ -1137,6 +1142,23 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div class="modal" style="max-width:640px;max-height:90vh;overflow-y:auto;">
     <div class="mtitle">Nueva reserva</div><div class="msub">Reserva telefónica, presencial o por WhatsApp</div>
 
+    <!-- BUSCADOR CLIENTE EXISTENTE -->
+    <div style="background:rgba(15,212,196,.06);border:1px solid rgba(15,212,196,.2);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Buscar cliente existente
+      </div>
+      <div style="position:relative">
+        <input type="text" class="fi" id="r-buscar-cliente" placeholder="Escribe nombre o teléfono..." autocomplete="off" oninput="buscarClienteModal(this.value)" style="padding-right:80px">
+        <button class="btn bg sm" onclick="limpiarClienteModal()" style="position:absolute;right:4px;top:4px;font-size:11px;padding:4px 10px">Limpiar</button>
+      </div>
+      <div id="r-cliente-resultados" style="display:none;margin-top:6px;background:var(--s1);border:1px solid var(--b2);border-radius:8px;overflow:hidden;max-height:180px;overflow-y:auto;"></div>
+      <div id="r-cliente-seleccionado" style="display:none;margin-top:8px;background:var(--gbg);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--green);font-weight:600;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="r-cliente-sel-nombre">—</span> — datos cargados automáticamente
+      </div>
+    </div>
+
     <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:4px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Datos del cliente</div>
     <div class="fr2">
       <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="r-nombre" placeholder="Nombre"></div>
@@ -1663,11 +1685,8 @@ async function loadReservas() {
     // Ordenar en cliente por fecha de reserva desc para consistencia.
     const snap = await getDocs(collection(db,'reservas'));
     allReservas = snap.docs.map(d => ({id:d.id,...d.data()}));
-    // Ordenar: primero por fecha de reserva desc, luego por createdAt
+    // Ordenar por fecha de creación desc (cuando se realizó la reserva)
     allReservas.sort((a,b) => {
-      const fa = a.fecha || ''; const fb = b.fecha || '';
-      if(fb !== fa) return fb.localeCompare(fa);
-      // Mismo día: más reciente primero
       const ta = a.createdAt?.toMillis?.() || new Date(a.createdAt||0).getTime();
       const tb = b.createdAt?.toMillis?.() || new Date(b.createdAt||0).getTime();
       return tb - ta;
@@ -1695,18 +1714,24 @@ function renderReservas(list) {
   el.innerHTML = list.map(r => {
     const subInfo = [r.telefono, r.email].filter(Boolean).join(' · ');
     const notasTip = r.notas ? ` title="${r.notas.replace(/"/g,'&quot;')}"` : '';
-    const origenBadge = r.origen === 'web'
-      ? '<span class="badge bg-t" title="Solicitud desde la web">Web</span>'
-      : '<span class="badge bg-x">Panel</span>';
     const notasIcon = r.notas
       ? `<span style="margin-left:4px;color:var(--amber);font-size:10px;cursor:default"${notasTip} title="${r.notas.replace(/"/g,'&quot;')}">📝</span>`
       : '';
+    // Detectar si es nueva (< 24h desde createdAt)
+    const tsCreado = r.createdAt?.toMillis?.() || new Date(r.createdAt||0).getTime();
+    const esNueva = tsCreado > 0 && (Date.now() - tsCreado) < 86400000;
+    const badgeNueva = esNueva ? '<span class="badge-nueva">✦ Nueva</span>' : '';
+    const rowClass = esNueva ? 'trow rc nueva' : 'trow rc';
+    // Fecha creación formateada
+    const fechaCreada = tsCreado > 0 ? new Date(tsCreado).toLocaleDateString('es-ES',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+    // Total
+    const totalStr = r.importe ? `<span class="cx cs" style="color:var(--teal)">${fmtMoney(r.importe)}</span>` : '<span class="cm">—</span>';
     return `
-    <div class="trow rc" onclick="openDet('${r.id}')">
-      <div><div class="c cs">${r.nombre||'—'}${notasIcon}</div><div class="cx cm" style="font-size:11px;color:var(--t3)">${subInfo}</div></div>
+    <div class="${rowClass}" onclick="openDet('${r.id}')">
+      <div><div class="c cs">${r.nombre||'—'}${badgeNueva}${notasIcon}</div><div class="cx cm" style="font-size:11px;color:var(--t3)">${subInfo}</div></div>
       <div class="c cm">${r.fecha||'—'}</div>
-      <div><span class="badge bg-t">${r.servicio||'—'}</span></div>
-      <div>${origenBadge}</div>
+      <div class="c cm" style="font-size:12px">${fechaCreada}</div>
+      <div>${totalStr}</div>
       <div>${estadoBadge(r.estado)}</div>
       <div>${pagoBadge(r)}</div>
       <div class="ras" onclick="event.stopPropagation()">
@@ -1782,6 +1807,64 @@ async function upsertCliente(data) {
   } catch(e) { console.warn('upsertCliente error:', e); }
 }
 
+// ── BUSCADOR CLIENTE EN MODAL RESERVA ────────────────────────
+window.buscarClienteModal = function(query) {
+  const q = (query || '').toLowerCase().trim();
+  const res = document.getElementById('r-cliente-resultados');
+  if (!q || q.length < 2) { res.style.display = 'none'; return; }
+  const matches = allClientes.filter(c =>
+    (c.nombre    ||'').toLowerCase().includes(q) ||
+    (c.apellidos ||'').toLowerCase().includes(q) ||
+    (c.telefono  ||'').toLowerCase().includes(q)
+  ).slice(0, 8);
+  if (!matches.length) {
+    res.innerHTML = '<div style="padding:10px 14px;font-size:12px;color:var(--t3)">Sin resultados — se creará como cliente nuevo</div>';
+    res.style.display = 'block';
+    return;
+  }
+  res.innerHTML = matches.map(c => `
+    <div onclick="seleccionarClienteModal('${c.id}')" style="padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--b1);font-size:13px;transition:background .1s" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
+      <span style="font-weight:600">${c.nombre||''} ${c.apellidos||''}</span>
+      <span style="color:var(--t3);font-size:11px;margin-left:8px">${c.telefono||''}</span>
+      ${c.email ? `<span style="color:var(--t3);font-size:11px;margin-left:6px">· ${c.email}</span>` : ''}
+    </div>`).join('');
+  res.style.display = 'block';
+};
+
+window.seleccionarClienteModal = function(id) {
+  const c = allClientes.find(x => x.id === id);
+  if (!c) return;
+  // Rellenar campos
+  const nombre = c.nombre || '';
+  const apell  = c.apellidos || '';
+  document.getElementById('r-nombre').value    = nombre;
+  document.getElementById('r-apellidos').value = apell;
+  document.getElementById('r-dni').value       = c.dni      || '';
+  document.getElementById('r-dir').value       = c.direccion|| '';
+  document.getElementById('r-loc').value       = c.localidad|| '';
+  document.getElementById('r-cp').value        = c.cp       || '';
+  document.getElementById('r-tel').value       = c.telefono || '';
+  document.getElementById('r-email').value     = c.email    || '';
+  const fnacEl = document.getElementById('r-fnac');
+  if (fnacEl && c.fechaNac) fnacEl.value = c.fechaNac;
+  // Feedback visual
+  document.getElementById('r-cliente-resultados').style.display = 'none';
+  document.getElementById('r-buscar-cliente').value = '';
+  const selDiv = document.getElementById('r-cliente-seleccionado');
+  document.getElementById('r-cliente-sel-nombre').textContent = `${nombre} ${apell}`.trim();
+  selDiv.style.display = 'block';
+};
+
+window.limpiarClienteModal = function() {
+  ['r-nombre','r-apellidos','r-dni','r-dir','r-loc','r-cp','r-tel','r-email'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  const fnacEl = document.getElementById('r-fnac'); if(fnacEl) fnacEl.value = '';
+  document.getElementById('r-buscar-cliente').value = '';
+  document.getElementById('r-cliente-resultados').style.display = 'none';
+  document.getElementById('r-cliente-seleccionado').style.display = 'none';
+};
+
 window.saveReserva = async () => {
   const nombre    = document.getElementById('r-nombre').value.trim();
   const apellidos = document.getElementById('r-apellidos').value.trim();
@@ -1839,6 +1922,13 @@ window.saveReserva = async () => {
   const senalEl = document.getElementById('r-senal');
   if(senalEl) senalEl.value = '0';
   document.getElementById('r-importe').value = '85';
+  // Limpiar buscador de cliente
+  const busEl = document.getElementById('r-buscar-cliente');
+  if(busEl) busEl.value = '';
+  const resEl = document.getElementById('r-cliente-resultados');
+  if(resEl) resEl.style.display = 'none';
+  const selEl = document.getElementById('r-cliente-seleccionado');
+  if(selEl) selEl.style.display = 'none';
 };
 
 const FRANJAS_MANANA = ['10h–14h','11h–15h','10:00–14:00','11:00–15:00','Mañana (10:00-14:00)'];
