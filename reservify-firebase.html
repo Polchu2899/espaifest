@@ -616,10 +616,17 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
               <tbody id="tar-body-estandar"></tbody>
             </table>
           </div>
-          <div class="tar-add-row">
-            <input class="fi tar-inp wide" id="tar-e-turno" placeholder="Turno (ej: Mañana)">
-            <input class="fi tar-inp wide" id="tar-e-hora" placeholder="Horario (ej: 10h–14h)">
-            <button class="btn bg sm" onclick="tarAddRow('estandar')">+ Añadir franja</button>
+          <div class="tar-add-row" style="flex-wrap:wrap;gap:6px;">
+            <input class="fi tar-inp wide" id="tar-e-turno" placeholder="Turno (ej: Mañana)" style="flex:2;min-width:110px;">
+            <input class="fi tar-inp wide" id="tar-e-hora" placeholder="Horario (ej: 10h–14h)" style="flex:2;min-width:110px;">
+            <input class="fi tar-inp" id="tar-e-lu" placeholder="Lu €" type="number" style="flex:1;min-width:58px;">
+            <input class="fi tar-inp" id="tar-e-ma" placeholder="Ma €" type="number" style="flex:1;min-width:58px;">
+            <input class="fi tar-inp" id="tar-e-mi" placeholder="Mi €" type="number" style="flex:1;min-width:58px;">
+            <input class="fi tar-inp" id="tar-e-ju" placeholder="Ju €" type="number" style="flex:1;min-width:58px;">
+            <input class="fi tar-inp" id="tar-e-vi" placeholder="Vi €" type="number" style="flex:1;min-width:58px;">
+            <input class="fi tar-inp" id="tar-e-sa" placeholder="Sá €" type="number" style="flex:1;min-width:58px;">
+            <input class="fi tar-inp" id="tar-e-do" placeholder="Do €" type="number" style="flex:1;min-width:58px;">
+            <button class="btn bg sm" onclick="tarAddRow('estandar')" style="white-space:nowrap;">+ Añadir franja</button>
           </div>
         </div>
 
@@ -643,10 +650,17 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
               <tbody id="tar-body-ampliados"></tbody>
             </table>
           </div>
-          <div class="tar-add-row">
-            <input class="fi tar-inp wide" id="tar-a-turno" placeholder="Turno">
-            <input class="fi tar-inp wide" id="tar-a-hora" placeholder="Horario">
-            <button class="btn bg sm" onclick="tarAddRow('ampliados')">+ Añadir franja</button>
+          <div class="tar-add-row" style="flex-wrap:wrap;gap:6px;">
+            <input class="fi tar-inp wide" id="tar-a-turno" placeholder="Turno" style="flex:2;min-width:110px;">
+            <input class="fi tar-inp wide" id="tar-a-hora" placeholder="Horario" style="flex:2;min-width:110px;">
+            <input class="fi tar-inp" id="tar-a-lu" placeholder="Lu €" type="number" style="flex:1;min-width:58px;">
+            <input class="fi tar-inp" id="tar-a-ma" placeholder="Ma €" type="number" style="flex:1;min-width:58px;">
+            <input class="fi tar-inp" id="tar-a-mi" placeholder="Mi €" type="number" style="flex:1;min-width:58px;">
+            <input class="fi tar-inp" id="tar-a-ju" placeholder="Ju €" type="number" style="flex:1;min-width:58px;">
+            <input class="fi tar-inp" id="tar-a-vi" placeholder="Vi €" type="number" style="flex:1;min-width:58px;">
+            <input class="fi tar-inp" id="tar-a-sa" placeholder="Sá €" type="number" style="flex:1;min-width:58px;">
+            <input class="fi tar-inp" id="tar-a-do" placeholder="Do €" type="number" style="flex:1;min-width:58px;">
+            <button class="btn bg sm" onclick="tarAddRow('ampliados')" style="white-space:nowrap;">+ Añadir franja</button>
           </div>
         </div>
 
@@ -4083,15 +4097,15 @@ function renderTarTabla(tipo) {
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData[tipo]||[]).map((row,i) => `
     <tr>
-      <td><input class="tar-inp wide" value="${row.turno}" onchange="window.tarifasData['${tipo}'][${i}].turno=this.value"></td>
-      <td><input class="tar-inp wide" value="${row.horario}" onchange="window.tarifasData['${tipo}'][${i}].horario=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.turno}" oninput="window.tarifasData['${tipo}'][${i}].turno=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.horario}" oninput="window.tarifasData['${tipo}'][${i}].horario=this.value"></td>
       ${DIAS.map(d => {
         const val = row[d];
         const isDash = val === '—' || val === '' || val == null;
         return `<td><input class="tar-inp${isDash?' dash':''}" value="${isDash?'—':val}"
-          onchange="tarCellChange(this,'${tipo}',${i},'${d}')"
+          oninput="tarCellChange(this,'${tipo}',${i},'${d}')"
           onfocus="if(this.value==='—')this.value='';this.classList.remove('dash')"
-          onblur="if(!this.value){this.value='—';this.classList.add('dash')}"></td>`;
+          onblur="if(!this.value){this.value='—';this.classList.add('dash');tarCellChange(this,'${tipo}',${i},'${d}')}"></td>`;
       }).join('')}
       <td><button class="tar-row-del" onclick="tarDelRow('${tipo}',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
     </tr>`).join('');
@@ -4110,15 +4124,22 @@ window.tarDelRow = function(tipo, i) {
 };
 
 window.tarAddRow = function(tipo) {
-  const t = document.getElementById(`tar-${tipo==='estandar'?'e':'a'}-turno`).value.trim();
-  const h = document.getElementById(`tar-${tipo==='estandar'?'e':'a'}-hora`).value.trim();
+  const px = tipo==='estandar'?'e':'a';
+  const t = document.getElementById(`tar-${px}-turno`).value.trim();
+  const h = document.getElementById(`tar-${px}-hora`).value.trim();
   if(!t||!h){showToast('Rellena turno y horario');return;}
   const row = {turno:t, horario:h};
-  DIAS.forEach(d => row[d]='—');
+  DIAS.forEach(d => {
+    const inp = document.getElementById(`tar-${px}-${d}`);
+    const v = inp ? inp.value.trim() : '';
+    row[d] = v==='' ? '—' : (parseFloat(v)||'—');
+  });
   window.tarifasData[tipo].push(row);
   renderTarTabla(tipo);
-  document.getElementById(`tar-${tipo==='estandar'?'e':'a'}-turno`).value='';
-  document.getElementById(`tar-${tipo==='estandar'?'e':'a'}-hora`).value='';
+  // Limpiar todos los campos
+  [`tar-${px}-turno`,`tar-${px}-hora`,...DIAS.map(d=>`tar-${px}-${d}`)].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
 };
 
 // ── Especiales ──
@@ -4127,10 +4148,10 @@ function renderTarTablaEspeciales() {
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData.especiales||[]).map((row,i) => `
     <tr>
-      <td><input class="tar-inp wide" value="${row.celebracion}" onchange="window.tarifasData.especiales[${i}].celebracion=this.value"></td>
-      <td><input class="tar-inp" value="${row.dia}" placeholder="DD/MM" onchange="window.tarifasData.especiales[${i}].dia=this.value"></td>
-      <td><input class="tar-inp wide" value="${row.horario}" onchange="window.tarifasData.especiales[${i}].horario=this.value"></td>
-      <td><input class="tar-inp" type="number" value="${row.precio}" onchange="window.tarifasData.especiales[${i}].precio=parseFloat(this.value)||0"></td>
+      <td><input class="tar-inp wide" value="${row.celebracion}" oninput="window.tarifasData.especiales[${i}].celebracion=this.value"></td>
+      <td><input class="tar-inp" value="${row.dia}" placeholder="DD/MM" oninput="window.tarifasData.especiales[${i}].dia=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.horario}" oninput="window.tarifasData.especiales[${i}].horario=this.value"></td>
+      <td><input class="tar-inp" type="number" value="${row.precio}" oninput="window.tarifasData.especiales[${i}].precio=parseFloat(this.value)||0"></td>
       <td><button class="tar-row-del" onclick="tarDelRow('especiales',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
     </tr>`).join('');
 }
@@ -4152,9 +4173,9 @@ function renderTarTablaExtras() {
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData.extras||[]).map((row,i) => `
     <tr>
-      <td><input class="tar-inp wide" value="${row.concepto}" onchange="window.tarifasData.extras[${i}].concepto=this.value"></td>
-      <td><input class="tar-inp wide" value="${row.turno}" onchange="window.tarifasData.extras[${i}].turno=this.value"></td>
-      <td><input class="tar-inp" type="number" value="${row.precio}" onchange="window.tarifasData.extras[${i}].precio=parseFloat(this.value)||0"></td>
+      <td><input class="tar-inp wide" value="${row.concepto}" oninput="window.tarifasData.extras[${i}].concepto=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.turno}" oninput="window.tarifasData.extras[${i}].turno=this.value"></td>
+      <td><input class="tar-inp" type="number" value="${row.precio}" oninput="window.tarifasData.extras[${i}].precio=parseFloat(this.value)||0"></td>
       <td><button class="tar-row-del" onclick="tarDelRow('extras',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
     </tr>`).join('');
 }
@@ -4171,24 +4192,33 @@ window.tarAddExtra = function() {
 
 // ── Guardar en Firestore ──
 window.saveTarifas = async function(tipo) {
+  // Forzar blur del input activo para que oninput/onblur actualicen tarifasData
+  if(document.activeElement && document.activeElement.tagName==='INPUT') document.activeElement.blur();
   try {
+    console.log('[saveTarifas] guardando tipo:', tipo, 'filas:', JSON.stringify(window.tarifasData[tipo]));
     await setDoc(doc(db,'tarifas',tipo), { filas: window.tarifasData[tipo], updatedAt: serverTimestamp() });
-    showToast('Tarifas guardadas en Firestore ✓');
+    console.log('[saveTarifas] OK');
+    showToast('Tarifas guardadas ✓');
   } catch(e) {
-    showToast('Error al guardar: '+e.message);
+    console.error('[saveTarifas] ERROR:', e.code, e.message, e);
+    showToast('Error: '+e.message);
   }
 };
 
-// ── Guardar TODOS los tipos de una vez (para que el index los vea todos actualizados) ──
 window.saveTodasTarifas = async function() {
+  if(document.activeElement && document.activeElement.tagName==='INPUT') document.activeElement.blur();
   try {
     const tipos = ['estandar','ampliados','especiales','extras'];
-    await Promise.all(tipos.map(t =>
-      setDoc(doc(db,'tarifas',t), { filas: window.tarifasData[t], updatedAt: serverTimestamp() })
-    ));
+    console.log('[saveTodasTarifas] guardando todos los tipos...');
+    await Promise.all(tipos.map(t => {
+      console.log(' >', t, window.tarifasData[t]?.length, 'filas');
+      return setDoc(doc(db,'tarifas',t), { filas: window.tarifasData[t], updatedAt: serverTimestamp() });
+    }));
+    console.log('[saveTodasTarifas] OK');
     showToast('✓ Todas las tarifas publicadas en la web');
   } catch(e) {
-    showToast('Error al guardar: '+e.message);
+    console.error('[saveTodasTarifas] ERROR:', e.code, e.message, e);
+    showToast('Error: '+e.message);
   }
 };
 
