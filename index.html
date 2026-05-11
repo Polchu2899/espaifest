@@ -2913,7 +2913,7 @@ const DAY_NAMES_ES = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
 const DAY_NAMES_CA = ['Dl','Dm','Dc','Dj','Dv','Ds','Dg'];
 const DAY_NAMES = DAY_NAMES_ES; // alias por compatibilidad
 
-function getCalLang() { return document.documentElement.lang === 'ca' ? 'ca' : 'es'; }
+function getCalLang() { return getLang(); }
 
 function renderCal() {
   const now = new Date();
