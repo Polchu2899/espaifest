@@ -585,11 +585,15 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
       <!-- PROMOCIONES -->
       <div class="panel" id="panel-tarifas">
-        <div class="tar-tabs">
+        <div class="tar-tabs" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
           <button class="tar-tab on" onclick="tarSwitch('estandar',this)">Turnos estándar (4h)</button>
           <button class="tar-tab" onclick="tarSwitch('ampliados',this)">Turnos ampliados</button>
           <button class="tar-tab" onclick="tarSwitch('especiales',this)">Días especiales</button>
           <button class="tar-tab" onclick="tarSwitch('extras',this)">Extras</button>
+          <button class="btn bp sm" onclick="saveTodasTarifas()" style="margin-left:auto;white-space:nowrap;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Guardar TODO
+          </button>
         </div>
 
         <!-- ESTÁNDAR -->
@@ -4170,6 +4174,19 @@ window.saveTarifas = async function(tipo) {
   try {
     await setDoc(doc(db,'tarifas',tipo), { filas: window.tarifasData[tipo], updatedAt: serverTimestamp() });
     showToast('Tarifas guardadas en Firestore ✓');
+  } catch(e) {
+    showToast('Error al guardar: '+e.message);
+  }
+};
+
+// ── Guardar TODOS los tipos de una vez (para que el index los vea todos actualizados) ──
+window.saveTodasTarifas = async function() {
+  try {
+    const tipos = ['estandar','ampliados','especiales','extras'];
+    await Promise.all(tipos.map(t =>
+      setDoc(doc(db,'tarifas',t), { filas: window.tarifasData[t], updatedAt: serverTimestamp() })
+    ));
+    showToast('✓ Todas las tarifas publicadas en la web');
   } catch(e) {
     showToast('Error al guardar: '+e.message);
   }
