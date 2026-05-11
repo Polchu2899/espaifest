@@ -2422,10 +2422,10 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     </div>
     <div class="ft-col">
       <h4>Legal</h4>
-      <a href="aviso-legal.html">Aviso legal</a>
-      <a href="privacidad.html">Privacidad</a>
-      <a href="cookies.html">Cookies</a>
-      <a href="condiciones.html">Condiciones de uso</a>
+      <a href="../aviso-legal.html">Aviso legal</a>
+      <a href="../privacidad.html">Privacidad</a>
+      <a href="../cookies.html">Cookies</a>
+      <a href="../condiciones.html">Condiciones de uso</a>
     </div>
     <div class="ft-col">
       <h4>Contacto</h4>
@@ -2438,10 +2438,10 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <div class="ft-bottom">
     <div class="ft-copy">© 2026 EspaiFest · Todos los derechos reservados</div>
     <div class="ft-legal-links">
-      <a href="aviso-legal.html">Aviso legal</a>
-      <a href="privacidad.html">Privacidad</a>
-      <a href="cookies.html">Cookies</a>
-      <a href="condiciones.html">Condiciones</a>
+      <a href="../aviso-legal.html">Aviso legal</a>
+      <a href="../privacidad.html">Privacidad</a>
+      <a href="../cookies.html">Cookies</a>
+      <a href="../condiciones.html">Condiciones</a>
     </div>
     <div class="ft-pal">
       <div class="fp" style="background:var(--co)"></div>
@@ -2457,7 +2457,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 <div id="cookie-banner" role="dialog" aria-label="Aviso de cookies" aria-live="polite">
   <p class="ck-text">
     Usamos cookies técnicas para el funcionamiento del sitio (preferencias de idioma y tema) y de análisis para mejorar la experiencia.
-    <a href="cookies.html">Más información</a>
+    <a href="../cookies.html">Más información</a>
   </p>
   <div class="ck-btns">
     <button id="ck-reject" class="ck-btn-reject">Rechazar</button>
@@ -2912,7 +2912,7 @@ const DAY_NAMES_ES = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
 const DAY_NAMES_CA = ['Dl','Dm','Dc','Dj','Dv','Ds','Dg'];
 const DAY_NAMES = DAY_NAMES_ES; // alias por compatibilidad
 
-function getCalLang() { return document.documentElement.lang === 'ca' ? 'ca' : 'es'; }
+function getCalLang() { return getLang(); }
 
 function renderCal() {
   const now = new Date();
