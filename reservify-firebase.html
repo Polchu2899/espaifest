@@ -1808,6 +1808,7 @@ function metodoBadge(m) {
 // ── LOAD ALL ──────────────────────────────────────────────────
 window.loadAllData = async () => {
   await Promise.all([loadReservas(), loadClientes(), loadServicios(), loadPromos()]);
+  loadAvisos();
 };
 
 // ── RESERVAS ──────────────────────────────────────────────────
@@ -2493,6 +2494,7 @@ function limpiarModalPromo() {
 const _origOpenModal = window.openModal;
 window.openModal = function(id) {
   if(id === 'promo' && !document.getElementById('p-edit-id').value) limpiarModalPromo();
+  if(id === 'bloqueo') { _bloqueoFechas = new Set(); initBloqueoCalendario(); }
   _origOpenModal(id);
 };
 
@@ -5237,12 +5239,7 @@ window.desbloquearFecha = async function(bloqueoId, fecha) {
   }
 };
 
-// Abrir modal bloqueo inicializa el calendario
-const _origOpenModal = window.openModal;
-window.openModal = function(name) {
-  _origOpenModal(name);
-  if (name === 'bloqueo') { _bloqueoFechas = new Set(); initBloqueoCalendario(); }
-};
+// (lógica de bloqueo integrada en openModal arriba)
 
 // ══════════════════════════════════════════════════════════════
 // AVISOS WEB
@@ -5435,12 +5432,7 @@ function limpiarModalAviso() {
   if (prev) prev.innerHTML = '';
 }
 
-// loadAllData incluye nuevos módulos
-const _origLoadAllData = window.loadAllData;
-window.loadAllData = async () => {
-  await _origLoadAllData();
-  loadAvisos();
-};
+// loadAvisos se llama desde loadAllData directamente
 
 </script>
 </body>
