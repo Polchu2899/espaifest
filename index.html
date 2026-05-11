@@ -1542,7 +1542,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
       <span class="lang-btn on" aria-current="true">CA</span>
     </div>
     <button class="theme-btn" onclick="toggleTheme()" aria-label="Cambiar tema" id="tb"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
-    <a href="#reservas" class="n-cta btn btn-sm" data-es="Reservar ahora" data-ca="Reservar ara" data-es="Reservar ahora" data-ca="Reservar ara">Reservar ara</a>
+    <a href="#reservas" class="n-cta btn btn-sm">Reservar ahora</a>
   </div>
   <!-- Hamburguesa — solo móvil -->
   <button class="ham-btn" id="ham-btn" aria-label="Abrir menú" aria-expanded="false" onclick="toggleMobMenu()">
@@ -1575,7 +1575,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   </nav>
   <div class="mob-cta-wrap">
     <a href="#reservas" class="btn btn-primary mob-cta-wrap" onclick="closeMobMenu()"
-       style="display:flex;align-items:center;justify-content:center;padding:14px;border-radius:12px;font-size:.95rem;text-decoration:none;font-weight:700;font-family:var(--fb);background:linear-gradient(135deg,var(--cp),var(--co));color:#fff;" data-es="Reservar ahora" data-ca="Reservar ara">Reservar ara</a>
+       style="display:flex;align-items:center;justify-content:center;padding:14px;border-radius:12px;font-size:.95rem;text-decoration:none;font-weight:700;font-family:var(--fb);background:linear-gradient(135deg,var(--cp),var(--co));color:#fff;">Reservar ara</a>
   </div>
   <div class="mob-footer">
     <div class="mob-lang">
@@ -1594,7 +1594,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <span class="promo-banner-tag">🔥 Oferta</span>
     <span class="promo-banner-txt" id="pb-txt">—</span>
     <button class="promo-banner-code" id="pb-code" onclick="copiarCodigoBanner()" title="Copiar código">—</button>
-    <a href="#reservas" class="promo-banner-cta" id="pb-cta" data-es="Reservar ahora" data-ca="Reservar ara">Reservar ara</a>
+    <a href="#reservas" class="promo-banner-cta" id="pb-cta">Reservar ara</a>
   </div>
   <button class="promo-banner-close" onclick="cerrarBanner()" aria-label="Cerrar banner">×</button>
 </div>
@@ -1901,7 +1901,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
     <!-- Panel Turnos estándar -->
     <div class="prc-panel on" id="prc-estandar" data-a="up">
-      <div class="prc-loading" id="prc-load-estandar" data-es="Cargando tarifas..." data-ca="Carregant tarifes...">Carregant tarifes...</div>
+      <div class="prc-loading" id="prc-load-estandar">Cargando tarifas...</div>
       <div class="prc-table-wrap" id="prc-wrap-estandar" style="display:none">
         <table class="prc-table" id="prc-tbl-estandar">
           <thead><tr>
@@ -1912,12 +1912,12 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
           <tbody id="prc-body-estandar"></tbody>
         </table>
       </div>
-      <p style="font-size:.75rem;color:var(--tx2);margin-top:10px;text-align:center" data-es="Precios en € por sesión · IVA no incluido" data-ca="Preus en € per sessió · IVA no inclòs">Preus en € per sessió · IVA no inclòs</p>
+      <p style="font-size:.75rem;color:var(--tx2);margin-top:10px;text-align:center">Preus en € per sessió · IVA no inclòs</p>
     </div>
 
     <!-- Panel Ampliados -->
     <div class="prc-panel" id="prc-ampliados" data-a="up">
-      <div class="prc-loading" id="prc-load-ampliados" data-es="Cargando tarifas..." data-ca="Carregant tarifes...">Carregant tarifes...</div>
+      <div class="prc-loading" id="prc-load-ampliados">Cargando tarifas...</div>
       <div class="prc-table-wrap" id="prc-wrap-ampliados" style="display:none">
         <table class="prc-table" id="prc-tbl-ampliados">
           <thead><tr>
@@ -1932,21 +1932,21 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
     <!-- Panel Especiales -->
     <div class="prc-panel" id="prc-especiales" data-a="up">
-      <div class="prc-loading" id="prc-load-especiales" data-es="Cargando tarifas..." data-ca="Carregant tarifes...">Carregant tarifes...</div>
+      <div class="prc-loading" id="prc-load-especiales">Cargando tarifas...</div>
       <div class="prc-esp-grid" id="prc-grid-especiales" style="display:none"></div>
     </div>
 
     <!-- Panel Extras -->
     <div class="prc-panel" id="prc-extras" data-a="up">
-      <div class="prc-loading" id="prc-load-extras" data-es="Cargando tarifas..." data-ca="Carregant tarifes...">Carregant tarifes...</div>
+      <div class="prc-loading" id="prc-load-extras">Cargando tarifas...</div>
       <div class="prc-extras-grid" id="prc-grid-extras" style="display:none"></div>
     </div>
 
     <!-- CTA -->
     <div style="text-align:center;margin-top:36px" data-a="up">
-      <a href="#reservas" class="btn btn-primary" data-es="Reservar ahora" data-ca="Reservar ara">Reservar ara<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <a href="#reservas" class="btn btn-primary">Reservar ara<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
-      <p style="font-size:.78rem;color:var(--tx2);margin-top:12px"><span data-es="¿Necesitas un horario diferente? Escríbenos y lo buscamos." data-ca="Necessites un horari diferent? Escriu-nos i ho busquem.">Necessites un horari diferent? Escriu-nos i ho busquem.</span><a href="https://api.whatsapp.com/send?phone=34674379709" target="_blank" rel="noopener" style="color:var(--ct);text-decoration:none" data-es=" Escríbenos →" data-ca=" Escriu-nos →"> Escriu-nos →</a></p>
+      <p style="font-size:.78rem;color:var(--tx2);margin-top:12px">Necessites un horari diferent? Escriu-nos i ho busquem.<a href="https://api.whatsapp.com/send?phone=34674379709" target="_blank" rel="noopener" style="color:var(--ct);text-decoration:none">Escríbenos y lo buscamos →</a></p>
     </div>
 
     <!-- Servicios adicionales desde Firestore -->
@@ -2012,7 +2012,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
           <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Accés prioritari en dates especials</span></div>
           <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Notificacions d'últimes hores disponibles</span></div>
         </div>
-        <a href="#reservas" class="btn btn-primary" data-es="Empezar a acumular" data-ca="Començar a acumular">Començar a acumular<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        <a href="#reservas" class="btn btn-primary">Començar a acumular<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       </div>
     </div>
   </div>
@@ -2180,7 +2180,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
     <div class="eq-notice" data-a="up">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <p data-es="Todo el equipamiento está incluido en el precio del alquiler. Sin costes adicionales ni sorpresas." data-ca="Tot l'equipament està inclòs en el preu del lloguer. Sense costos addicionals ni sorpreses.">Tot l'equipament està <strong>inclòs en el preu del lloguer</strong>. Sense costos addicionals ni sorpreses.</p>
+      <p>Tot l'equipament està <strong>inclòs en el preu del lloguer</strong>. Sense costos addicionals ni sorpreses.<strong>incluido en el precio del alquiler</strong>. Sin costes adicionales ni sorpresas.</p>
     </div>
   </div>
 </section>
@@ -2204,7 +2204,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   <div class="container">
     <div class="res-grid">
       <div data-a="right">
-        <div class="eyebrow ew-f"><div class="ew-dot"></div><span data-es="Reservar ahora" data-ca="Reservar ara">Reservar ara</span></div>
+        <div class="eyebrow ew-f"><div class="ew-dot"></div><span>Reservar ara</span></div>
         <h2 class="sec-h2" data-blur="top">Fàcil, ràpid i sense esperes</h2>
         <p class="sec-lead">Omple el formulari i confirmem disponibilitat en menys de 24 hores.</p>
         <div class="res-perks">
@@ -3552,7 +3552,10 @@ async function loadTarifasIndex() {
         }
       });
     }
-  } catch(e) { console.warn('Tarifas index: usando defaults',e); }
+  } catch(e) {
+    console.error('[Tarifas] Error leyendo Firestore — posible regla de seguridad bloqueando lectura pública:',e.code, e.message);
+    console.error('[Tarifas] Verifica en Firebase Console → Firestore → Rules que la colección "tarifas" permita: allow read: if true;');
+  }
   renderTodosPreciosIndex();
   loadFechasOcupadas();
   if(calSelected) renderFranjas(calSelected);
