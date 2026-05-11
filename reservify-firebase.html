@@ -187,7 +187,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .trow.rc.nueva:hover{background:rgba(15,212,196,.08);}
 .badge-nueva{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--teal);color:#080c14;margin-left:6px;animation:pulse-nueva 2s infinite;}
 @keyframes pulse-nueva{0%,100%{box-shadow:0 0 0 0 rgba(15,212,196,.5);}50%{box-shadow:0 0 0 4px rgba(15,212,196,0);}}
-.aviso-color-btn{transition:transform .1s;}.aviso-color-btn:hover{transform:scale(1.15);}
+.aviso-color-btn{transition:transform .1s;width:28px;height:28px;border-radius:6px;cursor:pointer;}
+.aviso-color-btn:hover{transform:scale(1.15);}
 .pc{grid-template-columns:.6fr 1.3fr .75fr .9fr .9fr .85fr .7fr;gap:10px;}
 .cc{grid-template-columns:1.6fr 1fr .8fr .9fr 1fr .8fr;gap:12px;}
 .sc{grid-template-columns:1.6fr 1fr 1fr .8fr .8fr;gap:12px;}
@@ -1121,16 +1122,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </div>
       </div><!-- /panel-gestoria -->
 
-      <!-- ══ PANEL BLOQUEOS ══ -->
       <div class="panel" id="panel-bloqueos">
-        <div class="hero" style="margin-bottom:20px"><div><h2>Bloqueos de calendario</h2><p>Fechas cerradas. Se bloquean en la web en tiempo real al guardar.</p></div><div class="hero-acts"><button class="btn bp sm" onclick="openModal('bloqueo')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nuevo bloqueo</button></div></div>
-        <div class="card"><div class="chead"><div><div class="ctitle">Bloqueos activos</div><div class="csub" id="bloqueos-count">Cargando...</div></div></div><div id="bloqueos-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div></div>
+        <div class="hero" style="margin-bottom:20px"><div><h2>Bloqueos de calendario</h2><p>Fechas cerradas en la web en tiempo real.</p></div><div class="hero-acts"><button class="btn bp" onclick="openModal('bloqueo')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg> Nuevo bloqueo</button></div></div>
+        <div class="card"><div class="chead"><div><div class="ctitle">Bloqueos</div><div class="csub" id="bloqueos-count">Cargando...</div></div></div><div id="bloqueos-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div></div>
       </div>
 
-      <!-- ══ PANEL AVISOS ══ -->
       <div class="panel" id="panel-avisos">
-        <div class="hero" style="margin-bottom:20px"><div><h2>Avisos y popups en la web</h2><p>Mensajes visibles en espaifest.com. Actívalos y desactívalos en un clic.</p></div><div class="hero-acts"><button class="btn bp sm" onclick="openModal('aviso')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nuevo aviso</button></div></div>
-        <div class="card"><div class="chead"><div><div class="ctitle">Todos los avisos</div><div class="csub">Solo los activos aparecen en la web</div></div></div><div id="avisos-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div></div>
+        <div class="hero" style="margin-bottom:20px"><div><h2>Avisos en la web</h2><p>Popups y banners en espaifest.com.</p></div><div class="hero-acts"><button class="btn bp" onclick="openModal('aviso')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg> Nuevo aviso</button></div></div>
+        <div class="card"><div class="chead"><div><div class="ctitle">Avisos</div><div class="csub">Solo activos aparecen en la web</div></div></div><div id="avisos-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div></div>
       </div>
 
       <div class="panel" id="panel-configuracion">
@@ -1157,7 +1156,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="mtitle">Nueva reserva</div><div class="msub">Reserva telefónica, presencial o por WhatsApp</div>
     <div style="background:rgba(15,212,196,.06);border:1px solid rgba(15,212,196,.2);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
       <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">🔍 Buscar cliente existente</div>
-      <div style="position:relative"><input type="text" class="fi" id="r-buscar-cliente" placeholder="Nombre o teléfono..." autocomplete="off" oninput="buscarClienteModal(this.value)" style="padding-right:80px"><button class="btn bg sm" onclick="limpiarClienteModal()" style="position:absolute;right:4px;top:4px;font-size:11px;padding:4px 10px">Limpiar</button></div>
+      <div style="position:relative"><input type="text" class="fi" id="r-buscar-cliente" placeholder="Nombre o teléfono..." autocomplete="off" oninput="buscarClienteModal(this.value)" style="padding-right:80px"><button class="btn bg" onclick="limpiarClienteModal()" style="position:absolute;right:4px;top:4px;font-size:11px;padding:4px 10px">Limpiar</button></div>
       <div id="r-cliente-resultados" style="display:none;margin-top:6px;background:var(--s1);border:1px solid var(--b2);border-radius:8px;overflow:hidden;max-height:180px;overflow-y:auto;"></div>
       <div id="r-cliente-seleccionado" style="display:none;margin-top:8px;background:var(--gbg);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--green);font-weight:600;">✓ <span id="r-cliente-sel-nombre">—</span> — datos cargados</div>
     </div>
@@ -1203,7 +1202,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="fr2">
       <div class="fg"><label class="fl">Fecha *</label><input type="date" class="fi" id="r-fecha" onchange="loadFranjasPorFecha(this.value);calcPrecioAuto()"></div>
       <div class="fg"><label class="fl">Franja horaria</label>
-        <select class="fsi" id="r-horario" onchange="calcPrecioAuto();onHorarioChange()">
+        <select class="fsi" id="r-horario" onchange="calcPrecioAuto();loadExtrasCheckboxes(this.options[this.selectedIndex]?.dataset?.turno||'')">
           <option value="">— Selecciona fecha primero —</option>
         </select>
         <div class="price-preview" id="price-preview">
@@ -1215,10 +1214,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
     <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:14px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Extras y pago</div>
     <div class="fg"><label class="fl">Extras</label>
-      <div id="r-extras-wrap" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px;background:var(--s1);border:1px solid var(--b2);border-radius:8px;min-height:40px;">
-        <span style="font-size:12px;color:var(--t3);align-self:center" id="r-extras-placeholder">Selecciona fecha y horario primero</span>
-      </div>
-      <input type="hidden" id="r-extras">
+      <div id="r-extras-wrap" style="display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--s1);border:1px solid var(--b2);border-radius:8px;min-height:40px;"><span id="r-extras-ph" style="font-size:12px;color:var(--t3);align-self:center">Selecciona fecha y horario primero</span></div>
+      <input type="hidden" id="r-extras" value="Ninguno">
     </div>
     <div class="fg"><label class="fl">Hora extra</label>
       <select class="fsi" id="r-horaext" onchange="calcPrecioAuto()">
@@ -1235,14 +1232,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </div>
     <div class="fg"><label class="fl">Señal cobrada (€)</label><input type="number" class="fi" id="r-senal" value="0"></div>
     <div class="fg"><label class="fl">Notas / Comentarios</label><textarea class="fi" id="r-notas" placeholder="Observaciones, necesidades especiales..." style="min-height:60px;resize:vertical;"></textarea></div>
-
     <div class="fg" style="margin-bottom:0"><label class="fl">Estado de la reserva</label>
       <select class="fsi" id="r-estado">
         <option value="Pendiente">Pendiente — espera confirmación</option>
         <option value="Confirmada">Confirmada — bloquea la web ahora</option>
       </select>
     </div>
-
     <div class="mfoot">
       <button class="btn bg" onclick="closeModal('res')">Cancelar</button>
       <button class="btn bp" onclick="saveReserva()">Guardar reserva</button>
@@ -1606,23 +1601,22 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- MODAL BLOQUEO -->
 <div class="mov" id="modal-bloqueo">
-  <div class="modal" style="max-width:560px;max-height:90vh;overflow-y:auto;">
-    <div class="mtitle">Bloquear fechas en la web</div>
-    <div class="msub">Las fechas seleccionadas quedan bloqueadas inmediatamente</div>
+  <div class="modal" style="max-width:540px;max-height:90vh;overflow-y:auto;">
+    <div class="mtitle">Bloquear fechas en la web</div><div class="msub">Las fechas se bloquean en espaifest.com de forma inmediata</div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-      <button class="btn bg sm" onclick="bloqueoCalPrev()">‹</button>
+      <button class="btn bg" onclick="bloqueoCalPrev()">‹</button>
       <span id="bloqueo-cal-label" style="font-size:13px;font-weight:700;flex:1;text-align:center">—</span>
-      <button class="btn bg sm" onclick="bloqueoCalNext()">›</button>
+      <button class="btn bg" onclick="bloqueoCalNext()">›</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;margin-bottom:4px">
       <span style="font-size:10px;font-weight:700;color:var(--t3)">L</span><span style="font-size:10px;font-weight:700;color:var(--t3)">M</span><span style="font-size:10px;font-weight:700;color:var(--t3)">X</span><span style="font-size:10px;font-weight:700;color:var(--t3)">J</span><span style="font-size:10px;font-weight:700;color:var(--t3)">V</span><span style="font-size:10px;font-weight:700;color:var(--t3)">S</span><span style="font-size:10px;font-weight:700;color:var(--t3)">D</span>
     </div>
     <div id="bloqueo-cal-days" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:12px"></div>
     <div id="bloqueo-fechas-sel" style="min-height:32px;display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px"><span style="font-size:12px;color:var(--t3)">Sin fechas seleccionadas</span></div>
-    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2)">Franja</div>
+    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2)">Franja horaria</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-      <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--b2);border-radius:8px;cursor:pointer;font-size:13px"><input type="radio" name="bloqueo-franja" value="manana" style="accent-color:var(--teal)"> Mañana</label>
-      <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--b2);border-radius:8px;cursor:pointer;font-size:13px"><input type="radio" name="bloqueo-franja" value="tarde" style="accent-color:var(--teal)"> Tarde</label>
+      <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--b2);border-radius:8px;cursor:pointer;font-size:13px"><input type="radio" name="bloqueo-franja" value="manana" style="accent-color:var(--teal)"> Mañana (10h–14h)</label>
+      <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--b2);border-radius:8px;cursor:pointer;font-size:13px"><input type="radio" name="bloqueo-franja" value="tarde" style="accent-color:var(--teal)"> Tarde (16:30h–20:30h)</label>
       <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--b2);border-radius:8px;cursor:pointer;font-size:13px"><input type="radio" name="bloqueo-franja" value="ambas" checked style="accent-color:var(--teal)"> Mañana y tarde</label>
       <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--b2);border-radius:8px;cursor:pointer;font-size:13px"><input type="radio" name="bloqueo-franja" value="dia" style="accent-color:var(--teal)"> Día completo</label>
     </div>
@@ -1633,28 +1627,15 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </div>
   </div>
 </div>
-
 <!-- MODAL AVISO WEB -->
 <div class="mov" id="modal-aviso">
-  <div class="modal" style="max-width:520px;max-height:90vh;overflow-y:auto;">
+  <div class="modal" style="max-width:500px;max-height:90vh;overflow-y:auto;">
     <input type="hidden" id="aviso-edit-id">
-    <div class="mtitle" id="aviso-modal-title">Nuevo aviso</div>
-    <div class="msub">Aparece en la web mientras esté activo</div>
-    <div class="fg"><label class="fl">Tipo</label>
-      <select class="fsi" id="aviso-tipo" onchange="previewAviso()">
-        <option value="banner-top">Banner superior (siempre visible)</option>
-        <option value="popup">Popup centrado</option>
-        <option value="banner-bottom">Banner inferior</option>
-      </select>
-    </div>
+    <div class="mtitle" id="aviso-modal-title">Nuevo aviso</div><div class="msub">Aparece en la web mientras esté activo</div>
+    <div class="fg"><label class="fl">Tipo</label><select class="fsi" id="aviso-tipo" onchange="previewAviso()"><option value="banner-top">Banner superior</option><option value="popup">Popup centrado</option><option value="banner-bottom">Banner inferior</option></select></div>
     <div class="fr2">
       <div class="fg"><label class="fl">Emoji</label><input type="text" class="fi" id="aviso-emoji" placeholder="🎉" maxlength="4" oninput="previewAviso()"></div>
-      <div class="fg"><label class="fl">Estado</label>
-        <div style="display:flex;gap:8px;margin-top:6px">
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="aviso-estado" value="activo" checked style="accent-color:var(--green)"> Activo</label>
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="aviso-estado" value="inactivo" style="accent-color:var(--t3)"> Inactivo</label>
-        </div>
-      </div>
+      <div class="fg"><label class="fl">Estado</label><div style="display:flex;gap:8px;margin-top:6px"><label style="font-size:13px;cursor:pointer"><input type="radio" name="aviso-estado" value="activo" checked style="accent-color:var(--green)"> Activo</label><label style="font-size:13px;cursor:pointer"><input type="radio" name="aviso-estado" value="inactivo" style="accent-color:var(--t3)"> Inactivo</label></div></div>
     </div>
     <div class="fg"><label class="fl">Título *</label><input type="text" class="fi" id="aviso-titulo" placeholder="¡Oferta especial!" oninput="previewAviso()"></div>
     <div class="fg"><label class="fl">Subtexto</label><input type="text" class="fi" id="aviso-subtexto" placeholder="Descripción breve" oninput="previewAviso()"></div>
@@ -1662,18 +1643,15 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="fg"><label class="fl">Botón CTA</label><input type="text" class="fi" id="aviso-cta-txt" placeholder="Reservar ahora" oninput="previewAviso()"></div>
       <div class="fg"><label class="fl">Enlace CTA</label><input type="text" class="fi" id="aviso-cta-url" placeholder="#reservas" oninput="previewAviso()"></div>
     </div>
-    <div class="fg"><label class="fl">Color</label>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px" id="aviso-colores">
-        <button class="aviso-color-btn" data-color="teal" onclick="selectAvisoColor('teal')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#0fd4c4,#0369a1);border:2px solid var(--teal);cursor:pointer"></button>
-        <button class="aviso-color-btn" data-color="purple" onclick="selectAvisoColor('purple')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border:2px solid transparent;cursor:pointer"></button>
-        <button class="aviso-color-btn" data-color="amber" onclick="selectAvisoColor('amber')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#f59e0b,#d97706);border:2px solid transparent;cursor:pointer"></button>
-        <button class="aviso-color-btn" data-color="red" onclick="selectAvisoColor('red')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#ef4444,#dc2626);border:2px solid transparent;cursor:pointer"></button>
-        <button class="aviso-color-btn" data-color="green" onclick="selectAvisoColor('green')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#10b981,#059669);border:2px solid transparent;cursor:pointer"></button>
-        <button class="aviso-color-btn" data-color="dark" onclick="selectAvisoColor('dark')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#1e293b,#0f172a);border:2px solid transparent;cursor:pointer"></button>
-        <button class="aviso-color-btn" data-color="pink" onclick="selectAvisoColor('pink')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#ec4899,#db2777);border:2px solid transparent;cursor:pointer"></button>
-      </div>
-    </div>
-    <div style="margin-top:12px;font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Vista previa</div>
+    <div class="fg"><label class="fl">Color</label><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
+      <button class="aviso-color-btn" data-color="teal" onclick="selectAvisoColor('teal')" style="background:linear-gradient(135deg,#0fd4c4,#0369a1);border:2px solid var(--teal)"></button>
+      <button class="aviso-color-btn" data-color="purple" onclick="selectAvisoColor('purple')" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);border:2px solid transparent"></button>
+      <button class="aviso-color-btn" data-color="amber" onclick="selectAvisoColor('amber')" style="background:linear-gradient(135deg,#f59e0b,#d97706);border:2px solid transparent"></button>
+      <button class="aviso-color-btn" data-color="red" onclick="selectAvisoColor('red')" style="background:linear-gradient(135deg,#ef4444,#dc2626);border:2px solid transparent"></button>
+      <button class="aviso-color-btn" data-color="green" onclick="selectAvisoColor('green')" style="background:linear-gradient(135deg,#10b981,#059669);border:2px solid transparent"></button>
+      <button class="aviso-color-btn" data-color="dark" onclick="selectAvisoColor('dark')" style="background:linear-gradient(135deg,#1e293b,#0f172a);border:2px solid transparent"></button>
+    </div></div>
+    <div style="margin-top:10px;font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Vista previa</div>
     <div id="aviso-modal-preview" style="border-radius:10px;overflow:hidden;min-height:44px"></div>
     <div class="mfoot">
       <button class="btn bg" onclick="closeModal('aviso')">Cancelar</button>
@@ -1681,7 +1659,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <!-- FIREBASE SDK -->
@@ -1777,10 +1754,10 @@ async function loadReservas() {
     // Ordenar en cliente por fecha de reserva desc para consistencia.
     const snap = await getDocs(collection(db,'reservas'));
     allReservas = snap.docs.map(d => ({id:d.id,...d.data()}));
-    allReservas.sort((a,b) => {
-      const ta = a.createdAt?.toMillis?.() || new Date(a.createdAt||0).getTime();
-      const tb = b.createdAt?.toMillis?.() || new Date(b.createdAt||0).getTime();
-      return tb - ta;
+    allReservas.sort((a,b)=>{
+      const ta=a.createdAt?.toMillis?.()|| new Date(a.createdAt||0).getTime();
+      const tb=b.createdAt?.toMillis?.()|| new Date(b.createdAt||0).getTime();
+      return tb-ta;
     });
     renderReservas(allReservas);
     updateDashboard();
@@ -1805,24 +1782,16 @@ function renderReservas(list) {
   el.innerHTML = list.map(r => {
     const subInfo = [r.telefono, r.email].filter(Boolean).join(' · ');
     const notasTip = r.notas ? ` title="${r.notas.replace(/"/g,'&quot;')}"` : '';
-    const notasIcon = r.notas
-      ? `<span style="margin-left:4px;color:var(--amber);font-size:10px;cursor:default"${notasTip}>📝</span>`
-      : '';
-    const tsCreado = r.createdAt?.toMillis?.() || new Date(r.createdAt||0).getTime();
-    const esNueva  = tsCreado > 0 && (Date.now() - tsCreado) < 86400000;
-    const badgeNueva = esNueva ? '<span class="badge-nueva">✦ Nueva</span>' : '';
-    const rowClass   = esNueva ? 'trow rc nueva' : 'trow rc';
-    const fechaCreada = tsCreado > 0
-      ? new Date(tsCreado).toLocaleDateString('es-ES',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})
-      : '—';
-    const totalStr = r.importe
-      ? `<span class="cx cs" style="color:var(--teal)">${fmtMoney(r.importe)}</span>`
-      : '<span class="cm">—</span>';
+    const notasIcon = r.notas ? `<span style="margin-left:4px;color:var(--amber);font-size:10px;cursor:default"${notasTip}>📝</span>` : '';
+    const tsC = r.createdAt?.toMillis?.() || new Date(r.createdAt||0).getTime();
+    const esNueva = tsC>0 && (Date.now()-tsC)<86400000;
+    const fechaC = tsC>0 ? new Date(tsC).toLocaleDateString('es-ES',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+    const totalStr = r.importe ? `<span class="cx cs" style="color:var(--teal)">${fmtMoney(r.importe)}</span>` : '<span class="cm">—</span>';
     return `
-    <div class="${rowClass}" onclick="openDet('${r.id}')">
-      <div><div class="c cs">${r.nombre||'—'}${badgeNueva}${notasIcon}</div><div class="cx cm" style="font-size:11px;color:var(--t3)">${subInfo}</div></div>
+    <div class="${esNueva?'trow rc nueva':'trow rc'}" onclick="openDet('${r.id}')">
+      <div><div class="c cs">${r.nombre||'—'}${esNueva?'<span class="badge-nueva">✦ Nueva</span>':''}${notasIcon}</div><div class="cx cm" style="font-size:11px;color:var(--t3)">${subInfo}</div></div>
       <div class="c cm">${r.fecha||'—'}</div>
-      <div class="c cm" style="font-size:12px">${fechaCreada}</div>
+      <div class="c cm" style="font-size:12px">${fechaC}</div>
       <div>${totalStr}</div>
       <div>${estadoBadge(r.estado)}</div>
       <div>${pagoBadge(r)}</div>
@@ -1912,9 +1881,9 @@ window.saveReserva = async () => {
   const servicio  = document.getElementById('r-servicio').value;
   const personas  = document.getElementById('r-personas').value;
   const fecha     = document.getElementById('r-fecha').value;
-  const horarioSel = document.getElementById('r-horario');
-  const horario    = horarioSel?.options[horarioSel.selectedIndex]?.dataset?.horario || horarioSel?.value || '';
-  const turnoSel   = horarioSel?.options[horarioSel.selectedIndex]?.dataset?.turno   || '';
+  const _hrSel=document.getElementById('r-horario');
+  const horario=_hrSel?.options[_hrSel.selectedIndex]?.dataset?.horario||_hrSel?.value||'';
+  const _turnoSel=_hrSel?.options[_hrSel.selectedIndex]?.dataset?.turno||'';
   const horaext   = document.getElementById('r-horaext').value;
   const extras    = document.getElementById('r-extras').value.trim();
   const pago      = document.getElementById('r-pago').value;
@@ -1924,35 +1893,29 @@ window.saveReserva = async () => {
 
   if(!nombre || !fecha) { showToast('Rellena al menos nombre y fecha'); return; }
 
-  const estadoElegido = document.getElementById('r-estado')?.value || 'Pendiente';
-
   const data = {
     nombre: `${nombre} ${apellidos}`.trim(),
     apellidos, dni, fechaNac: fnac,
     direccion: dir, localidad: loc, cp,
     telefono: tel, email,
     servicio, personas,
-    fecha, horario, turno: turnoSel, horaExtra: horaext,
+    fecha, horario, turno: _turnoSel, horaExtra: horaext,
     extras: extras || 'Ninguno',
     metodoPago: pago,
     importe, senal,
     notas: notas || '',
     origen: 'panel',
-    estado: estadoElegido,
+    estado: document.getElementById('r-estado')?.value||'Pendiente',
     createdAt: serverTimestamp()
   };
 
-  const newDoc = await addDoc(collection(db,'reservas'), data);
-  await upsertCliente({ nombre, apellidos, dni, fechaNac: fnac, direccion: dir, localidad: loc, cp, telefono: tel, email });
-
-  if (estadoElegido === 'Confirmada' && fecha) {
-    const tmpList = [...allReservas, { id: newDoc.id, ...data }];
-    await actualizarCalendarioFecha(fecha, tmpList);
+  const _newRef=await addDoc(collection(db,'reservas'),data);
+  await upsertCliente({nombre,apellidos,dni,fechaNac:fnac,direccion:dir,localidad:loc,cp,telefono:tel,email});
+  const _est=data.estado;
+  if(_est==='Confirmada'&&fecha){
+    await _actualizarCal(fecha,[...allReservas,{id:_newRef.id,...data}]);
     showToast('Reserva confirmada ✓ — Calendario bloqueado en la web');
-  } else {
-    showToast('Reserva guardada ✓ — Pendiente de confirmación');
-  }
-
+  }else{showToast('Reserva guardada ✓ — Pendiente de confirmación');}
   closeModal('res');
   loadReservas();
   loadClientes();
@@ -1966,18 +1929,16 @@ window.saveReserva = async () => {
   if(fnacEl) fnacEl.value = '';
   const senalEl = document.getElementById('r-senal');
   if(senalEl) senalEl.value = '0';
-  document.getElementById('r-importe').value = '85';
-  const busEl = document.getElementById('r-buscar-cliente'); if(busEl) busEl.value='';
-  const resEl2 = document.getElementById('r-cliente-resultados'); if(resEl2) resEl2.style.display='none';
-  const selEl = document.getElementById('r-cliente-seleccionado'); if(selEl) selEl.style.display='none';
-  const extWrap = document.getElementById('r-extras-wrap');
-  if(extWrap) extWrap.innerHTML='<span style="font-size:12px;color:var(--t3);align-self:center" id="r-extras-placeholder">Selecciona fecha y horario primero</span>';
-  const extHid = document.getElementById('r-extras'); if(extHid) extHid.value='';
+  document.getElementById('r-importe').value='85';
+  ['r-buscar-cliente'].forEach(k=>{const e=document.getElementById(k);if(e)e.value='';});
+  ['r-cliente-resultados','r-cliente-seleccionado'].forEach(k=>{const e=document.getElementById(k);if(e)e.style.display='none';});
+  const _ew=document.getElementById('r-extras-wrap');if(_ew)_ew.innerHTML='<span id="r-extras-ph" style="font-size:12px;color:var(--t3);align-self:center">Selecciona fecha y horario primero</span>';
+  const _eh=document.getElementById('r-extras');if(_eh)_eh.value='Ninguno';
 };
 
-const FRANJAS_MANANA = ['10h–14h','11h–15h','10:00–14:00','11:00–15:00','Mañana (10:00-14:00)'];
-const FRANJAS_TARDE  = ['16:30h–20:30h','16:30–20:30','Tarde (16:30-20:30)'];
-const FRANJAS_NOCHE  = ['19:30h–23:30h','21:15h–01:30h','16:30h–01:30h'];
+const FRANJAS_MANANA = ['10h–14h','11h–15h','10:00–14:00','11:00–15:00','Mañana (10:00-14:00)','Mañana'];
+const FRANJAS_TARDE  = ['16:30h–20:30h','16:30–20:30','Tarde (16:30-20:30)','Tarde'];
+const FRANJAS_NOCHE  = ['19:30h–23:30h','21:15h–01:30h','16:30h–01:30h','Noche'];
 const FRANJAS_DIA    = ['10h–20h','10:00–20:00','Todo el día'];
 
 function getHorario(r) {
@@ -1991,10 +1952,24 @@ function getHorario(r) {
   return '';
 }
 
-function getTurno(horario) {
-  if (!horario) return null;
-  if (FRANJAS_MANANA.includes(horario)) return 'manana';
-  if (FRANJAS_TARDE.includes(horario))  return 'tarde';
+function getTurno(rOrStr) {
+  const r=(typeof rOrStr==='object'&&rOrStr!==null)?rOrStr:null;
+  const tf=r?.turno||'';
+  if(tf){const t=tf.toLowerCase();
+    if(t.includes('mañana')||t.includes('manana'))return 'manana';
+    if(t.includes('noche'))return 'noche';
+    if(t.includes('todo')||t.includes('completo'))return 'dia';
+    if(t.includes('tarde'))return 'tarde';
+  }
+  const hor=r?getHorario(r):(rOrStr||'');
+  if(!hor)return null;
+  if(FRANJAS_MANANA.some(f=>hor===f||hor.includes(f)||f.includes(hor)))return 'manana';
+  if(FRANJAS_TARDE.some(f=>hor===f||hor.includes(f)||f.includes(hor)))return 'tarde';
+  if(FRANJAS_NOCHE.some(f=>hor===f||hor.includes(f)||f.includes(hor)))return 'noche';
+  if(FRANJAS_DIA.some(f=>hor===f||hor.includes(f)||f.includes(hor)))return 'dia';
+  const h=parseInt((hor.match(/^(\d+)/)||['0','0'])[1],10);
+  if(h>=10&&h<15)return 'manana';
+  if(h>=15&&h<22)return 'tarde';
   return null;
 }
 
@@ -2042,7 +2017,7 @@ window.openDet = function(id) {
   document.getElementById('det-actions').innerHTML = `
     ${estado !== 'confirmada' ? `<button class="btn bp" onclick="confirmarDesdeModal('${id}')">✓ Confirmar</button>` : ''}
     <button class="btn bt" onclick="abrirModalPago('${id}')">💳 Registrar pago</button>
-    ${r.email ? `<button class="btn bg" id="btn-email-cliente-${id}" onclick="enviarEmailReserva('${id}')" style="background:rgba(15,212,196,.08);color:var(--teal);border-color:rgba(15,212,196,.3)">📧 ${r.emailEnviado?'Reenviar':'Enviar email'}</button>` : ''}
+    ${r.email ? `<button class="btn bg" id="btn-em-${id}" onclick="enviarEmailReserva('${id}')" style="background:rgba(15,212,196,.08);color:var(--teal);border-color:rgba(15,212,196,.3)">📧 ${r.emailEnviado?'Reenviar':'Enviar email'}</button>` : ''}
     <button class="btn bg" onclick="abrirEditarReserva('${id}')"><svg width="12" height="12" stroke="currentColor" style="vertical-align:middle"><use href="#i-edit"/></svg> Editar</button>
     ${estado !== 'cancelada'  ? `<button class="btn bg" onclick="cancelarDesdeModal('${id}')" style="background:var(--rbg);color:var(--red);border-color:rgba(244,63,94,.3)">Cancelar</button>` : ''}
     <button class="btn bg" onclick="closeDet()">Cerrar</button>
@@ -2080,32 +2055,24 @@ window.cancelarDesdeModal = async function(id) {
   }
 };
 
-window.confirmarReserva = async (id) => {
-  const reserva = allReservas.find(r => r.id === id);
-  if (!reserva) return;
-  await updateDoc(doc(db,'reservas',id), {estado:'Confirmada'});
-  const idx = allReservas.findIndex(r => r.id === id);
-  if (idx !== -1) allReservas[idx] = {...allReservas[idx], estado:'Confirmada'};
-  if (reserva.fecha) {
-    await actualizarCalendarioFecha(reserva.fecha, allReservas);
-    showToast('Reserva confirmada ✓ — Calendario actualizado');
-  } else {
-    showToast('Reserva confirmada ✓');
-  }
+window.confirmarReserva=async(id)=>{
+  const reserva=allReservas.find(r=>r.id===id);if(!reserva)return;
+  await updateDoc(doc(db,'reservas',id),{estado:'Confirmada'});
+  const _i=allReservas.findIndex(r=>r.id===id);
+  if(_i!==-1)allReservas[_i]={...allReservas[_i],estado:'Confirmada'};
+  if(reserva.fecha){await _actualizarCal(reserva.fecha,allReservas);showToast('Reserva confirmada ✓ — Calendario actualizado');}
+  else showToast('Reserva confirmada ✓');
   loadReservas();
 };
 
-window.cancelarReserva = async (id) => {
-  if (!confirm('¿Cancelar esta reserva?')) return;
-  const reserva = allReservas.find(r => r.id === id);
-  await updateDoc(doc(db,'reservas',id), {estado:'Cancelada'});
-  const idx = allReservas.findIndex(r => r.id === id);
-  if (idx !== -1) allReservas[idx] = {...allReservas[idx], estado:'Cancelada'};
-  if (reserva?.fecha) {
-    await actualizarCalendarioFecha(reserva.fecha, allReservas);
-  }
-  showToast('Reserva cancelada');
-  loadReservas();
+window.cancelarReserva=async(id)=>{
+  if(!confirm('¿Cancelar esta reserva?'))return;
+  const reserva=allReservas.find(r=>r.id===id);
+  await updateDoc(doc(db,'reservas',id),{estado:'Cancelada'});
+  const _i=allReservas.findIndex(r=>r.id===id);
+  if(_i!==-1)allReservas[_i]={...allReservas[_i],estado:'Cancelada'};
+  if(reserva?.fecha)await _actualizarCal(reserva.fecha,allReservas);
+  showToast('Reserva cancelada');loadReservas();
 };
 
 window.eliminarReserva = async (id) => {
@@ -2148,7 +2115,7 @@ function renderClientes(list) {
       <div class="c cm">${fmtDate(c.ultimaVisita)}</div>
       <div class="ras">
         <button class="rab" onclick="abrirEditarCliente('${c.id}')" title="Editar cliente"><svg><use href="#i-edit"/></svg></button>
-        <button class="rab rab-cancel" onclick="eliminarClienteConf('${c.id}','${c.nombre||''}')" title="Eliminar cliente"><svg><use href="#i-trash"/></svg></button>
+        <button class="rab rab-cancel" onclick="if(confirm('¿Eliminar a ${(c.nombre||\'cliente\')}?'))deleteDoc(doc(db,'clientes','${c.id}')).then(()=>{showToast('Cliente eliminado');loadClientes();})" title="Eliminar"><svg><use href="#i-trash"/></svg></button>
       </div>
     </div>`).join('');
   // Fidelización — solo con lista completa
@@ -2427,7 +2394,7 @@ function limpiarModalPromo() {
   document.getElementById('promo-save-btn').textContent    = 'Crear promoción';
 }
 
-// openModal definido abajo con lógica completa
+// openModal defined below
 
 window.eliminarPromo = async (id) => {
   if(!confirm('¿Eliminar esta promoción? Esta acción no se puede deshacer.')) return;
@@ -2510,11 +2477,11 @@ function updateCrumb() {
   document.getElementById('pcrumb').textContent = now.toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
 
-window.openModal = function(id) {
+window.openModal=function(id){
   document.getElementById('modal-'+id).classList.add('open');
-  if (id === 'promo') { const pe = document.getElementById('p-edit-id'); if(pe && !pe.value) limpiarModalPromo(); }
-  if (id === 'bloqueo') { _bloqueoFechas = new Set(); setTimeout(initBloqueoCalendario, 50); }
-  if (id === 'aviso')   { setTimeout(previewAviso, 50); }
+  if(id==='promo'){const pe=document.getElementById('p-edit-id');if(pe&&!pe.value)limpiarModalPromo();}
+  if(id==='bloqueo'){_bloqueoFechas=new Set();setTimeout(initBloqueoCalendario,50);}
+  if(id==='aviso'){setTimeout(previewAviso,50);}
 };
 window.closeModal = id => document.getElementById('modal-'+id).classList.remove('open');
 document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
@@ -4379,21 +4346,14 @@ window.loadFranjasPorFecha = function(fechaStr) {
     return;
   }
 
-  disponibles.forEach(f => {
-    const precio = f[diaKey];
-    const opt = document.createElement('option');
-    opt.value = f.horario;                  // ← solo el horario limpio p.ej "10h–14h"
-    opt.textContent = `${f.turno} · ${f.horario} — ${precio} €`;
-    opt.dataset.precio  = precio;
-    opt.dataset.turno   = f.turno;          // ← turno guardado en dataset
-    opt.dataset.horario = f.horario;
+  disponibles.forEach(f=>{
+    const precio=f[diaKey];const opt=document.createElement('option');
+    opt.value=f.horario;opt.textContent=`${f.turno} · ${f.horario} — ${precio} €`;
+    opt.dataset.precio=precio;opt.dataset.turno=f.turno;opt.dataset.horario=f.horario;
     sel.appendChild(opt);
   });
-
-  // Actualizar hora extra según turno
   loadHorasExtra(disponibles[0]);
-  // Cargar extras según turno del primer slot disponible
-  loadExtrasCheckboxes(disponibles[0]?.turno || '');
+  loadExtrasCheckboxes(disponibles[0]?.turno||'');
   calcPrecioAuto();
 };
 
@@ -4819,575 +4779,194 @@ td.r{text-align:right;white-space:nowrap}
   win.document.close();
 };
 
-// ══════════════════════════════════════════════════════════════
-// FRANJAS + HELPERS DE CALENDARIO
-// ══════════════════════════════════════════════════════════════
-const FRANJAS_MANANA = ['10h–14h','11h–15h','10:00–14:00','11:00–15:00','Mañana (10:00-14:00)','Mañana'];
-const FRANJAS_TARDE  = ['16:30h–20:30h','16:30–20:30','Tarde (16:30-20:30)','Tarde'];
-const FRANJAS_NOCHE  = ['19:30h–23:30h','21:15h–01:30h','16:30h–01:30h','Noche'];
-const FRANJAS_DIA    = ['10h–20h','10:00–20:00','Todo el día'];
-
-function getHorario(r) {
-  if (r.horario && r.horario.trim()) return r.horario.trim();
-  if (r.notas) {
-    const linea = r.notas.split('\n').find(l => l.startsWith('Franja horaria:'));
-    if (linea) return linea.replace('Franja horaria:', '').trim();
+// ═══ CALENDARIO CENTRAL ═══════════════════════════════════════
+async function _actualizarCal(fecha,lista){
+  const conf=(lista||allReservas).filter(r=>r.fecha===fecha&&(r.estado||'').toLowerCase()==='confirmada');
+  if(!conf.length){await deleteDoc(doc(db,'calendario_publico',fecha)).catch(()=>{});return;}
+  let man=false,tar=false,noch=false,dia=false;
+  for(const r of conf){
+    const t=getTurno(r);const h=getHorario(r);const ext=(r.horaExtra||'').toLowerCase();
+    if(t==='manana')man=true;if(t==='tarde')tar=true;if(t==='noche')noch=true;
+    if(t==='dia'||FRANJAS_DIA.some(f=>h===f||h.includes(f)))dia=true;
+    if(t==='manana'&&(ext.includes('después')||ext.includes('despues')))tar=true;
+    if(t==='tarde'&&ext.includes('antes'))man=true;
+    if(t==='tarde'&&(ext.includes('después')||ext.includes('despues')))noch=true;
   }
-  return '';
+  if(man&&tar)dia=true;
+  await setDoc(doc(db,'calendario_publico',fecha),{fecha,mananaOcupada:man,tardeOcupada:tar,nocheOcupada:noch,diaOcupado:dia,updatedAt:serverTimestamp()},{merge:true});
 }
-
-function getTurno(r) {
-  // Usar campo turno si existe (guardado desde panel)
-  if (r.turno) {
-    const t = r.turno.toLowerCase();
-    if (t.includes('mañana') || t.includes('manana') || t.includes('morning')) return 'manana';
-    if (t.includes('noche') || t.includes('night')) return 'noche';
-    if (t.includes('todo') || t.includes('día completo')) return 'dia';
-    if (t.includes('tarde') || t.includes('afternoon')) return 'tarde';
-  }
-  // Fallback: usar horario textual
-  const hor = getHorario(r);
-  if (!hor) return null;
-  if (FRANJAS_MANANA.some(f => hor.includes(f) || f.includes(hor))) return 'manana';
-  if (FRANJAS_TARDE.some(f => hor.includes(f) || f.includes(hor)))  return 'tarde';
-  if (FRANJAS_NOCHE.some(f => hor.includes(f) || f.includes(hor)))  return 'noche';
-  if (FRANJAS_DIA.some(f => hor.includes(f) || f.includes(hor)))    return 'dia';
-  // Última opción: hora inicial
-  const h = parseInt(hor.split(/[h:–\-]/)[0] || '0', 10);
-  if (h >= 10 && h < 14) return 'manana';
-  if (h >= 14 && h < 22) return 'tarde';
-  return null;
-}
-
-function calcOcupacionCalendario(reservas) {
-  const porFecha = {};
-  for (const r of reservas) {
-    if (!r.fecha) continue;
-    if (!porFecha[r.fecha]) porFecha[r.fecha] = [];
-    porFecha[r.fecha].push(r);
-  }
-  const resultado = {};
-  for (const [fecha, list] of Object.entries(porFecha)) {
-    let mananaOcupada = false, tardeOcupada = false, nocheOcupada = false, diaOcupado = false;
-    for (const r of list) {
-      const turno = getTurno(r);
-      const hor   = getHorario(r);
-      const ext   = (r.horaExtra || '').toLowerCase();
-      if (turno === 'manana') mananaOcupada = true;
-      if (turno === 'tarde')  tardeOcupada  = true;
-      if (turno === 'noche')  nocheOcupada  = true;
-      if (turno === 'dia' || FRANJAS_DIA.some(f => hor.includes(f) || f.includes(hor))) diaOcupado = true;
-      // Hora extra: propagación de bloqueo
-      if (turno === 'manana' && (ext.includes('después') || ext.includes('despues'))) tardeOcupada = true;
-      if (turno === 'tarde'  && ext.includes('antes'))  mananaOcupada = true;
-      if (turno === 'tarde'  && (ext.includes('después') || ext.includes('despues'))) nocheOcupada = true;
-    }
-    if (mananaOcupada && tardeOcupada) diaOcupado = true;
-    resultado[fecha] = { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado };
-  }
-  return resultado;
-}
-
-async function actualizarCalendarioFecha(fecha, lista) {
-  const src = lista || allReservas;
-  const confirmadas = src.filter(r =>
-    r.fecha === fecha && (r.estado||'').toLowerCase() === 'confirmada'
-  );
-  if (confirmadas.length === 0) {
-    await deleteDoc(doc(db, 'calendario_publico', fecha)).catch(() => {});
-    return;
-  }
-  const oc   = calcOcupacionCalendario(confirmadas);
-  const info = oc[fecha] || {};
-  await setDoc(doc(db, 'calendario_publico', fecha), {
-    fecha,
-    mananaOcupada: info.mananaOcupada || false,
-    tardeOcupada:  info.tardeOcupada  || false,
-    nocheOcupada:  info.nocheOcupada  || false,
-    diaOcupado:    info.diaOcupado    || false,
-    updatedAt:     serverTimestamp()
-  }, { merge: true });
-}
-
-// ── confirmarReserva ──────────────────────────────────────────
-window.confirmarReserva = async (id) => {
-  const reserva = allReservas.find(r => r.id === id);
-  if (!reserva) return;
-  await updateDoc(doc(db,'reservas',id), {estado:'Confirmada'});
-  const idx = allReservas.findIndex(r => r.id === id);
-  if (idx !== -1) allReservas[idx] = {...allReservas[idx], estado:'Confirmada'};
-  if (reserva.fecha) {
-    await actualizarCalendarioFecha(reserva.fecha, allReservas);
-    showToast('Reserva confirmada ✓ — Calendario actualizado');
-  } else {
-    showToast('Reserva confirmada ✓');
-  }
-  loadReservas();
-};
-
-// ── cancelarReserva ───────────────────────────────────────────
-window.cancelarReserva = async (id) => {
-  if (!confirm('¿Cancelar esta reserva?')) return;
-  const reserva = allReservas.find(r => r.id === id);
-  await updateDoc(doc(db,'reservas',id), {estado:'Cancelada'});
-  const idx = allReservas.findIndex(r => r.id === id);
-  if (idx !== -1) allReservas[idx] = {...allReservas[idx], estado:'Cancelada'};
-  if (reserva?.fecha) await actualizarCalendarioFecha(reserva.fecha, allReservas);
-  showToast('Reserva cancelada');
-  loadReservas();
-};
-
-// ── EXTRAS CHECKBOXES ─────────────────────────────────────────
-window.onHorarioChange = function() {
-  const sel = document.getElementById('r-horario');
-  const opt = sel?.options[sel.selectedIndex];
-  if (!opt) return;
-  loadExtrasCheckboxes(opt.dataset.turno || '');
-};
-
-window.loadExtrasCheckboxes = function(turnoLabel) {
-  const wrap = document.getElementById('r-extras-wrap');
-  const ph   = document.getElementById('r-extras-placeholder');
-  if (!wrap) return;
-  const extrasDisp = (window.tarifasData?.extras || []).filter(e =>
-    e.concepto !== 'Hora extra'
-  );
-  if (!extrasDisp.length) {
-    if (ph) ph.style.display = '';
-    return;
-  }
-  if (ph) ph.style.display = 'none';
-  wrap.innerHTML = extrasDisp.map(e => {
-    const eid = 'ext-' + e.concepto.replace(/\s/g,'_');
-    return `<label style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer;font-size:12px;user-select:none" onclick="syncExtrasHidden()">
-      <input type="checkbox" id="${eid}" data-concepto="${e.concepto}" data-precio="${e.precio}" style="accent-color:var(--teal);width:14px;height:14px">
-      ${e.concepto} <span style="color:var(--teal);font-weight:700;margin-left:2px">+${e.precio}€</span>
-    </label>`;
+// ═══ EXTRAS CHECKBOXES ════════════════════════════════════════
+window.loadExtrasCheckboxes=function(turno){
+  const wrap=document.getElementById('r-extras-wrap');if(!wrap)return;
+  const extras=(window.tarifasData?.extras||[]).filter(e=>e.concepto!=='Hora extra');
+  if(!extras.length){wrap.innerHTML='<span style="font-size:12px;color:var(--t3)">Sin extras disponibles</span>';return;}
+  wrap.innerHTML=extras.map(e=>{
+    const id='xt-'+e.concepto.replace(/[^a-z0-9]/gi,'_');
+    return '<label style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer;font-size:12px" onclick="syncExtras()"><input type="checkbox" id="'+id+'" data-c="'+e.concepto+'" data-p="'+e.precio+'" style="accent-color:var(--teal)"> '+e.concepto+' <span style="color:var(--teal);font-weight:700">+'+e.precio+'€</span></label>';
   }).join('');
 };
-
-window.syncExtrasHidden = function() {
-  const checks = document.querySelectorAll('#r-extras-wrap input[type=checkbox]:checked');
-  const hid = document.getElementById('r-extras');
-  if (hid) hid.value = [...checks].map(c => c.dataset.concepto).join(', ') || 'Ninguno';
-  // Recalcular precio sumando extras seleccionados
-  setTimeout(calcPrecioAutoConExtras, 10);
+window.syncExtras=function(){const c=document.querySelectorAll('#r-extras-wrap input:checked');const h=document.getElementById('r-extras');if(h)h.value=[...c].map(x=>x.dataset.c).join(', ')||'Ninguno';};
+// ═══ BUSCADOR CLIENTE ═════════════════════════════════════════
+window.buscarClienteModal=function(q){
+  q=(q||'').toLowerCase().trim();const res=document.getElementById('r-cliente-resultados');
+  if(!q||q.length<2){if(res)res.style.display='none';return;}
+  const m=allClientes.filter(c=>(c.nombre||'').toLowerCase().includes(q)||(c.apellidos||'').toLowerCase().includes(q)||(c.telefono||'').toLowerCase().includes(q)).slice(0,8);
+  if(!m.length)res.innerHTML='<div style="padding:10px 14px;font-size:12px;color:var(--t3)">Sin resultados</div>';
+  else res.innerHTML=m.map(c=>'<div onclick="selCliente(''+c.id+'')" style="padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--b1);font-size:13px" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''"><strong>'+(c.nombre||'')+' '+(c.apellidos||'')+'</strong> <span style="color:var(--t3);font-size:11px;margin-left:6px">'+(c.telefono||'')+'</span></div>').join('');
+  res.style.display='block';
 };
-
-window.calcPrecioAutoConExtras = function() {
-  if (typeof calcPrecioAuto === 'function') calcPrecioAuto();
-  const checks = document.querySelectorAll('#r-extras-wrap input[type=checkbox]:checked');
-  let extraTotal = 0;
-  checks.forEach(c => { extraTotal += parseFloat(c.dataset.precio || 0); });
-  if (extraTotal > 0) {
-    const imp = document.getElementById('r-importe');
-    if (imp && imp.dataset.base) {
-      imp.value = (parseFloat(imp.dataset.base) + extraTotal).toFixed(2);
+window.selCliente=function(id){
+  const c=allClientes.find(x=>x.id===id);if(!c)return;
+  const m={nombre:'nombre',apellidos:'apellidos',dni:'dni',dir:'direccion',loc:'localidad',cp:'cp',tel:'telefono',email:'email'};
+  Object.entries(m).forEach(([k,v])=>{const e=document.getElementById('r-'+k);if(e)e.value=c[v]||'';});
+  const fn=document.getElementById('r-fnac');if(fn&&c.fechaNac)fn.value=c.fechaNac;
+  document.getElementById('r-cliente-resultados').style.display='none';
+  document.getElementById('r-buscar-cliente').value='';
+  const sn=document.getElementById('r-cliente-sel-nombre');if(sn)sn.textContent=((c.nombre||'')+' '+(c.apellidos||'')).trim();
+  document.getElementById('r-cliente-seleccionado').style.display='block';
+};
+window.limpiarClienteModal=function(){
+  ['r-nombre','r-apellidos','r-dni','r-dir','r-loc','r-cp','r-tel','r-email'].forEach(k=>{const e=document.getElementById(k);if(e)e.value='';});
+  const fn=document.getElementById('r-fnac');if(fn)fn.value='';
+  const bc=document.getElementById('r-buscar-cliente');if(bc)bc.value='';
+  const rd=document.getElementById('r-cliente-resultados');if(rd)rd.style.display='none';
+  const sd=document.getElementById('r-cliente-seleccionado');if(sd)sd.style.display='none';
+};
+// ═══ BLOQUEOS ═════════════════════════════════════════════════
+let _bloqueoFechas=new Set(),_bCalY,_bCalM;
+function initBloqueoCalendario(){const h=new Date();_bCalY=h.getFullYear();_bCalM=h.getMonth();renderBCal();}
+function renderBCal(){
+  const lEl=document.getElementById('bloqueo-cal-label');const dEl=document.getElementById('bloqueo-cal-days');if(!lEl||!dEl)return;
+  const y=_bCalY,m=_bCalM;const lbl=new Date(y,m,1).toLocaleDateString('es-ES',{month:'long',year:'numeric'});
+  lEl.textContent=lbl[0].toUpperCase()+lbl.slice(1);
+  const pd=new Date(y,m,1).getDay();const off=(pd===0?6:pd-1);const tot=new Date(y,m+1,0).getDate();
+  const hoy=new Date().toISOString().split('T')[0];let h2='';
+  for(let i=0;i<off;i++)h2+='<div></div>';
+  for(let d=1;d<=tot;d++){
+    const ds=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const past=ds<hoy;const sel=_bloqueoFechas.has(ds);
+    const sty=past?'opacity:.3;':sel?'background:var(--teal);color:#080c14;font-weight:700;cursor:pointer;':'cursor:pointer;';
+    h2+='<div data-ds="'+ds+'" data-past="'+past+'" style="padding:6px 2px;font-size:12px;border-radius:6px;text-align:center;'+sty+'">'+d+'</div>';
+  }
+  dEl.innerHTML=h2;
+  dEl.querySelectorAll('[data-ds]').forEach(el=>{
+    if(el.dataset.past==='true')return;
+    el.addEventListener('click',()=>toggleBF(el.dataset.ds));
+    el.addEventListener('mouseover',()=>{if(!_bloqueoFechas.has(el.dataset.ds))el.style.background='var(--s3)';});
+    el.addEventListener('mouseout',()=>{if(!_bloqueoFechas.has(el.dataset.ds))el.style.background='';});
+  });
+  renderBSel();
+}
+function renderBSel(){
+  const el=document.getElementById('bloqueo-fechas-sel');if(!el)return;
+  if(!_bloqueoFechas.size){el.innerHTML='<span style="font-size:12px;color:var(--t3)">Sin fechas seleccionadas</span>';return;}
+  el.innerHTML=[..._bloqueoFechas].sort().map(ds=>{const[y,m,d]=ds.split('-');return '<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(15,212,196,.12);border:1px solid rgba(15,212,196,.3);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;color:var(--teal)">'+d+'/'+m+'<button onclick="toggleBF(''+ds+'')" style="background:none;border:none;cursor:pointer;color:var(--teal);font-size:14px;padding:0;line-height:1">×</button></span>';}).join('');
+}
+window.toggleBF=function(ds){_bloqueoFechas.has(ds)?_bloqueoFechas.delete(ds):_bloqueoFechas.add(ds);renderBCal();};
+window.bloqueoCalPrev=function(){_bCalM--;if(_bCalM<0){_bCalM=11;_bCalY--;}renderBCal();};
+window.bloqueoCalNext=function(){_bCalM++;if(_bCalM>11){_bCalM=0;_bCalY++;}renderBCal();};
+window.resetBloqueoModal=function(){_bloqueoFechas.clear();if(typeof renderBCal==='function')renderBCal();const n=document.getElementById('bloqueo-nota');if(n)n.value='';const r=document.querySelector('input[name="bloqueo-franja"][value="ambas"]');if(r)r.checked=true;};
+// Alias para onclick en chips
+window.toggleBloqueoFecha=window.toggleBF;
+window.guardarBloqueo=async function(){
+  if(!_bloqueoFechas.size){showToast('Selecciona al menos una fecha');return;}
+  const franja=document.querySelector('input[name="bloqueo-franja"]:checked')?.value||'ambas';
+  const nota=document.getElementById('bloqueo-nota').value.trim()||'Bloqueo manual';
+  const fH={manana:'10h–14h',tarde:'16:30h–20:30h',ambas:'10h–14h / 16:30h–20:30h',dia:'10h–20h'};
+  const fT={manana:'Mañana',tarde:'Tarde',ambas:'Mañana y Tarde',dia:'Todo el día'};
+  const btn=document.querySelector('#modal-bloqueo .btn.bp');if(btn){btn.disabled=true;btn.textContent='Guardando...';}
+  try{
+    for(const fecha of [..._bloqueoFechas].sort()){
+      const man=['manana','ambas','dia'].includes(franja);const tar=['tarde','ambas','dia'].includes(franja);const diaOc=franja==='dia';
+      const ref=await addDoc(collection(db,'reservas'),{nombre:'🔒 Bloqueado — '+nota,apellidos:'',servicio:nota,personas:'—',fecha,horario:fH[franja],turno:fT[franja],horaExtra:'Sin horas extra',extras:'Ninguno',metodoPago:'—',importe:0,senal:0,notas:'Bloqueo · '+franja,origen:'bloqueo',estado:'Confirmada',esBloqueo:true,notaBloqueo:nota,createdAt:serverTimestamp()});
+      await addDoc(collection(db,'bloqueos'),{fecha,franja,nota,reservaId:ref.id,mananaOcupada:man,tardeOcupada:tar,diaOcupado:diaOc,createdAt:serverTimestamp()});
+      await setDoc(doc(db,'calendario_publico',fecha),{fecha,mananaOcupada:man,tardeOcupada:tar,nocheOcupada:diaOc,diaOcupado:diaOc,bloqueado:true,notaBloqueo:nota,updatedAt:serverTimestamp()},{merge:true});
     }
-  }
+    closeModal('bloqueo');resetBloqueoModal();showToast(_bloqueoFechas.size+' fecha(s) bloqueada(s) ✓');loadBloqueos();loadReservas();
+  }catch(e){console.error(e);showToast('Error al guardar bloqueo');}
+  finally{if(btn){btn.disabled=false;btn.textContent='Bloquear fechas';}}
 };
-
-// ── BUSCADOR CLIENTE EN MODAL RESERVA ────────────────────────
-window.buscarClienteModal = function(query) {
-  const q = (query||'').toLowerCase().trim();
-  const res = document.getElementById('r-cliente-resultados');
-  if (!q || q.length < 2) { res.style.display = 'none'; return; }
-  const matches = allClientes.filter(c =>
-    (c.nombre||'').toLowerCase().includes(q) ||
-    (c.apellidos||'').toLowerCase().includes(q) ||
-    (c.telefono||'').toLowerCase().includes(q)
-  ).slice(0, 8);
-  if (!matches.length) {
-    res.innerHTML = '<div style="padding:10px 14px;font-size:12px;color:var(--t3)">Sin resultados — se creará como cliente nuevo</div>';
-  } else {
-    res.innerHTML = matches.map(c =>
-      `<div onclick="seleccionarClienteModal('${c.id}')" style="padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--b1);font-size:13px" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
-        <span style="font-weight:600">${c.nombre||''} ${c.apellidos||''}</span>
-        <span style="color:var(--t3);font-size:11px;margin-left:8px">${c.telefono||''}</span>
-        ${c.email?`<span style="color:var(--t3);font-size:11px;margin-left:6px">· ${c.email}</span>`:''}
-      </div>`).join('');
-  }
-  res.style.display = 'block';
-};
-
-window.seleccionarClienteModal = function(id) {
-  const c = allClientes.find(x => x.id === id);
-  if (!c) return;
-  ['nombre','apellidos','dni','dir','loc','cp','tel','email'].forEach(k => {
-    const map = {nombre:'nombre',apellidos:'apellidos',dni:'dni',dir:'direccion',loc:'localidad',cp:'cp',tel:'telefono',email:'email'};
-    const el = document.getElementById('r-'+k);
-    if (el) el.value = c[map[k]] || '';
-  });
-  const fnacEl = document.getElementById('r-fnac');
-  if (fnacEl && c.fechaNac) fnacEl.value = c.fechaNac;
-  document.getElementById('r-cliente-resultados').style.display = 'none';
-  document.getElementById('r-buscar-cliente').value = '';
-  document.getElementById('r-cliente-sel-nombre').textContent = `${c.nombre||''} ${c.apellidos||''}`.trim();
-  document.getElementById('r-cliente-seleccionado').style.display = 'block';
-};
-
-window.limpiarClienteModal = function() {
-  ['r-nombre','r-apellidos','r-dni','r-dir','r-loc','r-cp','r-tel','r-email'].forEach(id => {
-    const el = document.getElementById(id); if(el) el.value = '';
-  });
-  const fnacEl = document.getElementById('r-fnac'); if(fnacEl) fnacEl.value = '';
-  document.getElementById('r-buscar-cliente').value = '';
-  document.getElementById('r-cliente-resultados').style.display = 'none';
-  document.getElementById('r-cliente-seleccionado').style.display = 'none';
-};
-
-// ── ELIMINAR CLIENTE ──────────────────────────────────────────
-window.eliminarClienteConf = async function(id, nombre) {
-  if (!confirm(`¿Eliminar al cliente "${nombre}"?\n\nSus reservas no se eliminarán.`)) return;
-  try {
-    await deleteDoc(doc(db,'clientes',id));
-    showToast('Cliente eliminado ✓');
-    loadClientes();
-  } catch(e) { showToast('Error al eliminar el cliente'); }
-};
-
-// ══════════════════════════════════════════════════════════════
-// BLOQUEOS DE CALENDARIO
-// ══════════════════════════════════════════════════════════════
-let _bloqueoFechas = new Set();
-let _bloqueoCalYear, _bloqueoCalMonth;
-
-function initBloqueoCalendario() {
-  const hoy = new Date();
-  _bloqueoCalYear  = hoy.getFullYear();
-  _bloqueoCalMonth = hoy.getMonth();
-  renderBloqueoCalendario();
-}
-
-function renderBloqueoCalendario() {
-  const labelEl = document.getElementById('bloqueo-cal-label');
-  const dias    = document.getElementById('bloqueo-cal-days');
-  if (!labelEl || !dias) return;
-
-  const y = _bloqueoCalYear, m = _bloqueoCalMonth;
-  const label = new Date(y, m, 1).toLocaleDateString('es-ES', {month:'long', year:'numeric'});
-  labelEl.textContent = label.charAt(0).toUpperCase() + label.slice(1);
-
-  const primerDia = new Date(y, m, 1).getDay();
-  const offset    = (primerDia === 0 ? 6 : primerDia - 1);
-  const totalDias = new Date(y, m+1, 0).getDate();
-  const hoy       = new Date().toISOString().split('T')[0];
-
-  let html = '';
-  for (let i = 0; i < offset; i++) html += '<div></div>';
-  for (let d = 1; d <= totalDias; d++) {
-    const ds     = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isPast = ds < hoy;
-    const isSel  = _bloqueoFechas.has(ds);
-    const sty    = isPast ? 'opacity:.3;' : isSel
-      ? 'background:var(--teal);color:#080c14;font-weight:700;cursor:pointer;'
-      : 'cursor:pointer;';
-    html += `<div data-ds="${ds}" data-past="${isPast}" style="padding:6px 4px;font-size:12px;border-radius:6px;text-align:center;${sty}">${d}</div>`;
-  }
-  dias.innerHTML = html;
-
-  dias.querySelectorAll('[data-ds]').forEach(el => {
-    if (el.dataset.past === 'true') return;
-    el.addEventListener('click', () => toggleBloqueoFecha(el.dataset.ds));
-    el.addEventListener('mouseover', () => { if (!_bloqueoFechas.has(el.dataset.ds)) el.style.background='var(--s3)'; });
-    el.addEventListener('mouseout',  () => { if (!_bloqueoFechas.has(el.dataset.ds)) el.style.background=''; });
-  });
-  renderBloqueoFechasSel();
-}
-
-function renderBloqueoFechasSel() {
-  const el = document.getElementById('bloqueo-fechas-sel');
-  if (!el) return;
-  if (!_bloqueoFechas.size) {
-    el.innerHTML = '<span style="font-size:12px;color:var(--t3)">Sin fechas seleccionadas</span>';
-    return;
-  }
-  el.innerHTML = [..._bloqueoFechas].sort().map(ds => {
-    const [y,m,d] = ds.split('-');
-    return `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(15,212,196,.12);border:1px solid rgba(15,212,196,.3);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;color:var(--teal)">${d}/${m}<button onclick="toggleBloqueoFecha('${ds}')" style="background:none;border:none;cursor:pointer;color:var(--teal);font-size:13px;padding:0;line-height:1">×</button></span>`;
-  }).join('');
-}
-
-window.toggleBloqueoFecha = function(ds) {
-  if (_bloqueoFechas.has(ds)) _bloqueoFechas.delete(ds);
-  else _bloqueoFechas.add(ds);
-  renderBloqueoCalendario();
-};
-window.bloqueoCalPrev = function() {
-  _bloqueoCalMonth--;
-  if (_bloqueoCalMonth < 0) { _bloqueoCalMonth = 11; _bloqueoCalYear--; }
-  renderBloqueoCalendario();
-};
-window.bloqueoCalNext = function() {
-  _bloqueoCalMonth++;
-  if (_bloqueoCalMonth > 11) { _bloqueoCalMonth = 0; _bloqueoCalYear++; }
-  renderBloqueoCalendario();
-};
-window.resetBloqueoModal = function() {
-  _bloqueoFechas.clear();
-  if (typeof renderBloqueoCalendario === 'function') renderBloqueoCalendario();
-  const notaEl = document.getElementById('bloqueo-nota'); if (notaEl) notaEl.value = '';
-  const radio = document.querySelector('input[name="bloqueo-franja"][value="ambas"]');
-  if (radio) radio.checked = true;
-};
-
-window.guardarBloqueo = async function() {
-  if (!_bloqueoFechas.size) { showToast('Selecciona al menos una fecha'); return; }
-  const franja = document.querySelector('input[name="bloqueo-franja"]:checked')?.value || 'ambas';
-  const nota   = document.getElementById('bloqueo-nota').value.trim() || 'Bloqueo manual';
-  const btn    = document.querySelector('#modal-bloqueo .btn.bp');
-  if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
-
-  const franjaHorario = { manana:'10h–14h', tarde:'16:30h–20:30h', ambas:'10h–14h / 16:30h–20:30h', dia:'10h–20h' };
-  const franjaTurno   = { manana:'Mañana', tarde:'Tarde', ambas:'Mañana y Tarde', dia:'Todo el día' };
-
-  try {
-    for (const fecha of [..._bloqueoFechas].sort()) {
-      const mananaOcupada = ['manana','ambas','dia'].includes(franja);
-      const tardeOcupada  = ['tarde','ambas','dia'].includes(franja);
-      const diaOcupado    = franja === 'dia';
-
-      // Crear reserva real en "reservas" (visible en panel)
-      const reservaRef = await addDoc(collection(db, 'reservas'), {
-        nombre:      `🔒 Bloqueado — ${nota}`,
-        apellidos:   '', servicio: nota, personas: '—',
-        fecha, horario: franjaHorario[franja], turno: franjaTurno[franja],
-        horaExtra: 'Sin horas extra', extras: 'Ninguno',
-        metodoPago: '—', importe: 0, senal: 0,
-        notas: `Bloqueo manual · Franja: ${franja}`,
-        origen: 'bloqueo', estado: 'Confirmada',
-        esBloqueo: true, notaBloqueo: nota,
-        createdAt: serverTimestamp()
-      });
-
-      // Guardar en colección bloqueos (para poder desbloquear)
-      await addDoc(collection(db, 'bloqueos'), {
-        fecha, franja, nota, reservaId: reservaRef.id,
-        mananaOcupada, tardeOcupada, diaOcupado,
-        createdAt: serverTimestamp()
-      });
-
-      // Bloquear en calendario_publico DIRECTAMENTE (sin recálculo)
-      await setDoc(doc(db, 'calendario_publico', fecha), {
-        fecha, mananaOcupada, tardeOcupada,
-        nocheOcupada: diaOcupado, diaOcupado,
-        bloqueado: true, notaBloqueo: nota,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-    }
-    closeModal('bloqueo');
-    resetBloqueoModal();
-    showToast(`${_bloqueoFechas.size} fecha(s) bloqueada(s) en la web ✓`);
-    loadBloqueos();
-    loadReservas();
-  } catch(e) {
-    console.error('guardarBloqueo error:', e);
-    showToast('Error al guardar bloqueo');
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = 'Bloquear fechas'; }
-  }
-};
-
-async function loadBloqueos() {
-  try {
-    const snap = await getDocs(query(collection(db, 'bloqueos'), orderBy('fecha','asc')));
-    const bloqueos = snap.docs.map(d => ({id:d.id,...d.data()}));
-    const hoy = new Date().toISOString().split('T')[0];
-    const el  = document.getElementById('bloqueos-list');
-    const cnt = document.getElementById('bloqueos-count');
-    if (!el) return;
-    const activos = bloqueos.filter(b => b.fecha >= hoy);
-    if (cnt) cnt.textContent = `${activos.length} activos · ${bloqueos.length - activos.length} pasados`;
-    if (!bloqueos.length) { el.innerHTML = '<div class="empty">No hay bloqueos activos.</div>'; return; }
-    const fL = {manana:'Mañana',tarde:'Tarde',ambas:'Mañana y tarde',dia:'Día completo'};
-    const mes = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-    el.innerHTML = bloqueos.map(b => {
-      const [y,m,d] = b.fecha.split('-');
-      const eA = b.fecha >= hoy;
-      return `<div class="trow" style="display:grid;grid-template-columns:1fr .8fr 1.2fr .55fr .7fr;gap:12px;align-items:center;${!eA?'opacity:.5':''}">
-        <div><div class="c cs">${d} ${mes[parseInt(m,10)-1]} ${y}</div><div style="font-size:11px;color:var(--t3)">${b.nota||'—'}</div></div>
-        <div><span class="badge bg-t">${fL[b.franja]||b.franja}</span></div>
-        <div class="c cm" style="font-size:11px">${fmtDate(b.createdAt)}</div>
-        <div><span class="badge ${eA?'bg-g':'bg-x'}">${eA?'Activo':'Pasado'}</span></div>
-        <div class="ras"><button class="rab rab-cancel" onclick="desbloquearFecha('${b.id}','${b.fecha}','${b.reservaId||''}')" title="Desbloquear"><svg><use href="#i-ban"/></svg></button></div>
-      </div>`;
+async function loadBloqueos(){
+  const el=document.getElementById('bloqueos-list');const cnt=document.getElementById('bloqueos-count');if(!el)return;
+  try{
+    const snap=await getDocs(query(collection(db,'bloqueos'),orderBy('fecha','asc')));
+    const bs=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const hoy=new Date().toISOString().split('T')[0];const act=bs.filter(b=>b.fecha>=hoy);
+    if(cnt)cnt.textContent=act.length+' activos';
+    if(!bs.length){el.innerHTML='<div class="empty">No hay bloqueos.</div>';return;}
+    const fL={manana:'Mañana',tarde:'Tarde',ambas:'Mañana y tarde',dia:'Día completo'};
+    const mes=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    el.innerHTML=bs.map(b=>{const[y,m,d]=b.fecha.split('-');const eA=b.fecha>=hoy;
+      return '<div class="trow" style="display:grid;grid-template-columns:1fr .8fr .55fr .7fr;gap:12px;align-items:center;'+(eA?'':'opacity:.5')+'"><div><div class="c cs">'+d+' '+mes[parseInt(m,10)-1]+' '+y+'</div><div style="font-size:11px;color:var(--t3)">'+(b.nota||'')+'</div></div><div><span class="badge bg-t">'+(fL[b.franja]||b.franja)+'</span></div><div><span class="badge '+(eA?'bg-g':'bg-x')+'">'+(eA?'Activo':'Pasado')+'</span></div><div class="ras"><button class="rab rab-cancel" onclick="desbloquear(''+b.id+'',''+b.fecha+'',''+(b.reservaId||'')+'')" title="Desbloquear"><svg><use href="#i-ban"/></svg></button></div></div>';
     }).join('');
-  } catch(e) { console.error('loadBloqueos:', e); }
+  }catch(e){console.error(e);}
 }
-
-window.desbloquearFecha = async function(bloqueoId, fecha, reservaId) {
-  if (!confirm(`¿Desbloquear ${fecha}?`)) return;
-  try {
-    await deleteDoc(doc(db, 'bloqueos', bloqueoId));
-    if (reservaId) await deleteDoc(doc(db, 'reservas', reservaId)).catch(()=>{});
-    // Recalcular con las reservas que queden
-    const restantes = allReservas.filter(r =>
-      r.fecha === fecha && (r.estado||'').toLowerCase() === 'confirmada' && r.id !== reservaId
-    );
-    if (restantes.length === 0) {
-      await deleteDoc(doc(db, 'calendario_publico', fecha)).catch(()=>{});
-    } else {
-      await actualizarCalendarioFecha(fecha, restantes);
-    }
-    showToast('Fecha desbloqueada ✓');
-    loadBloqueos();
-    loadReservas();
-  } catch(e) { console.error(e); showToast('Error al desbloquear'); }
+window.desbloquear=async function(bid,fecha,rid){
+  if(!confirm('¿Desbloquear '+fecha+'?'))return;
+  try{
+    await deleteDoc(doc(db,'bloqueos',bid));
+    if(rid)await deleteDoc(doc(db,'reservas',rid)).catch(()=>{});
+    const rest=allReservas.filter(r=>r.fecha===fecha&&(r.estado||'').toLowerCase()==='confirmada'&&r.id!==rid);
+    if(!rest.length)await deleteDoc(doc(db,'calendario_publico',fecha)).catch(()=>{});
+    else await _actualizarCal(fecha,rest);
+    showToast('Desbloqueado ✓');loadBloqueos();loadReservas();
+  }catch(e){showToast('Error al desbloquear');}
 };
-
-// ══════════════════════════════════════════════════════════════
-// AVISOS WEB
-// ══════════════════════════════════════════════════════════════
-const AVISO_COLORS = {
-  teal:   {bg:'linear-gradient(135deg,#0fd4c4,#0369a1)',txt:'#fff'},
-  purple: {bg:'linear-gradient(135deg,#7c3aed,#4f46e5)',txt:'#fff'},
-  amber:  {bg:'linear-gradient(135deg,#f59e0b,#d97706)',txt:'#fff'},
-  red:    {bg:'linear-gradient(135deg,#ef4444,#dc2626)',txt:'#fff'},
-  green:  {bg:'linear-gradient(135deg,#10b981,#059669)',txt:'#fff'},
-  dark:   {bg:'linear-gradient(135deg,#1e293b,#0f172a)',txt:'#e2e8f0'},
-  pink:   {bg:'linear-gradient(135deg,#ec4899,#db2777)',txt:'#fff'},
+// ═══ AVISOS WEB ═══════════════════════════════════════════════
+const _AC={teal:{bg:'linear-gradient(135deg,#0fd4c4,#0369a1)',txt:'#fff'},purple:{bg:'linear-gradient(135deg,#7c3aed,#4f46e5)',txt:'#fff'},amber:{bg:'linear-gradient(135deg,#f59e0b,#d97706)',txt:'#fff'},red:{bg:'linear-gradient(135deg,#ef4444,#dc2626)',txt:'#fff'},green:{bg:'linear-gradient(135deg,#10b981,#059669)',txt:'#fff'},dark:{bg:'linear-gradient(135deg,#1e293b,#0f172a)',txt:'#e2e8f0'}};
+let _aCol='teal';
+window.selectAvisoColor=function(c){_aCol=c;document.querySelectorAll('.aviso-color-btn').forEach(b=>{b.style.border=b.dataset.color===c?'2px solid var(--teal)':'2px solid transparent';});previewAviso();};
+window.previewAviso=function(){
+  const tipo=document.getElementById('aviso-tipo')?.value||'banner-top';const emoji=document.getElementById('aviso-emoji')?.value||'';const titulo=document.getElementById('aviso-titulo')?.value||'Vista previa';const sub=document.getElementById('aviso-subtexto')?.value||'';const ctaTxt=document.getElementById('aviso-cta-txt')?.value||'';
+  const col=_AC[_aCol]||_AC.teal;const wrap=document.getElementById('aviso-modal-preview');if(!wrap)return;
+  const cta=ctaTxt?'<a href="#" style="display:inline-block;margin-left:10px;padding:5px 14px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);border-radius:20px;color:'+col.txt+';font-size:12px;font-weight:700;text-decoration:none">'+ctaTxt+'</a>':'';
+  if(tipo==='popup')wrap.innerHTML='<div style="background:'+col.bg+';border-radius:12px;padding:24px;text-align:center"><div style="font-size:28px">'+(emoji||'📢')+'</div><div style="font-size:17px;font-weight:800;color:'+col.txt+';margin-top:8px">'+titulo+'</div>'+(sub?'<div style="font-size:13px;color:'+col.txt+';opacity:.85;margin-top:6px">'+sub+'</div>':'')+(cta?'<div style="margin-top:14px">'+cta+'</div>':'')+'</div>';
+  else wrap.innerHTML='<div style="background:'+col.bg+';padding:10px 16px;display:flex;align-items:center;gap:8px"><span style="font-size:13px;font-weight:700;color:'+col.txt+';flex:1">'+emoji+' '+titulo+(sub?' · <span style="font-weight:400;opacity:.85">'+sub+'</span>':'')+'</span>'+cta+'</div>';
 };
-let _avisoColor = 'teal';
-
-window.selectAvisoColor = function(color) {
-  _avisoColor = color;
-  document.querySelectorAll('.aviso-color-btn').forEach(b => {
-    b.style.border = b.dataset.color === color ? '2px solid var(--teal)' : '2px solid transparent';
-  });
-  previewAviso();
-};
-
-window.previewAviso = function() {
-  const tipo   = document.getElementById('aviso-tipo')?.value || 'banner-top';
-  const emoji  = document.getElementById('aviso-emoji')?.value || '';
-  const titulo = document.getElementById('aviso-titulo')?.value || 'Vista previa';
-  const sub    = document.getElementById('aviso-subtexto')?.value || '';
-  const ctaTxt = document.getElementById('aviso-cta-txt')?.value || '';
-  const col    = AVISO_COLORS[_avisoColor] || AVISO_COLORS.teal;
-  const wrap   = document.getElementById('aviso-modal-preview');
-  if (!wrap) return;
-  const cta  = ctaTxt ? `<a href="#" style="display:inline-block;margin-left:10px;padding:5px 14px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);border-radius:20px;color:${col.txt};font-size:12px;font-weight:700;text-decoration:none">${ctaTxt}</a>` : '';
-  if (tipo === 'popup') {
-    wrap.innerHTML = `<div style="background:${col.bg};border-radius:12px;padding:24px 28px;text-align:center"><div style="font-size:28px;margin-bottom:8px">${emoji||'📢'}</div><div style="font-size:17px;font-weight:800;color:${col.txt}">${titulo}</div>${sub?`<div style="font-size:13px;color:${col.txt};opacity:.85;margin-top:6px">${sub}</div>`:''}${cta?`<div style="margin-top:14px">${cta}</div>`:''}</div>`;
-  } else {
-    wrap.innerHTML = `<div style="background:${col.bg};padding:10px 16px;display:flex;align-items:center;gap:8px"><span style="font-size:13px;font-weight:700;color:${col.txt};flex:1">${emoji} ${titulo}${sub?` · <span style="font-weight:400;opacity:.85">${sub}</span>`:''}</span>${cta}</div>`;
-  }
-};
-
-async function loadAvisos() {
-  try {
-    const snap   = await getDocs(collection(db, 'avisos_web'));
-    const avisos = snap.docs.map(d => ({id:d.id,...d.data()}));
-    const el     = document.getElementById('avisos-list');
-    const badge  = document.getElementById('badge-avisos');
-    const activos = avisos.filter(a => a.estado === 'activo');
-    if (badge) { badge.textContent = activos.length; badge.style.display = activos.length ? 'inline-flex' : 'none'; }
-    if (!el) return;
-    if (!avisos.length) { el.innerHTML = '<div class="empty">No hay avisos. Crea el primero.</div>'; return; }
-    const tL = {'banner-top':'Banner superior','popup':'Popup','banner-bottom':'Banner inferior'};
-    el.innerHTML = avisos.map(a => {
-      const col = AVISO_COLORS[a.color] || AVISO_COLORS.teal;
-      return `<div class="trow" style="display:grid;grid-template-columns:.4fr 1.4fr .7fr .55fr .7fr;gap:12px;align-items:center">
-        <div style="width:28px;height:28px;border-radius:8px;background:${col.bg}"></div>
-        <div><div class="c cs">${a.emoji||''} ${a.titulo||'—'}</div><div style="font-size:11px;color:var(--t3)">${a.subtexto||''}</div></div>
-        <div><span class="badge bg-x">${tL[a.tipo]||a.tipo}</span></div>
-        <div><span class="badge ${a.estado==='activo'?'bg-g':'bg-x'}" style="cursor:pointer" onclick="toggleAvisoEstado('${a.id}','${a.estado}')">${a.estado==='activo'?'✓ Activo':'Inactivo'}</span></div>
-        <div class="ras">
-          <button class="rab" onclick="editarAviso('${a.id}')" title="Editar"><svg><use href="#i-edit"/></svg></button>
-          <button class="rab rab-cancel" onclick="eliminarAviso('${a.id}')" title="Eliminar"><svg><use href="#i-trash"/></svg></button>
-        </div>
-      </div>`;
+async function loadAvisos(){
+  const el=document.getElementById('avisos-list');const badge=document.getElementById('badge-avisos');if(!el)return;
+  try{
+    const snap=await getDocs(collection(db,'avisos_web'));const av=snap.docs.map(d=>({id:d.id,...d.data()}));const act=av.filter(a=>a.estado==='activo');
+    if(badge){badge.textContent=act.length;badge.style.display=act.length?'inline-flex':'none';}
+    if(!av.length){el.innerHTML='<div class="empty">No hay avisos.</div>';return;}
+    const tL={'banner-top':'Banner sup.','popup':'Popup','banner-bottom':'Banner inf.'};
+    el.innerHTML=av.map(a=>{const col=_AC[a.color]||_AC.teal;
+      return '<div class="trow" style="display:grid;grid-template-columns:.4fr 1.4fr .65fr .55fr .7fr;gap:12px;align-items:center"><div style="width:24px;height:24px;border-radius:6px;background:'+col.bg+'"></div><div><div class="c cs">'+(a.emoji||'')+' '+(a.titulo||'—')+'</div><div style="font-size:11px;color:var(--t3)">'+(a.subtexto||'')+'</div></div><div><span class="badge bg-x">'+(tL[a.tipo]||a.tipo)+'</span></div><div><span class="badge '+(a.estado==='activo'?'bg-g':'bg-x')+'" style="cursor:pointer" onclick="toggleAviso(''+a.id+'',''+a.estado+'')">'+(a.estado==='activo'?'Activo':'Inactivo')+'</span></div><div class="ras"><button class="rab" onclick="editarAviso(''+a.id+'')" title="Editar"><svg><use href="#i-edit"/></svg></button><button class="rab rab-cancel" onclick="if(confirm('¿Eliminar?'))deleteDoc(doc(db,'avisos_web',''+a.id+'')).then(()=>{showToast('Eliminado');loadAvisos();})" title="Eliminar"><svg><use href="#i-trash"/></svg></button></div></div>';
     }).join('');
-  } catch(e) { console.error('loadAvisos:', e); }
+  }catch(e){console.error(e);}
 }
+window.guardarAviso=async function(){
+  const eid=document.getElementById('aviso-edit-id')?.value;
+  const data={tipo:document.getElementById('aviso-tipo').value,emoji:document.getElementById('aviso-emoji').value.trim(),titulo:document.getElementById('aviso-titulo').value.trim(),subtexto:document.getElementById('aviso-subtexto').value.trim(),ctaTxt:document.getElementById('aviso-cta-txt').value.trim(),ctaUrl:document.getElementById('aviso-cta-url').value.trim()||'#reservas',color:_aCol,estado:document.querySelector('input[name="aviso-estado"]:checked')?.value||'inactivo',updatedAt:serverTimestamp()};
+  if(!data.titulo){showToast('El aviso necesita título');return;}
+  try{if(eid)await updateDoc(doc(db,'avisos_web',eid),data);else await addDoc(collection(db,'avisos_web'),{...data,createdAt:serverTimestamp()});showToast('Aviso guardado ✓');closeModal('aviso');loadAvisos();}
+  catch(e){showToast('Error al guardar aviso');}
+};
+window.editarAviso=async function(id){
+  const snap=await getDocs(collection(db,'avisos_web'));const a=snap.docs.map(d=>({id:d.id,...d.data()})).find(x=>x.id===id);if(!a)return;
+  document.getElementById('aviso-edit-id').value=id;document.getElementById('aviso-tipo').value=a.tipo||'banner-top';document.getElementById('aviso-emoji').value=a.emoji||'';document.getElementById('aviso-titulo').value=a.titulo||'';document.getElementById('aviso-subtexto').value=a.subtexto||'';document.getElementById('aviso-cta-txt').value=a.ctaTxt||'';document.getElementById('aviso-cta-url').value=a.ctaUrl||'#reservas';
+  const r=document.querySelector('input[name="aviso-estado"][value="'+(a.estado||'inactivo')+'"]');if(r)r.checked=true;
+  selectAvisoColor(a.color||'teal');document.getElementById('aviso-modal-title').textContent='Editar aviso';openModal('aviso');
+};
+window.toggleAviso=async function(id,est){await updateDoc(doc(db,'avisos_web',id),{estado:est==='activo'?'inactivo':'activo',updatedAt:serverTimestamp()});showToast(est==='activo'?'Desactivado':'Activado ✓');loadAvisos();};
+// ═══ EMAIL AL CLIENTE ═════════════════════════════════════════
+window.enviarEmailReserva=async function(id){
+  const r=allReservas.find(x=>x.id===id);if(!r?.email){showToast('Sin email en esta reserva');return;}
+  const btn=document.getElementById('btn-em-'+id);if(btn){btn.disabled=true;btn.textContent='Enviando...';}
+  const fe=n=>(parseFloat(n)||0).toFixed(2).replace('.',',')+' €';
+  const ff=s=>{if(!s)return'—';const[y,m,d]=s.split('-');return d+'/'+m+'/'+y;};
+  const html='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:Arial,sans-serif;background:#f4f4f4;padding:32px 16px"><div style="max-width:560px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden"><div style="background:#0d0f14;padding:24px;text-align:center"><img src="https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png" alt="EspaiFest" style="height:56px"></div><div style="background:linear-gradient(135deg,#0fd4c4,#06b6d4);padding:24px;text-align:center"><div style="font-size:28px">🎉</div><div style="font-size:20px;font-weight:800;color:#000">¡Reserva confirmada!</div></div><div style="padding:32px"><p>Hola <strong>'+(r.nombre||'—')+'</strong>,</p><table style="width:100%;background:#f9fafb;border-radius:8px;overflow:hidden;margin:16px 0"><tr style="background:#e5e7eb"><td colspan="2" style="padding:10px 16px;font-size:11px;font-weight:700;text-transform:uppercase">Detalles</td></tr><tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb">?? Fecha</td><td style="padding:10px 16px;font-size:13px;font-weight:700;border-bottom:1px solid #e5e7eb">'+ff(r.fecha)+'</td></tr><tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb">?? Horario</td><td style="padding:10px 16px;font-size:13px;font-weight:700;border-bottom:1px solid #e5e7eb">'+(r.horario||'—')+'</td></tr><tr><td style="padding:10px 16px;font-size:13px;color:#6b7280">?? Evento</td><td style="padding:10px 16px;font-size:13px;font-weight:700">'+(r.servicio||'—')+'</td></tr></table><div style="background:#0d0f14;padding:12px 16px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><span style="color:#fff;font-weight:800">TOTAL</span><span style="color:#0fd4c4;font-size:18px;font-weight:900">'+fe(r.importe)+'</span></div><div style="background:#ecfdf5;border:1px solid #6ee7b7;border-radius:8px;padding:16px;margin-bottom:16px"><strong style="color:#065f46">?? Cómo confirmar</strong><p style="font-size:13px;color:#374151;margin:8px 0 0"><strong>Bizum:</strong> 674 379 709<br>Una vez recibido el pago Laura confirmará por WhatsApp.</p></div><p style="font-size:12px;color:#9ca3af;text-align:center">info@espaifest.com · 674 379 709</p></div></div></body></html>';
+  try{
+    const res=await fetch('https://espaifest-brevo.lucasyleodigital.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:r.email,subject:'✅ Reserva confirmada — EspaiFest',html,from_name:'EspaiFest'})});
+    if(res.ok){showToast('Email enviado ✓');await updateDoc(doc(db,'reservas',id),{emailEnviado:true,emailEnviadoAt:serverTimestamp()});loadReservas();}
+    else showToast('Error al enviar email');
+  }catch(e){showToast('Error de conexión');}
+  if(btn){btn.disabled=false;btn.textContent='Enviar email';}
+};
+// ═══ INICIALIZACIÓN ════════════════════════════════════════════
+const _la=window.loadAllData;
+window.loadAllData=async()=>{await _la();try{loadAvisos();}catch(e){}};
 
-window.guardarAviso = async function() {
-  const editId  = document.getElementById('aviso-edit-id')?.value;
-  const tipo    = document.getElementById('aviso-tipo').value;
-  const emoji   = document.getElementById('aviso-emoji').value.trim();
-  const titulo  = document.getElementById('aviso-titulo').value.trim();
-  const sub     = document.getElementById('aviso-subtexto').value.trim();
-  const ctaTxt  = document.getElementById('aviso-cta-txt').value.trim();
-  const ctaUrl  = document.getElementById('aviso-cta-url').value.trim() || '#reservas';
-  const estado  = document.querySelector('input[name="aviso-estado"]:checked')?.value || 'inactivo';
-  if (!titulo) { showToast('El aviso necesita un título'); return; }
-  const data = { tipo, emoji, titulo, subtexto:sub, ctaTxt, ctaUrl, color:_avisoColor, estado, updatedAt:serverTimestamp() };
-  try {
-    if (editId) { await updateDoc(doc(db,'avisos_web',editId), data); showToast('Aviso actualizado ✓'); }
-    else { await addDoc(collection(db,'avisos_web'), {...data, createdAt:serverTimestamp()}); showToast('Aviso creado ✓'); }
-    closeModal('aviso');
-    loadAvisos();
-  } catch(e) { showToast('Error al guardar aviso'); }
-};
-
-window.editarAviso = async function(id) {
-  const snap = await getDocs(collection(db,'avisos_web'));
-  const a = snap.docs.map(d=>({id:d.id,...d.data()})).find(x=>x.id===id);
-  if (!a) return;
-  document.getElementById('aviso-edit-id').value  = id;
-  document.getElementById('aviso-tipo').value     = a.tipo||'banner-top';
-  document.getElementById('aviso-emoji').value    = a.emoji||'';
-  document.getElementById('aviso-titulo').value   = a.titulo||'';
-  document.getElementById('aviso-subtexto').value = a.subtexto||'';
-  document.getElementById('aviso-cta-txt').value  = a.ctaTxt||'';
-  document.getElementById('aviso-cta-url').value  = a.ctaUrl||'#reservas';
-  const r = document.querySelector(`input[name="aviso-estado"][value="${a.estado||'inactivo'}"]`);
-  if (r) r.checked = true;
-  selectAvisoColor(a.color||'teal');
-  document.getElementById('aviso-modal-title').textContent = 'Editar aviso';
-  openModal('aviso');
-};
-
-window.toggleAvisoEstado = async function(id, est) {
-  const nuevo = est === 'activo' ? 'inactivo' : 'activo';
-  await updateDoc(doc(db,'avisos_web',id), {estado:nuevo, updatedAt:serverTimestamp()});
-  showToast(nuevo==='activo' ? 'Aviso activado ✓' : 'Aviso desactivado ✓');
-  loadAvisos();
-};
-window.eliminarAviso = async function(id) {
-  if (!confirm('¿Eliminar este aviso?')) return;
-  await deleteDoc(doc(db,'avisos_web',id));
-  showToast('Aviso eliminado ✓');
-  loadAvisos();
-};
-
-// ── EMAIL AL CLIENTE DESDE PANEL ─────────────────────────────
-const _MAIL = {
-  workerUrl: 'https://espaifest-brevo.lucasyleodigital.workers.dev',
-  emailFrom: 'EspaiFest'
-};
-async function resendSend(to, subject, html) {
-  try {
-    const res = await fetch(_MAIL.workerUrl, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,subject,html,from_name:_MAIL.emailFrom})});
-    if (!res.ok) return false;
-    return true;
-  } catch(e) { return false; }
-}
-window.enviarEmailReserva = async function(id) {
-  const r = allReservas.find(x => x.id === id);
-  if (!r?.email) { showToast('Sin email en esta reserva'); return; }
-  const btn = document.getElementById('btn-email-cliente-'+id);
-  if (btn) { btn.disabled=true; btn.textContent='Enviando...'; }
-  const fmtE = n => (parseFloat(n)||0).toFixed(2).replace('.',',')+' €';
-  const fmtF = s => { if(!s)return'—'; const[y,m,d]=s.split('-'); return `${d}/${m}/${y}`; };
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:Arial,sans-serif;background:#f4f4f4;padding:32px 16px"><div style="max-width:560px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden"><div style="background:#0d0f14;padding:24px;text-align:center"><img src="https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png" alt="EspaiFest" style="height:56px"></div><div style="background:linear-gradient(135deg,#0fd4c4,#06b6d4);padding:24px;text-align:center"><div style="font-size:28px">🎉</div><div style="font-size:20px;font-weight:800;color:#000">¡Reserva confirmada!</div></div><div style="padding:32px"><p style="font-size:15px;color:#374151">Hola <strong>${r.nombre||'—'}</strong>,</p><table style="width:100%;background:#f9fafb;border-radius:8px;overflow:hidden;margin:16px 0"><tr style="background:#e5e7eb"><td colspan="2" style="padding:10px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151">Detalles</td></tr><tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb">📅 Fecha</td><td style="padding:10px 16px;font-size:13px;font-weight:700;color:#111;border-bottom:1px solid #e5e7eb">${fmtF(r.fecha)}</td></tr><tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb">🕐 Horario</td><td style="padding:10px 16px;font-size:13px;font-weight:700;color:#111;border-bottom:1px solid #e5e7eb">${r.horario||'—'}</td></tr><tr><td style="padding:10px 16px;font-size:13px;color:#6b7280">🎊 Evento</td><td style="padding:10px 16px;font-size:13px;font-weight:700;color:#111">${r.servicio||'—'}</td></tr></table><div style="background:#0d0f14;padding:12px 16px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><span style="color:#fff;font-weight:800">TOTAL</span><span style="color:#0fd4c4;font-size:18px;font-weight:900">${fmtE(r.importe)}</span></div><div style="background:#ecfdf5;border:1px solid #6ee7b7;border-radius:8px;padding:16px;margin-bottom:16px"><div style="font-weight:700;color:#065f46;margin-bottom:8px">💳 Cómo confirmar</div><div style="font-size:13px;color:#374151;line-height:1.6"><strong>Bizum:</strong> 674 379 709<br><strong>Transferencia:</strong> Indica nombre y fecha<br><br>Una vez recibido el pago Laura confirmará por WhatsApp.</div></div><p style="font-size:12px;color:#9ca3af;text-align:center">info@espaifest.com · 674 379 709</p></div></div></body></html>`;
-  const ok = await resendSend(r.email, '✅ Reserva confirmada — EspaiFest', html);
-  if (ok) {
-    showToast('Email enviado a '+r.email+' ✓');
-    await updateDoc(doc(db,'reservas',id), {emailEnviado:true, emailEnviadoAt:serverTimestamp()});
-    loadReservas();
-  } else {
-    showToast('Error al enviar email');
-  }
-  if (btn) { btn.disabled=false; btn.textContent='Enviar email'; }
-};
-
-// loadAllData: llamar loadAvisos
-const _origLoadAll = window.loadAllData;
-window.loadAllData = async () => {
-  await _origLoadAll();
-  loadAvisos().catch(()=>{});
-};
 </script>
 </body>
 </html>
