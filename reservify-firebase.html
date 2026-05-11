@@ -2210,7 +2210,7 @@ function renderClientes(list) {
       <div class="c cm">${fmtDate(c.ultimaVisita)}</div>
       <div class="ras">
         <button class="rab" onclick="abrirEditarCliente('${c.id}')" title="Editar cliente"><svg><use href="#i-edit"/></svg></button>
-        <button class="rab rab-cancel" onclick="eliminarCliente('${c.id}','${(c.nombre||'').replace(/'/g,'\\'')}' )" title="Eliminar cliente"><svg><use href="#i-trash"/></svg></button>
+        <button class="rab rab-cancel" onclick="eliminarCliente('${c.id}','${(c.nombre||'').replace(/'/g,'\u2019')} ${(c.apellidos||'').replace(/'/g,'\u2019')}')" title="Eliminar cliente"><svg><use href="#i-trash"/></svg></button>
       </div>
     </div>`).join('');
   // Fidelización — solo con lista completa
