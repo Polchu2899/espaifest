@@ -1740,14 +1740,15 @@ async function loadReservas() {
     // Ordenar en cliente por fecha de reserva desc para consistencia.
     const snap = await getDocs(collection(db,'reservas'));
     allReservas = snap.docs.map(d => ({id:d.id,...d.data()}));
-    // Ordenar: primero por createdAt desc (cuándo se registró), desempate por fecha del evento desc
-    allReservas.sort((a,b) => {
-      const ta = a.createdAt?.toMillis?.() ?? (a.createdAt ? new Date(a.createdAt).getTime() : 0);
-      const tb = b.createdAt?.toMillis?.() ?? (b.createdAt ? new Date(b.createdAt).getTime() : 0);
-      if(tb !== ta) return tb - ta;
-      // Desempate: fecha del evento más próxima primero
-      return (b.fecha||'').localeCompare(a.fecha||'');
-    });
+    // Ordenar por createdAt desc (más reciente primero)
+    // Soporta: Firestore Timestamp, string ISO, null/undefined
+    const tsOf = v => {
+      if(!v) return 0;
+      if(typeof v.toMillis === 'function') return v.toMillis();
+      const n = new Date(v).getTime();
+      return isNaN(n) ? 0 : n;
+    };
+    allReservas.sort((a,b) => tsOf(b.createdAt) - tsOf(a.createdAt));
     renderReservas(allReservas);
     updateDashboard();
   } catch(e) {
@@ -2415,28 +2416,40 @@ window.cancelarReserva = async (id) => {
 window.eliminarReserva = async (id) => {
   if(!confirm('¿Eliminar esta reserva permanentemente? Esta acción no se puede deshacer.')) return;
   const reserva = allReservas.find(r => r.id === id);
+  const fechaReserva = reserva?.fecha;
+
+  // 1. Borrar la reserva de Firestore
   await deleteDoc(doc(db,'reservas',id));
 
-  // Recalcular bloqueos del calendario si la reserva tenía fecha y estaba confirmada
-  if(reserva?.fecha) {
+  // 2. Actualizar calendario_publico para esa fecha
+  if(fechaReserva) {
     try {
-      const confirmadasHoy = allReservas.filter(r =>
-        r.id !== id &&
-        r.fecha === reserva.fecha &&
-        (r.estado||'').toLowerCase() === 'confirmada'
-      );
-      if(confirmadasHoy.length === 0) {
-        await deleteDoc(doc(db,'calendario_publico', reserva.fecha));
+      // Consultar Firestore directamente (no allReservas, que aún tiene la eliminada en memoria)
+      const snapRest = await getDocs(query(
+        collection(db,'reservas'),
+        where('fecha','==',fechaReserva),
+        where('estado','==','Confirmada')
+      ));
+      const confirmadasRestantes = snapRest.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      if(confirmadasRestantes.length === 0) {
+        // Sin confirmadas → borrar el bloqueo del día completamente
+        await deleteDoc(doc(db,'calendario_publico', fechaReserva));
+        console.log('[eliminar] calendario_publico borrado para', fechaReserva);
       } else {
-        const { mananaOcupada, tardeOcupada } = calcOcupacion(confirmadasHoy);
-        await setDoc(doc(db,'calendario_publico', reserva.fecha), {
-          fecha: reserva.fecha, mananaOcupada, tardeOcupada, updatedAt: serverTimestamp()
+        // Recalcular con las que quedan
+        const { mananaOcupada, tardeOcupada } = calcOcupacion(confirmadasRestantes);
+        await setDoc(doc(db,'calendario_publico', fechaReserva), {
+          fecha: fechaReserva, mananaOcupada, tardeOcupada, updatedAt: serverTimestamp()
         });
+        console.log('[eliminar] calendario actualizado →', {mananaOcupada, tardeOcupada});
       }
-    } catch(e) { console.warn('Error actualizando calendario al eliminar:', e); }
+    } catch(e) {
+      console.warn('[eliminar] Error actualizando calendario:', e);
+    }
   }
 
-  showToast('Reserva eliminada');
+  showToast('Reserva eliminada · Calendario actualizado');
   loadReservas();
 };
 
