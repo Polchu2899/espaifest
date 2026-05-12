@@ -1986,6 +1986,20 @@ async function loadReservas() {
   }
 }
 
+// ── Helper: actualizar reserva en memoria sin releer Firestore ──
+// Evita consumir lecturas innecesarias. Usar después de confirmar/cancelar/eliminar.
+function actualizarReservaLocal(id, cambios) {
+  // null = eliminar, objeto = actualizar campos
+  if(cambios === null) {
+    allReservas = allReservas.filter(r => r.id !== id);
+  } else {
+    const idx = allReservas.findIndex(r => r.id === id);
+    if(idx !== -1) allReservas[idx] = { ...allReservas[idx], ...cambios };
+  }
+  renderReservas(allReservas);
+  updateDashboard();
+}
+
 function pagoBadge(r) {
   const ep = r.estadoPago || '';
   if(ep === 'cobrado') return '<span class="badge bg-g">Cobrado</span>';
@@ -2311,7 +2325,7 @@ window.saveReserva = async () => {
     createdAt: serverTimestamp()
   };
 
-  await addDoc(collection(db,'reservas'), data);
+  const docRef = await addDoc(collection(db,'reservas'), data);
   await upsertCliente({ nombre, apellidos, dni, fechaNac: fnac, direccion: dir, localidad: loc, cp, telefono: tel, email });
 
   // ── 2. Bloquear en calendario_publico ─────────────────────
@@ -2374,8 +2388,11 @@ window.saveReserva = async () => {
   }
 
   closeModal('res');
-  loadReservas();
-  loadClientes();
+  // Añadir en memoria sin releer Firestore
+  const nuevaReserva = { id: docRef.id, ...data, createdAt: new Date() };
+  allReservas.unshift(nuevaReserva);
+  renderReservas(allReservas);
+  updateDashboard();
   if(btn) btn.disabled = false;
 
   // ── Limpiar campos ─────────────────────────────────────────
@@ -2612,7 +2629,8 @@ window.confirmarReserva = async (id) => {
   } else {
     showToast('Reserva confirmada ✓');
   }
-  loadReservas();
+  // Actualizar en memoria sin releer Firestore
+  actualizarReservaLocal(id, { estado: 'Confirmada' });
 };
 
 window.cancelarReserva = async (id) => {
@@ -2639,7 +2657,7 @@ window.cancelarReserva = async (id) => {
     }
   }
   showToast('Reserva cancelada');
-  loadReservas();
+  actualizarReservaLocal(id, { estado: 'Cancelada' });
 };
 
 window.eliminarReserva = async (id) => {
@@ -2680,7 +2698,7 @@ window.eliminarReserva = async (id) => {
   }
 
   showToast('Reserva eliminada · Calendario actualizado');
-  loadReservas();
+  actualizarReservaLocal(id, null); // null = eliminar del array
 };
 
 // ── CLIENTES ──────────────────────────────────────────────────
@@ -2988,9 +3006,10 @@ window.saveRecurrente = async function() {
   if(btn) btn.disabled = true;
 
   let ok = 0;
+  const nuevasSesiones = [];
   for(const fecha of recFechas) {
     try {
-      await addDoc(collection(db,'reservas'), {
+      const sesionData = {
         nombre: (nombre + ' ' + apellidos).trim(), apellidos,
         telefono: tel, email, servicio, personas,
         fecha, horario, horaExtra: 'Sin horas extra',
@@ -2998,7 +3017,9 @@ window.saveRecurrente = async function() {
         importe: precio, senal: 0,
         notas: notas || '', origen: 'panel', estado: 'Pendiente',
         createdAt: serverTimestamp()
-      });
+      };
+      const ref = await addDoc(collection(db,'reservas'), sesionData);
+      nuevasSesiones.push({ id: ref.id, ...sesionData, createdAt: new Date() });
       ok++;
     } catch(e) { console.warn('Error guardando sesión', fecha, e); }
   }
@@ -3007,9 +3028,10 @@ window.saveRecurrente = async function() {
     const horarioLimpio = getHorario({ horario });
     for(const fecha of recFechas) {
       try {
-        const snapDia = await getDocs(query(collection(db,'reservas'), where('fecha','==',fecha)));
-        const confirmadasDia = snapDia.docs.map(function(d) { return Object.assign({id:d.id}, d.data()); })
-          .filter(function(r) { return (r.estado||'').toLowerCase() === 'confirmada'; });
+        // Usar allReservas en memoria — sin getDocs extra
+        const confirmadasDia = allReservas.filter(function(r) {
+          return r.fecha === fecha && (r.estado||'').toLowerCase() === 'confirmada';
+        });
         const nuevaRec = { horario: horarioLimpio||horario, horaExtra:'Sin horas extra', estado:'Confirmada' };
         const ocupacion = calcOcupacion([...confirmadasDia, nuevaRec]);
         await setDoc(doc(db,'calendario_publico',fecha), {
@@ -3023,7 +3045,10 @@ window.saveRecurrente = async function() {
   showToast(ok + ' sesiones guardadas' + (bloquear ? ' · Calendario bloqueado' : '') + ' \u2713');
   closeModal('recurrente');
   window.recLimpiar();
-  loadReservas();
+  // Añadir sesiones en memoria sin releer Firestore
+  nuevasSesiones.forEach(function(s) { allReservas.unshift(s); });
+  renderReservas(allReservas);
+  updateDashboard();
   if(btn) btn.disabled = false;
 };
 
@@ -3549,15 +3574,15 @@ window.guardarPago = async function() {
   const metodo  = document.getElementById('mpago-metodo').value;
   const notas   = document.getElementById('mpago-notas').value.trim();
   const estado  = _pagoStatus || (cobrado >= total ? 'cobrado' : cobrado > 0 ? 'parcial' : 'pendiente');
-  await updateDoc(doc(db,'reservas',id), {
-    cobrado, estadoPago: estado,
-    metodoPago: metodo,
-    notasPago: notas || '',
-    updatedAt: serverTimestamp()
-  });
+  const upd = { cobrado, estadoPago: estado, metodoPago: metodo, notasPago: notas || '', updatedAt: serverTimestamp() };
+  await updateDoc(doc(db,'reservas',id), upd);
+  // Actualizar en memoria
+  const idx = allReservas.findIndex(r => r.id === id);
+  if(idx !== -1) allReservas[idx] = { ...allReservas[idx], ...upd };
+  renderReservas(allReservas);
+  updateDashboard();
   closeModal('pago');
   showToast('Pago registrado ✓');
-  loadReservas();
 };
 
 // ── NUEVO CLIENTE MANUAL ──────────────────────────────────────
@@ -4433,9 +4458,13 @@ window.guardarEdicionReserva = async function() {
 
   try {
     await updateDoc(doc(db,'reservas',id), upd);
+    // Actualizar en memoria
+    const idx = allReservas.findIndex(r => r.id === id);
+    if(idx !== -1) allReservas[idx] = { ...allReservas[idx], ...upd };
+    renderReservas(allReservas);
+    updateDashboard();
     closeModal('edit-res');
     showToast('Reserva actualizada ✓');
-    loadReservas();
   } catch(e) {
     console.error('Error guardando edición:', e);
     showToast('Error al guardar — revisa la consola');
