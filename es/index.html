@@ -3565,39 +3565,45 @@ async function loadTarifasIndex() {
 async function loadFechasOcupadas() {
   try {
     const hoy = new Date().toISOString().split('T')[0];
-    const q = query(
+    // Sin where — evita requerir índice compuesto en Firestore
+    // onSnapshot escucha la colección completa y filtra en cliente
+    onSnapshot(
       collection(_db, 'calendario_publico'),
-      where('fecha', '>=', hoy)
-    );
-    onSnapshot(q, (snap) => {
-      const data = {};
-      snap.docs.forEach(d => {
-        const fd = d.data();
-        if(fd.fecha) data[fd.fecha] = {
-          mananaOcupada: fd.mananaOcupada || false,
-          tardeOcupada:  fd.tardeOcupada  || false,
-          nocheOcupada:  fd.nocheOcupada  || false,
-          diaOcupado:    fd.diaOcupado    || false,
-        };
-      });
-      // Marcar días especiales en CAL_DATA con flag para pintarlos diferente
-      (indexTarifas?.especiales || []).forEach(esp => {
-        if(!esp.dia) return; // festivos sin fecha fija (Carnaval) se omiten
-        const [dd, mm] = esp.dia.split('/');
-        const anyo = new Date().getFullYear();
-        // Marcar para el año actual y el siguiente
-        [anyo, anyo+1].forEach(y => {
-          const ds = `${y}-${mm}-${dd}`;
-          if(ds >= hoy) {
-            if(!data[ds]) data[ds] = {};
-            data[ds].esDiaEspecial = true;
-            data[ds].celebracion = esp.celebracion;
-            data[ds].precioEsp = esp.precio;
+      (snap) => {
+        const data = {};
+        snap.docs.forEach(d => {
+          const fd = d.data();
+          const fecha = fd.fecha || d.id;
+          if(fecha >= hoy) {
+            data[fecha] = {
+              mananaOcupada: fd.mananaOcupada || false,
+              tardeOcupada:  fd.tardeOcupada  || false,
+              nocheOcupada:  fd.nocheOcupada  || false,
+              diaOcupado:    fd.diaOcupado    || false,
+            };
           }
         });
-      });
-      if(typeof updateCalOccupied === 'function') updateCalOccupied(data);
-    });
+        // Marcar días especiales en CAL_DATA con flag para pintarlos diferente
+        (indexTarifas?.especiales || []).forEach(esp => {
+          if(!esp.dia) return;
+          const [dd, mm] = esp.dia.split('/');
+          const anyo = new Date().getFullYear();
+          [anyo, anyo+1].forEach(y => {
+            const ds = `${y}-${mm}-${dd}`;
+            if(ds >= hoy) {
+              if(!data[ds]) data[ds] = {};
+              data[ds].esDiaEspecial = true;
+              data[ds].celebracion = esp.celebracion;
+              data[ds].precioEsp = esp.precio;
+            }
+          });
+        });
+        if(typeof updateCalOccupied === 'function') updateCalOccupied(data);
+      },
+      (err) => {
+        console.warn('onSnapshot calendario_publico error:', err.code, err.message);
+      }
+    );
   } catch(e) {
     console.warn('Fechas ocupadas error:', e.message);
   }
