@@ -1213,12 +1213,25 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
     <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:14px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Extras y pago</div>
 
-    <!-- HORA EXTRA -->
+    <!-- HORA EXTRA — checkboxes independientes (antes Y/O después) -->
     <div class="fg" style="margin-bottom:12px">
       <label class="fl">Hora extra</label>
-      <select class="fsi" id="r-horaext" onchange="calcPrecioAuto()">
-        <option value="Sin horas extra">Sin horas extra</option>
-      </select>
+      <div id="r-horaext-wrap" style="display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:var(--s3);border:1px solid var(--b2);border-radius:8px;">
+        <label style="display:flex;align-items:center;justify-content:space-between;font-size:13px;cursor:pointer;gap:8px">
+          <span style="display:flex;align-items:center;gap:8px">
+            <input type="checkbox" id="r-horaext-antes" onchange="calcPrecioAuto()" style="width:15px;height:15px;accent-color:var(--teal);flex-shrink:0">
+            +1h antes
+          </span>
+          <span id="r-horaext-antes-precio" style="font-size:12px;color:var(--teal);font-weight:700;white-space:nowrap">— €</span>
+        </label>
+        <label style="display:flex;align-items:center;justify-content:space-between;font-size:13px;cursor:pointer;gap:8px">
+          <span style="display:flex;align-items:center;gap:8px">
+            <input type="checkbox" id="r-horaext-despues" onchange="calcPrecioAuto()" style="width:15px;height:15px;accent-color:var(--teal);flex-shrink:0">
+            +1h después
+          </span>
+          <span id="r-horaext-despues-precio" style="font-size:12px;color:var(--teal);font-weight:700;white-space:nowrap">— €</span>
+        </label>
+      </div>
     </div>
 
     <!-- EXTRAS DINÁMICOS CON CHECKBOXES -->
@@ -1727,11 +1740,13 @@ async function loadReservas() {
     // Ordenar en cliente por fecha de reserva desc para consistencia.
     const snap = await getDocs(collection(db,'reservas'));
     allReservas = snap.docs.map(d => ({id:d.id,...d.data()}));
-    // Ordenar por fecha de creación desc (cuando se realizó la reserva)
+    // Ordenar: primero por createdAt desc (cuándo se registró), desempate por fecha del evento desc
     allReservas.sort((a,b) => {
-      const ta = a.createdAt?.toMillis?.() || new Date(a.createdAt||0).getTime();
-      const tb = b.createdAt?.toMillis?.() || new Date(b.createdAt||0).getTime();
-      return tb - ta;
+      const ta = a.createdAt?.toMillis?.() ?? (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+      const tb = b.createdAt?.toMillis?.() ?? (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+      if(tb !== ta) return tb - ta;
+      // Desempate: fecha del evento más próxima primero
+      return (b.fecha||'').localeCompare(a.fecha||'');
     });
     renderReservas(allReservas);
     updateDashboard();
@@ -2016,7 +2031,6 @@ window.saveReserva = async () => {
   const personas = document.getElementById('r-personas').value;
   const fecha    = document.getElementById('r-fecha').value;
   const horario  = document.getElementById('r-horario').value;
-  const horaext  = document.getElementById('r-horaext').value;
   const pago     = document.getElementById('r-pago').value;
   const importe  = parseFloat(document.getElementById('r-importe').value) || 85;
   const senal    = parseFloat(document.getElementById('r-senal').value) || 0;
@@ -2034,11 +2048,19 @@ window.saveReserva = async () => {
     : 'Ninguno';
   const extrasPrecio = extrasChecked.reduce((s,cb) => s+(parseFloat(cb.value.split('|')[1])||0), 0);
 
-  // Hora extra string normalizado (compatible con getRangoReal)
-  const horaExtStr = horaext === 'Sin horas extra' ? 'Sin horas extra'
-    : horaext.includes('antes') ? '+1h antes'
-    : horaext.includes('después') ? '+1h después'
-    : horaext;
+  // Hora extra: leer checkboxes independientes
+  const cbAntes   = document.getElementById('r-horaext-antes');
+  const cbDespues = document.getElementById('r-horaext-despues');
+  const tieneAntes   = cbAntes?.checked   || false;
+  const tieneDespues = cbDespues?.checked || false;
+  const precioHext   = (tieneAntes   ? parseFloat(cbAntes.dataset.precio  ||0) : 0)
+                     + (tieneDespues ? parseFloat(cbDespues.dataset.precio ||0) : 0);
+
+  // String compatible con getRangoReal (acepta "ambas" como nuevo caso)
+  const horaExtStr = (!tieneAntes && !tieneDespues) ? 'Sin horas extra'
+    : (tieneAntes && tieneDespues) ? '+1h antes y después'
+    : tieneAntes ? '+1h antes'
+    : '+1h después';
 
   if(btn) btn.disabled = true;
 
@@ -2138,6 +2160,10 @@ window.saveReserva = async () => {
   document.getElementById('r-importe').value = '85';
   document.getElementById('r-bloquear').checked = true;
   document.getElementById('r-enviar-email').checked = false;
+  const cbA = document.getElementById('r-horaext-antes');
+  const cbD = document.getElementById('r-horaext-despues');
+  if(cbA) cbA.checked = false;
+  if(cbD) cbD.checked = false;
   document.getElementById('r-email-lang-wrap').style.display = 'none';
   const langEs = document.querySelector('input[name="r-email-lang"][value="es"]');
   if(langEs) langEs.checked = true;
@@ -2387,7 +2413,29 @@ window.cancelarReserva = async (id) => {
 };
 
 window.eliminarReserva = async (id) => {
+  if(!confirm('¿Eliminar esta reserva permanentemente? Esta acción no se puede deshacer.')) return;
+  const reserva = allReservas.find(r => r.id === id);
   await deleteDoc(doc(db,'reservas',id));
+
+  // Recalcular bloqueos del calendario si la reserva tenía fecha y estaba confirmada
+  if(reserva?.fecha) {
+    try {
+      const confirmadasHoy = allReservas.filter(r =>
+        r.id !== id &&
+        r.fecha === reserva.fecha &&
+        (r.estado||'').toLowerCase() === 'confirmada'
+      );
+      if(confirmadasHoy.length === 0) {
+        await deleteDoc(doc(db,'calendario_publico', reserva.fecha));
+      } else {
+        const { mananaOcupada, tardeOcupada } = calcOcupacion(confirmadasHoy);
+        await setDoc(doc(db,'calendario_publico', reserva.fecha), {
+          fecha: reserva.fecha, mananaOcupada, tardeOcupada, updatedAt: serverTimestamp()
+        });
+      }
+    } catch(e) { console.warn('Error actualizando calendario al eliminar:', e); }
+  }
+
   showToast('Reserva eliminada');
   loadReservas();
 };
@@ -2426,6 +2474,7 @@ function renderClientes(list) {
       <div class="c cm">${fmtDate(c.ultimaVisita)}</div>
       <div class="ras">
         <button class="rab" onclick="abrirEditarCliente('${c.id}')" title="Editar cliente"><svg><use href="#i-edit"/></svg></button>
+        <button class="rab rab-cancel" onclick="eliminarCliente('${c.id}','${(c.nombre||'').replace(/'/g,'')} ${(c.apellidos||'').replace(/'/g,'')}')" title="Eliminar cliente"><svg><use href="#i-trash"/></svg></button>
       </div>
     </div>`).join('');
   // Fidelización — solo con lista completa
@@ -2454,6 +2503,20 @@ window.filterClientes = () => {
     (c.dni       ||'').toLowerCase().includes(q)
   );
   renderClientes(filtered);
+};
+
+window.eliminarCliente = async (id, nombre) => {
+  const n = nombre.trim() || 'este cliente';
+  if(!confirm(`¿Eliminar a ${n}? Se borrará su ficha pero no sus reservas.`)) return;
+  try {
+    await deleteDoc(doc(db,'clientes',id));
+    allClientes = allClientes.filter(c => c.id !== id);
+    renderClientes();
+    showToast(`${n} eliminado`);
+  } catch(e) {
+    showToast('Error al eliminar cliente');
+    console.error(e);
+  }
 };
 
 window.exportClientes = () => {
@@ -4688,9 +4751,6 @@ window.loadFranjasPorFecha = function(fechaStr) {
 };
 
 function loadHorasExtra(franjaRow) {
-  const sel = document.getElementById('r-horaext');
-  if(!sel) return;
-  sel.innerHTML = '<option value="Sin horas extra">Sin horas extra</option>';
   const turnoLower = (franjaRow?.turno||'').toLowerCase();
   let turnoKey = 'Mañana (9h–15h)';
   if(turnoLower.includes('tarde') && turnoLower.includes('noche')) turnoKey='Noche (22h–03h)';
@@ -4698,19 +4758,19 @@ function loadHorasExtra(franjaRow) {
   else if(turnoLower.includes('tarde')) turnoKey='Tarde (15h–22h)';
   else if(turnoLower.includes('todo')) turnoKey='Todo el día';
 
-  const hexExtras = (window.tarifasData.extras||[]).filter(e=>e.concepto==='Hora extra'&&e.turno===turnoKey);
-  hexExtras.forEach(e => {
-    const optA = document.createElement('option');
-    optA.value = `+1h antes (${e.precio}€)`;
-    optA.textContent = `+1h antes — ${e.precio} €`;
-    optA.dataset.precio = e.precio;
-    sel.appendChild(optA);
-    const optD = document.createElement('option');
-    optD.value = `+1h después (${e.precio}€)`;
-    optD.textContent = `+1h después — ${e.precio} €`;
-    optD.dataset.precio = e.precio;
-    sel.appendChild(optD);
-  });
+  const hexExtra = (window.tarifasData.extras||[]).find(e => e.concepto==='Hora extra' && e.turno===turnoKey);
+  const precio = hexExtra ? hexExtra.precio : 10; // fallback 10€
+
+  const elAntes   = document.getElementById('r-horaext-antes-precio');
+  const elDespues = document.getElementById('r-horaext-despues-precio');
+  if(elAntes)   elAntes.textContent   = `${precio} €`;
+  if(elDespues) elDespues.textContent = `${precio} €`;
+
+  // Guardar precio en dataset para calcPrecioAuto
+  const cbAntes   = document.getElementById('r-horaext-antes');
+  const cbDespues = document.getElementById('r-horaext-despues');
+  if(cbAntes)   cbAntes.dataset.precio   = precio;
+  if(cbDespues) cbDespues.dataset.precio = precio;
 }
 
 // Lista completa de extras (igual que en la web pública)
@@ -4790,10 +4850,11 @@ window.calcPrecioAuto = function() {
 
   let base = parseFloat(opt.dataset.precio)||0;
 
-  // Sumar hora extra si la hay
-  const hexSel = document.getElementById('r-horaext');
-  const hexOpt = hexSel?.options[hexSel.selectedIndex];
-  const hexPrecio = hexOpt?.dataset.precio ? parseFloat(hexOpt.dataset.precio) : 0;
+  // Sumar horas extra (checkboxes independientes: antes y/o después)
+  const cbAntes   = document.getElementById('r-horaext-antes');
+  const cbDespues = document.getElementById('r-horaext-despues');
+  const hexPrecio = (cbAntes?.checked   ? parseFloat(cbAntes.dataset.precio  ||0) : 0)
+                  + (cbDespues?.checked ? parseFloat(cbDespues.dataset.precio ||0) : 0);
 
   // Sumar extras seleccionados (checkboxes)
   const extrasPrecio = Array.from(document.querySelectorAll('.r-extra-cb:checked'))
