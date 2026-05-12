@@ -2018,11 +2018,9 @@ function renderReservas(list) {
     const notasIcon = r.notas
       ? `<span style="margin-left:4px;color:var(--amber);font-size:10px;cursor:default"${notasTip} title="${r.notas.replace(/"/g,'&quot;')}">📝</span>`
       : '';
-    // Detectar si es nueva (< 24h desde createdAt)
-    const tsCreado = r.createdAt?.toMillis?.() || new Date(r.createdAt||0).getTime();
-    const esNueva = tsCreado > 0 && (Date.now() - tsCreado) < 86400000;
-    const badgeNueva = esNueva ? '<span class="badge-nueva">✦ Nueva</span>' : '';
-    const rowClass = esNueva ? 'trow rc nueva' : 'trow rc';
+    // "Nueva" = llegó de la web y Laura aún no la ha abierto
+    const esNueva = r.origen === 'web' && !r.vista;
+    const badgeNueva = esNueva ? '<span class="badge-nueva">✦ Nueva</span>' : '';\n    const rowClass = esNueva ? 'trow rc nueva' : 'trow rc';
     // Fecha creación formateada
     const fechaCreada = tsCreado > 0 ? new Date(tsCreado).toLocaleDateString('es-ES',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
     // Total
@@ -2057,9 +2055,9 @@ function renderReservas(list) {
     <div class="atxt"><strong>${r.nombre}</strong> — ${r.servicio} · ${r.fecha} · ${fmtMoney(r.importe)}</div>
     <div class="atime">${fmtDate(r.createdAt)}</div></div>`).join('');
 
-  // Badge
-  const pend = list.filter(r => (r.estado||'').toLowerCase() === 'pendiente').length;
-  document.getElementById('badge-res').textContent = pend;
+  // Badge: reservas de la web que Laura aún no ha abierto
+  const noVistas = allReservas.filter(r => r.origen === 'web' && !r.vista).length;
+  document.getElementById('badge-res').textContent = noVistas;
 };
 
 window.filterReservas = () => {
@@ -2320,7 +2318,7 @@ window.saveReserva = async () => {
     metodoPago: pago,
     importe, senal,
     notas: notas || '',
-    origen: 'panel',
+    origen: 'panel', vista: true,
     estado: 'Pendiente',
     createdAt: serverTimestamp()
   };
@@ -2525,6 +2523,7 @@ function getTurno(horario) {
 window.openDet = function(id) {
   const r = allReservas.find(x => x.id === id);
   if (!r) return;
+
   const horario = getHorario(r);
   const nombreCompleto = r.nombre || '—';
 
@@ -2605,8 +2604,8 @@ window.cancelarDesdeModal = async function(id) {
 window.confirmarReserva = async (id) => {
   const reserva = allReservas.find(r => r.id === id);
   if (!reserva) return;
-  // 1. Actualizar estado en Firestore
-  await updateDoc(doc(db,'reservas',id), {estado:'Confirmada'});
+  // 1. Actualizar estado y marcar como vista en Firestore
+  await updateDoc(doc(db,'reservas',id), { estado:'Confirmada', vista: true });
   // 2. Calcular turnos ocupados ese día considerando rangos reales (con horas extra)
   if (reserva.fecha) {
     // Reservas ya confirmadas ese día (sin contar la actual)
@@ -2630,7 +2629,18 @@ window.confirmarReserva = async (id) => {
     showToast('Reserva confirmada ✓');
   }
   // Actualizar en memoria sin releer Firestore
-  actualizarReservaLocal(id, { estado: 'Confirmada' });
+  actualizarReservaLocal(id, { estado: 'Confirmada', vista: true });
+  // Quitar badge "Nueva" de la fila visualmente
+  const fila = document.querySelector('.trow[onclick*="' + id + '"]');
+  if(fila) {
+    fila.classList.remove('nueva');
+    const badge = fila.querySelector('.badge-nueva');
+    if(badge) badge.remove();
+  }
+  // Actualizar contador del menú
+  const noVistas = allReservas.filter(r => r.origen === 'web' && !r.vista).length;
+  const badgeEl = document.getElementById('badge-res');
+  if(badgeEl) badgeEl.textContent = noVistas;
 };
 
 window.cancelarReserva = async (id) => {
@@ -3015,7 +3025,7 @@ window.saveRecurrente = async function() {
         fecha, horario, horaExtra: 'Sin horas extra',
         extras: 'Ninguno', metodoPago: 'Transferencia bancaria',
         importe: precio, senal: 0,
-        notas: notas || '', origen: 'panel', estado: 'Pendiente',
+        notas: notas || '', origen: 'panel', vista: true, estado: 'Pendiente',
         createdAt: serverTimestamp()
       };
       const ref = await addDoc(collection(db,'reservas'), sesionData);
