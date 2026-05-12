@@ -183,12 +183,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .cm{color:var(--t2);}
 .cx{font-family:'DM Mono',monospace;font-size:12px;}
 .rc{grid-template-columns:1.4fr .75fr .75fr .75fr .9fr .85fr .75fr;gap:10px;}
+/* Fila nueva (< 24h) */
 .trow.rc.nueva{background:rgba(15,212,196,.045);border-left:3px solid var(--teal);}
 .trow.rc.nueva:hover{background:rgba(15,212,196,.08);}
 .badge-nueva{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--teal);color:#080c14;margin-left:6px;animation:pulse-nueva 2s infinite;}
 @keyframes pulse-nueva{0%,100%{box-shadow:0 0 0 0 rgba(15,212,196,.5);}50%{box-shadow:0 0 0 4px rgba(15,212,196,0);}}
-.aviso-color-btn{transition:transform .1s;width:28px;height:28px;border-radius:6px;cursor:pointer;}
-.aviso-color-btn:hover{transform:scale(1.15);}
 .pc{grid-template-columns:.6fr 1.3fr .75fr .9fr .9fr .85fr .7fr;gap:10px;}
 .cc{grid-template-columns:1.6fr 1fr .8fr .9fr 1fr .8fr;gap:12px;}
 .sc{grid-template-columns:1.6fr 1fr 1fr .8fr .8fr;gap:12px;}
@@ -209,6 +208,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .rab:hover{background:var(--s3);color:var(--tx);border-color:var(--b3);}
 .trow.rc{cursor:pointer;transition:background .12s;}
 .trow.rc:hover{background:var(--s2);}
+/* Bloqueo calendar */
+#bloqueo-cal-days div:hover{background:var(--s3)!important;}
+/* Avisos preview */
+.aviso-color-btn{transition:transform .1s;}
+.aviso-color-btn:hover{transform:scale(1.15);}
 /* Modal detalle reserva */
 .det-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
 .det-box{background:var(--s1);border:1px solid var(--b2);border-radius:16px;width:100%;max-width:480px;padding:28px;position:relative;}
@@ -463,9 +467,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="ni" onclick="showPanel('promociones',this)"><span class="ni-ico"><svg><use href="#i-tag"/></svg></span>Promociones</div>
       <div class="ni" onclick="showPanel('fidelizacion',this)"><span class="ni-ico"><svg><use href="#i-star"/></svg></span>Fidelización</div>
       <div class="ni" onclick="showPanel('recordatorios',this);loadRecordatorios()"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Recordatorios<span class="nbadge" id="badge-rec" style="display:none">0</span></div>
-      <div class="ni" onclick="showPanel('avisos',this);loadAvisos()"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>Avisos web<span class="nbadge" id="badge-avisos" style="display:none;background:var(--green)">0</span></div>
+      <div class="ni" onclick="showPanel('avisos',this);loadAvisos()"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><circle cx="19" cy="5" r="3" fill="var(--red)" stroke="none" id="badge-avisos-dot" style="display:none"/></svg></span>Avisos web<span class="nbadge" id="badge-avisos" style="display:none;background:var(--green)">0</span></div>
       <div class="ng" style="margin-top:8px">Ajustes</div>
-      <div class="ni" onclick="showPanel('bloqueos',this);loadBloqueos()"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>Bloqueos web</div>
+      <div class="ni" onclick="showPanel('bloqueos',this);loadBloqueos()"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>Bloqueos web</div>
       <div class="ni" onclick="showPanel('gestoria',this);loadGestoria()"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Gestoría</div>
       <div class="ni" onclick="showPanel('configuracion',this)"><span class="ni-ico"><svg><use href="#i-gear"/></svg></span>Mi negocio</div>
       <div class="ni" onclick="showPanel('migracion',this)"><span class="ni-ico"><svg><use href="#i-import"/></svg></span>Migración histórica<span class="stag">XLS</span></div>
@@ -1122,14 +1126,43 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </div>
       </div><!-- /panel-gestoria -->
 
+      <!-- ══ PANEL BLOQUEOS WEB ══ -->
       <div class="panel" id="panel-bloqueos">
-        <div class="hero" style="margin-bottom:20px"><div><h2>Bloqueos de calendario</h2><p>Fechas cerradas en la web en tiempo real.</p></div><div class="hero-acts"><button class="btn bp" onclick="openModal('bloqueo')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg> Nuevo bloqueo</button></div></div>
-        <div class="card"><div class="chead"><div><div class="ctitle">Bloqueos</div><div class="csub" id="bloqueos-count">Cargando...</div></div></div><div id="bloqueos-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div></div>
+        <div class="hero" style="margin-bottom:20px">
+          <div>
+            <h2>Bloqueos de calendario</h2>
+            <p>Reservas de sala privadas o fechas cerradas. Se bloquean en el calendario público de la web al guardar.</p>
+          </div>
+          <div class="hero-acts">
+            <button class="btn bp sm" onclick="openModal('bloqueo')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nuevo bloqueo</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="chead"><div><div class="ctitle">Bloqueos activos</div><div class="csub" id="bloqueos-count">Cargando...</div></div></div>
+          <div id="bloqueos-list"><div class="loading"><div class="spinner"></div>Cargando bloqueos...</div></div>
+        </div>
       </div>
 
+      <!-- ══ PANEL AVISOS WEB ══ -->
       <div class="panel" id="panel-avisos">
-        <div class="hero" style="margin-bottom:20px"><div><h2>Avisos en la web</h2><p>Popups y banners en espaifest.com.</p></div><div class="hero-acts"><button class="btn bp" onclick="openModal('aviso')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg> Nuevo aviso</button></div></div>
-        <div class="card"><div class="chead"><div><div class="ctitle">Avisos</div><div class="csub">Solo activos aparecen en la web</div></div></div><div id="avisos-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div></div>
+        <div class="hero" style="margin-bottom:20px">
+          <div>
+            <h2>Avisos y popups en la web</h2>
+            <p>Mensajes que aparecen en espaifest.com. Actívalos y desactívalos en un clic.</p>
+          </div>
+          <div class="hero-acts">
+            <button class="btn bp sm" onclick="openModal('aviso')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nuevo aviso</button>
+          </div>
+        </div>
+        <!-- Preview -->
+        <div id="aviso-preview-wrap" style="display:none;margin-bottom:18px">
+          <div class="chead" style="padding:10px 16px;background:var(--s2);border-radius:var(--rs) var(--rs) 0 0;border:1px solid var(--b2);border-bottom:none"><span style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em">Vista previa activo</span></div>
+          <div id="aviso-preview-box" style="border:1px solid var(--b2);border-radius:0 0 var(--rs) var(--rs);padding:20px;background:var(--s1)"></div>
+        </div>
+        <div class="card">
+          <div class="chead"><div><div class="ctitle">Todos los avisos</div><div class="csub">Solo los activos aparecen en la web</div></div></div>
+          <div id="avisos-list"><div class="loading"><div class="spinner"></div>Cargando avisos...</div></div>
+        </div>
       </div>
 
       <div class="panel" id="panel-configuracion">
@@ -1155,10 +1188,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div class="modal" style="max-width:640px;max-height:90vh;overflow-y:auto;">
     <div class="mtitle">Nueva reserva</div><div class="msub">Reserva telefónica, presencial o por WhatsApp</div>
     <div style="background:rgba(15,212,196,.06);border:1px solid rgba(15,212,196,.2);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
-      <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">🔍 Buscar cliente existente</div>
-      <div style="position:relative"><input type="text" class="fi" id="r-buscar-cliente" placeholder="Nombre o teléfono..." autocomplete="off" oninput="buscarClienteModal(this.value)" style="padding-right:80px"><button class="btn bg" onclick="limpiarClienteModal()" style="position:absolute;right:4px;top:4px;font-size:11px;padding:4px 10px">Limpiar</button></div>
+      <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Buscar cliente existente</div>
+      <div style="position:relative"><input type="text" class="fi" id="r-buscar-cliente" placeholder="Escribe nombre o teléfono..." autocomplete="off" oninput="buscarClienteModal(this.value)" style="padding-right:80px"><button class="btn bg sm" onclick="limpiarClienteModal()" style="position:absolute;right:4px;top:4px;font-size:11px;padding:4px 10px">Limpiar</button></div>
       <div id="r-cliente-resultados" style="display:none;margin-top:6px;background:var(--s1);border:1px solid var(--b2);border-radius:8px;overflow:hidden;max-height:180px;overflow-y:auto;"></div>
-      <div id="r-cliente-seleccionado" style="display:none;margin-top:8px;background:var(--gbg);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--green);font-weight:600;">✓ <span id="r-cliente-sel-nombre">—</span> — datos cargados</div>
+      <div id="r-cliente-seleccionado" style="display:none;margin-top:8px;background:var(--gbg);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--green);font-weight:600;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><polyline points="20 6 9 17 4 12"/></svg><span id="r-cliente-sel-nombre">—</span> — datos cargados automáticamente</div>
     </div>
     <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:4px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Datos del cliente</div>
     <div class="fr2">
@@ -1202,7 +1235,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="fr2">
       <div class="fg"><label class="fl">Fecha *</label><input type="date" class="fi" id="r-fecha" onchange="loadFranjasPorFecha(this.value);calcPrecioAuto()"></div>
       <div class="fg"><label class="fl">Franja horaria</label>
-        <select class="fsi" id="r-horario" onchange="calcPrecioAuto();loadExtrasCheckboxes(this.options[this.selectedIndex]?.dataset?.turno||'')">
+        <select class="fsi" id="r-horario" onchange="calcPrecioAuto()">
           <option value="">— Selecciona fecha primero —</option>
         </select>
         <div class="price-preview" id="price-preview">
@@ -1213,10 +1246,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </div>
 
     <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:14px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Extras y pago</div>
-    <div class="fg"><label class="fl">Extras</label>
-      <div id="r-extras-wrap" style="display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--s1);border:1px solid var(--b2);border-radius:8px;min-height:40px;"><span id="r-extras-ph" style="font-size:12px;color:var(--t3);align-self:center">Selecciona fecha y horario primero</span></div>
-      <input type="hidden" id="r-extras" value="Ninguno">
-    </div>
+    <div class="fg"><label class="fl">Extras seleccionados</label><input type="text" class="fi" id="r-extras" placeholder="Ej: Menú mini, Bandeja Dulce..."></div>
     <div class="fg"><label class="fl">Hora extra</label>
       <select class="fsi" id="r-horaext" onchange="calcPrecioAuto()">
         <option value="Sin horas extra">Sin horas extra</option>
@@ -1232,12 +1262,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </div>
     <div class="fg"><label class="fl">Señal cobrada (€)</label><input type="number" class="fi" id="r-senal" value="0"></div>
     <div class="fg"><label class="fl">Notas / Comentarios</label><textarea class="fi" id="r-notas" placeholder="Observaciones, necesidades especiales..." style="min-height:60px;resize:vertical;"></textarea></div>
-    <div class="fg" style="margin-bottom:0"><label class="fl">Estado de la reserva</label>
-      <select class="fsi" id="r-estado">
-        <option value="Pendiente">Pendiente — espera confirmación</option>
-        <option value="Confirmada">Confirmada — bloquea la web ahora</option>
-      </select>
-    </div>
+
     <div class="mfoot">
       <button class="btn bg" onclick="closeModal('res')">Cancelar</button>
       <button class="btn bp" onclick="saveReserva()">Guardar reserva</button>
@@ -1601,64 +1626,104 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- MODAL BLOQUEO -->
 <div class="mov" id="modal-bloqueo">
-  <div class="modal" style="max-width:540px;max-height:90vh;overflow-y:auto;">
-    <div class="mtitle">Bloquear fechas en la web</div><div class="msub">Las fechas se bloquean en espaifest.com de forma inmediata</div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-      <button class="btn bg" onclick="bloqueoCalPrev()">‹</button>
-      <span id="bloqueo-cal-label" style="font-size:13px;font-weight:700;flex:1;text-align:center">—</span>
-      <button class="btn bg" onclick="bloqueoCalNext()">›</button>
+  <div class="modal" style="max-width:580px;max-height:90vh;overflow-y:auto;">
+    <div class="mtitle">Nuevo bloqueo de calendario</div>
+    <div class="msub">Las fechas seleccionadas quedan bloqueadas en la web inmediatamente</div>
+
+    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Selecciona fechas</div>
+    <!-- Mini calendario multi-selección -->
+    <div id="bloqueo-cal-wrap" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <button class="btn bg sm" onclick="bloqueoCalPrev()">‹</button>
+        <span id="bloqueo-cal-label" style="font-size:13px;font-weight:700;flex:1;text-align:center">—</span>
+        <button class="btn bg sm" onclick="bloqueoCalNext()">›</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center">
+        <span style="font-size:10px;font-weight:700;color:var(--t3);padding:4px">L</span>
+        <span style="font-size:10px;font-weight:700;color:var(--t3);padding:4px">M</span>
+        <span style="font-size:10px;font-weight:700;color:var(--t3);padding:4px">X</span>
+        <span style="font-size:10px;font-weight:700;color:var(--t3);padding:4px">J</span>
+        <span style="font-size:10px;font-weight:700;color:var(--t3);padding:4px">V</span>
+        <span style="font-size:10px;font-weight:700;color:var(--t3);padding:4px">S</span>
+        <span style="font-size:10px;font-weight:700;color:var(--t3);padding:4px">D</span>
+      </div>
+      <div id="bloqueo-cal-days" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center"></div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;margin-bottom:4px">
-      <span style="font-size:10px;font-weight:700;color:var(--t3)">L</span><span style="font-size:10px;font-weight:700;color:var(--t3)">M</span><span style="font-size:10px;font-weight:700;color:var(--t3)">X</span><span style="font-size:10px;font-weight:700;color:var(--t3)">J</span><span style="font-size:10px;font-weight:700;color:var(--t3)">V</span><span style="font-size:10px;font-weight:700;color:var(--t3)">S</span><span style="font-size:10px;font-weight:700;color:var(--t3)">D</span>
+
+    <!-- Fechas seleccionadas -->
+    <div id="bloqueo-fechas-sel" style="margin-bottom:14px;min-height:32px;display:flex;flex-wrap:wrap;gap:6px">
+      <span style="font-size:12px;color:var(--t3);align-self:center">Sin fechas seleccionadas</span>
     </div>
-    <div id="bloqueo-cal-days" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:12px"></div>
-    <div id="bloqueo-fechas-sel" style="min-height:32px;display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px"><span style="font-size:12px;color:var(--t3)">Sin fechas seleccionadas</span></div>
-    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2)">Franja horaria</div>
+
+    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:4px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Franja a bloquear</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
       <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--b2);border-radius:8px;cursor:pointer;font-size:13px"><input type="radio" name="bloqueo-franja" value="manana" style="accent-color:var(--teal)"> Mañana (10h–14h)</label>
       <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--b2);border-radius:8px;cursor:pointer;font-size:13px"><input type="radio" name="bloqueo-franja" value="tarde" style="accent-color:var(--teal)"> Tarde (16:30h–20:30h)</label>
       <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--b2);border-radius:8px;cursor:pointer;font-size:13px"><input type="radio" name="bloqueo-franja" value="ambas" checked style="accent-color:var(--teal)"> Mañana y tarde</label>
       <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--b2);border-radius:8px;cursor:pointer;font-size:13px"><input type="radio" name="bloqueo-franja" value="dia" style="accent-color:var(--teal)"> Día completo</label>
     </div>
-    <div class="fg"><label class="fl">Motivo / nota interna</label><input type="text" class="fi" id="bloqueo-nota" placeholder="Ej: Limpieza, Evento privado..."></div>
+
+    <div class="fg"><label class="fl">Motivo / nota interna</label><input type="text" class="fi" id="bloqueo-nota" placeholder="Ej: Limpieza, Evento privado, Mantenimiento..."></div>
+
     <div class="mfoot">
       <button class="btn bg" onclick="closeModal('bloqueo');resetBloqueoModal()">Cancelar</button>
-      <button class="btn bp" onclick="guardarBloqueo()">Bloquear fechas</button>
+      <button class="btn bp" onclick="guardarBloqueo()"><svg width="13" height="13" stroke="currentColor"><use href="#i-check"/></svg>Bloquear fechas</button>
     </div>
   </div>
 </div>
+
 <!-- MODAL AVISO WEB -->
 <div class="mov" id="modal-aviso">
-  <div class="modal" style="max-width:500px;max-height:90vh;overflow-y:auto;">
+  <div class="modal" style="max-width:560px;max-height:90vh;overflow-y:auto;">
     <input type="hidden" id="aviso-edit-id">
-    <div class="mtitle" id="aviso-modal-title">Nuevo aviso</div><div class="msub">Aparece en la web mientras esté activo</div>
-    <div class="fg"><label class="fl">Tipo</label><select class="fsi" id="aviso-tipo" onchange="previewAviso()"><option value="banner-top">Banner superior</option><option value="popup">Popup centrado</option><option value="banner-bottom">Banner inferior</option></select></div>
-    <div class="fr2">
-      <div class="fg"><label class="fl">Emoji</label><input type="text" class="fi" id="aviso-emoji" placeholder="🎉" maxlength="4" oninput="previewAviso()"></div>
-      <div class="fg"><label class="fl">Estado</label><div style="display:flex;gap:8px;margin-top:6px"><label style="font-size:13px;cursor:pointer"><input type="radio" name="aviso-estado" value="activo" checked style="accent-color:var(--green)"> Activo</label><label style="font-size:13px;cursor:pointer"><input type="radio" name="aviso-estado" value="inactivo" style="accent-color:var(--t3)"> Inactivo</label></div></div>
+    <div class="mtitle" id="aviso-modal-title">Nuevo aviso</div>
+    <div class="msub">Aparece en la web mientras esté activo</div>
+
+    <div class="fg"><label class="fl">Tipo de aviso</label>
+      <select class="fsi" id="aviso-tipo" onchange="previewAviso()">
+        <option value="banner-top">Banner superior (siempre visible)</option>
+        <option value="popup">Popup centrado (aparece al entrar)</option>
+        <option value="banner-bottom">Banner inferior (sticky)</option>
+      </select>
     </div>
-    <div class="fg"><label class="fl">Título *</label><input type="text" class="fi" id="aviso-titulo" placeholder="¡Oferta especial!" oninput="previewAviso()"></div>
-    <div class="fg"><label class="fl">Subtexto</label><input type="text" class="fi" id="aviso-subtexto" placeholder="Descripción breve" oninput="previewAviso()"></div>
+    <div class="fg"><label class="fl">Emoji / icono</label><input type="text" class="fi" id="aviso-emoji" placeholder="🎉" maxlength="4" oninput="previewAviso()"></div>
+    <div class="fg"><label class="fl">Título del aviso *</label><input type="text" class="fi" id="aviso-titulo" placeholder="¡Oferta especial este fin de semana!" oninput="previewAviso()"></div>
+    <div class="fg"><label class="fl">Subtexto</label><input type="text" class="fi" id="aviso-subtexto" placeholder="20% de descuento en reservas de sábado" oninput="previewAviso()"></div>
     <div class="fr2">
-      <div class="fg"><label class="fl">Botón CTA</label><input type="text" class="fi" id="aviso-cta-txt" placeholder="Reservar ahora" oninput="previewAviso()"></div>
-      <div class="fg"><label class="fl">Enlace CTA</label><input type="text" class="fi" id="aviso-cta-url" placeholder="#reservas" oninput="previewAviso()"></div>
+      <div class="fg"><label class="fl">Texto del botón CTA</label><input type="text" class="fi" id="aviso-cta-txt" placeholder="Reservar ahora" oninput="previewAviso()"></div>
+      <div class="fg"><label class="fl">Enlace del CTA</label><input type="text" class="fi" id="aviso-cta-url" placeholder="#reservas" oninput="previewAviso()"></div>
     </div>
-    <div class="fg"><label class="fl">Color</label><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
-      <button class="aviso-color-btn" data-color="teal" onclick="selectAvisoColor('teal')" style="background:linear-gradient(135deg,#0fd4c4,#0369a1);border:2px solid var(--teal)"></button>
-      <button class="aviso-color-btn" data-color="purple" onclick="selectAvisoColor('purple')" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);border:2px solid transparent"></button>
-      <button class="aviso-color-btn" data-color="amber" onclick="selectAvisoColor('amber')" style="background:linear-gradient(135deg,#f59e0b,#d97706);border:2px solid transparent"></button>
-      <button class="aviso-color-btn" data-color="red" onclick="selectAvisoColor('red')" style="background:linear-gradient(135deg,#ef4444,#dc2626);border:2px solid transparent"></button>
-      <button class="aviso-color-btn" data-color="green" onclick="selectAvisoColor('green')" style="background:linear-gradient(135deg,#10b981,#059669);border:2px solid transparent"></button>
-      <button class="aviso-color-btn" data-color="dark" onclick="selectAvisoColor('dark')" style="background:linear-gradient(135deg,#1e293b,#0f172a);border:2px solid transparent"></button>
-    </div></div>
-    <div style="margin-top:10px;font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Vista previa</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Color de fondo</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap" id="aviso-colores">
+          <button class="aviso-color-btn sel" data-color="teal" onclick="selectAvisoColor('teal')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#0fd4c4,#0369a1);border:2px solid var(--teal);cursor:pointer"></button>
+          <button class="aviso-color-btn" data-color="purple" onclick="selectAvisoColor('purple')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border:2px solid transparent;cursor:pointer"></button>
+          <button class="aviso-color-btn" data-color="amber" onclick="selectAvisoColor('amber')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#f59e0b,#d97706);border:2px solid transparent;cursor:pointer"></button>
+          <button class="aviso-color-btn" data-color="red" onclick="selectAvisoColor('red')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#ef4444,#dc2626);border:2px solid transparent;cursor:pointer"></button>
+          <button class="aviso-color-btn" data-color="green" onclick="selectAvisoColor('green')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#10b981,#059669);border:2px solid transparent;cursor:pointer"></button>
+          <button class="aviso-color-btn" data-color="dark" onclick="selectAvisoColor('dark')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#1e293b,#0f172a);border:2px solid transparent;cursor:pointer"></button>
+          <button class="aviso-color-btn" data-color="pink" onclick="selectAvisoColor('pink')" style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#ec4899,#db2777);border:2px solid transparent;cursor:pointer"></button>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Estado</label>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="aviso-estado" value="activo" checked style="accent-color:var(--green)"> Activo</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="aviso-estado" value="inactivo" style="accent-color:var(--t3)"> Inactivo</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview live -->
+    <div style="margin-top:12px;margin-bottom:4px;font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em">Vista previa</div>
     <div id="aviso-modal-preview" style="border-radius:10px;overflow:hidden;min-height:44px"></div>
+
     <div class="mfoot">
       <button class="btn bg" onclick="closeModal('aviso')">Cancelar</button>
       <button class="btn bp" onclick="guardarAviso()">Guardar aviso</button>
     </div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
 
 <!-- FIREBASE SDK -->
@@ -1754,10 +1819,11 @@ async function loadReservas() {
     // Ordenar en cliente por fecha de reserva desc para consistencia.
     const snap = await getDocs(collection(db,'reservas'));
     allReservas = snap.docs.map(d => ({id:d.id,...d.data()}));
-    allReservas.sort((a,b)=>{
-      const ta=a.createdAt?.toMillis?.()|| new Date(a.createdAt||0).getTime();
-      const tb=b.createdAt?.toMillis?.()|| new Date(b.createdAt||0).getTime();
-      return tb-ta;
+    // Ordenar por fecha de creación desc (la más reciente primero)
+    allReservas.sort((a,b) => {
+      const ta = a.createdAt?.toMillis?.() || new Date(a.createdAt||0).getTime();
+      const tb = b.createdAt?.toMillis?.() || new Date(b.createdAt||0).getTime();
+      return tb - ta;
     });
     renderReservas(allReservas);
     updateDashboard();
@@ -1782,16 +1848,24 @@ function renderReservas(list) {
   el.innerHTML = list.map(r => {
     const subInfo = [r.telefono, r.email].filter(Boolean).join(' · ');
     const notasTip = r.notas ? ` title="${r.notas.replace(/"/g,'&quot;')}"` : '';
-    const notasIcon = r.notas ? `<span style="margin-left:4px;color:var(--amber);font-size:10px;cursor:default"${notasTip}>📝</span>` : '';
-    const tsC = r.createdAt?.toMillis?.() || new Date(r.createdAt||0).getTime();
-    const esNueva = tsC>0 && (Date.now()-tsC)<86400000;
-    const fechaC = tsC>0 ? new Date(tsC).toLocaleDateString('es-ES',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
-    const totalStr = r.importe ? `<span class="cx cs" style="color:var(--teal)">${fmtMoney(r.importe)}</span>` : '<span class="cm">—</span>';
+    const notasIcon = r.notas
+      ? `<span style="margin-left:4px;color:var(--amber);font-size:10px;cursor:default"${notasTip} title="${r.notas.replace(/"/g,'&quot;')}">📝</span>`
+      : '';
+    const tsCreado = r.createdAt?.toMillis?.() || new Date(r.createdAt||0).getTime();
+    const esNueva = tsCreado > 0 && (Date.now() - tsCreado) < 86400000;
+    const badgeNueva = esNueva ? '<span class="badge-nueva">✦ Nueva</span>' : '';
+    const rowClass = esNueva ? 'trow rc nueva' : 'trow rc';
+    const fechaCreada = tsCreado > 0
+      ? new Date(tsCreado).toLocaleDateString('es-ES',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})
+      : '—';
+    const totalStr = r.importe
+      ? `<span class="cx cs" style="color:var(--teal)">${fmtMoney(r.importe)}</span>`
+      : '<span class="cm">—</span>';
     return `
-    <div class="${esNueva?'trow rc nueva':'trow rc'}" onclick="openDet('${r.id}')">
-      <div><div class="c cs">${r.nombre||'—'}${esNueva?'<span class="badge-nueva">✦ Nueva</span>':''}${notasIcon}</div><div class="cx cm" style="font-size:11px;color:var(--t3)">${subInfo}</div></div>
+    <div class="${rowClass}" onclick="openDet('${r.id}')">
+      <div><div class="c cs">${r.nombre||'—'}${badgeNueva}${notasIcon}</div><div class="cx cm" style="font-size:11px;color:var(--t3)">${subInfo}</div></div>
       <div class="c cm">${r.fecha||'—'}</div>
-      <div class="c cm" style="font-size:12px">${fechaC}</div>
+      <div class="c cm" style="font-size:12px">${fechaCreada}</div>
       <div>${totalStr}</div>
       <div>${estadoBadge(r.estado)}</div>
       <div>${pagoBadge(r)}</div>
@@ -1881,9 +1955,7 @@ window.saveReserva = async () => {
   const servicio  = document.getElementById('r-servicio').value;
   const personas  = document.getElementById('r-personas').value;
   const fecha     = document.getElementById('r-fecha').value;
-  const _hrSel=document.getElementById('r-horario');
-  const horario=_hrSel?.options[_hrSel.selectedIndex]?.dataset?.horario||_hrSel?.value||'';
-  const _turnoSel=_hrSel?.options[_hrSel.selectedIndex]?.dataset?.turno||'';
+  const horario   = document.getElementById('r-horario').value;
   const horaext   = document.getElementById('r-horaext').value;
   const extras    = document.getElementById('r-extras').value.trim();
   const pago      = document.getElementById('r-pago').value;
@@ -1899,24 +1971,21 @@ window.saveReserva = async () => {
     direccion: dir, localidad: loc, cp,
     telefono: tel, email,
     servicio, personas,
-    fecha, horario, turno: _turnoSel, horaExtra: horaext,
+    fecha, horario, horaExtra: horaext,
     extras: extras || 'Ninguno',
     metodoPago: pago,
     importe, senal,
     notas: notas || '',
     origen: 'panel',
-    estado: document.getElementById('r-estado')?.value||'Pendiente',
+    estado: 'Pendiente',
     createdAt: serverTimestamp()
   };
 
-  const _newRef=await addDoc(collection(db,'reservas'),data);
-  await upsertCliente({nombre,apellidos,dni,fechaNac:fnac,direccion:dir,localidad:loc,cp,telefono:tel,email});
-  const _est=data.estado;
-  if(_est==='Confirmada'&&fecha){
-    await _actualizarCal(fecha,[...allReservas,{id:_newRef.id,...data}]);
-    showToast('Reserva confirmada ✓ — Calendario bloqueado en la web');
-  }else{showToast('Reserva guardada ✓ — Pendiente de confirmación');}
+  await addDoc(collection(db,'reservas'), data);
+  await upsertCliente({ nombre, apellidos, dni, fechaNac: fnac, direccion: dir, localidad: loc, cp, telefono: tel, email });
+
   closeModal('res');
+  showToast('Reserva y cliente guardados ✓');
   loadReservas();
   loadClientes();
 
@@ -1929,16 +1998,15 @@ window.saveReserva = async () => {
   if(fnacEl) fnacEl.value = '';
   const senalEl = document.getElementById('r-senal');
   if(senalEl) senalEl.value = '0';
-  document.getElementById('r-importe').value='85';
-  ['r-buscar-cliente'].forEach(k=>{const e=document.getElementById(k);if(e)e.value='';});
-  ['r-cliente-resultados','r-cliente-seleccionado'].forEach(k=>{const e=document.getElementById(k);if(e)e.style.display='none';});
-  const _ew=document.getElementById('r-extras-wrap');if(_ew)_ew.innerHTML='<span id="r-extras-ph" style="font-size:12px;color:var(--t3);align-self:center">Selecciona fecha y horario primero</span>';
-  const _eh=document.getElementById('r-extras');if(_eh)_eh.value='Ninguno';
+  document.getElementById('r-importe').value = '85';
+  const busEl = document.getElementById('r-buscar-cliente'); if(busEl) busEl.value='';
+  const resEl2 = document.getElementById('r-cliente-resultados'); if(resEl2) resEl2.style.display='none';
+  const selEl = document.getElementById('r-cliente-seleccionado'); if(selEl) selEl.style.display='none';
 };
 
-const FRANJAS_MANANA = ['10h–14h','11h–15h','10:00–14:00','11:00–15:00','Mañana (10:00-14:00)','Mañana'];
-const FRANJAS_TARDE  = ['16:30h–20:30h','16:30–20:30','Tarde (16:30-20:30)','Tarde'];
-const FRANJAS_NOCHE  = ['19:30h–23:30h','21:15h–01:30h','16:30h–01:30h','Noche'];
+const FRANJAS_MANANA = ['10h–14h','11h–15h','10:00–14:00','11:00–15:00','Mañana (10:00-14:00)'];
+const FRANJAS_TARDE  = ['16:30h–20:30h','16:30–20:30','Tarde (16:30-20:30)'];
+const FRANJAS_NOCHE  = ['19:30h–23:30h','21:15h–01:30h','16:30h–01:30h'];
 const FRANJAS_DIA    = ['10h–20h','10:00–20:00','Todo el día'];
 
 function getHorario(r) {
@@ -1952,24 +2020,10 @@ function getHorario(r) {
   return '';
 }
 
-function getTurno(rOrStr) {
-  const r=(typeof rOrStr==='object'&&rOrStr!==null)?rOrStr:null;
-  const tf=r?.turno||'';
-  if(tf){const t=tf.toLowerCase();
-    if(t.includes('mañana')||t.includes('manana'))return 'manana';
-    if(t.includes('noche'))return 'noche';
-    if(t.includes('todo')||t.includes('completo'))return 'dia';
-    if(t.includes('tarde'))return 'tarde';
-  }
-  const hor=r?getHorario(r):(rOrStr||'');
-  if(!hor)return null;
-  if(FRANJAS_MANANA.some(f=>hor===f||hor.includes(f)||f.includes(hor)))return 'manana';
-  if(FRANJAS_TARDE.some(f=>hor===f||hor.includes(f)||f.includes(hor)))return 'tarde';
-  if(FRANJAS_NOCHE.some(f=>hor===f||hor.includes(f)||f.includes(hor)))return 'noche';
-  if(FRANJAS_DIA.some(f=>hor===f||hor.includes(f)||f.includes(hor)))return 'dia';
-  const h=parseInt((hor.match(/^(\d+)/)||['0','0'])[1],10);
-  if(h>=10&&h<15)return 'manana';
-  if(h>=15&&h<22)return 'tarde';
+function getTurno(horario) {
+  if (!horario) return null;
+  if (FRANJAS_MANANA.includes(horario)) return 'manana';
+  if (FRANJAS_TARDE.includes(horario))  return 'tarde';
   return null;
 }
 
@@ -2017,7 +2071,7 @@ window.openDet = function(id) {
   document.getElementById('det-actions').innerHTML = `
     ${estado !== 'confirmada' ? `<button class="btn bp" onclick="confirmarDesdeModal('${id}')">✓ Confirmar</button>` : ''}
     <button class="btn bt" onclick="abrirModalPago('${id}')">💳 Registrar pago</button>
-    ${r.email ? `<button class="btn bg" id="btn-em-${id}" onclick="enviarEmailReserva('${id}')" style="background:rgba(15,212,196,.08);color:var(--teal);border-color:rgba(15,212,196,.3)">📧 ${r.emailEnviado?'Reenviar':'Enviar email'}</button>` : ''}
+    ${r.email ? `<button class="btn bg" id="btn-email-cliente-${id}" onclick="enviarEmailReserva('${id}')" style="background:rgba(15,212,196,.08);color:var(--teal);border-color:rgba(15,212,196,.3)"${r.emailEnviado?' title="Ya enviado"':''}>📧 ${r.emailEnviado?'Reenviar':'Enviar email'}</button>` : ''}
     <button class="btn bg" onclick="abrirEditarReserva('${id}')"><svg width="12" height="12" stroke="currentColor" style="vertical-align:middle"><use href="#i-edit"/></svg> Editar</button>
     ${estado !== 'cancelada'  ? `<button class="btn bg" onclick="cancelarDesdeModal('${id}')" style="background:var(--rbg);color:var(--red);border-color:rgba(244,63,94,.3)">Cancelar</button>` : ''}
     <button class="btn bg" onclick="closeDet()">Cerrar</button>
@@ -2055,24 +2109,65 @@ window.cancelarDesdeModal = async function(id) {
   }
 };
 
-window.confirmarReserva=async(id)=>{
-  const reserva=allReservas.find(r=>r.id===id);if(!reserva)return;
-  await updateDoc(doc(db,'reservas',id),{estado:'Confirmada'});
-  const _i=allReservas.findIndex(r=>r.id===id);
-  if(_i!==-1)allReservas[_i]={...allReservas[_i],estado:'Confirmada'};
-  if(reserva.fecha){await _actualizarCal(reserva.fecha,allReservas);showToast('Reserva confirmada ✓ — Calendario actualizado');}
-  else showToast('Reserva confirmada ✓');
+window.confirmarReserva = async (id) => {
+  const reserva = allReservas.find(r => r.id === id);
+  if (!reserva) return;
+  // 1. Actualizar estado en Firestore
+  await updateDoc(doc(db,'reservas',id), {estado:'Confirmada'});
+  // 2. Calcular turnos ocupados ese día (incluir esta reserva ya como confirmada)
+  if (reserva.fecha) {
+    const horarioEsta = getHorario(reserva);
+    const turnoEsta   = getTurno(horarioEsta);
+    // Reservas ya confirmadas ese día (sin contar la actual)
+    const otrasConfirmadas = allReservas.filter(r =>
+      r.id !== id &&
+      r.fecha === reserva.fecha &&
+      (r.estado||'').toLowerCase() === 'confirmada'
+    );
+    // Incluir la actual como confirmada para calcular bien
+    const todasConfirmadas = [...otrasConfirmadas, {...reserva, estado:'Confirmada'}];
+    const mananaOcupada = todasConfirmadas.some(r => getTurno(getHorario(r)) === 'manana');
+    const tardeOcupada  = todasConfirmadas.some(r => getTurno(getHorario(r)) === 'tarde');
+    console.log('Confirmando:', reserva.fecha, horarioEsta, 'turno:', turnoEsta, 'mañana:', mananaOcupada, 'tarde:', tardeOcupada);
+    await setDoc(doc(db, 'calendario_publico', reserva.fecha), {
+      fecha: reserva.fecha,
+      mananaOcupada,
+      tardeOcupada,
+      updatedAt: serverTimestamp()
+    });
+    showToast('Reserva confirmada ✓ — Calendario actualizado');
+  } else {
+    showToast('Reserva confirmada ✓');
+  }
   loadReservas();
 };
 
-window.cancelarReserva=async(id)=>{
-  if(!confirm('¿Cancelar esta reserva?'))return;
-  const reserva=allReservas.find(r=>r.id===id);
-  await updateDoc(doc(db,'reservas',id),{estado:'Cancelada'});
-  const _i=allReservas.findIndex(r=>r.id===id);
-  if(_i!==-1)allReservas[_i]={...allReservas[_i],estado:'Cancelada'};
-  if(reserva?.fecha)await _actualizarCal(reserva.fecha,allReservas);
-  showToast('Reserva cancelada');loadReservas();
+window.cancelarReserva = async (id) => {
+  if(!confirm('¿Cancelar esta reserva?')) return;
+  const reserva = allReservas.find(r => r.id === id);
+  await updateDoc(doc(db,'reservas',id), {estado:'Cancelada'});
+  if (reserva?.fecha) {
+    // Recalcular turnos que quedan ocupados ese día (excluyendo la cancelada)
+    const confirmadasHoy = allReservas.filter(r =>
+      r.id !== id &&
+      r.fecha === reserva.fecha &&
+      (r.estado||'').toLowerCase() === 'confirmada'
+    );
+    if (confirmadasHoy.length === 0) {
+      await deleteDoc(doc(db, 'calendario_publico', reserva.fecha));
+    } else {
+      const mananaOcupada = confirmadasHoy.some(r => getTurno(getHorario(r)) === 'manana');
+      const tardeOcupada  = confirmadasHoy.some(r => getTurno(getHorario(r)) === 'tarde');
+      await setDoc(doc(db, 'calendario_publico', reserva.fecha), {
+        fecha: reserva.fecha,
+        mananaOcupada,
+        tardeOcupada,
+        updatedAt: serverTimestamp()
+      });
+    }
+  }
+  showToast('Reserva cancelada');
+  loadReservas();
 };
 
 window.eliminarReserva = async (id) => {
@@ -2115,7 +2210,7 @@ function renderClientes(list) {
       <div class="c cm">${fmtDate(c.ultimaVisita)}</div>
       <div class="ras">
         <button class="rab" onclick="abrirEditarCliente('${c.id}')" title="Editar cliente"><svg><use href="#i-edit"/></svg></button>
-        <button class="rab rab-cancel" onclick="if(confirm('¿Eliminar a ${(c.nombre||\'cliente\')}?'))deleteDoc(doc(db,'clientes','${c.id}')).then(()=>{showToast('Cliente eliminado');loadClientes();})" title="Eliminar"><svg><use href="#i-trash"/></svg></button>
+        <button class="rab rab-cancel" onclick="eliminarCliente('${c.id}','${(c.nombre||'').replace(/'/g,'\u2019')} ${(c.apellidos||'').replace(/'/g,'\u2019')}')" title="Eliminar cliente"><svg><use href="#i-trash"/></svg></button>
       </div>
     </div>`).join('');
   // Fidelización — solo con lista completa
@@ -2394,7 +2489,12 @@ function limpiarModalPromo() {
   document.getElementById('promo-save-btn').textContent    = 'Crear promoción';
 }
 
-// openModal defined below
+// Limpiar modal al abrir desde "Nueva promoción"
+const _origOpenModal = window.openModal;
+window.openModal = function(id) {
+  if(id === 'promo' && !document.getElementById('p-edit-id').value) limpiarModalPromo();
+  _origOpenModal(id);
+};
 
 window.eliminarPromo = async (id) => {
   if(!confirm('¿Eliminar esta promoción? Esta acción no se puede deshacer.')) return;
@@ -2477,12 +2577,7 @@ function updateCrumb() {
   document.getElementById('pcrumb').textContent = now.toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
 
-window.openModal=function(id){
-  document.getElementById('modal-'+id).classList.add('open');
-  if(id==='promo'){const pe=document.getElementById('p-edit-id');if(pe&&!pe.value)limpiarModalPromo();}
-  if(id==='bloqueo'){_bloqueoFechas=new Set();setTimeout(initBloqueoCalendario,50);}
-  if(id==='aviso'){setTimeout(previewAviso,50);}
-};
+window.openModal = id => document.getElementById('modal-'+id).classList.add('open');
 window.closeModal = id => document.getElementById('modal-'+id).classList.remove('open');
 document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 
@@ -4346,14 +4441,17 @@ window.loadFranjasPorFecha = function(fechaStr) {
     return;
   }
 
-  disponibles.forEach(f=>{
-    const precio=f[diaKey];const opt=document.createElement('option');
-    opt.value=f.horario;opt.textContent=`${f.turno} · ${f.horario} — ${precio} €`;
-    opt.dataset.precio=precio;opt.dataset.turno=f.turno;opt.dataset.horario=f.horario;
+  disponibles.forEach(f => {
+    const precio = f[diaKey];
+    const opt = document.createElement('option');
+    opt.value = `${f.turno} (${f.horario}) — ${precio}€`;
+    opt.textContent = `${f.turno} · ${f.horario} — ${precio} €`;
+    opt.dataset.precio = precio;
     sel.appendChild(opt);
   });
+
+  // Actualizar hora extra según turno
   loadHorasExtra(disponibles[0]);
-  loadExtrasCheckboxes(disponibles[0]?.turno||'');
   calcPrecioAuto();
 };
 
@@ -4779,193 +4877,570 @@ td.r{text-align:right;white-space:nowrap}
   win.document.close();
 };
 
-// ═══ CALENDARIO CENTRAL ═══════════════════════════════════════
-async function _actualizarCal(fecha,lista){
-  const conf=(lista||allReservas).filter(r=>r.fecha===fecha&&(r.estado||'').toLowerCase()==='confirmada');
-  if(!conf.length){await deleteDoc(doc(db,'calendario_publico',fecha)).catch(()=>{});return;}
-  let man=false,tar=false,noch=false,dia=false;
-  for(const r of conf){
-    const t=getTurno(r);const h=getHorario(r);const ext=(r.horaExtra||'').toLowerCase();
-    if(t==='manana')man=true;if(t==='tarde')tar=true;if(t==='noche')noch=true;
-    if(t==='dia'||FRANJAS_DIA.some(f=>h===f||h.includes(f)))dia=true;
-    if(t==='manana'&&(ext.includes('después')||ext.includes('despues')))tar=true;
-    if(t==='tarde'&&ext.includes('antes'))man=true;
-    if(t==='tarde'&&(ext.includes('después')||ext.includes('despues')))noch=true;
+// ═══════════════════════════════════════════════════════════════
+// BLOQUE JS SESIONES ANTERIORES + NUEVAS FUNCIONALIDADES
+// ═══════════════════════════════════════════════════════════════
+
+// ── BUSCADOR CLIENTE EN MODAL RESERVA ────────────────────────
+window.buscarClienteModal = function(query) {
+  const q = (query||'').toLowerCase().trim();
+  const res = document.getElementById('r-cliente-resultados');
+  if(!q||q.length<2){res.style.display='none';return;}
+  const matches = allClientes.filter(c=>
+    (c.nombre||'').toLowerCase().includes(q)||
+    (c.apellidos||'').toLowerCase().includes(q)||
+    (c.telefono||'').toLowerCase().includes(q)
+  ).slice(0,8);
+  if(!matches.length){
+    res.innerHTML='<div style="padding:10px 14px;font-size:12px;color:var(--t3)">Sin resultados — se creará como cliente nuevo</div>';
+    res.style.display='block'; return;
   }
-  if(man&&tar)dia=true;
-  await setDoc(doc(db,'calendario_publico',fecha),{fecha,mananaOcupada:man,tardeOcupada:tar,nocheOcupada:noch,diaOcupado:dia,updatedAt:serverTimestamp()},{merge:true});
-}
-// ═══ EXTRAS CHECKBOXES ════════════════════════════════════════
-window.loadExtrasCheckboxes=function(turno){
-  const wrap=document.getElementById('r-extras-wrap');if(!wrap)return;
-  const extras=(window.tarifasData?.extras||[]).filter(e=>e.concepto!=='Hora extra');
-  if(!extras.length){wrap.innerHTML='<span style="font-size:12px;color:var(--t3)">Sin extras disponibles</span>';return;}
-  wrap.innerHTML=extras.map(e=>{
-    const id='xt-'+e.concepto.replace(/[^a-z0-9]/gi,'_');
-    return '<label style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;cursor:pointer;font-size:12px" onclick="syncExtras()"><input type="checkbox" id="'+id+'" data-c="'+e.concepto+'" data-p="'+e.precio+'" style="accent-color:var(--teal)"> '+e.concepto+' <span style="color:var(--teal);font-weight:700">+'+e.precio+'€</span></label>';
-  }).join('');
-};
-window.syncExtras=function(){const c=document.querySelectorAll('#r-extras-wrap input:checked');const h=document.getElementById('r-extras');if(h)h.value=[...c].map(x=>x.dataset.c).join(', ')||'Ninguno';};
-// ═══ BUSCADOR CLIENTE ═════════════════════════════════════════
-window.buscarClienteModal=function(q){
-  q=(q||'').toLowerCase().trim();const res=document.getElementById('r-cliente-resultados');
-  if(!q||q.length<2){if(res)res.style.display='none';return;}
-  const m=allClientes.filter(c=>(c.nombre||'').toLowerCase().includes(q)||(c.apellidos||'').toLowerCase().includes(q)||(c.telefono||'').toLowerCase().includes(q)).slice(0,8);
-  if(!m.length)res.innerHTML='<div style="padding:10px 14px;font-size:12px;color:var(--t3)">Sin resultados</div>';
-  else res.innerHTML=m.map(c=>'<div onclick="selCliente(''+c.id+'')" style="padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--b1);font-size:13px" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''"><strong>'+(c.nombre||'')+' '+(c.apellidos||'')+'</strong> <span style="color:var(--t3);font-size:11px;margin-left:6px">'+(c.telefono||'')+'</span></div>').join('');
+  res.innerHTML=matches.map(c=>`<div onclick="seleccionarClienteModal('${c.id}')" style="padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--b1);font-size:13px;transition:background .1s" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''"><span style="font-weight:600">${c.nombre||''} ${c.apellidos||''}</span><span style="color:var(--t3);font-size:11px;margin-left:8px">${c.telefono||''}</span>${c.email?`<span style="color:var(--t3);font-size:11px;margin-left:6px">· ${c.email}</span>`:''}</div>`).join('');
   res.style.display='block';
 };
-window.selCliente=function(id){
+window.seleccionarClienteModal=function(id){
   const c=allClientes.find(x=>x.id===id);if(!c)return;
-  const m={nombre:'nombre',apellidos:'apellidos',dni:'dni',dir:'direccion',loc:'localidad',cp:'cp',tel:'telefono',email:'email'};
-  Object.entries(m).forEach(([k,v])=>{const e=document.getElementById('r-'+k);if(e)e.value=c[v]||'';});
-  const fn=document.getElementById('r-fnac');if(fn&&c.fechaNac)fn.value=c.fechaNac;
+  document.getElementById('r-nombre').value=c.nombre||'';
+  document.getElementById('r-apellidos').value=c.apellidos||'';
+  document.getElementById('r-dni').value=c.dni||'';
+  document.getElementById('r-dir').value=c.direccion||'';
+  document.getElementById('r-loc').value=c.localidad||'';
+  document.getElementById('r-cp').value=c.cp||'';
+  document.getElementById('r-tel').value=c.telefono||'';
+  document.getElementById('r-email').value=c.email||'';
+  const fnacEl=document.getElementById('r-fnac');if(fnacEl&&c.fechaNac)fnacEl.value=c.fechaNac;
   document.getElementById('r-cliente-resultados').style.display='none';
   document.getElementById('r-buscar-cliente').value='';
-  const sn=document.getElementById('r-cliente-sel-nombre');if(sn)sn.textContent=((c.nombre||'')+' '+(c.apellidos||'')).trim();
+  document.getElementById('r-cliente-sel-nombre').textContent=`${c.nombre||''} ${c.apellidos||''}`.trim();
   document.getElementById('r-cliente-seleccionado').style.display='block';
 };
 window.limpiarClienteModal=function(){
-  ['r-nombre','r-apellidos','r-dni','r-dir','r-loc','r-cp','r-tel','r-email'].forEach(k=>{const e=document.getElementById(k);if(e)e.value='';});
-  const fn=document.getElementById('r-fnac');if(fn)fn.value='';
-  const bc=document.getElementById('r-buscar-cliente');if(bc)bc.value='';
-  const rd=document.getElementById('r-cliente-resultados');if(rd)rd.style.display='none';
-  const sd=document.getElementById('r-cliente-seleccionado');if(sd)sd.style.display='none';
+  ['r-nombre','r-apellidos','r-dni','r-dir','r-loc','r-cp','r-tel','r-email'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const fnacEl=document.getElementById('r-fnac');if(fnacEl)fnacEl.value='';
+  document.getElementById('r-buscar-cliente').value='';
+  document.getElementById('r-cliente-resultados').style.display='none';
+  document.getElementById('r-cliente-seleccionado').style.display='none';
 };
-// ═══ BLOQUEOS ═════════════════════════════════════════════════
-let _bloqueoFechas=new Set(),_bCalY,_bCalM;
-function initBloqueoCalendario(){const h=new Date();_bCalY=h.getFullYear();_bCalM=h.getMonth();renderBCal();}
-function renderBCal(){
-  const lEl=document.getElementById('bloqueo-cal-label');const dEl=document.getElementById('bloqueo-cal-days');if(!lEl||!dEl)return;
-  const y=_bCalY,m=_bCalM;const lbl=new Date(y,m,1).toLocaleDateString('es-ES',{month:'long',year:'numeric'});
-  lEl.textContent=lbl[0].toUpperCase()+lbl.slice(1);
-  const pd=new Date(y,m,1).getDay();const off=(pd===0?6:pd-1);const tot=new Date(y,m+1,0).getDate();
-  const hoy=new Date().toISOString().split('T')[0];let h2='';
-  for(let i=0;i<off;i++)h2+='<div></div>';
-  for(let d=1;d<=tot;d++){
-    const ds=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    const past=ds<hoy;const sel=_bloqueoFechas.has(ds);
-    const sty=past?'opacity:.3;':sel?'background:var(--teal);color:#080c14;font-weight:700;cursor:pointer;':'cursor:pointer;';
-    h2+='<div data-ds="'+ds+'" data-past="'+past+'" style="padding:6px 2px;font-size:12px;border-radius:6px;text-align:center;'+sty+'">'+d+'</div>';
+
+// ── ELIMINAR CLIENTE ──────────────────────────────────────────
+window.eliminarCliente=async function(id,nombre){
+  const nom=(nombre||'').trim().replace(/'\s*\)\s*$/,'').trim();
+  if(!confirm(`¿Eliminar al cliente "${nom}"?\n\nSus reservas no se eliminarán.`))return;
+  try{
+    await deleteDoc(doc(db,'clientes',id));
+    showToast('Cliente eliminado ✓');
+    loadClientes();
+  }catch(e){console.error(e);showToast('Error al eliminar el cliente');}
+};
+
+// ── CALENDARIO: calcOcupacionCalendario CON HORA EXTRA ────────
+function calcOcupacionCalendario(reservasConfirmadas){
+  const porFecha={};
+  for(const r of reservasConfirmadas){
+    if(!r.fecha)continue;
+    if(!porFecha[r.fecha])porFecha[r.fecha]=[];
+    porFecha[r.fecha].push(r);
   }
-  dEl.innerHTML=h2;
-  dEl.querySelectorAll('[data-ds]').forEach(el=>{
-    if(el.dataset.past==='true')return;
-    el.addEventListener('click',()=>toggleBF(el.dataset.ds));
-    el.addEventListener('mouseover',()=>{if(!_bloqueoFechas.has(el.dataset.ds))el.style.background='var(--s3)';});
-    el.addEventListener('mouseout',()=>{if(!_bloqueoFechas.has(el.dataset.ds))el.style.background='';});
-  });
-  renderBSel();
-}
-function renderBSel(){
-  const el=document.getElementById('bloqueo-fechas-sel');if(!el)return;
-  if(!_bloqueoFechas.size){el.innerHTML='<span style="font-size:12px;color:var(--t3)">Sin fechas seleccionadas</span>';return;}
-  el.innerHTML=[..._bloqueoFechas].sort().map(ds=>{const[y,m,d]=ds.split('-');return '<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(15,212,196,.12);border:1px solid rgba(15,212,196,.3);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;color:var(--teal)">'+d+'/'+m+'<button onclick="toggleBF(''+ds+'')" style="background:none;border:none;cursor:pointer;color:var(--teal);font-size:14px;padding:0;line-height:1">×</button></span>';}).join('');
-}
-window.toggleBF=function(ds){_bloqueoFechas.has(ds)?_bloqueoFechas.delete(ds):_bloqueoFechas.add(ds);renderBCal();};
-window.bloqueoCalPrev=function(){_bCalM--;if(_bCalM<0){_bCalM=11;_bCalY--;}renderBCal();};
-window.bloqueoCalNext=function(){_bCalM++;if(_bCalM>11){_bCalM=0;_bCalY++;}renderBCal();};
-window.resetBloqueoModal=function(){_bloqueoFechas.clear();if(typeof renderBCal==='function')renderBCal();const n=document.getElementById('bloqueo-nota');if(n)n.value='';const r=document.querySelector('input[name="bloqueo-franja"][value="ambas"]');if(r)r.checked=true;};
-// Alias para onclick en chips
-window.toggleBloqueoFecha=window.toggleBF;
-window.guardarBloqueo=async function(){
-  if(!_bloqueoFechas.size){showToast('Selecciona al menos una fecha');return;}
-  const franja=document.querySelector('input[name="bloqueo-franja"]:checked')?.value||'ambas';
-  const nota=document.getElementById('bloqueo-nota').value.trim()||'Bloqueo manual';
-  const fH={manana:'10h–14h',tarde:'16:30h–20:30h',ambas:'10h–14h / 16:30h–20:30h',dia:'10h–20h'};
-  const fT={manana:'Mañana',tarde:'Tarde',ambas:'Mañana y Tarde',dia:'Todo el día'};
-  const btn=document.querySelector('#modal-bloqueo .btn.bp');if(btn){btn.disabled=true;btn.textContent='Guardando...';}
-  try{
-    for(const fecha of [..._bloqueoFechas].sort()){
-      const man=['manana','ambas','dia'].includes(franja);const tar=['tarde','ambas','dia'].includes(franja);const diaOc=franja==='dia';
-      const ref=await addDoc(collection(db,'reservas'),{nombre:'🔒 Bloqueado — '+nota,apellidos:'',servicio:nota,personas:'—',fecha,horario:fH[franja],turno:fT[franja],horaExtra:'Sin horas extra',extras:'Ninguno',metodoPago:'—',importe:0,senal:0,notas:'Bloqueo · '+franja,origen:'bloqueo',estado:'Confirmada',esBloqueo:true,notaBloqueo:nota,createdAt:serverTimestamp()});
-      await addDoc(collection(db,'bloqueos'),{fecha,franja,nota,reservaId:ref.id,mananaOcupada:man,tardeOcupada:tar,diaOcupado:diaOc,createdAt:serverTimestamp()});
-      await setDoc(doc(db,'calendario_publico',fecha),{fecha,mananaOcupada:man,tardeOcupada:tar,nocheOcupada:diaOc,diaOcupado:diaOc,bloqueado:true,notaBloqueo:nota,updatedAt:serverTimestamp()},{merge:true});
+  const resultado={};
+  for(const[fecha,reservas]of Object.entries(porFecha)){
+    let mananaOcupada=false,tardeOcupada=false,nocheOcupada=false,diaOcupado=false;
+    for(const r of reservas){
+      const hor=getHorario(r);
+      const turno=getTurno(hor);
+      const horaExt=(r.horaExtra||'').toLowerCase();
+      if(turno==='manana')mananaOcupada=true;
+      if(turno==='tarde')tardeOcupada=true;
+      if(FRANJAS_NOCHE.includes(hor))nocheOcupada=true;
+      if(FRANJAS_DIA.includes(hor))diaOcupado=true;
+      if(turno==='manana'&&(horaExt.includes('después')||horaExt.includes('despues')))tardeOcupada=true;
+      if(turno==='tarde'&&horaExt.includes('antes'))mananaOcupada=true;
+      if(turno==='tarde'&&(horaExt.includes('después')||horaExt.includes('despues')))nocheOcupada=true;
     }
-    closeModal('bloqueo');resetBloqueoModal();showToast(_bloqueoFechas.size+' fecha(s) bloqueada(s) ✓');loadBloqueos();loadReservas();
-  }catch(e){console.error(e);showToast('Error al guardar bloqueo');}
-  finally{if(btn){btn.disabled=false;btn.textContent='Bloquear fechas';}}
-};
-async function loadBloqueos(){
-  const el=document.getElementById('bloqueos-list');const cnt=document.getElementById('bloqueos-count');if(!el)return;
-  try{
-    const snap=await getDocs(query(collection(db,'bloqueos'),orderBy('fecha','asc')));
-    const bs=snap.docs.map(d=>({id:d.id,...d.data()}));
-    const hoy=new Date().toISOString().split('T')[0];const act=bs.filter(b=>b.fecha>=hoy);
-    if(cnt)cnt.textContent=act.length+' activos';
-    if(!bs.length){el.innerHTML='<div class="empty">No hay bloqueos.</div>';return;}
-    const fL={manana:'Mañana',tarde:'Tarde',ambas:'Mañana y tarde',dia:'Día completo'};
-    const mes=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-    el.innerHTML=bs.map(b=>{const[y,m,d]=b.fecha.split('-');const eA=b.fecha>=hoy;
-      return '<div class="trow" style="display:grid;grid-template-columns:1fr .8fr .55fr .7fr;gap:12px;align-items:center;'+(eA?'':'opacity:.5')+'"><div><div class="c cs">'+d+' '+mes[parseInt(m,10)-1]+' '+y+'</div><div style="font-size:11px;color:var(--t3)">'+(b.nota||'')+'</div></div><div><span class="badge bg-t">'+(fL[b.franja]||b.franja)+'</span></div><div><span class="badge '+(eA?'bg-g':'bg-x')+'">'+(eA?'Activo':'Pasado')+'</span></div><div class="ras"><button class="rab rab-cancel" onclick="desbloquear(''+b.id+'',''+b.fecha+'',''+(b.reservaId||'')+'')" title="Desbloquear"><svg><use href="#i-ban"/></svg></button></div></div>';
-    }).join('');
-  }catch(e){console.error(e);}
+    if(mananaOcupada&&tardeOcupada)diaOcupado=true;
+    resultado[fecha]={mananaOcupada,tardeOcupada,nocheOcupada,diaOcupado};
+  }
+  return resultado;
 }
-window.desbloquear=async function(bid,fecha,rid){
-  if(!confirm('¿Desbloquear '+fecha+'?'))return;
-  try{
-    await deleteDoc(doc(db,'bloqueos',bid));
-    if(rid)await deleteDoc(doc(db,'reservas',rid)).catch(()=>{});
-    const rest=allReservas.filter(r=>r.fecha===fecha&&(r.estado||'').toLowerCase()==='confirmada'&&r.id!==rid);
-    if(!rest.length)await deleteDoc(doc(db,'calendario_publico',fecha)).catch(()=>{});
-    else await _actualizarCal(fecha,rest);
-    showToast('Desbloqueado ✓');loadBloqueos();loadReservas();
-  }catch(e){showToast('Error al desbloquear');}
+
+// ── confirmarReserva MEJORADA ─────────────────────────────────
+window.confirmarReserva=async(id)=>{
+  const reserva=allReservas.find(r=>r.id===id);if(!reserva)return;
+  await updateDoc(doc(db,'reservas',id),{estado:'Confirmada'});
+  if(reserva.fecha){
+    const todas=allReservas
+      .filter(r=>r.fecha===reserva.fecha&&(r.estado||'').toLowerCase()==='confirmada'&&r.id!==id)
+      .concat([{...reserva,estado:'Confirmada'}]);
+    const oc=calcOcupacionCalendario(todas);
+    const info=oc[reserva.fecha]||{};
+    await setDoc(doc(db,'calendario_publico',reserva.fecha),{
+      fecha:reserva.fecha,
+      mananaOcupada:info.mananaOcupada||false,
+      tardeOcupada:info.tardeOcupada||false,
+      nocheOcupada:info.nocheOcupada||false,
+      diaOcupado:info.diaOcupado||false,
+      updatedAt:serverTimestamp()
+    });
+    showToast('Reserva confirmada ✓ — Calendario actualizado');
+  }else{showToast('Reserva confirmada ✓');}
+  loadReservas();
 };
-// ═══ AVISOS WEB ═══════════════════════════════════════════════
-const _AC={teal:{bg:'linear-gradient(135deg,#0fd4c4,#0369a1)',txt:'#fff'},purple:{bg:'linear-gradient(135deg,#7c3aed,#4f46e5)',txt:'#fff'},amber:{bg:'linear-gradient(135deg,#f59e0b,#d97706)',txt:'#fff'},red:{bg:'linear-gradient(135deg,#ef4444,#dc2626)',txt:'#fff'},green:{bg:'linear-gradient(135deg,#10b981,#059669)',txt:'#fff'},dark:{bg:'linear-gradient(135deg,#1e293b,#0f172a)',txt:'#e2e8f0'}};
-let _aCol='teal';
-window.selectAvisoColor=function(c){_aCol=c;document.querySelectorAll('.aviso-color-btn').forEach(b=>{b.style.border=b.dataset.color===c?'2px solid var(--teal)':'2px solid transparent';});previewAviso();};
-window.previewAviso=function(){
-  const tipo=document.getElementById('aviso-tipo')?.value||'banner-top';const emoji=document.getElementById('aviso-emoji')?.value||'';const titulo=document.getElementById('aviso-titulo')?.value||'Vista previa';const sub=document.getElementById('aviso-subtexto')?.value||'';const ctaTxt=document.getElementById('aviso-cta-txt')?.value||'';
-  const col=_AC[_aCol]||_AC.teal;const wrap=document.getElementById('aviso-modal-preview');if(!wrap)return;
-  const cta=ctaTxt?'<a href="#" style="display:inline-block;margin-left:10px;padding:5px 14px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);border-radius:20px;color:'+col.txt+';font-size:12px;font-weight:700;text-decoration:none">'+ctaTxt+'</a>':'';
-  if(tipo==='popup')wrap.innerHTML='<div style="background:'+col.bg+';border-radius:12px;padding:24px;text-align:center"><div style="font-size:28px">'+(emoji||'📢')+'</div><div style="font-size:17px;font-weight:800;color:'+col.txt+';margin-top:8px">'+titulo+'</div>'+(sub?'<div style="font-size:13px;color:'+col.txt+';opacity:.85;margin-top:6px">'+sub+'</div>':'')+(cta?'<div style="margin-top:14px">'+cta+'</div>':'')+'</div>';
-  else wrap.innerHTML='<div style="background:'+col.bg+';padding:10px 16px;display:flex;align-items:center;gap:8px"><span style="font-size:13px;font-weight:700;color:'+col.txt+';flex:1">'+emoji+' '+titulo+(sub?' · <span style="font-weight:400;opacity:.85">'+sub+'</span>':'')+'</span>'+cta+'</div>';
+
+// ── cancelarReserva MEJORADA ──────────────────────────────────
+window.cancelarReserva=async(id)=>{
+  if(!confirm('¿Cancelar esta reserva?'))return;
+  const reserva=allReservas.find(r=>r.id===id);
+  await updateDoc(doc(db,'reservas',id),{estado:'Cancelada'});
+  if(reserva?.fecha){
+    const restantes=allReservas.filter(r=>r.id!==id&&r.fecha===reserva.fecha&&(r.estado||'').toLowerCase()==='confirmada');
+    if(restantes.length===0){
+      // Mantener bloqueos manuales si existen
+      const calSnap=await getDocs(query(collection(db,'bloqueos'),where('fecha','==',reserva.fecha)));
+      if(calSnap.empty) await deleteDoc(doc(db,'calendario_publico',reserva.fecha));
+      else recalcCalendarioFecha(reserva.fecha,[]);
+    }else{
+      const oc=calcOcupacionCalendario(restantes);
+      const info=oc[reserva.fecha]||{};
+      await setDoc(doc(db,'calendario_publico',reserva.fecha),{
+        fecha:reserva.fecha,
+        mananaOcupada:info.mananaOcupada||false,
+        tardeOcupada:info.tardeOcupada||false,
+        nocheOcupada:info.nocheOcupada||false,
+        diaOcupado:info.diaOcupado||false,
+        updatedAt:serverTimestamp()
+      });
+    }
+  }
+  showToast('Reserva cancelada');
+  loadReservas();
 };
-async function loadAvisos(){
-  const el=document.getElementById('avisos-list');const badge=document.getElementById('badge-avisos');if(!el)return;
+
+// ── EMAIL AL CLIENTE DESDE PANEL ─────────────────────────────
+const _MAIL={
+  workerUrl:'https://espaifest-brevo.lucasyleodigital.workers.dev',
+  emailLaura:'laurarmarin81@gmail.com',
+  emailFrom:'EspaiFest'
+};
+async function resendSend(to,subject,html){
   try{
-    const snap=await getDocs(collection(db,'avisos_web'));const av=snap.docs.map(d=>({id:d.id,...d.data()}));const act=av.filter(a=>a.estado==='activo');
-    if(badge){badge.textContent=act.length;badge.style.display=act.length?'inline-flex':'none';}
-    if(!av.length){el.innerHTML='<div class="empty">No hay avisos.</div>';return;}
-    const tL={'banner-top':'Banner sup.','popup':'Popup','banner-bottom':'Banner inf.'};
-    el.innerHTML=av.map(a=>{const col=_AC[a.color]||_AC.teal;
-      return '<div class="trow" style="display:grid;grid-template-columns:.4fr 1.4fr .65fr .55fr .7fr;gap:12px;align-items:center"><div style="width:24px;height:24px;border-radius:6px;background:'+col.bg+'"></div><div><div class="c cs">'+(a.emoji||'')+' '+(a.titulo||'—')+'</div><div style="font-size:11px;color:var(--t3)">'+(a.subtexto||'')+'</div></div><div><span class="badge bg-x">'+(tL[a.tipo]||a.tipo)+'</span></div><div><span class="badge '+(a.estado==='activo'?'bg-g':'bg-x')+'" style="cursor:pointer" onclick="toggleAviso(''+a.id+'',''+a.estado+'')">'+(a.estado==='activo'?'Activo':'Inactivo')+'</span></div><div class="ras"><button class="rab" onclick="editarAviso(''+a.id+'')" title="Editar"><svg><use href="#i-edit"/></svg></button><button class="rab rab-cancel" onclick="if(confirm('¿Eliminar?'))deleteDoc(doc(db,'avisos_web',''+a.id+'')).then(()=>{showToast('Eliminado');loadAvisos();})" title="Eliminar"><svg><use href="#i-trash"/></svg></button></div></div>';
-    }).join('');
-  }catch(e){console.error(e);}
+    const res=await fetch(_MAIL.workerUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,subject,html,from_name:_MAIL.emailFrom})});
+    if(!res.ok){const e=await res.json();console.warn('Resend error:',e);return false;}
+    return true;
+  }catch(err){console.warn('Resend fetch error:',err);return false;}
 }
-window.guardarAviso=async function(){
-  const eid=document.getElementById('aviso-edit-id')?.value;
-  const data={tipo:document.getElementById('aviso-tipo').value,emoji:document.getElementById('aviso-emoji').value.trim(),titulo:document.getElementById('aviso-titulo').value.trim(),subtexto:document.getElementById('aviso-subtexto').value.trim(),ctaTxt:document.getElementById('aviso-cta-txt').value.trim(),ctaUrl:document.getElementById('aviso-cta-url').value.trim()||'#reservas',color:_aCol,estado:document.querySelector('input[name="aviso-estado"]:checked')?.value||'inactivo',updatedAt:serverTimestamp()};
-  if(!data.titulo){showToast('El aviso necesita título');return;}
-  try{if(eid)await updateDoc(doc(db,'avisos_web',eid),data);else await addDoc(collection(db,'avisos_web'),{...data,createdAt:serverTimestamp()});showToast('Aviso guardado ✓');closeModal('aviso');loadAvisos();}
-  catch(e){showToast('Error al guardar aviso');}
-};
-window.editarAviso=async function(id){
-  const snap=await getDocs(collection(db,'avisos_web'));const a=snap.docs.map(d=>({id:d.id,...d.data()})).find(x=>x.id===id);if(!a)return;
-  document.getElementById('aviso-edit-id').value=id;document.getElementById('aviso-tipo').value=a.tipo||'banner-top';document.getElementById('aviso-emoji').value=a.emoji||'';document.getElementById('aviso-titulo').value=a.titulo||'';document.getElementById('aviso-subtexto').value=a.subtexto||'';document.getElementById('aviso-cta-txt').value=a.ctaTxt||'';document.getElementById('aviso-cta-url').value=a.ctaUrl||'#reservas';
-  const r=document.querySelector('input[name="aviso-estado"][value="'+(a.estado||'inactivo')+'"]');if(r)r.checked=true;
-  selectAvisoColor(a.color||'teal');document.getElementById('aviso-modal-title').textContent='Editar aviso';openModal('aviso');
-};
-window.toggleAviso=async function(id,est){await updateDoc(doc(db,'avisos_web',id),{estado:est==='activo'?'inactivo':'activo',updatedAt:serverTimestamp()});showToast(est==='activo'?'Desactivado':'Activado ✓');loadAvisos();};
-// ═══ EMAIL AL CLIENTE ═════════════════════════════════════════
+function buildEmailClientePanel(r){
+  const fmtEur=n=>(parseFloat(n)||0).toFixed(2).replace('.',',')+' €';
+  const fmtF=s=>{if(!s)return'—';const[y,m,d]=s.split('-');const mes=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];return`${d} ${mes[parseInt(m,10)-1]} ${y}`;};
+  const nombre=r.nombre||'—',fecha=fmtF(r.fecha),horario=r.horario||'—',evento=r.servicio||'—',personas=r.personas||'—',horaExtra=r.horaExtra||'Sin horas extra',extras=r.extras&&r.extras!=='Ninguno'?r.extras:'Ninguno',total=fmtEur(r.importe||0),senal=fmtEur((r.importe||0)*0.5),notas=r.notas||'',fechaHoy=new Date().toLocaleDateString('es-ES');
+  return`<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:'Helvetica Neue',Arial,sans-serif;"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 16px;"><tr><td align="center"><table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08);"><tr><td style="background:#0d0f14;padding:28px 40px;text-align:center;"><img src="https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png" alt="EspaiFest" style="height:64px;width:auto;display:block;margin:0 auto;"></td></tr><tr><td style="background:linear-gradient(135deg,#0fd4c4,#06b6d4);padding:28px 40px;text-align:center;"><div style="font-size:36px;margin-bottom:8px;">🎉</div><div style="font-size:22px;font-weight:800;color:#000;">¡Reserva confirmada!</div><div style="font-size:14px;color:#003333;margin-top:6px;">Aquí tienes todos los detalles de tu reserva en EspaiFest.</div></td></tr><tr><td style="padding:36px 40px;"><p style="font-size:16px;color:#374151;margin:0 0 24px;">Hola <strong>${nombre}</strong>,</p><p style="font-size:14px;color:#6b7280;margin:0 0 28px;">Te enviamos el resumen completo de tu reserva.</p><table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:24px;"><tr><td colspan="2" style="background:#e5e7eb;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;">Detalles de la reserva</td></tr><tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;width:45%;">📅 Fecha</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${fecha}</td></tr><tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">🕐 Franja horaria</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${horario}</td></tr><tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">🎊 Tipo de evento</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${evento}</td></tr><tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">👥 Personas</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;border-bottom:1px solid #e5e7eb;">${personas}</td></tr><tr><td style="padding:12px 20px;font-size:13px;color:#6b7280;">⏱️ Hora extra</td><td style="padding:12px 20px;font-size:13px;font-weight:700;color:#111827;">${horaExtra}</td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:12px;overflow:hidden;margin-bottom:24px;"><tr><td colspan="2" style="background:#e5e7eb;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;">Presupuesto</td></tr><tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb;">🍽️ Extras</td><td style="padding:10px 20px;font-size:13px;color:#111827;border-bottom:1px solid #e5e7eb;">${extras}</td></tr><tr style="background:#0d0f14;"><td style="padding:14px 20px;font-size:14px;font-weight:800;color:#fff;">TOTAL</td><td style="padding:14px 20px;font-size:18px;font-weight:900;color:#0fd4c4;text-align:right;">${total}</td></tr><tr><td style="padding:10px 20px;font-size:13px;color:#6b7280;">Señal 50%</td><td style="padding:10px 20px;font-size:13px;font-weight:700;color:#f97316;text-align:right;">${senal}</td></tr></table><table width="100%" cellpadding="0" cellspacing="0" style="background:#ecfdf5;border:1px solid #6ee7b7;border-radius:12px;margin-bottom:32px;"><tr><td style="padding:20px 24px;"><div style="font-size:14px;font-weight:700;color:#065f46;margin-bottom:8px;">💳 Cómo confirmar tu reserva</div><div style="font-size:13px;color:#374151;line-height:1.6;">Realiza el pago de la señal del 50% (<strong>${senal}</strong>) por:<br><br><strong>Bizum:</strong> 674 379 709<br><strong>Transferencia:</strong> Indica tu nombre y fecha de reserva<br><br>Una vez recibido el pago, Laura confirmará tu reserva por WhatsApp.</div></td></tr></table>${notas?`<table width="100%" cellpadding="0" cellspacing="0" style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;margin-bottom:24px;"><tr><td style="padding:16px 20px;font-size:13px;color:#92400e;"><strong>📝 Notas:</strong><br><span style="color:#374151;">${notas}</span></td></tr></table>`:''}<p style="font-size:13px;color:#9ca3af;text-align:center;margin:0;">¿Dudas? <a href="mailto:info@espaifest.com" style="color:#0fd4c4;">info@espaifest.com</a> · <a href="tel:+34674379709" style="color:#0fd4c4;">674 379 709</a></p></td></tr><tr><td style="background:#0d0f14;padding:24px 40px;text-align:center;"><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;">EspaiFest Martorell</div><div style="font-size:12px;color:#6b7280;">C/ Francesc Macià, 37 · ${fechaHoy}</div></td></tr></table></td></tr></table></body></html>`;
+}
 window.enviarEmailReserva=async function(id){
-  const r=allReservas.find(x=>x.id===id);if(!r?.email){showToast('Sin email en esta reserva');return;}
-  const btn=document.getElementById('btn-em-'+id);if(btn){btn.disabled=true;btn.textContent='Enviando...';}
-  const fe=n=>(parseFloat(n)||0).toFixed(2).replace('.',',')+' €';
-  const ff=s=>{if(!s)return'—';const[y,m,d]=s.split('-');return d+'/'+m+'/'+y;};
-  const html='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:Arial,sans-serif;background:#f4f4f4;padding:32px 16px"><div style="max-width:560px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden"><div style="background:#0d0f14;padding:24px;text-align:center"><img src="https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png" alt="EspaiFest" style="height:56px"></div><div style="background:linear-gradient(135deg,#0fd4c4,#06b6d4);padding:24px;text-align:center"><div style="font-size:28px">🎉</div><div style="font-size:20px;font-weight:800;color:#000">¡Reserva confirmada!</div></div><div style="padding:32px"><p>Hola <strong>'+(r.nombre||'—')+'</strong>,</p><table style="width:100%;background:#f9fafb;border-radius:8px;overflow:hidden;margin:16px 0"><tr style="background:#e5e7eb"><td colspan="2" style="padding:10px 16px;font-size:11px;font-weight:700;text-transform:uppercase">Detalles</td></tr><tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb">?? Fecha</td><td style="padding:10px 16px;font-size:13px;font-weight:700;border-bottom:1px solid #e5e7eb">'+ff(r.fecha)+'</td></tr><tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #e5e7eb">?? Horario</td><td style="padding:10px 16px;font-size:13px;font-weight:700;border-bottom:1px solid #e5e7eb">'+(r.horario||'—')+'</td></tr><tr><td style="padding:10px 16px;font-size:13px;color:#6b7280">?? Evento</td><td style="padding:10px 16px;font-size:13px;font-weight:700">'+(r.servicio||'—')+'</td></tr></table><div style="background:#0d0f14;padding:12px 16px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><span style="color:#fff;font-weight:800">TOTAL</span><span style="color:#0fd4c4;font-size:18px;font-weight:900">'+fe(r.importe)+'</span></div><div style="background:#ecfdf5;border:1px solid #6ee7b7;border-radius:8px;padding:16px;margin-bottom:16px"><strong style="color:#065f46">?? Cómo confirmar</strong><p style="font-size:13px;color:#374151;margin:8px 0 0"><strong>Bizum:</strong> 674 379 709<br>Una vez recibido el pago Laura confirmará por WhatsApp.</p></div><p style="font-size:12px;color:#9ca3af;text-align:center">info@espaifest.com · 674 379 709</p></div></div></body></html>';
+  const r=allReservas.find(x=>x.id===id);
+  if(!r){showToast('Reserva no encontrada');return;}
+  if(!r.email){showToast('Esta reserva no tiene email del cliente');return;}
+  const btn=document.getElementById('btn-email-cliente-'+id);
+  if(btn){btn.disabled=true;btn.textContent='Enviando...';}
   try{
-    const res=await fetch('https://espaifest-brevo.lucasyleodigital.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:r.email,subject:'✅ Reserva confirmada — EspaiFest',html,from_name:'EspaiFest'})});
-    if(res.ok){showToast('Email enviado ✓');await updateDoc(doc(db,'reservas',id),{emailEnviado:true,emailEnviadoAt:serverTimestamp()});loadReservas();}
-    else showToast('Error al enviar email');
-  }catch(e){showToast('Error de conexión');}
-  if(btn){btn.disabled=false;btn.textContent='Enviar email';}
+    const html=buildEmailClientePanel(r);
+    const ok=await resendSend(r.email,'✅ Reserva confirmada en EspaiFest',html);
+    if(ok){showToast('Email enviado a '+r.email+' ✓');await updateDoc(doc(db,'reservas',id),{emailEnviado:true,emailEnviadoAt:serverTimestamp()});loadReservas();}
+    else showToast('Error al enviar el email');
+  }catch(e){console.error(e);showToast('Error al enviar email');}
+  finally{if(btn){btn.disabled=false;btn.textContent=r.emailEnviado?'Reenviar email':'Enviar email';}}
 };
-// ═══ INICIALIZACIÓN ════════════════════════════════════════════
-const _la=window.loadAllData;
-window.loadAllData=async()=>{await _la();try{loadAvisos();}catch(e){}};
+
+// ══════════════════════════════════════════════════════════════
+// BLOQUEOS DE CALENDARIO
+// ══════════════════════════════════════════════════════════════
+let _bloqueoFechas = new Set();
+let _bloqueoCalYear, _bloqueoCalMonth;
+
+function initBloqueoCalendario() {
+  const hoy = new Date();
+  _bloqueoCalYear  = hoy.getFullYear();
+  _bloqueoCalMonth = hoy.getMonth();
+  renderBloqueoCalendario();
+}
+
+function renderBloqueoCalendario() {
+  const y = _bloqueoCalYear, m = _bloqueoCalMonth;
+  const label = new Date(y, m, 1).toLocaleDateString('es-ES', {month:'long', year:'numeric'});
+  document.getElementById('bloqueo-cal-label').textContent = label.charAt(0).toUpperCase() + label.slice(1);
+
+  const dias = document.getElementById('bloqueo-cal-days');
+  const primerDia = new Date(y, m, 1).getDay(); // 0=dom
+  const offset = (primerDia === 0 ? 6 : primerDia - 1); // lun=0
+  const totalDias = new Date(y, m+1, 0).getDate();
+  const hoy = new Date().toISOString().split('T')[0];
+
+  let html = Array(offset).fill('<div></div>').join('');
+  for (let d = 1; d <= totalDias; d++) {
+    const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isPast = ds < hoy;
+    const isSel  = _bloqueoFechas.has(ds);
+    const style  = isPast
+      ? 'opacity:.3;pointer-events:none;'
+      : isSel
+        ? 'background:var(--teal);color:#080c14;font-weight:700;border-radius:6px;cursor:pointer;'
+        : 'cursor:pointer;border-radius:6px;';
+    html += `<div onclick="toggleBloqueoFecha('${ds}')" style="padding:6px 4px;font-size:12px;transition:background .1s;${style}" onmouseover="if(!${isSel}&&!${isPast})this.style.background='var(--s3)'" onmouseout="if(!${isSel})this.style.background=''">${d}</div>`;
+  }
+  dias.innerHTML = html;
+  renderBloqueoFechasSel();
+}
+
+function renderBloqueoFechasSel() {
+  const el = document.getElementById('bloqueo-fechas-sel');
+  if (!_bloqueoFechas.size) {
+    el.innerHTML = '<span style="font-size:12px;color:var(--t3);align-self:center">Sin fechas seleccionadas</span>';
+    return;
+  }
+  const sorted = [..._bloqueoFechas].sort();
+  el.innerHTML = sorted.map(ds => {
+    const [y,m,d] = ds.split('-');
+    const label = `${d}/${m}`;
+    return `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(15,212,196,.12);border:1px solid rgba(15,212,196,.3);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;color:var(--teal)">${label}<button onclick="toggleBloqueoFecha('${ds}')" style="background:none;border:none;cursor:pointer;color:var(--teal);font-size:13px;padding:0;line-height:1">×</button></span>`;
+  }).join('');
+}
+
+window.toggleBloqueoFecha = function(ds) {
+  if (_bloqueoFechas.has(ds)) _bloqueoFechas.delete(ds);
+  else _bloqueoFechas.add(ds);
+  renderBloqueoCalendario();
+};
+
+window.bloqueoCalPrev = function() {
+  _bloqueoCalMonth--;
+  if (_bloqueoCalMonth < 0) { _bloqueoCalMonth = 11; _bloqueoCalYear--; }
+  renderBloqueoCalendario();
+};
+window.bloqueoCalNext = function() {
+  _bloqueoCalMonth++;
+  if (_bloqueoCalMonth > 11) { _bloqueoCalMonth = 0; _bloqueoCalYear++; }
+  renderBloqueoCalendario();
+};
+
+window.resetBloqueoModal = function() {
+  _bloqueoFechas.clear();
+  renderBloqueoCalendario();
+  document.getElementById('bloqueo-nota').value = '';
+  const radio = document.querySelector('input[name="bloqueo-franja"][value="ambas"]');
+  if (radio) radio.checked = true;
+};
+
+window.guardarBloqueo = async function() {
+  if (!_bloqueoFechas.size) { showToast('Selecciona al menos una fecha'); return; }
+  const franja = document.querySelector('input[name="bloqueo-franja"]:checked')?.value || 'ambas';
+  const nota   = document.getElementById('bloqueo-nota').value.trim() || 'Bloqueo manual';
+  const btn    = document.querySelector('#modal-bloqueo .btn.bp');
+  if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
+
+  try {
+    for (const fecha of _bloqueoFechas) {
+      const mananaOcupada = franja === 'manana' || franja === 'ambas' || franja === 'dia';
+      const tardeOcupada  = franja === 'tarde'  || franja === 'ambas' || franja === 'dia';
+      const diaOcupado    = franja === 'dia';
+
+      // Guardar bloqueo en colección separada
+      await addDoc(collection(db, 'bloqueos'), {
+        fecha, franja, nota,
+        mananaOcupada, tardeOcupada, diaOcupado,
+        createdAt: serverTimestamp()
+      });
+
+      // Actualizar calendario_publico (merge con lo que ya haya)
+      const calRef = doc(db, 'calendario_publico', fecha);
+      await setDoc(calRef, {
+        fecha,
+        mananaOcupada,
+        tardeOcupada,
+        nocheOcupada: diaOcupado,
+        diaOcupado,
+        bloqueado: true,
+        notaBloqueo: nota,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    }
+    closeModal('bloqueo');
+    resetBloqueoModal();
+    showToast(`${_bloqueoFechas.size} fecha(s) bloqueada(s) en la web ✓`);
+    loadBloqueos();
+  } catch(e) {
+    console.error('guardarBloqueo error:', e);
+    showToast('Error al guardar bloqueo');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Bloquear fechas'; }
+  }
+};
+
+async function loadBloqueos() {
+  try {
+    const snap = await getDocs(query(collection(db, 'bloqueos'), orderBy('fecha', 'asc')));
+    const bloqueos = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    const hoy = new Date().toISOString().split('T')[0];
+    const el  = document.getElementById('bloqueos-list');
+    const cnt = document.getElementById('bloqueos-count');
+
+    const activos  = bloqueos.filter(b => b.fecha >= hoy);
+    const pasados  = bloqueos.filter(b => b.fecha < hoy);
+    cnt.textContent = `${activos.length} activos · ${pasados.length} en el pasado`;
+
+    if (!bloqueos.length) {
+      el.innerHTML = '<div class="empty">No hay bloqueos. Crea uno para cerrar fechas en la web.</div>';
+      return;
+    }
+
+    const franjaLabel = { manana:'Mañana', tarde:'Tarde', ambas:'Mañana y tarde', dia:'Día completo' };
+    el.innerHTML = bloqueos.map(b => {
+      const [y,m,d] = b.fecha.split('-');
+      const esActivo = b.fecha >= hoy;
+      const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+      const fechaFmt = `${d} ${meses[parseInt(m,10)-1]} ${y}`;
+      return `
+      <div class="trow" style="display:grid;grid-template-columns:1fr .8fr 1.2fr .6fr .7fr;gap:12px;align-items:center;${!esActivo?'opacity:.5':''}">
+        <div><div class="c cs">${fechaFmt}</div><div style="font-size:11px;color:var(--t3)">${b.nota||'—'}</div></div>
+        <div><span class="badge ${b.franja==='dia'?'bg-r':b.franja==='ambas'?'bg-a':'bg-t'}">${franjaLabel[b.franja]||b.franja}</span></div>
+        <div class="c cm">${fmtDate(b.createdAt)}</div>
+        <div><span class="badge ${esActivo?'bg-g':'bg-x'}">${esActivo?'Activo':'Pasado'}</span></div>
+        <div class="ras"><button class="rab rab-cancel" onclick="desbloquearFecha('${b.id}','${b.fecha}')" title="Desbloquear"><svg><use href="#i-ban"/></svg></button></div>
+      </div>`;
+    }).join('');
+  } catch(e) { console.error('loadBloqueos error:', e); }
+}
+
+window.desbloquearFecha = async function(bloqueoId, fecha) {
+  if (!confirm(`¿Desbloquear ${fecha} de la web?`)) return;
+  try {
+    await deleteDoc(doc(db, 'bloqueos', bloqueoId));
+
+    // Recalcular si hay reservas confirmadas ese día
+    const reservasDia = allReservas.filter(r => r.fecha === fecha && (r.estado||'').toLowerCase() === 'confirmada');
+    if (reservasDia.length === 0) {
+      await deleteDoc(doc(db, 'calendario_publico', fecha));
+    } else {
+      const oc = calcOcupacionCalendario(reservasDia);
+      const info = oc[fecha] || {};
+      await setDoc(doc(db, 'calendario_publico', fecha), {
+        fecha,
+        mananaOcupada: info.mananaOcupada || false,
+        tardeOcupada:  info.tardeOcupada  || false,
+        nocheOcupada:  info.nocheOcupada  || false,
+        diaOcupado:    info.diaOcupado    || false,
+        bloqueado:     false,
+        updatedAt:     serverTimestamp()
+      });
+    }
+    showToast('Fecha desbloqueada ✓ — Calendario actualizado');
+    loadBloqueos();
+  } catch(e) {
+    console.error('desbloquearFecha error:', e);
+    showToast('Error al desbloquear');
+  }
+};
+
+// Abrir modal bloqueo inicializa el calendario
+const _origOpenModal = window.openModal;
+window.openModal = function(name) {
+  _origOpenModal(name);
+  if (name === 'bloqueo') { _bloqueoFechas = new Set(); initBloqueoCalendario(); }
+};
+
+// ══════════════════════════════════════════════════════════════
+// AVISOS WEB
+// ══════════════════════════════════════════════════════════════
+const AVISO_COLORS = {
+  teal:   { bg:'linear-gradient(135deg,#0fd4c4,#0369a1)', txt:'#fff', btn:'rgba(255,255,255,.25)' },
+  purple: { bg:'linear-gradient(135deg,#7c3aed,#4f46e5)', txt:'#fff', btn:'rgba(255,255,255,.25)' },
+  amber:  { bg:'linear-gradient(135deg,#f59e0b,#d97706)', txt:'#fff', btn:'rgba(0,0,0,.2)' },
+  red:    { bg:'linear-gradient(135deg,#ef4444,#dc2626)', txt:'#fff', btn:'rgba(255,255,255,.25)' },
+  green:  { bg:'linear-gradient(135deg,#10b981,#059669)', txt:'#fff', btn:'rgba(255,255,255,.25)' },
+  dark:   { bg:'linear-gradient(135deg,#1e293b,#0f172a)', txt:'#fff', btn:'rgba(15,212,196,.35)' },
+  pink:   { bg:'linear-gradient(135deg,#ec4899,#db2777)', txt:'#fff', btn:'rgba(255,255,255,.25)' },
+};
+
+let _avisoColor = 'teal';
+
+window.selectAvisoColor = function(color) {
+  _avisoColor = color;
+  document.querySelectorAll('.aviso-color-btn').forEach(btn => {
+    btn.style.border = btn.dataset.color === color ? '2px solid var(--teal)' : '2px solid transparent';
+  });
+  previewAviso();
+};
+
+window.previewAviso = function() {
+  const tipo    = document.getElementById('aviso-tipo')?.value || 'banner-top';
+  const emoji   = document.getElementById('aviso-emoji')?.value || '';
+  const titulo  = document.getElementById('aviso-titulo')?.value || 'Título del aviso';
+  const sub     = document.getElementById('aviso-subtexto')?.value || '';
+  const ctaTxt  = document.getElementById('aviso-cta-txt')?.value || '';
+  const col     = AVISO_COLORS[_avisoColor] || AVISO_COLORS.teal;
+  const wrap    = document.getElementById('aviso-modal-preview');
+  if (!wrap) return;
+  wrap.innerHTML = buildAvisoHTML({ tipo, emoji, titulo, subtexto: sub, ctaTxt, ctaUrl:'#', color: _avisoColor }, true);
+};
+
+function buildAvisoHTML(aviso, preview=false) {
+  const col = AVISO_COLORS[aviso.color] || AVISO_COLORS.teal;
+  const e   = aviso.emoji ? `${aviso.emoji} ` : '';
+  const cta = aviso.ctaTxt ? `<a href="${aviso.ctaUrl||'#reservas'}" style="display:inline-block;margin-left:12px;padding:6px 16px;background:${col.btn};border:1px solid rgba(255,255,255,.4);border-radius:20px;color:${col.txt};font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap">${aviso.ctaTxt}</a>` : '';
+  const closeSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+
+  if (aviso.tipo === 'popup') {
+    return `<div style="background:${col.bg};border-radius:12px;padding:28px 32px;text-align:center;max-width:440px;margin:0 auto;position:relative">
+      <div style="font-size:32px;margin-bottom:10px">${aviso.emoji||'📢'}</div>
+      <div style="font-size:18px;font-weight:800;color:${col.txt};margin-bottom:6px">${aviso.titulo}</div>
+      ${aviso.subtexto?`<div style="font-size:13px;color:${col.txt};opacity:.85;margin-bottom:16px">${aviso.subtexto}</div>`:''}
+      ${aviso.ctaTxt?`<a href="${aviso.ctaUrl||'#reservas'}" style="display:inline-block;padding:10px 24px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);border-radius:24px;color:${col.txt};font-size:13px;font-weight:700;text-decoration:none">${aviso.ctaTxt}</a>`:''}
+    </div>`;
+  }
+
+  // banner-top o banner-bottom
+  return `<div style="background:${col.bg};padding:10px 48px 10px 16px;display:flex;align-items:center;flex-wrap:wrap;gap:8px;position:relative">
+    <span style="font-size:13px;font-weight:700;color:${col.txt};flex:1;min-width:200px">${e}${aviso.titulo}${aviso.subtexto?` <span style="font-weight:400;opacity:.85">· ${aviso.subtexto}</span>`:''}</span>
+    ${cta}
+    ${!preview?`<button onclick="cerrarAvisoWeb()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:${col.txt};opacity:.7;padding:4px">${closeSvg}</button>`:''}
+  </div>`;
+}
+
+async function loadAvisos() {
+  try {
+    const snap = await getDocs(collection(db, 'avisos_web'));
+    const avisos = snap.docs.map(d => ({id:d.id,...d.data()}));
+    const el = document.getElementById('avisos-list');
+    const badge = document.getElementById('badge-avisos');
+    const activos = avisos.filter(a => a.estado === 'activo');
+
+    // Badge sidebar
+    if (badge) {
+      badge.textContent = activos.length;
+      badge.style.display = activos.length ? 'inline-flex' : 'none';
+    }
+
+    // Preview del activo
+    const prevWrap = document.getElementById('aviso-preview-wrap');
+    const prevBox  = document.getElementById('aviso-preview-box');
+    if (activos.length && prevWrap && prevBox) {
+      prevBox.innerHTML = buildAvisoHTML(activos[0], true);
+      prevWrap.style.display = 'block';
+    } else if (prevWrap) {
+      prevWrap.style.display = 'none';
+    }
+
+    if (!avisos.length) {
+      el.innerHTML = '<div class="empty">No hay avisos. Crea el primero para mostrar un mensaje en la web.</div>';
+      return;
+    }
+
+    el.innerHTML = avisos.map(a => {
+      const col = AVISO_COLORS[a.color] || AVISO_COLORS.teal;
+      const tipoLabel = { 'banner-top':'Banner superior','popup':'Popup','banner-bottom':'Banner inferior' };
+      return `
+      <div class="trow" style="display:grid;grid-template-columns:.4fr 1.4fr .7fr .55fr .7fr;gap:12px;align-items:center">
+        <div style="width:28px;height:28px;border-radius:8px;background:${col.bg}"></div>
+        <div>
+          <div class="c cs">${a.emoji||''} ${a.titulo||'—'}</div>
+          <div style="font-size:11px;color:var(--t3)">${a.subtexto||''}</div>
+        </div>
+        <div><span class="badge bg-x">${tipoLabel[a.tipo]||a.tipo}</span></div>
+        <div>
+          <span class="badge ${a.estado==='activo'?'bg-g':'bg-x'}" style="cursor:pointer" onclick="toggleAvisoEstado('${a.id}','${a.estado}')" title="Clic para ${a.estado==='activo'?'desactivar':'activar'}">
+            ${a.estado==='activo'?'✓ Activo':'Inactivo'}
+          </span>
+        </div>
+        <div class="ras">
+          <button class="rab" onclick="editarAviso('${a.id}')" title="Editar"><svg><use href="#i-edit"/></svg></button>
+          <button class="rab rab-cancel" onclick="eliminarAviso('${a.id}')" title="Eliminar"><svg><use href="#i-trash"/></svg></button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { console.error('loadAvisos error:', e); }
+}
+
+window.guardarAviso = async function() {
+  const editId  = document.getElementById('aviso-edit-id').value;
+  const tipo    = document.getElementById('aviso-tipo').value;
+  const emoji   = document.getElementById('aviso-emoji').value.trim();
+  const titulo  = document.getElementById('aviso-titulo').value.trim();
+  const sub     = document.getElementById('aviso-subtexto').value.trim();
+  const ctaTxt  = document.getElementById('aviso-cta-txt').value.trim();
+  const ctaUrl  = document.getElementById('aviso-cta-url').value.trim() || '#reservas';
+  const estado  = document.querySelector('input[name="aviso-estado"]:checked')?.value || 'inactivo';
+
+  if (!titulo) { showToast('El aviso necesita un título'); return; }
+
+  const data = { tipo, emoji, titulo, subtexto: sub, ctaTxt, ctaUrl, color: _avisoColor, estado, updatedAt: serverTimestamp() };
+
+  try {
+    if (editId) {
+      await updateDoc(doc(db, 'avisos_web', editId), data);
+      showToast('Aviso actualizado ✓');
+    } else {
+      data.createdAt = serverTimestamp();
+      await addDoc(collection(db, 'avisos_web'), data);
+      showToast('Aviso creado ✓' + (estado === 'activo' ? ' — ya visible en la web' : ''));
+    }
+    closeModal('aviso');
+    limpiarModalAviso();
+    loadAvisos();
+  } catch(e) { console.error('guardarAviso error:', e); showToast('Error al guardar aviso'); }
+};
+
+window.editarAviso = async function(id) {
+  try {
+    const snap = await getDocs(collection(db, 'avisos_web'));
+    const a = snap.docs.map(d=>({id:d.id,...d.data()})).find(x=>x.id===id);
+    if (!a) return;
+    document.getElementById('aviso-edit-id').value  = id;
+    document.getElementById('aviso-tipo').value     = a.tipo || 'banner-top';
+    document.getElementById('aviso-emoji').value    = a.emoji || '';
+    document.getElementById('aviso-titulo').value   = a.titulo || '';
+    document.getElementById('aviso-subtexto').value = a.subtexto || '';
+    document.getElementById('aviso-cta-txt').value  = a.ctaTxt || '';
+    document.getElementById('aviso-cta-url').value  = a.ctaUrl || '#reservas';
+    const estadoRadio = document.querySelector(`input[name="aviso-estado"][value="${a.estado||'inactivo'}"]`);
+    if (estadoRadio) estadoRadio.checked = true;
+    selectAvisoColor(a.color || 'teal');
+    document.getElementById('aviso-modal-title').textContent = 'Editar aviso';
+    openModal('aviso');
+    previewAviso();
+  } catch(e) { console.error(e); }
+};
+
+window.toggleAvisoEstado = async function(id, estadoActual) {
+  const nuevo = estadoActual === 'activo' ? 'inactivo' : 'activo';
+  await updateDoc(doc(db, 'avisos_web', id), { estado: nuevo, updatedAt: serverTimestamp() });
+  showToast(nuevo === 'activo' ? 'Aviso activado — visible en la web ✓' : 'Aviso desactivado ✓');
+  loadAvisos();
+};
+
+window.eliminarAviso = async function(id) {
+  if (!confirm('¿Eliminar este aviso?')) return;
+  await deleteDoc(doc(db, 'avisos_web', id));
+  showToast('Aviso eliminado ✓');
+  loadAvisos();
+};
+
+function limpiarModalAviso() {
+  document.getElementById('aviso-edit-id').value = '';
+  document.getElementById('aviso-tipo').value = 'banner-top';
+  document.getElementById('aviso-emoji').value = '';
+  document.getElementById('aviso-titulo').value = '';
+  document.getElementById('aviso-subtexto').value = '';
+  document.getElementById('aviso-cta-txt').value = '';
+  document.getElementById('aviso-cta-url').value = '#reservas';
+  document.getElementById('aviso-modal-title').textContent = 'Nuevo aviso';
+  document.querySelector('input[name="aviso-estado"][value="activo"]').checked = true;
+  selectAvisoColor('teal');
+  const prev = document.getElementById('aviso-modal-preview');
+  if (prev) prev.innerHTML = '';
+}
+
+// loadAllData incluye nuevos módulos
+const _origLoadAllData = window.loadAllData;
+window.loadAllData = async () => {
+  await _origLoadAllData();
+  loadAvisos();
+};
 
 </script>
 </body>
