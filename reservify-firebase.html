@@ -2424,28 +2424,29 @@ window.eliminarReserva = async (id) => {
   // 2. Actualizar calendario_publico para esa fecha
   if(fechaReserva) {
     try {
-      // Consultar Firestore directamente (no allReservas, que aún tiene la eliminada en memoria)
+      // Borrar el bloqueo del día SIEMPRE primero (evita documentos huérfanos)
+      await deleteDoc(doc(db,'calendario_publico', fechaReserva));
+      console.log('[eliminar] calendario_publico borrado para', fechaReserva);
+
+      // Recalcular solo con un where (evita requerir índice compuesto en Firestore)
       const snapRest = await getDocs(query(
         collection(db,'reservas'),
-        where('fecha','==',fechaReserva),
-        where('estado','==','Confirmada')
+        where('fecha','==',fechaReserva)
       ));
-      const confirmadasRestantes = snapRest.docs.map(d => ({ id: d.id, ...d.data() }));
+      const confirmadasRestantes = snapRest.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(r => (r.estado||'').toLowerCase() === 'confirmada');
 
-      if(confirmadasRestantes.length === 0) {
-        // Sin confirmadas → borrar el bloqueo del día completamente
-        await deleteDoc(doc(db,'calendario_publico', fechaReserva));
-        console.log('[eliminar] calendario_publico borrado para', fechaReserva);
-      } else {
-        // Recalcular con las que quedan
+      if(confirmadasRestantes.length > 0) {
+        // Si quedan confirmadas, volver a escribir el bloqueo correctamente
         const { mananaOcupada, tardeOcupada } = calcOcupacion(confirmadasRestantes);
         await setDoc(doc(db,'calendario_publico', fechaReserva), {
           fecha: fechaReserva, mananaOcupada, tardeOcupada, updatedAt: serverTimestamp()
         });
-        console.log('[eliminar] calendario actualizado →', {mananaOcupada, tardeOcupada});
+        console.log('[eliminar] calendario recalculado →', {mananaOcupada, tardeOcupada});
       }
     } catch(e) {
-      console.warn('[eliminar] Error actualizando calendario:', e);
+      console.warn('[eliminar] Error actualizando calendario:', e.code, e.message);
     }
   }
 
