@@ -527,7 +527,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <div class="fbar">
           <div class="swrap"><div class="sico"><svg><use href="#i-search"/></svg></div><input type="text" class="sinp" id="search-res" placeholder="Buscar cliente o evento..." oninput="filterReservas()"></div>
           <select class="fsel" id="filter-estado" onchange="filterReservas()"><option value="">Todos los estados</option><option>Confirmada</option><option>Pendiente</option><option>Cancelada</option></select>
-          <button class="btn bp sm" style="margin-left:auto" onclick="openModal('res')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nueva reserva</button>
+        <button class="btn bp sm" style="margin-left:auto" onclick="openModal('res')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nueva reserva</button>
+          <button class="btn bg sm" onclick="openModal('recurrente')" title="Reserva recurrente"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>Recurrente</button>
+          <button class="btn bg sm" onclick="openModal('bloqueo')" title="Bloquear días" style="color:var(--orange)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Bloquear días</button>
         </div>
         <div class="card">
           <div class="thead rc"><span>Cliente</span><span>Fecha evento</span><span>Reservado el</span><span>Total</span><span>Estado</span><span>Pago</span><span style="text-align:right">Acciones</span></div>
@@ -1308,6 +1310,199 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="mfoot">
       <button class="btn bg" onclick="closeModal('res')">Cancelar</button>
       <button class="btn bp" id="btn-guardar-reserva" onclick="saveReserva()">Guardar reserva</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESERVA RECURRENTE -->
+<div class="mov" id="modal-recurrente">
+  <div class="modal" style="max-width:680px;max-height:92vh;overflow-y:auto;">
+    <div class="mtitle">Reserva recurrente</div>
+    <div class="msub">Un cliente, varias fechas, misma franja horaria</div>
+
+    <!-- Cliente -->
+    <div style="background:rgba(15,212,196,.06);border:1px solid rgba(15,212,196,.2);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Buscar cliente existente</div>
+      <div style="position:relative">
+        <input type="text" class="fi" id="rec-buscar" placeholder="Nombre o teléfono..." autocomplete="off" oninput="buscarClienteRec(this.value)" style="padding-right:80px">
+        <button class="btn bg sm" onclick="limpiarClienteRec()" style="position:absolute;right:4px;top:4px;font-size:11px;padding:4px 10px">Limpiar</button>
+      </div>
+      <div id="rec-resultados" style="display:none;margin-top:6px;background:var(--s1);border:1px solid var(--b2);border-radius:8px;overflow:hidden;max-height:160px;overflow-y:auto;"></div>
+      <div id="rec-seleccionado" style="display:none;margin-top:8px;background:var(--gbg);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--green);font-weight:600;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="rec-sel-nombre">—</span>
+      </div>
+    </div>
+
+    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Datos del cliente</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="rec-nombre" placeholder="Nombre"></div>
+      <div class="fg"><label class="fl">Apellidos</label><input type="text" class="fi" id="rec-apellidos" placeholder="Apellidos"></div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Teléfono *</label><input type="text" class="fi" id="rec-tel" placeholder="6XX XXX XXX"></div>
+      <div class="fg"><label class="fl">Email</label><input type="text" class="fi" id="rec-email" placeholder="cliente@email.com"></div>
+    </div>
+
+    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:14px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Detalles de la reserva</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Tipo de evento *</label>
+        <select class="fsi" id="rec-servicio">
+          <option>Pilates / Yoga</option><option>Clases / Taller</option>
+          <option>Fiesta infantil</option><option>Fiesta adultos</option>
+          <option>Reunión empresa</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Personas</label>
+        <select class="fsi" id="rec-personas">
+          <option>Hasta 10 personas</option><option>De 10 a 20 personas</option>
+          <option>De 20 a 30 personas</option><option>De 30 a 40 personas</option>
+        </select>
+      </div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Franja horaria *</label>
+        <select class="fsi" id="rec-horario" onchange="recCalcPrecio()">
+          <option value="">— Selecciona —</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Precio por sesión (€)</label>
+        <input type="number" class="fi" id="rec-precio" value="85">
+      </div>
+    </div>
+
+    <!-- Selector de fechas -->
+    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:14px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Fechas de las sesiones</div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;align-items:flex-end">
+      <div class="fg" style="flex:1;min-width:150px;margin:0">
+        <label class="fl">Añadir fecha</label>
+        <input type="date" class="fi" id="rec-fecha-add" style="margin-top:4px">
+      </div>
+      <button class="btn bg sm" onclick="recAddFecha()" style="white-space:nowrap">+ Añadir fecha</button>
+      <button class="btn bg sm" onclick="recAddRango()" style="white-space:nowrap;font-size:11px">+ Rango / días semana</button>
+    </div>
+
+    <!-- Rango rápido (oculto por defecto) -->
+    <div id="rec-rango-wrap" style="display:none;background:var(--s3);border:1px solid var(--b2);border-radius:10px;padding:12px 14px;margin-bottom:10px;">
+      <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:10px;">Generar fechas automáticamente</div>
+      <div class="fr2">
+        <div class="fg"><label class="fl">Desde</label><input type="date" class="fi" id="rec-rango-desde"></div>
+        <div class="fg"><label class="fl">Hasta</label><input type="date" class="fi" id="rec-rango-hasta"></div>
+      </div>
+      <div class="fg" style="margin-bottom:10px">
+        <label class="fl">Días de la semana</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+          ${['Lu','Ma','Mi','Ju','Vi','Sá','Do'].map((d,i) => `
+            <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer">
+              <input type="checkbox" class="rec-dow" value="${i}" style="accent-color:var(--teal)"> ${d}
+            </label>`).join('')}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn bp sm" onclick="recGenerarRango()">Generar fechas</button>
+        <button class="btn bg sm" onclick="document.getElementById('rec-rango-wrap').style.display='none'">Cerrar</button>
+      </div>
+    </div>
+
+    <!-- Lista de fechas seleccionadas -->
+    <div id="rec-fechas-list" style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px;max-height:200px;overflow-y:auto;">
+      <div style="font-size:12px;color:var(--t3);padding:8px 0;text-align:center">No hay fechas seleccionadas</div>
+    </div>
+    <div id="rec-resumen" style="display:none;background:rgba(15,212,196,.06);border:1px solid rgba(15,212,196,.2);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:10px;">
+      <strong id="rec-resumen-n">0</strong> sesiones · Total estimado: <strong id="rec-resumen-total">0 €</strong>
+    </div>
+
+    <div class="fg"><label class="fl">Notas</label><textarea class="fi" id="rec-notas" placeholder="Observaciones..." style="min-height:50px;resize:vertical;"></textarea></div>
+
+    <div style="background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.2);border-radius:10px;padding:10px 14px;margin-top:10px;">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;">
+        <input type="checkbox" id="rec-bloquear" checked style="width:15px;height:15px;accent-color:var(--orange);flex-shrink:0">
+        <div><strong style="color:var(--orange)">Bloquear todas las fechas en el calendario web</strong>
+        <div style="font-size:11px;color:var(--t3);margin-top:1px">Los clientes no podrán reservar esas fechas y franjas</div></div>
+      </label>
+    </div>
+
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeModal('recurrente');limpiarRec()">Cancelar</button>
+      <button class="btn bp" id="btn-guardar-rec" onclick="saveRecurrente()">Guardar sesiones</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL BLOQUEO DE DÍAS -->
+<div class="mov" id="modal-bloqueo">
+  <div class="modal" style="max-width:560px;max-height:92vh;overflow-y:auto;">
+    <div class="mtitle">Bloquear días</div>
+    <div class="msub">Vacaciones, mantenimiento o cierre temporal</div>
+
+    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Motivo del bloqueo</div>
+    <div class="fg">
+      <select class="fsi" id="blq-motivo">
+        <option value="Vacaciones">Vacaciones</option>
+        <option value="Mantenimiento">Mantenimiento</option>
+        <option value="Evento privado">Evento privado</option>
+        <option value="Cierre">Cierre temporal</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+
+    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:14px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Qué bloquear</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <button class="btn bg sm" id="blq-tab-rango" onclick="blqSetTab('rango')" style="flex:1">Por rango de fechas</button>
+      <button class="btn bg sm" id="blq-tab-sueltos" onclick="blqSetTab('sueltos')" style="flex:1">Fechas sueltas</button>
+    </div>
+
+    <!-- Tab rango -->
+    <div id="blq-panel-rango">
+      <div class="fr2">
+        <div class="fg"><label class="fl">Desde *</label><input type="date" class="fi" id="blq-desde"></div>
+        <div class="fg"><label class="fl">Hasta *</label><input type="date" class="fi" id="blq-hasta"></div>
+      </div>
+      <div class="fg">
+        <label class="fl">Días de la semana a bloquear</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+          ${['Lu','Ma','Mi','Ju','Vi','Sá','Do'].map((d,i) => `
+            <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer">
+              <input type="checkbox" class="blq-dow" value="${i}" checked style="accent-color:var(--orange)"> ${d}
+            </label>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab sueltos -->
+    <div id="blq-panel-sueltos" style="display:none">
+      <div style="display:flex;gap:8px;margin-bottom:8px;align-items:flex-end">
+        <div class="fg" style="flex:1;margin:0"><label class="fl">Añadir fecha</label><input type="date" class="fi" id="blq-fecha-add" style="margin-top:4px"></div>
+        <button class="btn bg sm" onclick="blqAddFecha()">+ Añadir</button>
+      </div>
+      <div id="blq-fechas-list" style="display:flex;flex-direction:column;gap:5px;max-height:180px;overflow-y:auto;">
+        <div style="font-size:12px;color:var(--t3);padding:8px 0;text-align:center">No hay fechas seleccionadas</div>
+      </div>
+    </div>
+
+    <div style="font:700 .68rem var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:14px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Turno a bloquear</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;background:var(--s3);padding:8px 12px;border-radius:8px;border:1px solid var(--b2)">
+        <input type="checkbox" id="blq-manana" checked style="accent-color:var(--orange)"> Mañana
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;background:var(--s3);padding:8px 12px;border-radius:8px;border:1px solid var(--b2)">
+        <input type="checkbox" id="blq-tarde" checked style="accent-color:var(--orange)"> Tarde
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;background:var(--s3);padding:8px 12px;border-radius:8px;border:1px solid var(--b2)">
+        <input type="checkbox" id="blq-diacomp" style="accent-color:var(--orange)"> Día completo
+      </label>
+    </div>
+
+    <div id="blq-preview" style="display:none;margin-top:14px;background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.2);border-radius:8px;padding:10px 14px;font-size:13px;">
+      Se bloquearán <strong id="blq-preview-n">0</strong> días en el calendario público
+    </div>
+
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeModal('bloqueo');limpiarBlq()">Cancelar</button>
+      <button class="btn" style="background:var(--orange);color:#fff;border:none;font-weight:700;padding:10px 20px;border-radius:10px;cursor:pointer;font-size:14px" id="btn-guardar-blq" onclick="saveBloqueo()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Bloquear fechas
+      </button>
     </div>
   </div>
 </div>
@@ -2617,6 +2812,345 @@ window.desbloquearFechaManual = async () => {
   document.getElementById('cal-desbloquear-fecha').value = '';
 };
 
+// ══ RESERVA RECURRENTE ═══════════════════════════════════════
+
+let recFechas = []; // fechas seleccionadas para la reserva recurrente
+
+// Inicializar franjas al abrir modal
+function initRecModal() {
+  recFechas = [];
+  renderRecFechas();
+  // Cargar franjas desde tarifasData
+  const sel = document.getElementById('rec-horario');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">— Selecciona franja —</option>';
+  const todas = [...(window.tarifasData?.estandar||[]), ...(window.tarifasData?.ampliados||[])];
+  // Franjas únicas por horario
+  const vistas = new Set();
+  todas.forEach(f => {
+    if(!vistas.has(f.horario)) {
+      vistas.add(f.horario);
+      const opt = document.createElement('option');
+      opt.value = f.horario;
+      opt.textContent = `${f.turno} · ${f.horario}`;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+function recAddFecha() {
+  const input = document.getElementById('rec-fecha-add');
+  const fecha = input?.value;
+  if(!fecha) { showToast('Selecciona una fecha'); return; }
+  if(recFechas.includes(fecha)) { showToast('Esa fecha ya está añadida'); return; }
+  recFechas.push(fecha);
+  recFechas.sort();
+  input.value = '';
+  renderRecFechas();
+}
+
+function recAddRango() {
+  const w = document.getElementById('rec-rango-wrap');
+  if(w) w.style.display = w.style.display === 'none' ? 'block' : 'none';
+}
+
+function recGenerarRango() {
+  const desde = document.getElementById('rec-rango-desde')?.value;
+  const hasta = document.getElementById('rec-rango-hasta')?.value;
+  if(!desde || !hasta) { showToast('Selecciona rango completo'); return; }
+  const dows = Array.from(document.querySelectorAll('.rec-dow:checked')).map(c => parseInt(c.value));
+  if(!dows.length) { showToast('Selecciona al menos un día de la semana'); return; }
+
+  const d = new Date(desde + 'T12:00:00');
+  const fin = new Date(hasta + 'T12:00:00');
+  let added = 0;
+  while(d <= fin) {
+    const dow = (d.getDay() + 6) % 7; // 0=Lu...6=Do
+    if(dows.includes(dow)) {
+      const ds = d.toISOString().split('T')[0];
+      if(!recFechas.includes(ds)) { recFechas.push(ds); added++; }
+    }
+    d.setDate(d.getDate() + 1);
+  }
+  recFechas.sort();
+  renderRecFechas();
+  document.getElementById('rec-rango-wrap').style.display = 'none';
+  showToast(`${added} fechas añadidas`);
+}
+
+function recRemoveFecha(fecha) {
+  recFechas = recFechas.filter(f => f !== fecha);
+  renderRecFechas();
+}
+
+function renderRecFechas() {
+  const el = document.getElementById('rec-fechas-list');
+  const res = document.getElementById('rec-resumen');
+  if(!el) return;
+  if(!recFechas.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--t3);padding:8px 0;text-align:center">No hay fechas seleccionadas</div>';
+    if(res) res.style.display = 'none';
+    return;
+  }
+  el.innerHTML = recFechas.map(f => {
+    const [y,m,d] = f.split('-');
+    const label = `${d}/${m}/${y}`;
+    const dow = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'][(new Date(f+'T12:00:00').getDay()+6)%7];
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--s3);border:1px solid var(--b2);border-radius:7px;font-size:13px">
+      <span><strong>${label}</strong> <span style="color:var(--t3);font-size:11px">${dow}</span></span>
+      <button onclick="recRemoveFecha('${f}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:0 4px;line-height:1">×</button>
+    </div>`;
+  }).join('');
+  // Resumen
+  if(res) {
+    res.style.display = 'block';
+    const precio = parseFloat(document.getElementById('rec-precio')?.value) || 0;
+    document.getElementById('rec-resumen-n').textContent = recFechas.length;
+    document.getElementById('rec-resumen-total').textContent = (recFechas.length * precio).toFixed(2).replace('.',',') + ' €';
+  }
+}
+
+function recCalcPrecio() {
+  // Intentar rellenar precio automáticamente desde tarifas del sábado (precio medio-alto)
+  const horario = document.getElementById('rec-horario')?.value;
+  if(!horario) return;
+  renderRecFechas(); // refrescar resumen
+}
+
+function buscarClienteRec(q) {
+  const res = document.getElementById('rec-resultados');
+  if(!q || q.length < 2) { res.style.display='none'; return; }
+  const matches = allClientes.filter(c =>
+    (c.nombre||'').toLowerCase().includes(q.toLowerCase()) ||
+    (c.apellidos||'').toLowerCase().includes(q.toLowerCase()) ||
+    (c.telefono||'').includes(q)
+  ).slice(0,6);
+  if(!matches.length) { res.style.display='none'; return; }
+  res.style.display = 'block';
+  res.innerHTML = matches.map(c => `
+    <div onclick="selClienteRec('${c.id}')" style="padding:10px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--b2)" onmouseover="this.style.background='var(--s3)'" onmouseout="this.style.background=''">
+      <strong>${c.nombre||''} ${c.apellidos||''}</strong>
+      <span style="color:var(--t3);margin-left:8px">${c.telefono||''}</span>
+    </div>`).join('');
+}
+
+function selClienteRec(id) {
+  const c = allClientes.find(x => x.id === id);
+  if(!c) return;
+  document.getElementById('rec-nombre').value    = c.nombre    || '';
+  document.getElementById('rec-apellidos').value = c.apellidos || '';
+  document.getElementById('rec-tel').value       = c.telefono  || '';
+  document.getElementById('rec-email').value     = c.email     || '';
+  document.getElementById('rec-resultados').style.display = 'none';
+  const sel = document.getElementById('rec-seleccionado');
+  if(sel) { sel.style.display='block'; document.getElementById('rec-sel-nombre').textContent = `${c.nombre||''} ${c.apellidos||''} — datos cargados`; }
+  document.getElementById('rec-buscar').value = '';
+}
+
+function limpiarClienteRec() {
+  ['rec-nombre','rec-apellidos','rec-tel','rec-email','rec-buscar'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
+  document.getElementById('rec-resultados').style.display='none';
+  document.getElementById('rec-seleccionado').style.display='none';
+}
+
+function limpiarRec() {
+  limpiarClienteRec();
+  recFechas = [];
+  renderRecFechas();
+  document.getElementById('rec-notas').value = '';
+  document.getElementById('rec-bloquear').checked = true;
+  document.getElementById('rec-rango-wrap').style.display = 'none';
+}
+
+window.saveRecurrente = async () => {
+  const nombre   = document.getElementById('rec-nombre').value.trim();
+  const apellidos= document.getElementById('rec-apellidos').value.trim();
+  const tel      = document.getElementById('rec-tel').value.trim();
+  const email    = document.getElementById('rec-email').value.trim();
+  const servicio = document.getElementById('rec-servicio').value;
+  const personas = document.getElementById('rec-personas').value;
+  const horario  = document.getElementById('rec-horario').value;
+  const precio   = parseFloat(document.getElementById('rec-precio').value) || 85;
+  const notas    = document.getElementById('rec-notas').value.trim();
+  const bloquear = document.getElementById('rec-bloquear').checked;
+
+  if(!nombre)        { showToast('Falta el nombre del cliente'); return; }
+  if(!horario)       { showToast('Selecciona la franja horaria'); return; }
+  if(!recFechas.length) { showToast('Añade al menos una fecha'); return; }
+
+  const btn = document.getElementById('btn-guardar-rec');
+  if(btn) btn.disabled = true;
+
+  let ok = 0;
+  for(const fecha of recFechas) {
+    try {
+      await addDoc(collection(db,'reservas'), {
+        nombre: `${nombre} ${apellidos}`.trim(), apellidos,
+        telefono: tel, email, servicio, personas,
+        fecha, horario, horaExtra: 'Sin horas extra',
+        extras: 'Ninguno', metodoPago: 'Transferencia bancaria',
+        importe: precio, senal: 0,
+        notas: notas || '', origen: 'panel', estado: 'Pendiente',
+        createdAt: serverTimestamp()
+      });
+      ok++;
+    } catch(e) { console.warn('Error guardando sesión', fecha, e); }
+  }
+
+  // Bloquear en calendario si se pidió
+  if(bloquear && horario) {
+    const horarioLimpio = getHorario({ horario });
+    const rangoBase = FRANJAS_RANGOS[horarioLimpio || horario];
+    const esMañana = rangoBase?.turno === 'manana';
+    const esTarde  = rangoBase?.turno === 'tarde';
+
+    for(const fecha of recFechas) {
+      try {
+        const snapDia = await getDocs(query(collection(db,'reservas'), where('fecha','==',fecha)));
+        const confirmadasDia = snapDia.docs.map(d=>({id:d.id,...d.data()}))
+          .filter(r=>(r.estado||'').toLowerCase()==='confirmada');
+        const nuevaRec = { horario: horarioLimpio||horario, horaExtra:'Sin horas extra', estado:'Confirmada' };
+        const { mananaOcupada, tardeOcupada } = calcOcupacion([...confirmadasDia, nuevaRec]);
+        await setDoc(doc(db,'calendario_publico',fecha), {
+          fecha, mananaOcupada, tardeOcupada, updatedAt: serverTimestamp()
+        });
+      } catch(e) { console.warn('Error bloqueando', fecha, e); }
+    }
+  }
+
+  // Actualizar cliente
+  await upsertCliente({ nombre, apellidos, telefono: tel, email });
+
+  showToast(`${ok} sesiones guardadas${bloquear?' · Calendario bloqueado':''} ✓`);
+  closeModal('recurrente');
+  limpiarRec();
+  loadReservas();
+  if(btn) btn.disabled = false;
+};
+
+// ══ BLOQUEO DE DÍAS ══════════════════════════════════════════
+
+let blqFechasSueltas = [];
+let blqTab = 'rango';
+
+function blqSetTab(tab) {
+  blqTab = tab;
+  document.getElementById('blq-panel-rango').style.display   = tab==='rango'   ? '' : 'none';
+  document.getElementById('blq-panel-sueltos').style.display = tab==='sueltos' ? '' : 'none';
+  document.getElementById('blq-tab-rango').style.opacity   = tab==='rango'   ? '1' : '.5';
+  document.getElementById('blq-tab-sueltos').style.opacity = tab==='sueltos' ? '1' : '.5';
+  blqActualizarPreview();
+}
+
+function blqAddFecha() {
+  const input = document.getElementById('blq-fecha-add');
+  const fecha = input?.value;
+  if(!fecha) return;
+  if(!blqFechasSueltas.includes(fecha)) { blqFechasSueltas.push(fecha); blqFechasSueltas.sort(); }
+  input.value = '';
+  renderBlqFechasSueltas();
+  blqActualizarPreview();
+}
+
+function blqRemoveFecha(fecha) {
+  blqFechasSueltas = blqFechasSueltas.filter(f => f !== fecha);
+  renderBlqFechasSueltas();
+  blqActualizarPreview();
+}
+
+function renderBlqFechasSueltas() {
+  const el = document.getElementById('blq-fechas-list');
+  if(!el) return;
+  if(!blqFechasSueltas.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--t3);padding:8px 0;text-align:center">No hay fechas seleccionadas</div>';
+    return;
+  }
+  el.innerHTML = blqFechasSueltas.map(f => {
+    const [y,m,d] = f.split('-');
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--s3);border:1px solid var(--b2);border-radius:7px;font-size:13px">
+      <span><strong>${d}/${m}/${y}</strong></span>
+      <button onclick="blqRemoveFecha('${f}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:0 4px;line-height:1">×</button>
+    </div>`;
+  }).join('');
+}
+
+function blqGetFechas() {
+  if(blqTab === 'sueltos') return [...blqFechasSueltas];
+  const desde = document.getElementById('blq-desde')?.value;
+  const hasta = document.getElementById('blq-hasta')?.value;
+  if(!desde || !hasta) return [];
+  const dows = Array.from(document.querySelectorAll('.blq-dow:checked')).map(c => parseInt(c.value));
+  const fechas = [];
+  const d = new Date(desde + 'T12:00:00');
+  const fin = new Date(hasta + 'T12:00:00');
+  while(d <= fin) {
+    const dow = (d.getDay() + 6) % 7;
+    if(!dows.length || dows.includes(dow)) fechas.push(d.toISOString().split('T')[0]);
+    d.setDate(d.getDate() + 1);
+  }
+  return fechas;
+}
+
+function blqActualizarPreview() {
+  const fechas = blqGetFechas();
+  const prev = document.getElementById('blq-preview');
+  if(!prev) return;
+  prev.style.display = fechas.length ? 'block' : 'none';
+  document.getElementById('blq-preview-n').textContent = fechas.length;
+}
+
+function limpiarBlq() {
+  blqFechasSueltas = [];
+  blqTab = 'rango';
+  blqSetTab('rango');
+  ['blq-desde','blq-hasta','blq-fecha-add'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
+  document.getElementById('blq-preview').style.display = 'none';
+  renderBlqFechasSueltas();
+}
+
+window.saveBloqueo = async () => {
+  const fechas = blqGetFechas();
+  if(!fechas.length) { showToast('No hay fechas para bloquear'); return; }
+
+  const manana = document.getElementById('blq-manana')?.checked || false;
+  const tarde  = document.getElementById('blq-tarde')?.checked  || false;
+  const diaComp= document.getElementById('blq-diacomp')?.checked || false;
+  if(!manana && !tarde && !diaComp) { showToast('Selecciona al menos un turno'); return; }
+
+  const btn = document.getElementById('btn-guardar-blq');
+  if(btn) btn.disabled = true;
+
+  const motivo = document.getElementById('blq-motivo')?.value || 'Bloqueo';
+  let ok = 0;
+  for(const fecha of fechas) {
+    try {
+      await setDoc(doc(db,'calendario_publico',fecha), {
+        fecha,
+        mananaOcupada: manana || diaComp,
+        tardeOcupada:  tarde  || diaComp,
+        diaOcupado:    diaComp,
+        motivo,
+        updatedAt: serverTimestamp()
+      });
+      ok++;
+    } catch(e) { console.warn('Error bloqueando', fecha, e); }
+  }
+
+  showToast(`${ok} días bloqueados en el calendario ✓`);
+  closeModal('bloqueo');
+  limpiarBlq();
+  if(btn) btn.disabled = false;
+};
+
+// Añadir listeners para actualizar preview en tiempo real
+document.addEventListener('change', e => {
+  if(e.target.classList.contains('blq-dow') ||
+     e.target.id === 'blq-desde' || e.target.id === 'blq-hasta') {
+    blqActualizarPreview();
+  }
+  if(e.target.id === 'rec-precio') renderRecFechas();
+});
+
 window.exportClientes = () => {
   const csv = ['Nombre,Email,Teléfono,Reservas', ...allClientes.map(c=>`${c.nombre},${c.email},${c.telefono},${c.reservas}`)].join('\n');
   const a = document.createElement('a');
@@ -2870,8 +3404,13 @@ const _origOpenModal = window.openModal;
 window.openModal = function(id) {
   if(id === 'promo' && !document.getElementById('p-edit-id').value) limpiarModalPromo();
   if(id === 'res') {
-    // Inicializar extras al abrir el modal de reserva
     setTimeout(() => renderExtrasChecks(), 50);
+  }
+  if(id === 'recurrente') {
+    setTimeout(() => initRecModal(), 50);
+  }
+  if(id === 'bloqueo') {
+    setTimeout(() => { blqSetTab('rango'); blqActualizarPreview(); }, 50);
   }
   _origOpenModal(id);
 };
