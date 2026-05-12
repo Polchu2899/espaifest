@@ -2222,8 +2222,8 @@ function buildEmailCliente(params, lang) {
   const lHext      = ca ? '⏱️ Hora extra:'             : '⏱️ Hora extra:';
   const tPag       = ca ? 'Com confirmar la teva reserva' : 'Cómo confirmar tu reserva';
   const txtPag     = ca
-    ? `Realitza el pagament de la senyal del 50% (<strong>${params.senal_50}</strong>) per:<br><br><strong>Bizum:</strong> 674 379 709<br><strong>Transferència:</strong> Indica el teu nom i data de reserva<br><br>Un cop rebut el pagament, la Laura confirmarà la teva reserva per WhatsApp.`
-    : `Realiza el pago de la señal del 50% (<strong>${params.senal_50}</strong>) por:<br><br><strong>Bizum:</strong> 674 379 709<br><strong>Transferencia:</strong> Indica tu nombre y fecha de reserva<br><br>Una vez recibido el pago, Laura confirmará tu reserva por WhatsApp.`;
+    ? `Realitza el pagament de la senyal del 50% (<strong>${params.senal_50}</strong>) per:<br><br><strong>Bizum:</strong> 674 379 709<br><strong>Transferència bancària:</strong> ES91 0081 2706 1300 0878 56 — indica el teu nom i data de reserva com a concepte<br><br>Un cop rebut el pagament, la Laura confirmarà la teva reserva per WhatsApp.`
+    : `Realiza el pago de la señal del 50% (<strong>${params.senal_50}</strong>) por:<br><br><strong>Bizum:</strong> 674 379 709<br><strong>Transferencia bancaria:</strong> ES91 0081 2706 1300 0878 56 — indica tu nombre y fecha de reserva como concepto<br><br>Una vez recibido el pago, Laura confirmará tu reserva por WhatsApp.`;
   const lDubtes    = ca ? 'Tens dubtes? Escriu-nos a' : '¿Tienes dudas? Escríbenos a';
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
@@ -2364,7 +2364,6 @@ window.saveReserva = async () => {
       await setDoc(doc(db,'calendario_publico', fecha), {
         fecha, mananaOcupada, tardeOcupada, updatedAt: serverTimestamp()
       });
-      console.log('[bloqueo] fecha:', fecha, '| horario limpio:', horarioLimpio, '| horaExtra:', horaExtStr, '| mañana:', mananaOcupada, '| tarde:', tardeOcupada);
     } catch(e) { console.warn('Error bloqueando calendario:', e); }
   }
 
@@ -2638,7 +2637,6 @@ window.confirmarReserva = async (id) => {
     // Incluir la actual como confirmada para calcular bien
     const todasConfirmadas = [...otrasConfirmadas, {...reserva, estado:'Confirmada'}];
     const { mananaOcupada, tardeOcupada } = calcOcupacion(todasConfirmadas);
-    console.log('Confirmando:', reserva.fecha, getHorario(reserva), reserva.horaExtra||'sin extra', '→ mañana:', mananaOcupada, 'tarde:', tardeOcupada);
     await setDoc(doc(db, 'calendario_publico', reserva.fecha), {
       fecha: reserva.fecha,
       mananaOcupada,
