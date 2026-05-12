@@ -2020,7 +2020,8 @@ function renderReservas(list) {
       : '';
     // "Nueva" = llegó de la web y Laura aún no la ha abierto
     const esNueva = r.origen === 'web' && !r.vista;
-    const badgeNueva = esNueva ? '<span class="badge-nueva">✦ Nueva</span>' : '';\n    const rowClass = esNueva ? 'trow rc nueva' : 'trow rc';
+    const badgeNueva = esNueva ? '<span class="badge-nueva">✦ Nueva</span>' : '';
+    const rowClass = esNueva ? 'trow rc nueva' : 'trow rc';
     // Fecha creación formateada
     const fechaCreada = tsCreado > 0 ? new Date(tsCreado).toLocaleDateString('es-ES',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
     // Total
