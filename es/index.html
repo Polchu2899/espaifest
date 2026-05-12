@@ -1943,9 +1943,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
     <!-- CTA -->
     <div style="text-align:center;margin-top:36px" data-a="up">
-      <a href="#reservas" class="btn btn-primary">Reservar ara<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <a href="#reservas" class="btn btn-primary">Reservar ahora<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
-      <p style="font-size:.78rem;color:var(--tx2);margin-top:12px">Necessites un horari diferent? Escriu-nos i ho busquem.<a href="https://api.whatsapp.com/send?phone=34674379709" target="_blank" rel="noopener" style="color:var(--ct);text-decoration:none">Escríbenos y lo buscamos →</a></p>
+      <p style="font-size:.78rem;color:var(--tx2);margin-top:12px">¿Necesitas un horario diferente? <a href="https://api.whatsapp.com/send?phone=34674379709" target="_blank" rel="noopener" style="color:var(--ct);text-decoration:none">Escríbenos y lo buscamos →</a></p>
     </div>
 
     <!-- Servicios adicionales desde Firestore -->
@@ -2011,7 +2011,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
           <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Acceso prioritario en fechas especiales</span></div>
           <div class="fid-perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Notificaciones de últimas horas disponibles</span></div>
         </div>
-        <a href="#reservas" class="btn btn-primary">Començar a acumular<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        <a href="#reservas" class="btn btn-primary">Empezar a acumular<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       </div>
     </div>
   </div>
@@ -2179,7 +2179,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
     <div class="eq-notice" data-a="up">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <p>Tot l'equipament està <strong>inclòs en el preu del lloguer</strong>. Sense costos addicionals ni sorpreses.<strong>incluido en el precio del alquiler</strong>. Sin costes adicionales ni sorpresas.</p>
+      <p>Todo el equipamiento está <strong>incluido en el precio del alquiler</strong>. Sin costes adicionales ni sorpresas.</p>
     </div>
   </div>
 </section>
@@ -3036,16 +3036,21 @@ function webLoadFranjasPorFecha(fechaStr) {
   const d = new Date(fechaStr+'T12:00:00');
   const ddmm = String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
   const esp = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
+
+  // Añadir opción placeholder siempre
+  const opt0 = document.createElement('option');
+  opt0.value = '';
+  opt0.textContent = '— Selecciona franja —';
+  sel.appendChild(opt0);
+
+  // Si hay día especial, añadirlo primero (pero NO hacer return — seguir cargando todas las franjas)
   if(esp) {
-    const opt = document.createElement('option');
-    opt.value = `${esp.celebracion} · ${esp.horario}`;
-    opt.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
-    opt.dataset.precio = esp.precio;
-    opt.dataset.esDiaEsp = '1';
-    sel.appendChild(opt);
-    webUpdatePricePreview(esp.precio, true);
-    calcularTotal();
-    return;
+    const optEsp = document.createElement('option');
+    optEsp.value = `${esp.celebracion} · ${esp.horario}`;
+    optEsp.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
+    optEsp.dataset.precio = esp.precio;
+    optEsp.dataset.esDiaEsp = '1';
+    sel.appendChild(optEsp);
   }
 
   // Franjas normales según día de semana
@@ -3058,14 +3063,13 @@ function webLoadFranjasPorFecha(fechaStr) {
   });
 
   if(!disponibles.length) {
-    sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
+    if(sel.options.length <= 1) {
+      // Solo el placeholder, sin franjas normales ni especiales
+      sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
+    }
+    calcularTotal();
     return;
   }
-
-  const opt0 = document.createElement('option');
-  opt0.value = '';
-  opt0.textContent = '— Selecciona franja —';
-  sel.appendChild(opt0);
 
   disponibles.forEach(f => {
     const precio = f[diaKey];
@@ -3541,29 +3545,20 @@ async function loadBlogPosts() {
 }
 
 // ══ TARIFAS DESDE FIRESTORE → PRECIOS INDEX + CALENDARIO ════
-// onSnapshot = tiempo real: cuando Laura guarda desde el admin, el index se actualiza solo
-let _tarifasLoaded = false;
-function loadTarifasIndex() {
+async function loadTarifasIndex() {
   try {
-    onSnapshot(collection(_db,'tarifas'), (snap) => {
+    const snap = await getDocs(collection(_db,'tarifas'));
+    if(!snap.empty) {
       snap.forEach(d => {
         if(indexTarifas[d.id] !== undefined && d.data().filas) {
           indexTarifas[d.id] = d.data().filas;
         }
       });
-      renderTodosPreciosIndex();
-      if(calSelected) renderFranjas(calSelected);
-      if(!_tarifasLoaded) { _tarifasLoaded = true; loadFechasOcupadas(); }
-    }, (e) => {
-      console.error('[Tarifas] Error Firestore:', e.code, e.message);
-      renderTodosPreciosIndex();
-      loadFechasOcupadas();
-    });
-  } catch(e) {
-    console.error('[Tarifas] Error al suscribir:', e);
-    renderTodosPreciosIndex();
-    loadFechasOcupadas();
-  }
+    }
+  } catch(e) { console.warn('Tarifas index: usando defaults',e); }
+  renderTodosPreciosIndex();
+  loadFechasOcupadas();
+  if(calSelected) renderFranjas(calSelected);
 }
 
 // ══ FECHAS OCUPADAS — CALENDARIO ═════════════════════════════
