@@ -1931,27 +1931,90 @@ window.saveReserva = async () => {
   if(selEl) selEl.style.display = 'none';
 };
 
-const FRANJAS_MANANA = ['10h–14h','11h–15h','10:00–14:00','11:00–15:00','Mañana (10:00-14:00)'];
-const FRANJAS_TARDE  = ['16:30h–20:30h','16:30–20:30','Tarde (16:30-20:30)'];
-const FRANJAS_NOCHE  = ['19:30h–23:30h','21:15h–01:30h','16:30h–01:30h'];
-const FRANJAS_DIA    = ['10h–20h','10:00–20:00','Todo el día'];
+// ── Rangos horarios base (minutos desde medianoche) ──────────────
+// Cada franja tiene inicio y fin base. La hora extra desplaza uno de los extremos.
+const FRANJAS_RANGOS = {
+  // Mañana
+  '10h–14h':          { ini: 10*60,       fin: 14*60,       turno: 'manana' },
+  '11h–15h':          { ini: 11*60,       fin: 15*60,       turno: 'manana' },
+  '10:00–14:00':      { ini: 10*60,       fin: 14*60,       turno: 'manana' },
+  '11:00–15:00':      { ini: 11*60,       fin: 15*60,       turno: 'manana' },
+  'Mañana (10:00-14:00)': { ini: 10*60,   fin: 14*60,       turno: 'manana' },
+  // Tarde
+  '16:30h–20:30h':    { ini: 16*60+30,    fin: 20*60+30,    turno: 'tarde'  },
+  '16:30–20:30':      { ini: 16*60+30,    fin: 20*60+30,    turno: 'tarde'  },
+  'Tarde (16:30-20:30)':  { ini: 16*60+30, fin: 20*60+30,   turno: 'tarde'  },
+  // Tarde-Noche
+  '19:30h–23:30h':    { ini: 19*60+30,    fin: 23*60+30,    turno: 'noche'  },
+  '21:15h–01:30h':    { ini: 21*60+15,    fin: 25*60+30,    turno: 'noche'  }, // +24h para cruzar medianoche
+  '16:30h–01:30h':    { ini: 16*60+30,    fin: 25*60+30,    turno: 'noche'  },
+  // Día completo
+  '10h–20h':          { ini: 10*60,       fin: 20*60,       turno: 'diacomp'},
+  '10:00–20:00':      { ini: 10*60,       fin: 20*60,       turno: 'diacomp'},
+  'Todo el día':      { ini: 10*60,       fin: 20*60,       turno: 'diacomp'},
+};
 
 function getHorario(r) {
   // Prioridad: campo horario directo, luego extraer de notas
   if (r.horario && r.horario.trim()) return r.horario.trim();
   if (r.notas) {
-    // Buscar línea "Franja horaria: HH:MM–HH:MM"
     const linea = r.notas.split('\n').find(l => l.startsWith('Franja horaria:'));
     if (linea) return linea.replace('Franja horaria:', '').trim();
   }
   return '';
 }
 
+// Devuelve el rango real {ini, fin} de una reserva aplicando la hora extra
+function getRangoReal(r) {
+  const horario = getHorario(r);
+  const base = FRANJAS_RANGOS[horario];
+  if (!base) return null;
+
+  let { ini, fin } = base;
+  const extra = (r.horaExtra || '').toLowerCase();
+  if (extra.includes('antes'))  ini  -= 60; // -1h al inicio
+  if (extra.includes('después') || extra.includes('despues')) fin += 60; // +1h al final
+
+  return { ini, fin, turno: base.turno };
+}
+
+// Dos rangos se solapan si uno empieza antes de que termine el otro
+function seSuperponen(a, b) {
+  return a.ini < b.fin && b.ini < a.fin;
+}
+
+// Dado un conjunto de reservas confirmadas, detecta qué turnos quedan bloqueados
+// Un turno queda bloqueado si ALGUNA de sus franjas base choca con CUALQUIER rango real confirmado
+function calcOcupacion(reservasConfirmadas) {
+  const rangosConfirmados = reservasConfirmadas
+    .map(r => getRangoReal(r))
+    .filter(Boolean);
+
+  // Franjas base de cada turno para testear solapamiento
+  const franjasManana = [
+    { ini: 10*60, fin: 14*60 }, // 10h–14h
+    { ini: 11*60, fin: 15*60 }, // 11h–15h
+  ];
+  const franjasTarde = [
+    { ini: 16*60+30, fin: 20*60+30 }, // 16:30h–20:30h
+  ];
+
+  // Un turno está ocupado si alguna de sus franjas base se solapa con algún rango confirmado
+  const mananaOcupada = franjasManana.some(f =>
+    rangosConfirmados.some(rc => seSuperponen(f, rc))
+  );
+  const tardeOcupada = franjasTarde.some(f =>
+    rangosConfirmados.some(rc => seSuperponen(f, rc))
+  );
+
+  return { mananaOcupada, tardeOcupada };
+}
+
 function getTurno(horario) {
-  if (!horario) return null;
-  if (FRANJAS_MANANA.includes(horario)) return 'manana';
-  if (FRANJAS_TARDE.includes(horario))  return 'tarde';
-  return null;
+  // Mantenido por compatibilidad — usar calcOcupacion() para lógica nueva
+  const base = FRANJAS_RANGOS[horario];
+  if (!base) return null;
+  return base.turno;
 }
 
 // ── MODAL DETALLE RESERVA ─────────────────────────────────────
@@ -2040,10 +2103,8 @@ window.confirmarReserva = async (id) => {
   if (!reserva) return;
   // 1. Actualizar estado en Firestore
   await updateDoc(doc(db,'reservas',id), {estado:'Confirmada'});
-  // 2. Calcular turnos ocupados ese día (incluir esta reserva ya como confirmada)
+  // 2. Calcular turnos ocupados ese día considerando rangos reales (con horas extra)
   if (reserva.fecha) {
-    const horarioEsta = getHorario(reserva);
-    const turnoEsta   = getTurno(horarioEsta);
     // Reservas ya confirmadas ese día (sin contar la actual)
     const otrasConfirmadas = allReservas.filter(r =>
       r.id !== id &&
@@ -2052,9 +2113,8 @@ window.confirmarReserva = async (id) => {
     );
     // Incluir la actual como confirmada para calcular bien
     const todasConfirmadas = [...otrasConfirmadas, {...reserva, estado:'Confirmada'}];
-    const mananaOcupada = todasConfirmadas.some(r => getTurno(getHorario(r)) === 'manana');
-    const tardeOcupada  = todasConfirmadas.some(r => getTurno(getHorario(r)) === 'tarde');
-    console.log('Confirmando:', reserva.fecha, horarioEsta, 'turno:', turnoEsta, 'mañana:', mananaOcupada, 'tarde:', tardeOcupada);
+    const { mananaOcupada, tardeOcupada } = calcOcupacion(todasConfirmadas);
+    console.log('Confirmando:', reserva.fecha, getHorario(reserva), reserva.horaExtra||'sin extra', '→ mañana:', mananaOcupada, 'tarde:', tardeOcupada);
     await setDoc(doc(db, 'calendario_publico', reserva.fecha), {
       fecha: reserva.fecha,
       mananaOcupada,
@@ -2082,8 +2142,7 @@ window.cancelarReserva = async (id) => {
     if (confirmadasHoy.length === 0) {
       await deleteDoc(doc(db, 'calendario_publico', reserva.fecha));
     } else {
-      const mananaOcupada = confirmadasHoy.some(r => getTurno(getHorario(r)) === 'manana');
-      const tardeOcupada  = confirmadasHoy.some(r => getTurno(getHorario(r)) === 'tarde');
+      const { mananaOcupada, tardeOcupada } = calcOcupacion(confirmadasHoy);
       await setDoc(doc(db, 'calendario_publico', reserva.fecha), {
         fecha: reserva.fecha,
         mananaOcupada,
