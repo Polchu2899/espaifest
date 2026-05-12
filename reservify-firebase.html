@@ -1131,6 +1131,27 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             <div class="cfitem"><div class="cflbl">Soporte</div><div class="cfval" style="color:var(--teal)">Lucas y Leo Digital</div></div>
           </div></div>
         </div>
+
+        <!-- GESTIÓN MANUAL DE BLOQUEOS DE CALENDARIO -->
+        <div class="card" style="margin-top:20px">
+          <div class="chead">
+            <div><div class="ctitle">Bloqueos del calendario</div><div class="csub">Gestiona manualmente los días bloqueados en la web pública</div></div>
+            <button class="btn bg sm" onclick="cargarBloqueos()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Recargar</button>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-end">
+            <div class="fg" style="flex:1;min-width:160px;margin:0">
+              <label class="fl">Desbloquear fecha manualmente</label>
+              <input type="date" class="fi" id="cal-desbloquear-fecha" style="margin-top:4px">
+            </div>
+            <button class="btn" style="background:var(--red,#ef4444);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap" onclick="desbloquearFechaManual()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+              Desbloquear
+            </button>
+          </div>
+          <div id="bloqueos-list" style="display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;">
+            <div style="font-size:13px;color:var(--t3);padding:12px 0">Pulsa "Recargar" para ver los bloqueos activos</div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -1740,15 +1761,22 @@ async function loadReservas() {
     // Ordenar en cliente por fecha de reserva desc para consistencia.
     const snap = await getDocs(collection(db,'reservas'));
     allReservas = snap.docs.map(d => ({id:d.id,...d.data()}));
-    // Ordenar por createdAt desc (más reciente primero)
-    // Soporta: Firestore Timestamp, string ISO, null/undefined
+    // Ordenar por createdAt desc — soporta Firestore Timestamp, string ISO, string fecha, null
     const tsOf = v => {
       if(!v) return 0;
-      if(typeof v.toMillis === 'function') return v.toMillis();
+      if(typeof v.toMillis === 'function') return v.toMillis();      // Firestore Timestamp
       const n = new Date(v).getTime();
       return isNaN(n) ? 0 : n;
     };
-    allReservas.sort((a,b) => tsOf(b.createdAt) - tsOf(a.createdAt));
+    // Reservas sin Timestamp van al final; entre ellas ordenar por fecha del evento desc
+    allReservas.sort((a,b) => {
+      const ta = tsOf(a.createdAt);
+      const tb = tsOf(b.createdAt);
+      if(ta === 0 && tb === 0) return (b.fecha||'').localeCompare(a.fecha||'');
+      if(ta === 0) return 1;   // a sin timestamp → va después
+      if(tb === 0) return -1;  // b sin timestamp → va después
+      return tb - ta;          // ambos con timestamp → más reciente primero
+    });
     renderReservas(allReservas);
     updateDashboard();
   } catch(e) {
@@ -2531,6 +2559,62 @@ window.eliminarCliente = async (id, nombre) => {
     showToast('Error al eliminar cliente');
     console.error(e);
   }
+};
+
+// ── GESTIÓN MANUAL DE BLOQUEOS ────────────────────────────────
+window.cargarBloqueos = async () => {
+  const el = document.getElementById('bloqueos-list');
+  if(!el) return;
+  el.innerHTML = '<div style="font-size:13px;color:var(--t3);padding:8px 0">Cargando...</div>';
+  try {
+    const snap = await getDocs(collection(db,'calendario_publico'));
+    const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      .sort((a,b) => (a.fecha||'').localeCompare(b.fecha||''));
+
+    if(!docs.length) {
+      el.innerHTML = '<div style="font-size:13px;color:var(--t3);padding:8px 0">No hay bloqueos activos</div>';
+      return;
+    }
+
+    el.innerHTML = docs.map(d => {
+      const turnos = [
+        d.mananaOcupada ? '<span style="background:rgba(249,115,22,.15);color:#f97316;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">Mañana</span>' : '',
+        d.tardeOcupada  ? '<span style="background:rgba(249,115,22,.15);color:#f97316;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">Tarde</span>' : '',
+        d.diaOcupado    ? '<span style="background:rgba(239,68,68,.15);color:#ef4444;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">Día completo</span>' : '',
+      ].filter(Boolean).join(' ');
+      return `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--s3);border:1px solid var(--b2);border-radius:8px;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span style="font-size:13px;font-weight:700;color:var(--tx)">${d.fecha||d.id}</span>
+            <div style="display:flex;gap:4px;flex-wrap:wrap">${turnos||'<span style="font-size:11px;color:var(--t3)">sin datos</span>'}</div>
+          </div>
+          <button onclick="desbloquearFecha('${d.fecha||d.id}')" style="background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
+            Desbloquear
+          </button>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = `<div style="font-size:13px;color:#ef4444;padding:8px 0">Error: ${e.message}</div>`;
+  }
+};
+
+window.desbloquearFecha = async (fecha) => {
+  if(!fecha) return;
+  if(!confirm(`¿Desbloquear el día ${fecha} en el calendario público?`)) return;
+  try {
+    await deleteDoc(doc(db,'calendario_publico', fecha));
+    showToast(`${fecha} desbloqueado ✓`);
+    cargarBloqueos();
+  } catch(e) {
+    showToast('Error: ' + e.message);
+  }
+};
+
+window.desbloquearFechaManual = async () => {
+  const fecha = document.getElementById('cal-desbloquear-fecha')?.value;
+  if(!fecha) { showToast('Selecciona una fecha primero'); return; }
+  await desbloquearFecha(fecha);
+  document.getElementById('cal-desbloquear-fecha').value = '';
 };
 
 window.exportClientes = () => {
