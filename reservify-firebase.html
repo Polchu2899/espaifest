@@ -1596,7 +1596,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="det-field"><div class="det-label">Email</div><div class="det-value" id="det-email">—</div></div>
       <!-- Reserva -->
       <div class="det-field full" style="grid-column:1/-1;font:700 .65rem var(--t2);text-transform:uppercase;letter-spacing:.08em;padding-bottom:4px;border-bottom:1px solid var(--b2);margin-bottom:4px;margin-top:8px;">Detalles de la reserva</div>
-      <div class="det-field"><div class="det-label">Fecha</div><div class="det-value" id="det-fecha">—</div></div>
+      <div class="det-field"><div class="det-label">Fecha del evento</div><div class="det-value" id="det-fecha">—</div></div>
+      <div class="det-field"><div class="det-label">Reservado el</div><div class="det-value" id="det-creado" style="color:var(--t3);font-size:.85rem">—</div></div>
       <div class="det-field"><div class="det-label">Franja horaria</div><div class="det-value" id="det-horario">—</div></div>
       <div class="det-field"><div class="det-label">Tipo de evento</div><div class="det-value" id="det-servicio">—</div></div>
       <div class="det-field"><div class="det-label">Personas</div><div class="det-value" id="det-personas">—</div></div>
@@ -1965,21 +1966,37 @@ async function loadReservas() {
     // Ordenar por createdAt desc — soporta Firestore Timestamp, string ISO, string fecha, null
     const tsOf = v => {
       if(!v) return 0;
-      if(typeof v.toMillis === 'function') return v.toMillis();      // Firestore Timestamp
+      if(typeof v.toMillis === 'function') return v.toMillis(); // Firestore Timestamp real
       const n = new Date(v).getTime();
       return isNaN(n) ? 0 : n;
     };
-    // Reservas sin Timestamp van al final; entre ellas ordenar por fecha del evento desc
+    const esTimestampReal = v => v && typeof v.toMillis === 'function';
     allReservas.sort((a,b) => {
-      const ta = tsOf(a.createdAt);
-      const tb = tsOf(b.createdAt);
-      if(ta === 0 && tb === 0) return (b.fecha||'').localeCompare(a.fecha||'');
-      if(ta === 0) return 1;   // a sin timestamp → va después
-      if(tb === 0) return -1;  // b sin timestamp → va después
-      return tb - ta;          // ambos con timestamp → más reciente primero
+      const aReal = esTimestampReal(a.createdAt);
+      const bReal = esTimestampReal(b.createdAt);
+      // Timestamps reales siempre antes que strings importados
+      if(aReal && !bReal) return -1;
+      if(!aReal && bReal) return 1;
+      // Ambos reales → más reciente primero
+      if(aReal && bReal) return tsOf(b.createdAt) - tsOf(a.createdAt);
+      // Ambos importados → ordenar por fecha del evento descendente
+      return (b.fecha||'').localeCompare(a.fecha||'');
     });
     renderReservas(allReservas);
     updateDashboard();
+
+    // Migración silenciosa: marcar vista:true en confirmadas que no lo tienen
+    const sinVista = allReservas.filter(r =>
+      r.origen === 'web' && !r.vista &&
+      (r.estado||'').toLowerCase() === 'confirmada'
+    );
+    if(sinVista.length > 0) {
+      sinVista.forEach(r => { r.vista = true; });
+      Promise.all(sinVista.map(r =>
+        updateDoc(doc(db,'reservas',r.id), { vista: true })
+      )).then(() => { renderReservas(allReservas); updateDashboard(); })
+        .catch(e => console.warn('Migración vista:', e));
+    }
   } catch(e) {
     document.getElementById('reservas-list').innerHTML = '<div class="empty">Error al cargar reservas. Verifica los permisos de Firestore.</div>';
     console.error('loadReservas error:', e);
@@ -2539,7 +2556,9 @@ window.openDet = function(id) {
   document.getElementById('det-loc').textContent           = [r.localidad, r.cp].filter(Boolean).join(' · ') || '—';
   document.getElementById('det-tel').textContent           = r.telefono || '—';
   document.getElementById('det-email').textContent         = r.email || '—';
-  document.getElementById('det-fecha').textContent         = r.fecha || '—';
+  document.getElementById('det-fecha').textContent         = r.fecha ? r.fecha.split('-').reverse().join('/') : '—';
+  const tsCr = r.createdAt?.toMillis?.() || new Date(r.createdAt||0).getTime();
+  document.getElementById('det-creado').textContent        = tsCr > 0 ? new Date(tsCr).toLocaleString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
   document.getElementById('det-horario').textContent       = horario || r.horario || '—';
   document.getElementById('det-servicio').textContent      = r.servicio || '—';
   document.getElementById('det-personas').textContent      = r.personas || '—';
