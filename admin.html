@@ -460,6 +460,7 @@ body {
   font-size: .8rem;
   color: var(--tx3);
   min-height: 18px;
+}
 
 /* ── TRADUCTOR ── */
 .trad-dir {
@@ -507,7 +508,6 @@ body {
   color: var(--tx3);
   text-align: center;
   min-height: 16px;
-}
 }
 
 /* ── MODAL CONFIRMACIÓN ── */
@@ -619,79 +619,79 @@ body {
         <div class="editor-main">
 
           <div class="field-group">
-            <label class="field-label">Título del post *</label>
-            <input type="text" class="field-input" id="e-titulo" placeholder="Escribe el título aquí…">
+            <label class="field-label">Títol del post * <span style="background:oklch(68% .22 38 / .15);color:var(--co);font-size:.72rem;padding:2px 8px;border-radius:99px;font-weight:700;text-transform:none;letter-spacing:0;margin-left:6px;font-family:'DM Sans',sans-serif">CA</span></label>
+            <input type="text" class="field-input" id="e-titulo-ca" placeholder="Escriu el títol aquí…">
           </div>
 
           <div class="field-group">
-            <label class="field-label">Extracto <span style="color:var(--tx3);font-weight:400;text-transform:none">(resumen corto que aparece en la web)</span></label>
-            <textarea class="field-textarea" id="e-extracto" placeholder="Una o dos frases que resuman el post…" rows="2"></textarea>
+            <label class="field-label">Extracte <span style="color:var(--tx3);font-weight:400;text-transform:none">(resum curt que apareix a la web)</span></label>
+            <textarea class="field-textarea" id="e-extracto-ca" placeholder="Una o dues frases que resumeixin el post…" rows="2"></textarea>
           </div>
 
           <div class="field-group">
-            <label class="field-label">Contenido</label>
+            <label class="field-label">Contingut <span style="background:oklch(68% .22 38 / .15);color:var(--co);font-size:.72rem;padding:2px 8px;border-radius:99px;font-weight:700;text-transform:none;letter-spacing:0;margin-left:6px;font-family:'DM Sans',sans-serif">CA</span></label>
             <div class="rich-wrap">
               <div class="rich-toolbar">
-                <button class="tb-btn" onclick="fmt('bold')" title="Negrita"><strong>N</strong></button>
-                <button class="tb-btn" onclick="fmt('italic')" title="Cursiva"><em>C</em></button>
-                <button class="tb-btn" onclick="fmt('underline')" title="Subrayado"><u>S</u></button>
+                <button class="tb-btn" onclick="fmtCA('bold')" title="Negreta"><strong>N</strong></button>
+                <button class="tb-btn" onclick="fmtCA('italic')" title="Cursiva"><em>C</em></button>
+                <button class="tb-btn" onclick="fmtCA('underline')" title="Subratllat"><u>S</u></button>
                 <div class="tb-sep"></div>
-                <button class="tb-btn" onclick="fmtBlock('p')" title="Párrafo normal" style="font-size:.75rem">¶ P</button>
-                <button class="tb-btn" onclick="fmtBlock('h2')" title="Título grande">H2</button>
-                <button class="tb-btn" onclick="fmtBlock('h3')" title="Título pequeño">H3</button>
+                <button class="tb-btn" onclick="fmtBlockCA('p')" title="Paràgraf normal" style="font-size:.75rem">¶ P</button>
+                <button class="tb-btn" onclick="fmtBlockCA('h2')" title="Títol gran">H2</button>
+                <button class="tb-btn" onclick="fmtBlockCA('h3')" title="Títol petit">H3</button>
                 <div class="tb-sep"></div>
-                <button class="tb-btn" onclick="fmt('insertUnorderedList')" title="Lista">
+                <button class="tb-btn" onclick="fmtCA('insertUnorderedList')" title="Llista">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/></svg>
                 </button>
                 <div class="tb-sep"></div>
-                <button class="tb-btn" onclick="insertLink()" title="Enlace">
+                <button class="tb-btn" onclick="insertLinkCA()" title="Enllaç">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
                 </button>
                 <div class="tb-sep"></div>
                 <span style="font-size:10px;color:var(--tx3);align-self:center;padding:0 2px">Color:</span>
-                <button class="tb-btn color-swatch" onclick="setColor('#FFFFFF')" title="Blanco" style="background:#fff;border-color:#555"></button>
-                <button class="tb-btn color-swatch" onclick="setColor('#111111')" title="Negro" style="background:#111;border-color:#555"></button>
-                <button class="tb-btn color-swatch" onclick="setColor('#F5A623')" title="Naranja" style="background:#F5A623;border-color:#F5A623"></button>
-                <button class="tb-btn color-swatch" onclick="setColor('#E91E8C')" title="Rosa" style="background:#E91E8C;border-color:#E91E8C"></button>
-                <button class="tb-btn color-swatch" onclick="setColor('#0FC4C4')" title="Teal" style="background:#0FC4C4;border-color:#0FC4C4"></button>
-                <button class="tb-btn color-swatch" onclick="setColor('#7C3AED')" title="Morado" style="background:#7C3AED;border-color:#7C3AED"></button>
+                <button class="tb-btn color-swatch" onclick="setColorCA('#FFFFFF')" title="Blanc" style="background:#fff;border-color:#555"></button>
+                <button class="tb-btn color-swatch" onclick="setColorCA('#111111')" title="Negre" style="background:#111;border-color:#555"></button>
+                <button class="tb-btn color-swatch" onclick="setColorCA('#F5A623')" title="Taronja" style="background:#F5A623;border-color:#F5A623"></button>
+                <button class="tb-btn color-swatch" onclick="setColorCA('#E91E8C')" title="Rosa" style="background:#E91E8C;border-color:#E91E8C"></button>
+                <button class="tb-btn color-swatch" onclick="setColorCA('#0FC4C4')" title="Teal" style="background:#0FC4C4;border-color:#0FC4C4"></button>
+                <button class="tb-btn color-swatch" onclick="setColorCA('#7C3AED')" title="Morat" style="background:#7C3AED;border-color:#7C3AED"></button>
                 <div class="tb-sep"></div>
-                <button class="tb-btn" onclick="quitarFormato()" title="Quitar formato" style="font-size:.75rem;padding:3px 8px">✕ fmt</button>
+                <button class="tb-btn" onclick="quitarFormatCA()" title="Treure format" style="font-size:.75rem;padding:3px 8px">✕ fmt</button>
               </div>
-              <div class="rich-editor" id="e-contenido" contenteditable="true" data-placeholder="Escribe aquí el contenido del post…"></div>
+              <div class="rich-editor" id="e-contenido-ca" contenteditable="true" data-placeholder="Escriu aquí el contingut en català…"></div>
             </div>
           </div>
 
-          <!-- ── VERSIÓN CATALÁN ── -->
+          <!-- ── VERSIÓ CASTELLÀ (opcional) ── -->
           <details style="border:1px solid var(--br);border-radius:12px;padding:0;margin-top:8px">
             <summary style="padding:14px 16px;cursor:pointer;font:700 .78rem 'Syne',sans-serif;text-transform:uppercase;letter-spacing:.08em;list-style:none;display:flex;align-items:center;justify-content:space-between">
-              🟡 Versión en catalán <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx3);font-family:'DM Sans',sans-serif;font-size:.75rem">(opcional — si no lo rellenas se muestra el castellano)</span>
+              🇪🇸 Versión en castellano <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx3);font-family:'DM Sans',sans-serif;font-size:.75rem">(opcional — si no ho ompleixes es mostra el català)</span>
               <span style="color:var(--tx3);font-size:14px">▾</span>
             </summary>
             <div style="padding:0 16px 16px;border-top:1px solid var(--br);margin-top:0">
               <div class="field-group" style="margin-top:14px">
-                <label class="field-label">Títol (CA)</label>
-                <input type="text" class="field-input" id="e-titulo-ca" placeholder="Escriu el títol aquí…">
+                <label class="field-label">Título (ES)</label>
+                <input type="text" class="field-input" id="e-titulo" placeholder="Escribe el título en castellano…">
               </div>
               <div class="field-group">
-                <label class="field-label">Extracte (CA)</label>
-                <textarea class="field-textarea" id="e-extracto-ca" placeholder="Una o dues frases que resumeixin el post…" rows="2"></textarea>
+                <label class="field-label">Extracto (ES)</label>
+                <textarea class="field-textarea" id="e-extracto" placeholder="Una o dos frases que resuman el post en castellano…" rows="2"></textarea>
               </div>
               <div class="field-group">
-                <label class="field-label">Contingut (CA) <span style="color:var(--tx3);font-weight:400;text-transform:none">(HTML — puedes copiar y pegar desde el castellano y traducir)</span></label>
+                <label class="field-label">Contenido (ES)</label>
                 <div class="rich-wrap">
                   <div class="rich-toolbar">
-                    <button class="tb-btn" onclick="fmtCA('bold')" title="Negreta"><strong>N</strong></button>
-                    <button class="tb-btn" onclick="fmtCA('italic')" title="Cursiva"><em>C</em></button>
-                    <button class="tb-btn" onclick="fmtCA('underline')" title="Subratllat"><u>S</u></button>
+                    <button class="tb-btn" onclick="fmt('bold')" title="Negrita"><strong>N</strong></button>
+                    <button class="tb-btn" onclick="fmt('italic')" title="Cursiva"><em>C</em></button>
+                    <button class="tb-btn" onclick="fmt('underline')" title="Subrayado"><u>S</u></button>
                     <div class="tb-sep"></div>
-                    <button class="tb-btn" onclick="fmtBlockCA('p')" style="font-size:.75rem">¶ P</button>
-                    <button class="tb-btn" onclick="fmtBlockCA('h2')">H2</button>
-                    <button class="tb-btn" onclick="fmtBlockCA('h3')">H3</button>
+                    <button class="tb-btn" onclick="fmtBlock('p')" style="font-size:.75rem">¶ P</button>
+                    <button class="tb-btn" onclick="fmtBlock('h2')">H2</button>
+                    <button class="tb-btn" onclick="fmtBlock('h3')">H3</button>
                     <div class="tb-sep"></div>
-                    <button class="tb-btn" onclick="copiarContenidoAlCA()" title="Copiar contenido ES al editor CA" style="font-size:.72rem;padding:3px 8px">📋 Copiar ES→CA</button>
+                    <button class="tb-btn" onclick="copiarContenidoAlES()" title="Copiar contenido CA al editor ES" style="font-size:.72rem;padding:3px 8px">📋 Copiar CA→ES</button>
                   </div>
-                  <div class="rich-editor" id="e-contenido-ca" contenteditable="true" data-placeholder="Escriu aquí el contingut en català…" style="min-height:160px"></div>
+                  <div class="rich-editor" id="e-contenido" contenteditable="true" data-placeholder="Escribe aquí el contenido en castellano…" style="min-height:160px"></div>
                 </div>
               </div>
             </div>
@@ -741,10 +741,10 @@ body {
             <div>
               <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:6px">Dirección</div>
               <div class="trad-dir">
-                <button class="trad-dir-btn active" id="trad-es-ca" onclick="setTradDir('es','ca')">
+                <button class="trad-dir-btn" id="trad-es-ca" onclick="setTradDir('es','ca')">
                   🇪🇸 ES<br><span style="font-size:.9em">↓</span><br>🟡 CA
                 </button>
-                <button class="trad-dir-btn" id="trad-ca-es" onclick="setTradDir('ca','es')">
+                <button class="trad-dir-btn active" id="trad-ca-es" onclick="setTradDir('ca','es')">
                   🟡 CA<br><span style="font-size:.9em">↓</span><br>🇪🇸 ES
                 </button>
               </div>
@@ -979,22 +979,22 @@ window.backToList = function() {
 
 // ── Guardar post ──────────────────────────────────────────
 window.savePost = async function(estadoOverride) {
-  const titulo      = document.getElementById('e-titulo').value.trim();
-  const extracto    = document.getElementById('e-extracto').value.trim();
-  const contenido   = document.getElementById('e-contenido').innerHTML.trim();
-  const titulo_ca   = document.getElementById('e-titulo-ca')?.value.trim()    || titulo;
-  const extracto_ca = document.getElementById('e-extracto-ca')?.value.trim()  || extracto;
-  const contenido_ca= document.getElementById('e-contenido-ca')?.innerHTML.trim() || contenido;
+  const titulo_ca   = document.getElementById('e-titulo-ca').value.trim();
+  const extracto_ca = document.getElementById('e-extracto-ca').value.trim();
+  const contenido_ca= document.getElementById('e-contenido-ca').innerHTML.trim();
+  const titulo      = document.getElementById('e-titulo')?.value.trim()    || titulo_ca;
+  const extracto    = document.getElementById('e-extracto')?.value.trim()  || extracto_ca;
+  const contenido   = document.getElementById('e-contenido')?.innerHTML.trim() || contenido_ca;
   const estado      = estadoOverride || document.getElementById('e-estado').value;
   const categoria   = document.getElementById('e-cat').value;
   const imagenURL   = normalizeDriveURL(document.getElementById('e-img').value.trim());
 
-  if(!titulo) { showToast('El título es obligatorio'); return; }
+  if(!titulo_ca) { showToast('El títol és obligatori'); return; }
 
   const msgEl = document.getElementById('saving-msg');
   msgEl.textContent = 'Guardando…';
 
-  const slug = titulo.toLowerCase()
+  const slug = titulo_ca.toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .replace(/[^a-z0-9\s-]/g,'')
     .trim().replace(/\s+/g,'-');
@@ -1117,19 +1117,21 @@ window.insertLink = function() {
   }
 };
 
-// Enter crea párrafo nuevo — fix del wrap
-document.getElementById('e-contenido').addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) {
+// Enter crea párrafo nuevo y paste plano — ambos editores
+['e-contenido-ca', 'e-contenido'].forEach(id => {
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      document.execCommand('insertParagraph');
+    }
+  });
+  el.addEventListener('paste', e => {
     e.preventDefault();
-    document.execCommand('insertParagraph');
-  }
-});
-
-// Prevenir paste con formato pesado — pegar solo texto plano
-document.getElementById('e-contenido').addEventListener('paste', e => {
-  e.preventDefault();
-  const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-  document.execCommand('insertText', false, text);
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+    document.execCommand('insertText', false, text);
+  });
 });
 
 // ── Toast ─────────────────────────────────────────────────
@@ -1143,8 +1145,8 @@ window.showToast = function(msg) {
 };
 
 // ── TRADUCTOR CON GOOGLE TRANSLATE ──────────────────────
-let _tradDe = 'es';
-let _tradA  = 'ca';
+let _tradDe = 'ca';
+let _tradA  = 'es';
 
 window.setTradDir = function(de, a) {
   _tradDe = de;
@@ -1181,7 +1183,7 @@ window.abrirGoogleTranslate = function(campo) {
   showToast('Google Translate abierto — copia la traducción y pégala en el campo correspondiente');
 };
 
-// ── Editor catalán ──────────────────────────────────────
+// ── Editor catalán (principal) ────────────────────────
 window.fmtCA = function(cmd) {
   document.getElementById('e-contenido-ca')?.focus();
   document.execCommand(cmd, false, null);
@@ -1190,12 +1192,28 @@ window.fmtBlockCA = function(tag) {
   document.getElementById('e-contenido-ca')?.focus();
   document.execCommand('formatBlock', false, tag);
 };
-window.copiarContenidoAlCA = function() {
-  const src = document.getElementById('e-contenido');
-  const dst = document.getElementById('e-contenido-ca');
+window.setColorCA = function(color) {
+  document.getElementById('e-contenido-ca')?.focus();
+  document.execCommand('foreColor', false, color);
+};
+window.quitarFormatCA = function() {
+  document.getElementById('e-contenido-ca')?.focus();
+  document.execCommand('formatBlock', false, 'p');
+  document.execCommand('removeFormat', false, null);
+};
+window.insertLinkCA = function() {
+  const url = prompt("URL de l'enllaç:");
+  if (url) {
+    document.getElementById('e-contenido-ca')?.focus();
+    document.execCommand('createLink', false, url);
+  }
+};
+window.copiarContenidoAlES = function() {
+  const src = document.getElementById('e-contenido-ca');
+  const dst = document.getElementById('e-contenido');
   if(!src || !dst) return;
   dst.innerHTML = src.innerHTML;
-  showToast('Contenido copiado — ahora tradúcelo al catalán');
+  showToast('Contingut copiat — ara tradueix-lo al castellà');
   dst.scrollIntoView({ behavior:'smooth', block:'center' });
 };
 
