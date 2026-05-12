@@ -1542,7 +1542,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
       <span class="lang-btn on" aria-current="true">CA</span>
     </div>
     <button class="theme-btn" onclick="toggleTheme()" aria-label="Cambiar tema" id="tb"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
-    <a href="#reservas" class="n-cta btn btn-sm">Reservar ahora</a>
+    <a href="#reservas" class="n-cta btn btn-sm">Reservar ara</a>
   </div>
   <!-- Hamburguesa — solo móvil -->
   <button class="ham-btn" id="ham-btn" aria-label="Abrir menú" aria-expanded="false" onclick="toggleMobMenu()">
@@ -2180,7 +2180,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
     <div class="eq-notice" data-a="up">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <p>Tot l'equipament està <strong>inclòs en el preu del lloguer</strong>. Sense costos addicionals ni sorpreses.<strong>incluido en el precio del alquiler</strong>. Sin costes adicionales ni sorpresas.</p>
+      <p>Tot l'equipament està <strong>inclòs en el preu del lloguer</strong>. Sense costos addicionals ni sorpreses.</p>
     </div>
   </div>
 </section>
@@ -2273,7 +2273,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             <div class="fg"><label class="fl">Data desitjada *</label><input type="date" class="fi" id="r-f" required onchange="webLoadFranjasPorFecha(this.value)"></div>
             <div class="fg"><label class="fl">Franja horària *</label>
               <select class="fsel" id="r-horario" required onchange="calcularTotal()">
-                <option value="">— Elige fecha primero —</option>
+                <option value="">— Tria la data primer —</option>
               </select>
               <div id="web-price-preview" style="display:none;margin-top:7px;padding:9px 13px;background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:10px;display:none;font-size:.8rem;align-items:center;justify-content:space-between;gap:8px;">
                 <span id="web-price-label" style="color:var(--tx2)">Precio sala</span>
@@ -3029,7 +3029,7 @@ function webLoadFranjasPorFecha(fechaStr) {
   if(prev) prev.style.display = 'none';
 
   if(!fechaStr) {
-    sel.innerHTML = '<option value="">— Elige fecha primero —</option>';
+    sel.innerHTML = '<option value="">— Tria la data primer —</option>';
     return;
   }
 
@@ -3037,16 +3037,21 @@ function webLoadFranjasPorFecha(fechaStr) {
   const d = new Date(fechaStr+'T12:00:00');
   const ddmm = String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
   const esp = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
+
+  // Añadir opción placeholder siempre
+  const opt0 = document.createElement('option');
+  opt0.value = '';
+  opt0.textContent = '— Selecciona franja —';
+  sel.appendChild(opt0);
+
+  // Si hay día especial, añadirlo primero (pero NO hacer return — seguir cargando todas las franjas)
   if(esp) {
-    const opt = document.createElement('option');
-    opt.value = `${esp.celebracion} · ${esp.horario}`;
-    opt.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
-    opt.dataset.precio = esp.precio;
-    opt.dataset.esDiaEsp = '1';
-    sel.appendChild(opt);
-    webUpdatePricePreview(esp.precio, true);
-    calcularTotal();
-    return;
+    const optEsp = document.createElement('option');
+    optEsp.value = `${esp.celebracion} · ${esp.horario}`;
+    optEsp.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
+    optEsp.dataset.precio = esp.precio;
+    optEsp.dataset.esDiaEsp = '1';
+    sel.appendChild(optEsp);
   }
 
   // Franjas normales según día de semana
@@ -3059,14 +3064,12 @@ function webLoadFranjasPorFecha(fechaStr) {
   });
 
   if(!disponibles.length) {
-    sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
+    if(sel.options.length <= 1) {
+      sel.innerHTML = '<option value="">— Sense franges per a aquest dia —</option>';
+    }
+    calcularTotal();
     return;
   }
-
-  const opt0 = document.createElement('option');
-  opt0.value = '';
-  opt0.textContent = '— Selecciona franja —';
-  sel.appendChild(opt0);
 
   disponibles.forEach(f => {
     const precio = f[diaKey];
@@ -3541,30 +3544,21 @@ async function loadBlogPosts() {
   }
 }
 
-/// ══ TARIFAS DESDE FIRESTORE → PRECIOS INDEX + CALENDARIO ════
-// onSnapshot = tiempo real: cuando Laura guarda desde el admin, el index se actualiza solo
-let _tarifasLoaded = false;
-function loadTarifasIndex() {
+// ══ TARIFAS DESDE FIRESTORE → PRECIOS INDEX + CALENDARIO ════
+async function loadTarifasIndex() {
   try {
-    onSnapshot(collection(_db,'tarifas'), (snap) => {
+    const snap = await getDocs(collection(_db,'tarifas'));
+    if(!snap.empty) {
       snap.forEach(d => {
         if(indexTarifas[d.id] !== undefined && d.data().filas) {
           indexTarifas[d.id] = d.data().filas;
         }
       });
-      renderTodosPreciosIndex();
-      if(calSelected) renderFranjas(calSelected);
-      if(!_tarifasLoaded) { _tarifasLoaded = true; loadFechasOcupadas(); }
-    }, (e) => {
-      console.error('[Tarifas] Error Firestore:', e.code, e.message);
-      renderTodosPreciosIndex();
-      loadFechasOcupadas();
-    });
-  } catch(e) {
-    console.error('[Tarifas] Error al suscribir:', e);
-    renderTodosPreciosIndex();
-    loadFechasOcupadas();
-  }
+    }
+  } catch(e) { console.warn('Tarifas index: usando defaults',e); }
+  renderTodosPreciosIndex();
+  loadFechasOcupadas();
+  if(calSelected) renderFranjas(calSelected);
 }
 
 // ══ FECHAS OCUPADAS — CALENDARIO ═════════════════════════════
