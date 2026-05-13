@@ -2375,7 +2375,7 @@ window.saveReserva = async () => {
       return `${dd}/${m}/${y}`;
     };
     const fmtEur = n => Number(n).toLocaleString('es-ES',{style:'currency',currency:'EUR'});
-    const hexPrecio = horaext === 'Sin horas extra' ? 0 : (parseFloat((horaext.match(/\((\d+)€\)/)||[])[1])||10);
+    const hexPrecio = precioHext;
     const precioSala = importe - hexPrecio - extrasPrecio;
 
     const paramsCliente = {
