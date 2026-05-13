@@ -1038,17 +1038,17 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
 /* Drawer móvil */
 .mob-drawer{
-  position:fixed;top:0;right:0;bottom:0;height:100%;width:min(320px,90vw);
+  position:fixed;top:0;right:0;bottom:0;width:min(320px,90vw);
   background:var(--s1);border-left:1px solid var(--bd);z-index:801;
-  display:flex;flex-direction:column;padding:0;
   transform:translateX(100%);transition:transform .35s cubic-bezier(.25,.46,.45,.94);
   overflow:hidden;
 }
 .mob-drawer.open{transform:translateX(0);}
 .mob-drawer-head{
+  position:absolute;top:0;left:0;right:0;z-index:2;
   display:flex;align-items:center;justify-content:space-between;
-  padding:20px 20px 16px;border-bottom:1px solid var(--bd);
-  flex-shrink:0;
+  padding:18px 20px 14px;border-bottom:1px solid var(--bd);
+  background:var(--s1);
 }
 .mob-drawer-logo img{height:52px;width:auto;}
 .mob-close{
@@ -1056,27 +1056,33 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   background:var(--s2);color:var(--tx2);cursor:pointer;
   display:flex;align-items:center;justify-content:center;
 }
-.mob-links{padding:10px 12px;flex:1 1 0%;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;}
+.mob-links{
+  position:absolute;top:86px;left:0;right:0;bottom:132px;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:8px 12px;display:flex;flex-direction:column;
+}
 .mob-links a{
   display:flex;flex-direction:row;align-items:center;gap:10px;
-  padding:12px 12px;border-radius:10px;
+  padding:11px 12px;border-radius:10px;
   font:600 .9rem var(--fb);color:var(--tx2);text-decoration:none;
-  transition:all .18s;margin-bottom:2px;width:100%;box-sizing:border-box;
+  transition:all .18s;margin-bottom:2px;box-sizing:border-box;
 }
 .mob-links a:hover{background:var(--s2);color:var(--tx1);}
 .mob-links a:active{background:var(--s3);}
-.mob-links a .mob-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
-.mob-group-lbl{font:700 .62rem var(--fb);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);padding:14px 12px 4px;display:block;width:100%;}
-.mob-group-lbl:first-child{padding-top:4px;}
-.mob-cta-wrap{padding:12px 12px 12px;flex-shrink:0;border-top:1px solid var(--bd);background:var(--s1);}
+.mob-links a .mob-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+.mob-group-lbl{font:700 .6rem var(--fb);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);padding:10px 12px 3px;display:block;}
+.mob-bottom-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  background:var(--s1);border-top:2px solid var(--bd);
+}
+.mob-cta-wrap{padding:10px 12px 8px;}
 .mob-cta-wrap .btn-primary{
   display:flex;align-items:center;justify-content:center;width:100%;
-  padding:14px;border-radius:12px;font-size:.95rem;
+  padding:13px;border-radius:12px;font-size:.93rem;
 }
 .mob-footer{
-  padding:16px 20px;border-top:1px solid var(--bd);
+  padding:10px 20px 14px;
   display:flex;align-items:center;justify-content:space-between;
-  flex-shrink:0;
 }
 .mob-lang{display:flex;background:var(--s3);border-radius:14px;padding:5px;gap:6px;}
 .mob-lang a, .mob-lang span{
@@ -1613,18 +1619,20 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <a href="#blog"       onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(66% .24 355/.1)">✍️</span>Blog</a>
     <a href="#reservas"   onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(68% .22 38/.18)">📋</span>Fer una reserva</a>
   </nav>
-  <div class="mob-cta-wrap">
-    <a href="#reservas" class="btn btn-primary mob-cta-wrap" onclick="closeMobMenu()"
-       style="display:flex;align-items:center;justify-content:center;padding:14px;border-radius:12px;font-size:.95rem;text-decoration:none;font-weight:700;font-family:var(--fb);background:linear-gradient(135deg,var(--cp),var(--co));color:#fff;">Reservar ara</a>
-  </div>
-  <div class="mob-footer">
-    <div class="mob-lang">
-      <a href="es/" hreflang="es">ES</a>
-      <span class="on">CA</span>
+  <div class="mob-bottom-bar">
+    <div class="mob-cta-wrap">
+      <a href="#reservas" class="btn btn-primary" onclick="closeMobMenu()"
+         style="display:flex;align-items:center;justify-content:center;width:100%;padding:13px;border-radius:12px;font-size:.93rem;text-decoration:none;font-weight:700;font-family:var(--fb);background:linear-gradient(135deg,var(--cp),var(--co));color:#fff;">Reservar ara</a>
     </div>
-    <button class="mob-theme" onclick="toggleTheme()" aria-label="Cambiar tema">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-    </button>
+    <div class="mob-footer">
+      <div class="mob-lang">
+        <a href="es/" hreflang="es">ES</a>
+        <span class="on">CA</span>
+      </div>
+      <button class="mob-theme" onclick="toggleTheme()" aria-label="Cambiar tema">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -3710,10 +3718,7 @@ async function loadKits() {
           <div class="manu-desc">${desc}</div>
           <div class="manu-foot">
             <div class="manu-price">${precio}</div>
-            <div style="display:flex;gap:6px;align-items:center">
-              ${hasDetail?`<button class="btn-ver" onclick="event.stopPropagation();openKitModal(${i})">Veure +</button>`:''}
-              <button class="btn-wa-sm" onclick="event.stopPropagation();pedirWA('${nombreSafe}')">${waSvg} Pedir</button>
-            </div>
+            <button class="btn-wa-sm" onclick="event.stopPropagation();pedirWA('${nombreSafe}')">${waSvg} Pedir</button>
           </div>
         </div>
       </div>`;
