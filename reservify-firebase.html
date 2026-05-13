@@ -529,6 +529,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <div class="fbar">
           <div class="swrap"><div class="sico"><svg><use href="#i-search"/></svg></div><input type="text" class="sinp" id="search-res" placeholder="Buscar cliente o evento..." oninput="filterReservas()"></div>
           <select class="fsel" id="filter-estado" onchange="filterReservas()"><option value="">Todos los estados</option><option>Confirmada</option><option>Pendiente</option><option>Cancelada</option></select>
+          <select class="fsel" id="sort-campo" onchange="filterReservas()" title="Ordenar por">
+            <option value="createdAt">Ordenar: fecha inscripción</option>
+            <option value="fecha">Ordenar: fecha celebración</option>
+          </select>
+          <button class="btn bg sm" id="btn-sort-dir" onclick="toggleSortDir()" title="Cambiar dirección" style="min-width:34px;padding:0 10px;font-size:15px">↓</button>
         <button class="btn bp sm" style="margin-left:auto" onclick="openModal('res')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nueva reserva</button>
           <button class="btn bg sm" onclick="openModal('recurrente')" title="Reserva recurrente"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>Recurrente</button>
           <button class="btn bg sm" onclick="openModal('bloqueo')" title="Bloquear días" style="color:var(--orange)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Bloquear días</button>
@@ -2100,21 +2105,48 @@ function renderReservas(list) {
   document.getElementById('badge-res').textContent = noVistas;
 };
 
+let _sortDir = 'desc'; // 'asc' | 'desc'
+
+window.toggleSortDir = () => {
+  _sortDir = _sortDir === 'desc' ? 'asc' : 'desc';
+  const btn = document.getElementById('btn-sort-dir');
+  if (btn) btn.textContent = _sortDir === 'desc' ? '↓' : '↑';
+  filterReservas();
+};
+
 window.filterReservas = () => {
   const q     = document.getElementById('search-res').value.toLowerCase();
   const e     = document.getElementById('filter-estado').value;
   const desde = document.getElementById('filter-fecha-desde').value;
   const hasta = document.getElementById('filter-fecha-hasta').value;
+  const campo = document.getElementById('sort-campo')?.value || 'createdAt';
+
   const filtered = allReservas.filter(r =>
     (!q     || (r.nombre||'').toLowerCase().includes(q) || (r.servicio||'').toLowerCase().includes(q)) &&
     (!e     || (r.estado||'').toLowerCase() === e.toLowerCase()) &&
     (!desde || (r.fecha||'') >= desde) &&
     (!hasta || (r.fecha||'') <= hasta)
   );
-  // Resaltar botones activos
-  const hoy    = new Date().toISOString().split('T')[0];
-  const lunes  = getLunes();
-  const p1mes  = hoy.slice(0,8)+'01';
+
+  // Ordenar
+  filtered.sort((a, b) => {
+    let va, vb;
+    if (campo === 'createdAt') {
+      va = a.createdAt?.toMillis?.() || new Date(a.createdAt || 0).getTime();
+      vb = b.createdAt?.toMillis?.() || new Date(b.createdAt || 0).getTime();
+    } else {
+      va = (a.fecha || '').replace(/-/g, '');
+      vb = (b.fecha || '').replace(/-/g, '');
+    }
+    if (va < vb) return _sortDir === 'desc' ? 1 : -1;
+    if (va > vb) return _sortDir === 'desc' ? -1 : 1;
+    return 0;
+  });
+
+  // Resaltar botones de fecha rápida activos
+  const hoy   = new Date().toISOString().split('T')[0];
+  const lunes = getLunes();
+  const p1mes = hoy.slice(0,8)+'01';
   const actHoy    = desde === hoy   && hasta === hoy;
   const actSemana = desde === lunes && !hasta;
   const actMes    = desde === p1mes && !hasta;
@@ -2124,6 +2156,7 @@ window.filterReservas = () => {
   document.getElementById('btn-semana')?.classList.toggle('bg', !actSemana);
   document.getElementById('btn-mes')?.classList.toggle('bp', actMes);
   document.getElementById('btn-mes')?.classList.toggle('bg', !actMes);
+
   renderReservas(filtered);
 };
 
