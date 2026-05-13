@@ -280,18 +280,18 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .sw{width:18px;height:18px;border-radius:4px;display:inline-block;vertical-align:middle;margin-right:7px;border:1px solid var(--b2);}
 
 /* MODAL */
-.mov{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;}
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
 .mov.open{display:flex;animation:fu .18s ease;}
-.modal{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);width:100%;max-width:500px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.12);}
+.modal{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);width:100%;max-width:500px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.12);max-height:calc(100vh - 60px);overflow-y:auto;display:flex;flex-direction:column;}
 .mtitle{font-size:18px;font-weight:800;margin-bottom:4px;}
 .msub{font-size:13px;color:var(--t2);margin-bottom:22px;}
+.mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid var(--b1);position:sticky;bottom:0;background:var(--s2);z-index:1;}
 .fg{margin-bottom:14px;}
 .fl{font-size:12px;font-weight:600;color:var(--t2);margin-bottom:6px;display:block;}
 .fi,.fsi{width:100%;background:var(--s3);border:1px solid var(--b2);border-radius:var(--rxs);padding:10px 13px;color:var(--tx);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border-color .15s;}
 .fi:focus,.fsi:focus{border-color:var(--teal);}
 .fi::placeholder{color:var(--t3);}
 .fr2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid var(--b1);}
 
 /* PAGO STATUS */
 .pago-status{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
@@ -1670,7 +1670,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </label>
       </div>
     </div>
-    <div class="fg"><label class="fl">URL de la imagen</label><input type="url" class="fi" id="k-imagen" placeholder="https://i.ibb.co/... (pega el enlace directo de la imagen)"></div>
+    <div class="fg">
+      <label class="fl">Imagen (URL o enlace de Google Drive)</label>
+      <input type="text" class="fi" id="k-imagen" placeholder="https://drive.google.com/file/d/... o https://i.ibb.co/..." onblur="convertDriveImg('k-imagen')">
+      <div style="font-size:11px;color:var(--t3);margin-top:5px">Pega el enlace para compartir de Google Drive o una URL directa. Se convierte automáticamente.</div>
+    </div>
 
     <div class="mfoot">
       <button class="btn bg" onclick="closeModal('kit');limpiarModalKit()">Cancelar</button>
@@ -3700,6 +3704,13 @@ window.eliminarPromo = async (id) => {
 };
 
 // ── MANUALIDADES / KITS ───────────────────────────────────────
+window.convertDriveImg = function(inputId) {
+  const el = document.getElementById(inputId);
+  if(!el || !el.value) return;
+  const m = el.value.match(/\/d\/([a-zA-Z0-9_-]{20,})/);
+  if(m) el.value = `https://drive.google.com/uc?export=view&id=${m[1]}`;
+};
+
 const KIT_SEASON_LABELS = { verano:'Estiu / Verano', pascua:'Pasqua / Pascua', navidad:'Nadal / Navidad', general:"Tot l'any / Todo el año" };
 let _kitFilterActive = 'all';
 
