@@ -1042,12 +1042,13 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   background:var(--s1);border-left:1px solid var(--bd);z-index:801;
   display:flex;flex-direction:column;padding:0;
   transform:translateX(100%);transition:transform .35s cubic-bezier(.25,.46,.45,.94);
-  overflow-y:auto;
+  overflow:hidden;
 }
 .mob-drawer.open{transform:translateX(0);}
 .mob-drawer-head{
   display:flex;align-items:center;justify-content:space-between;
   padding:20px 20px 16px;border-bottom:1px solid var(--bd);
+  flex-shrink:0;
 }
 .mob-drawer-logo img{height:52px;width:auto;}
 .mob-close{
@@ -1055,7 +1056,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   background:var(--s2);color:var(--tx2);cursor:pointer;
   display:flex;align-items:center;justify-content:center;
 }
-.mob-links{padding:10px 12px;flex:1;display:flex;flex-direction:column;}
+.mob-links{padding:10px 12px;flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;}
 .mob-links a{
   display:flex;flex-direction:row;align-items:center;gap:10px;
   padding:12px 12px;border-radius:10px;
@@ -1067,7 +1068,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 .mob-links a .mob-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
 .mob-group-lbl{font:700 .62rem var(--fb);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);padding:14px 12px 4px;display:block;width:100%;}
 .mob-group-lbl:first-child{padding-top:4px;}
-.mob-cta-wrap{padding:0 12px 12px;}
+.mob-cta-wrap{padding:0 12px 12px;flex-shrink:0;}
 .mob-cta-wrap .btn-primary{
   display:flex;align-items:center;justify-content:center;width:100%;
   padding:14px;border-radius:12px;font-size:.95rem;
@@ -1075,6 +1076,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 .mob-footer{
   padding:16px 20px;border-top:1px solid var(--bd);
   display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
 }
 .mob-lang{display:flex;background:var(--s3);border-radius:14px;padding:5px;gap:6px;}
 .mob-lang a, .mob-lang span{
