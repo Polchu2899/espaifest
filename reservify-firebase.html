@@ -932,10 +932,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
               <div style="display:flex;gap:16px;align-items:center;margin:16px 0;padding:14px;background:var(--s3);border-radius:10px;border:1px solid var(--b2)">
                 <div style="flex:1">
                   <div style="font-size:12px;font-weight:700;margin-bottom:4px">Filtrar por fecha</div>
-                  <div style="font-size:11px;color:var(--t3)">Importar solo reservas a partir de esta fecha (útil para actualización incremental)</div>
+                  <div style="font-size:11px;color:var(--t3)">Importar solo reservas registradas a partir de esta fecha (útil para actualización incremental)</div>
                 </div>
                 <div style="display:flex;gap:8px;align-items:center">
-                  <label style="font-size:12px;color:var(--t2)">Desde:</label>
+                  <label style="font-size:12px;color:var(--t2)">Registradas desde:</label>
                   <input type="date" class="fi" id="xls-desde" style="width:160px;padding:7px 10px;font-size:12px" onchange="filtrarXls()">
                   <button class="btn bg sm" id="btn-todo-xls" onclick="resetFiltroXls()" style="background:var(--grad);color:#080c14;border:none">✓ Todo</button>
                 </div>
@@ -1895,7 +1895,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js';
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc, query, orderBy, serverTimestamp, where } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc, query, orderBy, serverTimestamp, where, Timestamp } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
 
 // ── CONFIG — reemplaza con tu nueva API key tras regenerarla ──
 const firebaseConfig = {
@@ -2069,8 +2069,13 @@ function renderReservas(list) {
     const esNueva = esReservaNueva(r);
     const badgeNueva = esNueva ? '<span class="badge-nueva">✦ Nueva</span>' : '';
     const rowClass = esNueva ? 'trow rc nueva' : 'trow rc';
-    // Fecha creación formateada
-    const fechaCreada = tsCreado > 0 ? new Date(tsCreado).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    // Fecha creación formateada (si está >60 días en el futuro, es dato incorrecto)
+    const ahora = Date.now();
+    const esFuturoSospechoso = tsCreado > ahora + 60*24*60*60*1000;
+    const fechaFmt = tsCreado > 0 ? new Date(tsCreado).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    const fechaCreada = esFuturoSospechoso
+      ? `<span style="color:var(--amber)" title="Fecha de inscripción en el futuro — posible dato incorrecto">⚠️ ${fechaFmt}</span>`
+      : fechaFmt;
     // Total
     const totalStr = r.importe ? `<span class="cx cs" style="color:var(--teal)">${fmtMoney(r.importe)}</span>` : '<span class="cm">—</span>';
     return `
@@ -4168,7 +4173,7 @@ function actualizarPreviewXls() {
 window.filtrarXls = function() {
   const desde = document.getElementById('xls-desde').value;
   xlsDataFiltrado = desde
-    ? xlsDataRaw.filter(r => r.fecha && r.fecha >= desde)
+    ? xlsDataRaw.filter(r => r.fechaRegistro && r.fechaRegistro >= desde)
     : [...xlsDataRaw];
   actualizarPreviewXls();
 };
@@ -4192,8 +4197,9 @@ window.importarBookly = async function() {
       // Escritura paralela dentro del lote
       await Promise.all(lote.map(async r => {
         try {
-          // Añadir createdAt como string ISO — compatible con sort en cliente
-          const docData = { ...r, createdAt: r.fechaRegistro || new Date().toISOString().split('T')[0] };
+          // createdAt como Timestamp real de Firestore (usa fechaRegistro del XLS o ahora)
+          const tsReg = r.fechaRegistro ? new Date(r.fechaRegistro) : new Date();
+          const docData = { ...r, createdAt: Timestamp.fromDate(tsReg), vista: true };
           await addDoc(collection(db,'reservas'), docData);
           ok++;
           // Acumular cliente
