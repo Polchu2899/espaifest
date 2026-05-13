@@ -3588,7 +3588,7 @@ async function loadFechasOcupadas() {
           if(!esp.dia) return;
           const [dd, mm] = esp.dia.split('/');
           const anyo = new Date().getFullYear();
-          [anyo, anyo+1].forEach(y => {
+          [anyo, anyo+1, anyo+2, anyo+3, anyo+4].forEach(y => {
             const ds = `${y}-${mm}-${dd}`;
             if(ds >= hoy) {
               if(!data[ds]) data[ds] = {};
