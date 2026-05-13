@@ -134,7 +134,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 /* HERO */
 .hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#091524 0%,#0c1e38 60%,#080e1a 100%);border:1px solid rgba(15,212,196,.18);border-radius:var(--r);padding:22px 26px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
 .hero::before{content:'';position:absolute;right:-40px;top:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(15,212,196,.07) 0%,transparent 70%);pointer-events:none;}
-.hero h2{font-size:15px;font-weight:800;margin-bottom:4px;}
+.hero h2{font-size:15px;font-weight:800;margin-bottom:4px;color:#fff;}
 .hero p{font-size:13px;color:var(--t2);}
 .hero-acts{display:flex;gap:8px;z-index:1;flex-shrink:0;}
 
@@ -501,7 +501,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <!-- DASHBOARD -->
       <div class="panel active" id="panel-dashboard">
         <div class="hero">
-          <div><h2 id="hero-title">Bienvenida a Reservify</h2><p>Panel conectado a Firebase en tiempo real.</p></div>
+          <div><h2 id="hero-title">Bienvenida a Reservify</h2></div>
           <div class="hero-acts">
             <button class="btn bp sm" onclick="showPanel('configuracion',document.querySelector('[onclick*=configuracion]'))">Configurar</button>
             <button class="btn bt sm" onclick="loadAllData()">Actualizar datos</button>
@@ -2019,7 +2019,7 @@ onAuthStateChanged(auth, user => {
     const cap = name.charAt(0).toUpperCase() + name.slice(1);
     document.getElementById('sb-name').textContent = cap;
     document.getElementById('sb-av').textContent = cap.charAt(0).toUpperCase();
-    document.getElementById('hero-title').textContent = 'Bienvenida, ' + cap;
+    document.getElementById('hero-title').textContent = 'Bienvenida, Laura';
     document.getElementById('cfg-project').textContent = firebaseConfig.projectId;
     loadAllData();
     updateCrumb();
