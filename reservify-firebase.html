@@ -3574,7 +3574,7 @@ window.autoFillCA = function(esId, caId) {
   if(el) el.addEventListener('input', () => { el.dataset.modified = '1'; });
 });
 
-// Traduce CA → ES con MyMemory API (gratuita, sin clave)
+// Traduce CA → ES con Google Translate (gratuita, sin clave)
 window.autoFillES = async function(caId, esId) {
   const esEl = document.getElementById(esId);
   if(!esEl || esEl.dataset.modified) return;
@@ -3582,18 +3582,18 @@ window.autoFillES = async function(caId, esId) {
   if(!text) return;
 
   const origPlaceholder = esEl.placeholder;
-  esEl.placeholder = '⏳ Traduint al castellà...';
-  esEl.disabled = true;
+  esEl.placeholder = '⏳ Traduint...';
+  esEl.style.opacity = '0.5';
   try {
-    const res  = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ca|es`);
+    const url  = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ca&tl=es&dt=t&q=${encodeURIComponent(text)}`;
+    const res  = await fetch(url);
     const data = await res.json();
-    if(data.responseStatus === 200 && !esEl.dataset.modified) {
-      esEl.value = data.responseData.translatedText || text;
-    }
+    const translated = data[0]?.map(chunk => chunk[0] || '').join('').trim();
+    if(translated && !esEl.dataset.modified) esEl.value = translated;
   } catch(_) {
     if(!esEl.dataset.modified) esEl.value = text;
   } finally {
-    esEl.disabled = false;
+    esEl.style.opacity = '';
     esEl.placeholder = origPlaceholder;
   }
 };
