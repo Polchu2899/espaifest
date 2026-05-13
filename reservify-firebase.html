@@ -466,6 +466,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="ni" onclick="showPanel('tarifas',this);loadTarifas()"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>Tarifas</div>
       <div class="ng" style="margin-top:8px">Marketing</div>
       <div class="ni" onclick="showPanel('promociones',this)"><span class="ni-ico"><svg><use href="#i-tag"/></svg></span>Promociones</div>
+      <div class="ni" onclick="showPanel('manualidades',this)"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>Manualidades</div>
       <div class="ni" onclick="showPanel('fidelizacion',this)"><span class="ni-ico"><svg><use href="#i-star"/></svg></span>Fidelización</div>
       <div class="ni" onclick="showPanel('recordatorios',this);loadRecordatorios()"><span class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Recordatorios<span class="nbadge" id="badge-rec" style="display:none">0</span></div>
       <div class="ng" style="margin-top:8px">Ajustes</div>
@@ -757,6 +758,28 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="panel" id="panel-promociones">
         <div class="fbar"><div style="font-size:13px;color:var(--t2);flex:1">Descuentos y códigos para tus clientes.</div><button class="btn bp sm" onclick="openModal('promo')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nueva promoción</button></div>
         <div class="card"><div class="pgrid" id="promos-grid"><div class="loading"><div class="spinner"></div>Cargando...</div></div></div>
+      </div>
+
+      <!-- MANUALIDADES / KITS -->
+      <div class="panel" id="panel-manualidades">
+        <div class="fbar">
+          <div style="font-size:13px;color:var(--t2);flex:1">Kits de manualidades por temporada. Se muestran en la sección Manualidades de la web con botón de WhatsApp.</div>
+          <button class="btn bp sm" onclick="openModal('kit')"><svg width="13" height="13" stroke="currentColor"><use href="#i-plus"/></svg>Nuevo kit</button>
+        </div>
+        <!-- Filtros temporada -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
+          <button class="tar-tab on" onclick="kitFilter('all',this)">Todos</button>
+          <button class="tar-tab" onclick="kitFilter('verano',this)">Estiu / Verano</button>
+          <button class="tar-tab" onclick="kitFilter('pascua',this)">Pasqua / Pascua</button>
+          <button class="tar-tab" onclick="kitFilter('navidad',this)">Nadal / Navidad</button>
+          <button class="tar-tab" onclick="kitFilter('general',this)">Tot l'any / Todo el año</button>
+        </div>
+        <div class="card">
+          <div class="thead sc" style="grid-template-columns:1fr 140px 70px 60px 90px">
+            <span>Kit / Manualidad</span><span>Temporada</span><span>Precio</span><span>Orden</span><span style="text-align:right">Acciones</span>
+          </div>
+          <div id="kits-list"><div class="loading"><div class="spinner"></div>Cargando kits...</div></div>
+        </div>
       </div>
 
       <!-- FIDELIZACIÓN -->
@@ -1606,6 +1629,52 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="mfoot">
       <button class="btn bg" onclick="closeModal('promo');limpiarModalPromo()">Cancelar</button>
       <button class="btn bp" id="promo-save-btn" onclick="savePromo()">Crear promoción</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL KIT / MANUALIDAD -->
+<div class="mov" id="modal-kit">
+  <div class="modal" style="max-width:560px">
+    <div class="mtitle" id="kit-modal-title">Nuevo kit</div>
+    <div class="msub" id="kit-modal-sub">Se mostrará en la sección Manualidades de la web</div>
+    <input type="hidden" id="k-edit-id">
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🇪🇸 Castellano</div>
+    <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="k-nombre" placeholder="Ej: Kit estrellas navideñas" oninput="autoFillCA('k-nombre','k-nombre-ca')"></div>
+    <div class="fg"><label class="fl">Descripción</label><input type="text" class="fi" id="k-desc" placeholder="Breve descripción visible en la web" oninput="autoFillCA('k-desc','k-desc-ca')"></div>
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🟡 Catalán <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)">(opcional — si lo dejas vacío se usa el castellano)</span></div>
+    <div class="fg"><label class="fl">Nom (CA)</label><input type="text" class="fi" id="k-nombre-ca" placeholder="Ej: Kit estrelles nadalenques"></div>
+    <div class="fg"><label class="fl">Descripció (CA)</label><input type="text" class="fi" id="k-desc-ca" placeholder="Breu descripció visible a la web"></div>
+
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Detalles</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Precio (€) *</label><input type="number" class="fi" id="k-precio" placeholder="12" min="0" step="0.5"></div>
+      <div class="fg">
+        <label class="fl">Temporada *</label>
+        <select class="fi" id="k-temporada">
+          <option value="general">Tot l'any / Todo el año</option>
+          <option value="verano">Estiu / Verano</option>
+          <option value="pascua">Pasqua / Pascua</option>
+          <option value="navidad">Nadal / Navidad</option>
+        </select>
+      </div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">Orden (1 = primero)</label><input type="number" class="fi" id="k-orden" placeholder="99" min="1" value="99"></div>
+      <div class="fg" style="display:flex;align-items:flex-end;padding-bottom:4px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="k-activo" checked style="width:16px;height:16px;accent-color:var(--teal)">
+          <span style="font-size:13px;color:var(--t2)">Visible en la web</span>
+        </label>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">URL de la imagen</label><input type="url" class="fi" id="k-imagen" placeholder="https://i.ibb.co/... (pega el enlace directo de la imagen)"></div>
+
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeModal('kit');limpiarModalKit()">Cancelar</button>
+      <button class="btn bp" id="kit-save-btn" onclick="saveKit()">Guardar kit</button>
     </div>
   </div>
 </div>
@@ -3491,7 +3560,7 @@ window.autoFillCA = function(esId, caId) {
   }
 };
 // Marcar campo CA como modificado manualmente para no sobreescribir
-['s-nombre-ca','s-desc-ca','p-nombre-ca','p-desc-ca'].forEach(id => {
+['s-nombre-ca','s-desc-ca','p-nombre-ca','p-desc-ca','k-nombre-ca','k-desc-ca'].forEach(id => {
   const el = document.getElementById(id);
   if(el) el.addEventListener('input', () => { el.dataset.modified = '1'; });
 });
@@ -3610,6 +3679,7 @@ function limpiarModalPromo() {
 const _origOpenModal = window.openModal;
 window.openModal = function(id) {
   if(id === 'promo' && !document.getElementById('p-edit-id').value) limpiarModalPromo();
+  if(id === 'kit'   && !document.getElementById('k-edit-id').value) limpiarModalKit();
   if(id === 'res') {
     setTimeout(() => renderExtrasChecks(), 50);
   }
@@ -3628,6 +3698,140 @@ window.eliminarPromo = async (id) => {
   showToast('Promoción eliminada');
   loadPromos();
 };
+
+// ── MANUALIDADES / KITS ───────────────────────────────────────
+const KIT_SEASON_LABELS = { verano:'Estiu / Verano', pascua:'Pasqua / Pascua', navidad:'Nadal / Navidad', general:"Tot l'any / Todo el año" };
+let _kitFilterActive = 'all';
+
+window.kitFilter = function(season, btn) {
+  _kitFilterActive = season;
+  document.querySelectorAll('#panel-manualidades .tar-tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('#kits-list .trow').forEach(row => {
+    row.style.display = (season === 'all' || row.dataset.season === season) ? '' : 'none';
+  });
+};
+
+async function loadKitsAdmin() {
+  const el = document.getElementById('kits-list');
+  if(!el) return;
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Cargando kits...</div>';
+  try {
+    const snap = await getDocs(collection(db, 'kits'));
+    const kits = snap.docs
+      .map(d => ({id: d.id, ...d.data()}))
+      .sort((a, b) => (a.orden||99) - (b.orden||99));
+
+    if(!kits.length) {
+      el.innerHTML = '<div class="empty">No hay kits. Añade el primero con el botón de arriba.</div>';
+      return;
+    }
+
+    el.innerHTML = kits.map(k => {
+      const season = k.temporada || 'general';
+      const activo = k.activo !== false;
+      const hidden = (_kitFilterActive !== 'all' && season !== _kitFilterActive) ? 'display:none;' : '';
+      return `
+      <div class="trow sc" style="grid-template-columns:1fr 140px 70px 60px 90px;${!activo?'opacity:.55':''}${hidden}" data-season="${season}">
+        <div>
+          <div class="c cs">${k.nombre||'—'}</div>
+          <div style="font-size:11px;color:var(--t3)">${k.desc||''}${k.imagenURL?' · 🖼️ imagen':''}</div>
+        </div>
+        <div><span class="badge" style="background:var(--s4);color:var(--t2);font-size:11px">${KIT_SEASON_LABELS[season]||season}</span></div>
+        <div class="c cx">${k.precio?k.precio+'€':'—'}</div>
+        <div class="c cm" style="color:var(--t3)">${k.orden||'—'}</div>
+        <div class="ras">
+          <button class="rab" onclick="editarKit('${k.id}')" title="Editar"><svg><use href="#i-edit"/></svg></button>
+          <button class="rab rab-cancel" onclick="eliminarKit('${k.id}')" title="Eliminar"><svg><use href="#i-trash"/></svg></button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    console.warn('loadKitsAdmin error:', e);
+    el.innerHTML = '<div class="empty">Error al cargar los kits.</div>';
+  }
+}
+
+window.saveKit = async () => {
+  const editId    = document.getElementById('k-edit-id').value;
+  const nombre    = document.getElementById('k-nombre').value.trim();
+  const desc      = document.getElementById('k-desc').value.trim();
+  const nombre_ca = document.getElementById('k-nombre-ca').value.trim() || nombre;
+  const desc_ca   = document.getElementById('k-desc-ca').value.trim() || desc;
+  const precio    = parseFloat(document.getElementById('k-precio').value) || 0;
+  const temporada = document.getElementById('k-temporada').value || 'general';
+  const orden     = parseInt(document.getElementById('k-orden').value) || 99;
+  const activo    = document.getElementById('k-activo').checked;
+  const imagenURL = document.getElementById('k-imagen').value.trim();
+
+  if(!nombre) { showToast('Escribe el nombre del kit'); return; }
+
+  const data = { nombre, desc, nombre_ca, desc_ca, precio, temporada, orden, activo, imagenURL, updatedAt: serverTimestamp() };
+
+  try {
+    if(editId) {
+      await updateDoc(doc(db, 'kits', editId), data);
+      showToast('Kit actualizado ✓ — cambios visibles en la web');
+    } else {
+      data.createdAt = serverTimestamp();
+      await addDoc(collection(db, 'kits'), data);
+      showToast('Kit añadido ✓ — visible en la web');
+    }
+    closeModal('kit');
+    limpiarModalKit();
+    loadKitsAdmin();
+  } catch(e) {
+    console.error('saveKit error:', e);
+    showToast('Error al guardar el kit');
+  }
+};
+
+window.editarKit = async (id) => {
+  try {
+    const snap = await getDocs(collection(db, 'kits'));
+    const k = snap.docs.map(d => ({id: d.id, ...d.data()})).find(x => x.id === id);
+    if(!k) { showToast('Kit no encontrado'); return; }
+
+    document.getElementById('k-edit-id').value   = id;
+    document.getElementById('k-nombre').value    = k.nombre     || '';
+    document.getElementById('k-desc').value      = k.desc       || '';
+    document.getElementById('k-nombre-ca').value = k.nombre_ca  || '';
+    document.getElementById('k-desc-ca').value   = k.desc_ca    || '';
+    document.getElementById('k-precio').value    = k.precio     || '';
+    document.getElementById('k-temporada').value = k.temporada  || 'general';
+    document.getElementById('k-orden').value     = k.orden      || 99;
+    document.getElementById('k-activo').checked  = k.activo !== false;
+    document.getElementById('k-imagen').value    = k.imagenURL  || '';
+
+    document.getElementById('kit-modal-title').textContent = 'Editar kit';
+    document.getElementById('kit-modal-sub').textContent   = `Modificando: ${k.nombre}`;
+    document.getElementById('kit-save-btn').textContent    = 'Guardar cambios';
+
+    openModal('kit');
+  } catch(e) {
+    showToast('Error al cargar el kit');
+  }
+};
+
+window.eliminarKit = async (id) => {
+  if(!confirm('¿Eliminar este kit? Esta acción no se puede deshacer.')) return;
+  await deleteDoc(doc(db, 'kits', id));
+  showToast('Kit eliminado');
+  loadKitsAdmin();
+};
+
+function limpiarModalKit() {
+  ['k-edit-id','k-nombre','k-desc','k-nombre-ca','k-desc-ca','k-imagen'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  const kprecio = document.getElementById('k-precio'); if(kprecio) kprecio.value = '';
+  const korden  = document.getElementById('k-orden');  if(korden)  korden.value  = '99';
+  const kactivo = document.getElementById('k-activo'); if(kactivo) kactivo.checked = true;
+  const ktemp   = document.getElementById('k-temporada'); if(ktemp) ktemp.value = 'general';
+  const ktitle  = document.getElementById('kit-modal-title'); if(ktitle) ktitle.textContent = 'Nuevo kit';
+  const ksub    = document.getElementById('kit-modal-sub');   if(ksub)   ksub.textContent   = 'Se mostrará en la sección Manualidades de la web';
+  const kbtn    = document.getElementById('kit-save-btn');    if(kbtn)   kbtn.textContent    = 'Guardar kit';
+}
 
 // ── DASHBOARD KPIs ────────────────────────────────────────────
 function updateDashboard() {
@@ -3680,7 +3884,7 @@ function updateDashboard() {
 }
 
 // ── UTILS ─────────────────────────────────────────────────────
-const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],tarifas:['Tarifas y precios'],promociones:['Promociones'],fidelizacion:['Fidelización'],recordatorios:['Recordatorios WhatsApp'],configuracion:['Configuración'],migracion:['Migración histórica'],informes:['Informes']};
+const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],tarifas:['Tarifas y precios'],promociones:['Promociones'],manualidades:['Manualidades / Kits'],fidelizacion:['Fidelización'],recordatorios:['Recordatorios WhatsApp'],configuracion:['Configuración'],migracion:['Migración histórica'],informes:['Informes']};
 
 window.showPanel = (id, el) => {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -3690,12 +3894,13 @@ window.showPanel = (id, el) => {
   document.getElementById('ptitle').textContent = titles[id]?.[0]||id;
   updateCrumb();
   // Acciones específicas por panel
-  if(id === 'migracion') loadMigLog();
-  if(id === 'clientes')  loadClientes();
-  if(id === 'informes')  renderInformes();
-  if(id === 'pagos')     renderPagos();
-  if(id === 'tarifas')   loadTarifas();
-  if(id === 'gestoria')  loadGestoria();
+  if(id === 'migracion')     loadMigLog();
+  if(id === 'clientes')      loadClientes();
+  if(id === 'informes')      renderInformes();
+  if(id === 'pagos')         renderPagos();
+  if(id === 'tarifas')       loadTarifas();
+  if(id === 'gestoria')      loadGestoria();
+  if(id === 'manualidades')  loadKitsAdmin();
 };
 
 function updateCrumb() {
