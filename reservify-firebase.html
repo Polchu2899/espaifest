@@ -1641,14 +1641,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <input type="hidden" id="k-edit-id">
 
     <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🟡 Català <span style="font-weight:400;text-transform:none;letter-spacing:0">(llengua principal)</span></div>
-    <div class="fg"><label class="fl">Nom *</label><input type="text" class="fi" id="k-nombre-ca" placeholder="Ej: Kit estrelles nadalenques" oninput="autoFillES('k-nombre-ca','k-nombre')"></div>
-    <div class="fg"><label class="fl">Descripció curta</label><input type="text" class="fi" id="k-desc-ca" placeholder="Breu descripció visible a la targeta" oninput="autoFillES('k-desc-ca','k-desc')"></div>
-    <div class="fg"><label class="fl">Contingut complet (CA) <span style="font-weight:400;color:var(--t3)">— apareix quan el client obre el kit</span></label><textarea class="fi" id="k-contenido-ca" rows="4" placeholder="Detalla tot el que inclou el kit, materials, edat recomanada, dificultat... Escriu amb salts de línia per a una millor presentació." style="resize:vertical;min-height:90px;font-family:inherit;font-size:13px;line-height:1.5" oninput="autoFillES('k-contenido-ca','k-contenido')"></textarea></div>
+    <div class="fg"><label class="fl">Nom *</label><input type="text" class="fi" id="k-nombre-ca" placeholder="Ej: Kit estrelles nadalenques" onblur="autoFillES('k-nombre-ca','k-nombre')"></div>
+    <div class="fg"><label class="fl">Descripció curta</label><input type="text" class="fi" id="k-desc-ca" placeholder="Breu descripció visible a la targeta" onblur="autoFillES('k-desc-ca','k-desc')"></div>
+    <div class="fg"><label class="fl">Contingut complet (CA) <span style="font-weight:400;color:var(--t3)">— apareix quan el client obre el kit</span></label><textarea class="fi" id="k-contenido-ca" rows="4" placeholder="Detalla tot el que inclou el kit, materials, edat recomanada, dificultat... Escriu amb salts de línia per a una millor presentació." style="resize:vertical;min-height:90px;font-family:inherit;font-size:13px;line-height:1.5" onblur="autoFillES('k-contenido-ca','k-contenido')"></textarea></div>
 
-    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🇪🇸 Castellano <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)">(se rellena solo desde el catalán)</span></div>
-    <div class="fg"><label class="fl">Nombre (ES)</label><input type="text" class="fi" id="k-nombre" placeholder="Se rellena automáticamente"></div>
-    <div class="fg"><label class="fl">Descripción (ES)</label><input type="text" class="fi" id="k-desc" placeholder="Se rellena automáticamente"></div>
-    <div class="fg"><label class="fl">Contenido completo (ES)</label><textarea class="fi" id="k-contenido" rows="3" placeholder="Se rellena automáticamente" style="resize:vertical;min-height:70px;font-family:inherit;font-size:13px;line-height:1.5"></textarea></div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🇪🇸 Castellano <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)">(se copia del catalán al salir del campo — edítalo para traducirlo)</span></div>
+    <div class="fg"><label class="fl">Nombre (ES)</label><input type="text" class="fi" id="k-nombre" placeholder="Se copia automáticamente al salir del campo catalán"></div>
+    <div class="fg"><label class="fl">Descripción (ES)</label><input type="text" class="fi" id="k-desc" placeholder="Se copia automáticamente al salir del campo catalán"></div>
+    <div class="fg"><label class="fl">Contenido completo (ES)</label><textarea class="fi" id="k-contenido" rows="3" placeholder="Se copia automáticamente — edítalo para traducirlo al castellano" style="resize:vertical;min-height:70px;font-family:inherit;font-size:13px;line-height:1.5"></textarea></div>
 
     <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Detalls</div>
     <div class="fr2">
