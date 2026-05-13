@@ -175,6 +175,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 /* TABLE */
 .thead{display:grid;padding:9px 20px;background:var(--s2);border-bottom:1px solid var(--b1);}
 .thead span{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;}
+.th-sort:hover{color:var(--t1)!important;}
+.th-sort.activo{color:var(--teal)!important;}
+.th-sort.activo::after{content:' ↓';font-size:11px;}
+.th-sort.activo.asc::after{content:' ↑';}
 .trow{display:grid;padding:13px 20px;border-bottom:1px solid var(--b1);align-items:center;cursor:pointer;transition:background .1s;}
 .trow:last-child{border-bottom:none;}
 .trow:hover{background:var(--s2);}
@@ -549,7 +553,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <button class="btn bg sm" onclick="limpiarFiltroFecha()" style="font-size:12px;color:var(--t3)">✕ Limpiar</button>
         </div>
         <div class="card">
-          <div class="thead rc"><span>Cliente</span><span>Fecha evento</span><span>Reservado el</span><span>Total</span><span>Estado</span><span>Pago</span><span style="text-align:right">Acciones</span></div>
+          <div class="thead rc" id="thead-reservas"><span>Cliente</span><span class="th-sort" onclick="sortPor('fecha')" id="th-fecha" title="Ordenar por fecha evento" style="cursor:pointer;user-select:none">Fecha evento</span><span class="th-sort" onclick="sortPor('createdAt')" id="th-creado" title="Ordenar por fecha inscripción" style="cursor:pointer;user-select:none">Reservado el</span><span>Total</span><span>Estado</span><span>Pago</span><span style="text-align:right">Acciones</span></div>
           <div id="reservas-list"><div class="loading"><div class="spinner"></div>Cargando reservas...</div></div>
         </div>
       </div>
@@ -2066,7 +2070,7 @@ function renderReservas(list) {
     const badgeNueva = esNueva ? '<span class="badge-nueva">✦ Nueva</span>' : '';
     const rowClass = esNueva ? 'trow rc nueva' : 'trow rc';
     // Fecha creación formateada
-    const fechaCreada = tsCreado > 0 ? new Date(tsCreado).toLocaleDateString('es-ES',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+    const fechaCreada = tsCreado > 0 ? new Date(tsCreado).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
     // Total
     const totalStr = r.importe ? `<span class="cx cs" style="color:var(--teal)">${fmtMoney(r.importe)}</span>` : '<span class="cm">—</span>';
     return `
@@ -2105,12 +2109,37 @@ function renderReservas(list) {
   document.getElementById('badge-res').textContent = noVistas;
 };
 
-let _sortDir = 'desc'; // 'asc' | 'desc'
+let _sortDir   = 'desc'; // 'asc' | 'desc'
+let _sortCampo = 'createdAt';
+
+function actualizarIndicadoresSort() {
+  const thFecha  = document.getElementById('th-fecha');
+  const thCreado = document.getElementById('th-creado');
+  const btn      = document.getElementById('btn-sort-dir');
+  const sel      = document.getElementById('sort-campo');
+
+  [thFecha, thCreado].forEach(th => { if(th) { th.classList.remove('activo','asc'); } });
+  const thActivo = _sortCampo === 'fecha' ? thFecha : thCreado;
+  if(thActivo) {
+    thActivo.classList.add('activo');
+    if(_sortDir === 'asc') thActivo.classList.add('asc');
+  }
+  if(btn) btn.textContent = _sortDir === 'desc' ? '↓' : '↑';
+  if(sel) sel.value = _sortCampo;
+}
+
+window.sortPor = (campo) => {
+  if(_sortCampo === campo) {
+    _sortDir = _sortDir === 'desc' ? 'asc' : 'desc';
+  } else {
+    _sortCampo = campo;
+    _sortDir = 'desc';
+  }
+  filterReservas();
+};
 
 window.toggleSortDir = () => {
   _sortDir = _sortDir === 'desc' ? 'asc' : 'desc';
-  const btn = document.getElementById('btn-sort-dir');
-  if (btn) btn.textContent = _sortDir === 'desc' ? '↓' : '↑';
   filterReservas();
 };
 
@@ -2119,7 +2148,8 @@ window.filterReservas = () => {
   const e     = document.getElementById('filter-estado').value;
   const desde = document.getElementById('filter-fecha-desde').value;
   const hasta = document.getElementById('filter-fecha-hasta').value;
-  const campo = document.getElementById('sort-campo')?.value || 'createdAt';
+  const campoSel = document.getElementById('sort-campo')?.value;
+  if(campoSel) _sortCampo = campoSel;
 
   const filtered = allReservas.filter(r =>
     (!q     || (r.nombre||'').toLowerCase().includes(q) || (r.servicio||'').toLowerCase().includes(q)) &&
@@ -2131,7 +2161,7 @@ window.filterReservas = () => {
   // Ordenar
   filtered.sort((a, b) => {
     let va, vb;
-    if (campo === 'createdAt') {
+    if (_sortCampo === 'createdAt') {
       va = a.createdAt?.toMillis?.() || new Date(a.createdAt || 0).getTime();
       vb = b.createdAt?.toMillis?.() || new Date(b.createdAt || 0).getTime();
     } else {
@@ -2142,6 +2172,8 @@ window.filterReservas = () => {
     if (va > vb) return _sortDir === 'desc' ? -1 : 1;
     return 0;
   });
+
+  actualizarIndicadoresSort();
 
   // Resaltar botones de fecha rápida activos
   const hoy   = new Date().toISOString().split('T')[0];
