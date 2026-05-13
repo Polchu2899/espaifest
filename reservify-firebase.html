@@ -1640,17 +1640,19 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="msub" id="kit-modal-sub">Se mostrará en la sección Manualidades de la web</div>
     <input type="hidden" id="k-edit-id">
 
-    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🇪🇸 Castellano</div>
-    <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="k-nombre" placeholder="Ej: Kit estrellas navideñas" oninput="autoFillCA('k-nombre','k-nombre-ca')"></div>
-    <div class="fg"><label class="fl">Descripción</label><input type="text" class="fi" id="k-desc" placeholder="Breve descripción visible en la web" oninput="autoFillCA('k-desc','k-desc-ca')"></div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🟡 Català <span style="font-weight:400;text-transform:none;letter-spacing:0">(llengua principal)</span></div>
+    <div class="fg"><label class="fl">Nom *</label><input type="text" class="fi" id="k-nombre-ca" placeholder="Ej: Kit estrelles nadalenques" oninput="autoFillES('k-nombre-ca','k-nombre')"></div>
+    <div class="fg"><label class="fl">Descripció curta</label><input type="text" class="fi" id="k-desc-ca" placeholder="Breu descripció visible a la targeta" oninput="autoFillES('k-desc-ca','k-desc')"></div>
+    <div class="fg"><label class="fl">Contingut complet (CA) <span style="font-weight:400;color:var(--t3)">— apareix quan el client obre el kit</span></label><textarea class="fi" id="k-contenido-ca" rows="4" placeholder="Detalla tot el que inclou el kit, materials, edat recomanada, dificultat... Escriu amb salts de línia per a una millor presentació." style="resize:vertical;min-height:90px;font-family:inherit;font-size:13px;line-height:1.5" oninput="autoFillES('k-contenido-ca','k-contenido')"></textarea></div>
 
-    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🟡 Catalán <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)">(opcional — si lo dejas vacío se usa el castellano)</span></div>
-    <div class="fg"><label class="fl">Nom (CA)</label><input type="text" class="fi" id="k-nombre-ca" placeholder="Ej: Kit estrelles nadalenques"></div>
-    <div class="fg"><label class="fl">Descripció (CA)</label><input type="text" class="fi" id="k-desc-ca" placeholder="Breu descripció visible a la web"></div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🇪🇸 Castellano <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)">(se rellena solo desde el catalán)</span></div>
+    <div class="fg"><label class="fl">Nombre (ES)</label><input type="text" class="fi" id="k-nombre" placeholder="Se rellena automáticamente"></div>
+    <div class="fg"><label class="fl">Descripción (ES)</label><input type="text" class="fi" id="k-desc" placeholder="Se rellena automáticamente"></div>
+    <div class="fg"><label class="fl">Contenido completo (ES)</label><textarea class="fi" id="k-contenido" rows="3" placeholder="Se rellena automáticamente" style="resize:vertical;min-height:70px;font-family:inherit;font-size:13px;line-height:1.5"></textarea></div>
 
-    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Detalles</div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Detalls</div>
     <div class="fr2">
-      <div class="fg"><label class="fl">Precio (€) *</label><input type="number" class="fi" id="k-precio" placeholder="12" min="0" step="0.5"></div>
+      <div class="fg"><label class="fl">Preu (€) *</label><input type="number" class="fi" id="k-precio" placeholder="12" min="0" step="0.5"></div>
       <div class="fg">
         <label class="fl">Temporada *</label>
         <select class="fi" id="k-temporada">
@@ -1661,19 +1663,16 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </select>
       </div>
     </div>
-    <div class="fr2">
-      <div class="fg"><label class="fl">Orden (1 = primero)</label><input type="number" class="fi" id="k-orden" placeholder="99" min="1" value="99"></div>
-      <div class="fg" style="display:flex;align-items:flex-end;padding-bottom:4px">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-          <input type="checkbox" id="k-activo" checked style="width:16px;height:16px;accent-color:var(--teal)">
-          <span style="font-size:13px;color:var(--t2)">Visible en la web</span>
-        </label>
-      </div>
+    <div class="fg" style="display:flex;align-items:center;gap:12px;padding:6px 0">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="k-activo" checked style="width:16px;height:16px;accent-color:var(--teal)">
+        <span style="font-size:13px;color:var(--t2)">Visible a la web</span>
+      </label>
     </div>
     <div class="fg">
-      <label class="fl">Imagen (URL o enlace de Google Drive)</label>
+      <label class="fl">Imatge (enllaç de Google Drive o URL directa)</label>
       <input type="text" class="fi" id="k-imagen" placeholder="https://drive.google.com/file/d/... o https://i.ibb.co/..." onblur="convertDriveImg('k-imagen')">
-      <div style="font-size:11px;color:var(--t3);margin-top:5px">Pega el enlace para compartir de Google Drive o una URL directa. Se convierte automáticamente.</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:5px">Pega l'enllaç de Drive (ha d'estar compartit "qualsevol persona") i es convertirà automàticament.</div>
     </div>
 
     <div class="mfoot">
@@ -3564,10 +3563,22 @@ window.autoFillCA = function(esId, caId) {
   }
 };
 // Marcar campo CA como modificado manualmente para no sobreescribir
-['s-nombre-ca','s-desc-ca','p-nombre-ca','p-desc-ca','k-nombre-ca','k-desc-ca'].forEach(id => {
+// Marca CA como modificado manualmente (para servicios y promos: ES→CA)
+['s-nombre-ca','s-desc-ca','p-nombre-ca','p-desc-ca'].forEach(id => {
   const el = document.getElementById(id);
   if(el) el.addEventListener('input', () => { el.dataset.modified = '1'; });
 });
+// Marca ES como modificado manualmente (para kits: CA→ES)
+['k-nombre','k-desc','k-contenido'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('input', () => { el.dataset.modified = '1'; });
+});
+
+// Rellena ES desde CA (kits: escribe en catalán, se auto-traduce al castellano)
+window.autoFillES = function(caId, esId) {
+  const esEl = document.getElementById(esId);
+  if(esEl && !esEl.dataset.modified) esEl.value = document.getElementById(caId).value;
+};
 
 window.eliminarServicio = async (id) => {
   if(!confirm('¿Eliminar este servicio? No se puede deshacer.')) return;
@@ -3708,7 +3719,7 @@ window.convertDriveImg = function(inputId) {
   const el = document.getElementById(inputId);
   if(!el || !el.value) return;
   const m = el.value.match(/\/d\/([a-zA-Z0-9_-]{20,})/);
-  if(m) el.value = `https://drive.google.com/uc?export=view&id=${m[1]}`;
+  if(m) el.value = `https://drive.google.com/thumbnail?id=${m[1]}&sz=w800`;
 };
 
 const KIT_SEASON_LABELS = { verano:'Estiu / Verano', pascua:'Pasqua / Pascua', navidad:'Nadal / Navidad', general:"Tot l'any / Todo el año" };
@@ -3765,28 +3776,33 @@ async function loadKitsAdmin() {
 
 window.saveKit = async () => {
   const editId    = document.getElementById('k-edit-id').value;
-  const nombre    = document.getElementById('k-nombre').value.trim();
-  const desc      = document.getElementById('k-desc').value.trim();
-  const nombre_ca = document.getElementById('k-nombre-ca').value.trim() || nombre;
-  const desc_ca   = document.getElementById('k-desc-ca').value.trim() || desc;
-  const precio    = parseFloat(document.getElementById('k-precio').value) || 0;
-  const temporada = document.getElementById('k-temporada').value || 'general';
-  const orden     = parseInt(document.getElementById('k-orden').value) || 99;
-  const activo    = document.getElementById('k-activo').checked;
-  const imagenURL = document.getElementById('k-imagen').value.trim();
+  const nombre_ca    = document.getElementById('k-nombre-ca').value.trim();
+  const desc_ca      = document.getElementById('k-desc-ca').value.trim();
+  const contenido_ca = document.getElementById('k-contenido-ca').value.trim();
+  const nombre       = document.getElementById('k-nombre').value.trim() || nombre_ca;
+  const desc         = document.getElementById('k-desc').value.trim()   || desc_ca;
+  const contenido    = document.getElementById('k-contenido').value.trim() || contenido_ca;
+  const precio       = parseFloat(document.getElementById('k-precio').value) || 0;
+  const temporada    = document.getElementById('k-temporada').value || 'general';
+  const activo       = document.getElementById('k-activo').checked;
+  const imagenURL    = document.getElementById('k-imagen').value.trim();
 
-  if(!nombre) { showToast('Escribe el nombre del kit'); return; }
+  if(!nombre_ca) { showToast('Escriu el nom del kit en català'); return; }
 
-  const data = { nombre, desc, nombre_ca, desc_ca, precio, temporada, orden, activo, imagenURL, updatedAt: serverTimestamp() };
+  const data = { nombre, desc, contenido, nombre_ca, desc_ca, contenido_ca, precio, temporada, activo, imagenURL, updatedAt: serverTimestamp() };
 
   try {
     if(editId) {
+      const savedOrden = parseInt(document.getElementById('k-edit-id').dataset.orden) || 99;
+      data.orden = savedOrden;
       await updateDoc(doc(db, 'kits', editId), data);
-      showToast('Kit actualizado ✓ — cambios visibles en la web');
+      showToast('Kit actualitzat ✓ — canvis visibles a la web');
     } else {
+      const countSnap = await getDocs(collection(db, 'kits'));
+      data.orden     = countSnap.size + 1;
       data.createdAt = serverTimestamp();
       await addDoc(collection(db, 'kits'), data);
-      showToast('Kit añadido ✓ — visible en la web');
+      showToast('Kit afegit ✓ — visible a la web');
     }
     closeModal('kit');
     limpiarModalKit();
@@ -3803,20 +3819,27 @@ window.editarKit = async (id) => {
     const k = snap.docs.map(d => ({id: d.id, ...d.data()})).find(x => x.id === id);
     if(!k) { showToast('Kit no encontrado'); return; }
 
-    document.getElementById('k-edit-id').value   = id;
-    document.getElementById('k-nombre').value    = k.nombre     || '';
-    document.getElementById('k-desc').value      = k.desc       || '';
-    document.getElementById('k-nombre-ca').value = k.nombre_ca  || '';
-    document.getElementById('k-desc-ca').value   = k.desc_ca    || '';
+    document.getElementById('k-edit-id').value     = id;
+    document.getElementById('k-nombre-ca').value   = k.nombre_ca    || k.nombre    || '';
+    document.getElementById('k-desc-ca').value     = k.desc_ca      || k.desc      || '';
+    document.getElementById('k-contenido-ca').value= k.contenido_ca || k.contenido || '';
+    document.getElementById('k-nombre').value      = k.nombre       || '';
+    document.getElementById('k-desc').value        = k.desc         || '';
+    document.getElementById('k-contenido').value   = k.contenido    || '';
     document.getElementById('k-precio').value    = k.precio     || '';
     document.getElementById('k-temporada').value = k.temporada  || 'general';
-    document.getElementById('k-orden').value     = k.orden      || 99;
     document.getElementById('k-activo').checked  = k.activo !== false;
     document.getElementById('k-imagen').value    = k.imagenURL  || '';
+    // preservar orden existente al editar
+    document.getElementById('k-edit-id').dataset.orden = k.orden || 99;
+
+    // marcar campos ES como "modificados" para no sobreescribir al editar
+    const kn = document.getElementById('k-nombre'); if(kn && kn.value) kn.dataset.modified = '1';
+    const kd = document.getElementById('k-desc');   if(kd && kd.value) kd.dataset.modified = '1';
 
     document.getElementById('kit-modal-title').textContent = 'Editar kit';
-    document.getElementById('kit-modal-sub').textContent   = `Modificando: ${k.nombre}`;
-    document.getElementById('kit-save-btn').textContent    = 'Guardar cambios';
+    document.getElementById('kit-modal-sub').textContent   = `Editant: ${k.nombre_ca || k.nombre}`;
+    document.getElementById('kit-save-btn').textContent    = 'Guardar canvis';
 
     openModal('kit');
   } catch(e) {
@@ -3832,16 +3855,16 @@ window.eliminarKit = async (id) => {
 };
 
 function limpiarModalKit() {
-  ['k-edit-id','k-nombre','k-desc','k-nombre-ca','k-desc-ca','k-imagen'].forEach(id => {
-    const el = document.getElementById(id); if(el) el.value = '';
+  ['k-edit-id','k-nombre','k-desc','k-contenido','k-nombre-ca','k-desc-ca','k-contenido-ca','k-imagen'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) { el.value = ''; delete el.dataset.modified; delete el.dataset.orden; }
   });
   const kprecio = document.getElementById('k-precio'); if(kprecio) kprecio.value = '';
-  const korden  = document.getElementById('k-orden');  if(korden)  korden.value  = '99';
   const kactivo = document.getElementById('k-activo'); if(kactivo) kactivo.checked = true;
   const ktemp   = document.getElementById('k-temporada'); if(ktemp) ktemp.value = 'general';
-  const ktitle  = document.getElementById('kit-modal-title'); if(ktitle) ktitle.textContent = 'Nuevo kit';
-  const ksub    = document.getElementById('kit-modal-sub');   if(ksub)   ksub.textContent   = 'Se mostrará en la sección Manualidades de la web';
-  const kbtn    = document.getElementById('kit-save-btn');    if(kbtn)   kbtn.textContent    = 'Guardar kit';
+  document.getElementById('kit-modal-title').textContent = 'Nou kit';
+  document.getElementById('kit-modal-sub').textContent   = 'Es mostrarà a la secció Manualitats de la web';
+  document.getElementById('kit-save-btn').textContent    = 'Guardar kit';
 }
 
 // ── DASHBOARD KPIs ────────────────────────────────────────────
