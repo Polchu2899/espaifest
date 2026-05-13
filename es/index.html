@@ -1042,7 +1042,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
 /* Drawer móvil */
 .mob-drawer{
-  position:fixed;top:0;right:0;bottom:0;width:min(320px,90vw);
+  position:fixed;top:0;right:0;bottom:0;height:100%;width:min(320px,90vw);
   background:var(--s1);border-left:1px solid var(--bd);z-index:801;
   display:flex;flex-direction:column;padding:0;
   transform:translateX(100%);transition:transform .35s cubic-bezier(.25,.46,.45,.94);
@@ -1060,7 +1060,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   background:var(--s2);color:var(--tx2);cursor:pointer;
   display:flex;align-items:center;justify-content:center;
 }
-.mob-links{padding:10px 12px;flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;}
+.mob-links{padding:10px 12px;flex:1 1 0%;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;}
 .mob-links a{
   display:flex;flex-direction:row;align-items:center;gap:10px;
   padding:12px 12px;border-radius:10px;
@@ -1069,7 +1069,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 }
 .mob-links a:hover{background:var(--s2);color:var(--tx1);}
 .mob-links a:active{background:var(--s3);}
-.mob-cta-wrap{padding:0 12px 12px;flex-shrink:0;}
+.mob-cta-wrap{padding:12px 12px 12px;flex-shrink:0;border-top:1px solid var(--bd);background:var(--s1);}
 .mob-cta-wrap .btn-primary{
   display:flex;align-items:center;justify-content:center;width:100%;
   padding:14px;border-radius:12px;font-size:.95rem;
