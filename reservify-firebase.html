@@ -5877,6 +5877,12 @@ window.loadFranjasPorFecha = function(fechaStr) {
     return;
   }
 
+  // Rangos ya ocupados ese día (solo reservas confirmadas)
+  const rangosOcupados = (allReservas||[])
+    .filter(r => r.fecha === fechaStr && (r.estado||'').toLowerCase() === 'confirmada')
+    .map(r => getRangoReal(r))
+    .filter(Boolean);
+
   const esp = getDiaEspecial(fechaStr);
 
   // Placeholder siempre primero
@@ -5889,8 +5895,15 @@ window.loadFranjasPorFecha = function(fechaStr) {
   if(esp) {
     const optE = document.createElement('option');
     optE.value = `${esp.celebracion} (${esp.horario}) — ${esp.precio}€`;
-    optE.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
     optE.dataset.precio = esp.precio;
+    const espRango = FRANJAS_RANGOS[esp.horario];
+    const espOcupado = espRango && rangosOcupados.some(rc => seSuperponen(espRango, rc));
+    if(espOcupado) {
+      optE.disabled = true;
+      optE.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} € · 🔴 OCUPADO`;
+    } else {
+      optE.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
+    }
     sel.appendChild(optE);
   }
 
@@ -5908,18 +5921,28 @@ window.loadFranjasPorFecha = function(fechaStr) {
     return;
   }
 
+  let primeraLibre = null;
   disponibles.forEach(f => {
     const precio = f[diaKey];
     const opt = document.createElement('option');
     opt.value = `${f.turno} (${f.horario}) — ${precio}€`;
-    opt.textContent = `${f.turno} · ${f.horario} — ${precio} €`;
     opt.dataset.precio = precio;
+    const rango = FRANJAS_RANGOS[f.horario];
+    const ocupado = rango && rangosOcupados.some(rc => seSuperponen(rango, rc));
+    if(ocupado) {
+      opt.disabled = true;
+      opt.textContent = `${f.turno} · ${f.horario} — ${precio} € · 🔴 OCUPADO`;
+    } else {
+      opt.textContent = `${f.turno} · ${f.horario} — ${precio} €`;
+      if(!primeraLibre) primeraLibre = f;
+    }
     sel.appendChild(opt);
   });
 
-  // Carga hora extra y extras para la primera franja disponible
-  if(disponibles.length) loadHorasExtra(disponibles[0]);
-  renderExtrasChecks(disponibles[0]);
+  // Carga hora extra y extras para la primera franja libre (no la ocupada)
+  const franjaRef = primeraLibre || disponibles[0];
+  if(franjaRef) loadHorasExtra(franjaRef);
+  renderExtrasChecks(franjaRef || null);
   calcPrecioAuto();
 };
 
