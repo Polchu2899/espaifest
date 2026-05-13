@@ -485,8 +485,8 @@ nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%
 .n-logo img:hover{transform:scale(1.04);}
 /* ---------------------------------------------- */
 
-.n-links{display:flex;align-items:center;gap:3px;}
-.n-links a{padding:7px 13px;border-radius:40px;font-size:.875rem;font-weight:500;color:var(--tx2);transition:all .2s;}
+.n-links{display:flex;align-items:center;gap:1px;flex-wrap:nowrap;}
+.n-links a{padding:6px 10px;border-radius:40px;font-size:.82rem;font-weight:500;color:var(--tx2);transition:all .2s;white-space:nowrap;}
 .n-links a:hover{color:var(--tx1);background:var(--glass);}
 .lang-wrap{display:flex;background:var(--s3);border-radius:30px;padding:3px;gap:2px;margin:0 5px;}
 .lang-btn{padding:5px 11px;border-radius:24px;border:none;font:700 .72rem var(--fb);cursor:pointer;background:transparent;color:var(--tx3);transition:all .2s;display:inline-block;text-decoration:none;line-height:1;}
@@ -685,6 +685,30 @@ section{padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem);}
 .manu-price{font:900 1.3rem var(--fd);color:var(--co);}
 .btn-wa-sm{display:flex;align-items:center;gap:5px;background:#25D366;color:#fff;border:none;padding:6px 13px;border-radius:20px;font:700 .75rem var(--fb);cursor:pointer;transition:all .2s;}
 .btn-wa-sm:hover{background:#1DA851;transform:scale(1.05);}
+.manu-card{cursor:pointer;}
+.btn-ver{background:transparent;border:1.5px solid var(--bd);color:var(--tx2);padding:5px 13px;border-radius:20px;font:600 .75rem var(--fb);cursor:pointer;transition:all .2s;}
+.btn-ver:hover{border-color:var(--co);color:var(--co);}
+
+/* Kit detail modal */
+.kit-ov{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(12px);z-index:9100;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+.kit-ov.open{display:flex;animation:fu .2s ease;}
+.kit-box{background:var(--s1);border-radius:26px;max-width:540px;width:100%;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.55);max-height:calc(100vh - 40px);overflow-y:auto;display:flex;flex-direction:column;position:relative;}
+.kit-box-img{height:250px;position:relative;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.kit-box-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.kit-season-badge{position:absolute;top:14px;left:14px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);color:#fff;padding:4px 12px;border-radius:20px;font:700 .65rem var(--fb);text-transform:uppercase;letter-spacing:.08em;z-index:2;}
+.kit-close-btn{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.55);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;backdrop-filter:blur(6px);transition:background .15s;}
+.kit-close-btn:hover{background:rgba(0,0,0,.75);}
+.kit-body{padding:28px 28px 24px;}
+.kit-title{font:900 1.5rem var(--fd);margin-bottom:8px;line-height:1.2;}
+.kit-desc{font-size:.9rem;color:var(--tx2);margin-bottom:18px;line-height:1.65;}
+.kit-contenido{background:var(--s2);border:1px solid var(--bd);border-radius:14px;padding:18px;margin-bottom:24px;}
+.kit-contenido-lbl{font:700 .63rem var(--fb);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:10px;}
+.kit-contenido-txt{font-size:.875rem;line-height:1.75;white-space:pre-wrap;color:var(--tx);}
+.kit-foot-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.kit-price-lg{font:900 2.1rem var(--fd);color:var(--co);}
+.btn-wa-lg{display:flex;align-items:center;gap:10px;background:#25D366;color:#fff;border:none;padding:14px 26px;border-radius:14px;font:700 1rem var(--fb);cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(37,211,102,.3);}
+.btn-wa-lg:hover{background:#1DA851;transform:translateY(-2px);box-shadow:0 8px 30px rgba(37,211,102,.4);}
+@media(max-width:480px){.manu-grid{grid-template-columns:repeat(2,1fr);}.kit-foot-row{flex-direction:column;align-items:flex-start;}.btn-wa-lg{width:100%;justify-content:center;}}
 
 /* ═══ PRECIOS ════════════════════════════════════ */
 #precios{background:var(--s0);}
@@ -1031,14 +1055,17 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   background:var(--s2);color:var(--tx2);cursor:pointer;
   display:flex;align-items:center;justify-content:center;
 }
-.mob-links{padding:16px 12px;flex:1;}
+.mob-links{padding:10px 12px;flex:1;}
 .mob-links a{
-  display:flex;align-items:center;padding:13px 12px;border-radius:10px;
-  font:600 .95rem var(--fb);color:var(--tx2);text-decoration:none;
+  display:flex;align-items:center;gap:10px;padding:12px 12px;border-radius:10px;
+  font:600 .9rem var(--fb);color:var(--tx2);text-decoration:none;
   transition:all .18s;margin-bottom:2px;
 }
 .mob-links a:hover{background:var(--s2);color:var(--tx1);}
 .mob-links a:active{background:var(--s3);}
+.mob-links a .mob-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.mob-group-lbl{font:700 .62rem var(--fb);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);padding:14px 12px 4px;display:block;}
+.mob-group-lbl:first-child{padding-top:4px;}
 .mob-cta-wrap{padding:0 12px 12px;}
 .mob-cta-wrap .btn-primary{
   display:flex;align-items:center;justify-content:center;width:100%;
@@ -1532,7 +1559,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     <a href="#fiestas">Festes</a>
     <a href="#adultos">Celebracions</a>
     <a href="#business">Business</a>
+    <a href="#manualidades" id="nav-link-manualidades" style="display:none">Manualitats</a>
     <a href="#precios">Preus</a>
+    <a href="#fidelizacion">Fidelització</a>
     <a href="#equipamiento">Equipament</a>
     <a href="#galeria">Galeria</a>
     <a href="#calendario">Calendari</a>
@@ -1564,14 +1593,22 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
     </button>
   </div>
   <nav class="mob-links" aria-label="Menú principal">
-    <a href="#fiestas"   onclick="closeMobMenu()">🎈 Festes infantils</a>
-    <a href="#adultos"   onclick="closeMobMenu()">🎉 Celebracions adults</a>
-    <a href="#business"  onclick="closeMobMenu()">💼 Business</a>
-    <a href="#precios"   onclick="closeMobMenu()">💰 Preus</a>
-    <a href="#equipamiento" onclick="closeMobMenu()">🎪 Equipament</a>
-    <a href="#galeria"   onclick="closeMobMenu()">📷 Galeria</a>
-    <a href="#calendario" onclick="closeMobMenu()">📅 Calendari</a>
-    <a href="#blog"      onclick="closeMobMenu()">✍️ Blog</a>
+    <span class="mob-group-lbl">Espais</span>
+    <a href="#fiestas"    onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(87% .19 90/.15)">🎈</span>Festes infantils</a>
+    <a href="#adultos"    onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(68% .22 38/.12)">🎉</span>Celebracions adults</a>
+    <a href="#business"   onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(73% .14 190/.15)">💼</span>Business</a>
+    <a href="#manualidades" id="mob-link-manualidades" style="display:none" onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(72% .15 90/.15)">✂️</span>Manualitats</a>
+
+    <span class="mob-group-lbl">L'espai</span>
+    <a href="#equipamiento" onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(73% .14 190/.12)">🎪</span>Equipament</a>
+    <a href="#galeria"    onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(66% .24 355/.1)">📷</span>Galeria</a>
+
+    <span class="mob-group-lbl">Preus i informació</span>
+    <a href="#precios"    onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(68% .22 38/.12)">💰</span>Preus</a>
+    <a href="#fidelizacion" onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(87% .19 90/.15)">⭐</span>Fidelització</a>
+    <a href="#calendario" onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(73% .14 190/.12)">📅</span>Calendari</a>
+    <a href="#blog"       onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(66% .24 355/.1)">✍️</span>Blog</a>
+    <a href="#reservas"   onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(68% .22 38/.18)">📋</span>Fer una reserva</a>
   </nav>
   <div class="mob-cta-wrap">
     <a href="#reservas" class="btn btn-primary mob-cta-wrap" onclick="closeMobMenu()"
@@ -3615,6 +3652,7 @@ const _WA_PATH = 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-
 
 async function loadKits() {
   const grid = document.getElementById('manu-grid');
+  const sec  = document.getElementById('manualidades');
   if (!grid) return;
   try {
     const snap = await getDocs(collection(_db, 'kits'));
@@ -3623,41 +3661,56 @@ async function loadKits() {
       .filter(k => k.activo !== false)
       .sort((a, b) => (a.orden||99) - (b.orden||99));
 
-    const lang = 'ca';
+    const _showManualLinks = v => {
+      ['nav-link-manualidades','mob-link-manualidades'].forEach(id => {
+        const el = document.getElementById(id); if(el) el.style.display = v ? '' : 'none';
+      });
+      const ftLink = document.querySelector('a[href="#manualidades"]:not(#nav-link-manualidades):not(#mob-link-manualidades)');
+      if(ftLink) ftLink.style.display = v ? '' : 'none';
+    };
 
     if (!kits.length) {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t2)">No hay kits disponibles.</div>';
+      if(sec) sec.style.display = 'none';
+      _showManualLinks(false);
+      grid.innerHTML = '';
       return;
     }
 
+    if(sec) sec.style.display = '';
+    _showManualLinks(true);
+    window._kitsData = kits;
+    const lang = 'ca';
     const waSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="${_WA_PATH}"/></svg>`;
 
     grid.innerHTML = kits.map((k, i) => {
       const season      = k.temporada || 'general';
       const coverCss    = _KIT_COVER_CSS[season] || 'mc-1';
       const seasonColor = _KIT_SEASON_COLORS[season] || 'var(--ct)';
-      const seasonLabel = lang === 'ca' ? (_KIT_SEASON_LABELS_CA[season]||season) : (_KIT_SEASON_LABELS[season]||season);
       const nombre      = (lang==='ca' && k.nombre_ca) ? k.nombre_ca : (k.nombre||'');
       const desc        = (lang==='ca' && k.desc_ca)   ? k.desc_ca   : (k.desc||'');
       const precio      = k.precio ? `${k.precio}€` : '';
       const delay       = i * 80;
+      const hasDetail   = !!(k.contenido_ca || k.contenido);
 
       const coverContent = k.imagenURL
         ? `<img src="${k.imagenURL}" alt="${nombre}" style="width:100%;height:100%;object-fit:cover;border-radius:0">`
         : `<div class="manu-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${seasonColor}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>`;
 
       const nombreSafe = (nombre||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
-      return `<div class="manu-card" data-a="up" data-d="${delay}" data-season="${season}">
+      return `<div class="manu-card" data-a="up" data-d="${delay}" data-season="${season}" onclick="openKitModal(${i})">
         <div class="manu-cover ${k.imagenURL?'':coverCss}" style="position:relative;overflow:hidden">
           <span class="manu-season" style="color:${seasonColor};position:absolute;top:10px;left:10px;z-index:2">${_KIT_SEASON_LABELS_CA[season]||season}</span>
           ${coverContent}
         </div>
         <div class="manu-body">
-          <div class="manu-name">${k.nombre_ca||k.nombre||''}</div>
-          <div class="manu-desc">${k.desc_ca||k.desc||''}</div>
+          <div class="manu-name">${nombre}</div>
+          <div class="manu-desc">${desc}</div>
           <div class="manu-foot">
             <div class="manu-price">${precio}</div>
-            <button class="btn-wa-sm" onclick="pedirWA('${nombreSafe}')">${waSvg} Pedir</button>
+            <div style="display:flex;gap:6px;align-items:center">
+              ${hasDetail?`<button class="btn-ver" onclick="event.stopPropagation();openKitModal(${i})">Veure +</button>`:''}
+              <button class="btn-wa-sm" onclick="event.stopPropagation();pedirWA('${nombreSafe}')">${waSvg} Pedir</button>
+            </div>
           </div>
         </div>
       </div>`;
@@ -3669,6 +3722,58 @@ async function loadKits() {
     console.warn('loadKits error:', e);
     grid.innerHTML = '';
   }
+}
+
+function openKitModal(i) {
+  const k = (window._kitsData || [])[i];
+  if(!k) return;
+  const lang   = 'ca';
+  const nombre = (lang==='ca' && k.nombre_ca) ? k.nombre_ca : (k.nombre||'');
+  const desc   = (lang==='ca' && k.desc_ca)   ? k.desc_ca   : (k.desc||'');
+  const cont   = (lang==='ca' && k.contenido_ca) ? k.contenido_ca : (k.contenido||'');
+  const season = k.temporada || 'general';
+
+  document.getElementById('kb-name').textContent  = nombre;
+  document.getElementById('kb-desc').textContent  = desc;
+  document.getElementById('kb-season').textContent = _KIT_SEASON_LABELS_CA[season] || season;
+  document.getElementById('kb-price').textContent = k.precio ? `${k.precio}€` : '';
+
+  const contWrap = document.getElementById('kb-contenido-wrap');
+  document.getElementById('kb-contenido').textContent = cont;
+  contWrap.style.display = cont ? 'block' : 'none';
+
+  const imgEl     = document.getElementById('kb-img');
+  const imgWrap   = document.getElementById('kb-img-wrap');
+  const phEl      = document.getElementById('kb-placeholder');
+  if(k.imagenURL) {
+    imgEl.src          = k.imagenURL;
+    imgEl.alt          = nombre;
+    imgEl.style.display = 'block';
+    phEl.innerHTML     = '';
+    imgWrap.style.background = '';
+  } else {
+    imgEl.style.display = 'none';
+    const gradients = {
+      verano:  'linear-gradient(135deg,oklch(73% .14 190/.25),oklch(65% .2 220/.2))',
+      pascua:  'linear-gradient(135deg,oklch(87% .19 90/.25),oklch(68% .22 38/.2))',
+      navidad: 'linear-gradient(135deg,oklch(66% .24 355/.25),oklch(68% .22 38/.2))',
+      general: 'linear-gradient(135deg,oklch(87% .19 90/.2),oklch(73% .14 190/.15))'
+    };
+    imgWrap.style.background = gradients[season] || gradients.general;
+    const sc = _KIT_SEASON_COLORS[season] || 'var(--co)';
+    phEl.innerHTML = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="${sc}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`;
+  }
+
+  const nombreSafe = nombre.replace(/'/g,"\\'");
+  document.getElementById('kb-wa-btn').onclick = () => pedirWA(nombreSafe);
+
+  document.getElementById('kit-ov').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeKitModal() {
+  document.getElementById('kit-ov').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 // Cargar al iniciar — tarifas primero, luego fechas (dependen de los días especiales)
@@ -4078,6 +4183,33 @@ document.addEventListener('keydown', e => {
     </div>
     <div class="blog-todos-grid" id="blog-todos-grid">
       <div class="blog-todos-loading">Cargando...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL DETALL KIT ════════════════════════════ -->
+<div class="kit-ov" id="kit-ov" onclick="if(event.target===this)closeKitModal()">
+  <div class="kit-box">
+    <div class="kit-box-img" id="kb-img-wrap">
+      <img id="kb-img" src="" alt="" style="display:none">
+      <div id="kb-placeholder"></div>
+    </div>
+    <span class="kit-season-badge" id="kb-season"></span>
+    <button class="kit-close-btn" onclick="closeKitModal()">×</button>
+    <div class="kit-body">
+      <div class="kit-title" id="kb-name"></div>
+      <div class="kit-desc" id="kb-desc"></div>
+      <div class="kit-contenido" id="kb-contenido-wrap" style="display:none">
+        <div class="kit-contenido-lbl">Què inclou · Qué incluye</div>
+        <div class="kit-contenido-txt" id="kb-contenido"></div>
+      </div>
+      <div class="kit-foot-row">
+        <div class="kit-price-lg" id="kb-price"></div>
+        <button class="btn-wa-lg" id="kb-wa-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Pedir per WhatsApp
+        </button>
+      </div>
     </div>
   </div>
 </div>
