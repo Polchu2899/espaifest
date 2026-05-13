@@ -51,11 +51,9 @@ body {
   box-shadow: 0 4px 24px oklch(0% 0 0 / .08);
 }
 .login-logo {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: var(--co);
   margin-bottom: 6px;
+  display: flex;
+  justify-content: center;
 }
 .login-sub {
   color: var(--tx3);
@@ -115,12 +113,18 @@ body {
   z-index: 100;
 }
 .hdr-logo {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: 1.1rem;
-  color: var(--co);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-.hdr-logo span { color: var(--tx2); font-weight: 400; font-size: .85rem; margin-left: 8px; }
+.hdr-logo span {
+  color: var(--tx2);
+  font-family: 'Syne', sans-serif;
+  font-weight: 400;
+  font-size: .85rem;
+  border-left: 1px solid var(--br);
+  padding-left: 10px;
+}
 .hdr-right { display: flex; align-items: center; gap: 12px; }
 .hdr-user { color: var(--tx3); font-size: .82rem; }
 .btn-logout {
@@ -570,7 +574,9 @@ body {
 <!-- ── LOGIN ── -->
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">EspaiFest</div>
+    <div class="login-logo">
+      <img src="https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png" alt="EspaiFest" style="height:80px;object-fit:contain">
+    </div>
     <div class="login-sub">Panel de administración del blog</div>
     <input type="email" id="l-email" placeholder="tu@email.com" autocomplete="email">
     <input type="password" id="l-pass" placeholder="Contraseña" autocomplete="current-password">
@@ -584,7 +590,10 @@ body {
 
   <!-- Header -->
   <header class="hdr">
-    <div class="hdr-logo">EspaiFest <span>Blog Admin</span></div>
+    <div class="hdr-logo">
+      <img src="https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png" alt="EspaiFest" style="height:34px;object-fit:contain">
+      <span>Blog Admin</span>
+    </div>
     <div class="hdr-right">
       <span class="hdr-user" id="hdr-email"></span>
       <button class="btn-logout" onclick="doLogout()">Cerrar sesión</button>
