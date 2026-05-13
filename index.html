@@ -1031,7 +1031,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   right:max(20px, env(safe-area-inset-right, 20px));
 }
 .mob-overlay{
-  position:fixed;inset:0;background:oklch(0% 0 0/.6);z-index:799;
+  position:fixed;inset:0;background:oklch(0% 0 0/.6);z-index:820;
   opacity:0;pointer-events:none;transition:opacity .3s ease;
 }
 .mob-overlay.open{opacity:1;pointer-events:all;}
@@ -1039,7 +1039,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 /* Drawer móvil */
 .mob-drawer{
   position:fixed;top:0;right:0;bottom:0;width:min(320px,90vw);
-  background:var(--s1);border-left:1px solid var(--bd);z-index:801;
+  background:var(--s1);border-left:1px solid var(--bd);z-index:830;
   transform:translateX(100%);transition:transform .35s cubic-bezier(.25,.46,.45,.94);
   overflow:hidden;
   display:grid;grid-template-rows:auto 1fr auto;
