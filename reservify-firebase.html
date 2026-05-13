@@ -959,6 +959,17 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </div>
 
         <div class="card" style="margin-top:18px">
+          <div class="chead">
+            <div><div class="ctitle">Sincronizar calendario</div><div class="csub">Reconstruye los días ocupados en la web a partir de todas las reservas confirmadas en Firestore</div></div>
+            <button class="btn bp sm" onclick="sincronizarCalendario()" id="btn-sync-cal">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+              Sincronizar calendario
+            </button>
+          </div>
+          <div id="sync-cal-status" style="padding:12px 20px;font-size:13px;color:var(--t3);display:none"></div>
+        </div>
+
+        <div class="card" style="margin-top:18px">
           <div class="chead"><div><div class="ctitle">Historial de importaciones</div><div class="csub">Registros de migraciones realizadas</div></div></div>
           <div id="mig-log"><div class="empty">Sin importaciones registradas todavía.</div></div>
         </div>
@@ -4327,6 +4338,52 @@ async function loadMigLog() {
     }).join('');
   } catch(e){}
 }
+
+// ── SINCRONIZAR CALENDARIO DESDE RESERVAS CONFIRMADAS ────────
+window.sincronizarCalendario = async function() {
+  const btn    = document.getElementById('btn-sync-cal');
+  const status = document.getElementById('sync-cal-status');
+  if(btn) btn.disabled = true;
+  if(status) { status.style.display = 'block'; status.textContent = 'Leyendo reservas confirmadas...'; }
+
+  try {
+    const hoy  = new Date().toISOString().split('T')[0];
+    const snap = await getDocs(query(collection(db,'reservas'), where('estado','==','Confirmada')));
+    const confirmadas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Agrupar por fecha (solo fechas presentes y futuras)
+    const porFecha = {};
+    confirmadas.forEach(r => {
+      const f = r.fecha || '';
+      if(!f || f < hoy) return;
+      if(!porFecha[f]) porFecha[f] = [];
+      porFecha[f].push(r);
+    });
+
+    const fechas = Object.keys(porFecha);
+    if(status) status.textContent = `Actualizando ${fechas.length} fechas en calendario_publico...`;
+
+    let ok = 0;
+    for(const fecha of fechas) {
+      try {
+        const { mananaOcupada, tardeOcupada } = calcOcupacion(porFecha[fecha]);
+        await setDoc(doc(db,'calendario_publico', fecha), {
+          fecha, mananaOcupada, tardeOcupada, updatedAt: serverTimestamp()
+        });
+        ok++;
+      } catch(e) { console.warn('Error sync calendario', fecha, e); }
+    }
+
+    if(status) status.textContent = `✅ ${ok} fechas sincronizadas. El calendario web se actualizará automáticamente.`;
+    showToast(`✅ Calendario sincronizado — ${ok} fechas actualizadas`);
+  } catch(e) {
+    if(status) status.textContent = `❌ Error: ${e.message}`;
+    showToast('Error al sincronizar calendario');
+    console.error(e);
+  } finally {
+    if(btn) btn.disabled = false;
+  }
+};
 
 // ── TABS PANEL MIGRACIÓN ──────────────────────────────────────
 window.switchMigTab = function(tab) {
