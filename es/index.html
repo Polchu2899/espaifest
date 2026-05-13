@@ -1062,7 +1062,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   display:flex;align-items:center;justify-content:center;
 }
 .mob-links{
-  position:absolute;top:108px;left:0;right:0;bottom:120px;
+  position:absolute;top:110px;left:0;right:0;bottom:115px;
   overflow-y:auto;-webkit-overflow-scrolling:touch;
   padding:8px 12px;display:flex;flex-direction:column;
 }
@@ -2655,6 +2655,18 @@ window.addEventListener('scroll', ()=>{
 // Idioma fijo: ES
 
 // ── MENÚ MÓVIL ────────────────────────────────────────────────
+function adjustMobLinks() {
+  const drawer = document.getElementById('mob-drawer');
+  if(!drawer) return;
+  const head   = drawer.querySelector('.mob-drawer-head');
+  const bottom = drawer.querySelector('.mob-bottom-bar');
+  const links  = drawer.querySelector('.mob-links');
+  if(head && bottom && links) {
+    links.style.top    = head.getBoundingClientRect().height + 'px';
+    links.style.bottom = bottom.getBoundingClientRect().height + 'px';
+  }
+}
+
 function toggleMobMenu() {
   const drawer  = document.getElementById('mob-drawer');
   const overlay = document.getElementById('mob-overlay');
@@ -2664,6 +2676,7 @@ function toggleMobMenu() {
   ham.classList.toggle('open', open);
   ham.setAttribute('aria-expanded', open);
   document.body.style.overflow = open ? 'hidden' : '';
+  if(open) setTimeout(adjustMobLinks, 10);
 }
 
 function closeMobMenu() {
