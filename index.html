@@ -1042,13 +1042,12 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   background:var(--s1);border-left:1px solid var(--bd);z-index:801;
   transform:translateX(100%);transition:transform .35s cubic-bezier(.25,.46,.45,.94);
   overflow:hidden;
+  display:grid;grid-template-rows:auto 1fr auto;
 }
 .mob-drawer.open{transform:translateX(0);}
 .mob-drawer-head{
-  position:absolute;top:0;left:0;right:0;z-index:2;
   display:flex;align-items:center;justify-content:space-between;
   padding:18px 20px 14px;border-bottom:1px solid var(--bd);
-  background:var(--s1);
 }
 .mob-drawer-logo img{height:52px;width:auto;content:url('https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png');}
 [data-theme="light"] .mob-drawer-logo img{content:url('https://i.ibb.co/7J43XDW2/Dise-o-sin-t-tulo.png');}
@@ -1058,9 +1057,9 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   display:flex;align-items:center;justify-content:center;
 }
 .mob-links{
-  position:absolute;top:110px;left:0;right:0;bottom:115px;
   overflow-y:auto;-webkit-overflow-scrolling:touch;
   padding:8px 12px;display:flex;flex-direction:column;
+  min-height:0;
 }
 .mob-links a{
   display:flex;flex-direction:row;align-items:center;gap:10px;
