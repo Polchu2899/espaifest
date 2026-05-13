@@ -1978,7 +1978,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js';
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc, query, orderBy, serverTimestamp, where, Timestamp } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
+import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, setDoc, query, orderBy, serverTimestamp, where, Timestamp } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
 
 // ── CONFIG — reemplaza con tu nueva API key tras regenerarla ──
 const firebaseConfig = {
@@ -3574,27 +3574,36 @@ window.autoFillCA = function(esId, caId) {
   if(el) el.addEventListener('input', () => { el.dataset.modified = '1'; });
 });
 
-// Traduce CA → ES con Google Translate (gratuita, sin clave)
+// Traduce CA → ES (intenta Google Translate, fallback a MyMemory)
 window.autoFillES = async function(caId, esId) {
   const esEl = document.getElementById(esId);
   if(!esEl || esEl.dataset.modified) return;
   const text = (document.getElementById(caId)?.value || '').trim();
   if(!text) return;
 
-  const origPlaceholder = esEl.placeholder;
-  esEl.placeholder = '⏳ Traduint...';
-  esEl.style.opacity = '0.5';
+  esEl.value = '⏳ Traduint...';
+  esEl.style.color = 'var(--t3)';
+
+  let translated = '';
   try {
-    const url  = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ca&tl=es&dt=t&q=${encodeURIComponent(text)}`;
-    const res  = await fetch(url);
-    const data = await res.json();
-    const translated = data[0]?.map(chunk => chunk[0] || '').join('').trim();
-    if(translated && !esEl.dataset.modified) esEl.value = translated;
-  } catch(_) {
-    if(!esEl.dataset.modified) esEl.value = text;
-  } finally {
-    esEl.style.opacity = '';
-    esEl.placeholder = origPlaceholder;
+    const r1 = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=ca&tl=es&dt=t&q=${encodeURIComponent(text)}`);
+    if(r1.ok) {
+      const d1 = await r1.json();
+      translated = (d1[0] || []).map(c => c[0] || '').join('').trim();
+    }
+  } catch(_) {}
+
+  if(!translated) {
+    try {
+      const r2 = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ca|es`);
+      const d2 = await r2.json();
+      if(d2.responseStatus === 200) translated = d2.responseData.translatedText || '';
+    } catch(_) {}
+  }
+
+  if(!esEl.dataset.modified) {
+    esEl.value = translated || text;
+    esEl.style.color = '';
   }
 };
 
@@ -3752,7 +3761,7 @@ window.kitFilter = function(season, btn) {
   });
 };
 
-async function loadKitsAdmin() {
+window.loadKitsAdmin = async function loadKitsAdmin() {
   const el = document.getElementById('kits-list');
   if(!el) return;
   el.innerHTML = '<div class="loading"><div class="spinner"></div>Cargando kits...</div>';
@@ -3811,10 +3820,22 @@ window.saveKit = async () => {
 
   try {
     if(editId) {
-      const savedOrden = parseInt(document.getElementById('k-edit-id').dataset.orden) || 99;
-      data.orden = savedOrden;
-      await updateDoc(doc(db, 'kits', editId), data);
-      showToast('Kit actualitzat ✓ — canvis visibles a la web');
+      // Verificar que el documento sigue existiendo antes de actualizar
+      const kitRef  = doc(db, 'kits', editId);
+      const kitSnap = await getDoc(kitRef);
+      if(!kitSnap.exists()) {
+        showToast('Este kit ya no existe. Se creará como nuevo.');
+        document.getElementById('k-edit-id').value = '';
+        const countSnap = await getDocs(collection(db, 'kits'));
+        data.orden = countSnap.size + 1; data.createdAt = serverTimestamp();
+        await addDoc(collection(db, 'kits'), data);
+        showToast('Kit afegit ✓ — visible a la web');
+      } else {
+        const savedOrden = parseInt(document.getElementById('k-edit-id').dataset.orden) || kitSnap.data().orden || 99;
+        data.orden = savedOrden;
+        await updateDoc(kitRef, data);
+        showToast('Kit actualitzat ✓ — canvis visibles a la web');
+      }
     } else {
       const countSnap = await getDocs(collection(db, 'kits'));
       data.orden     = countSnap.size + 1;
@@ -3872,7 +3893,7 @@ window.eliminarKit = async (id) => {
   loadKitsAdmin();
 };
 
-function limpiarModalKit() {
+window.limpiarModalKit = function() {
   ['k-edit-id','k-nombre','k-desc','k-contenido','k-nombre-ca','k-desc-ca','k-contenido-ca','k-imagen'].forEach(id => {
     const el = document.getElementById(id);
     if(el) { el.value = ''; delete el.dataset.modified; delete el.dataset.orden; }
@@ -3880,9 +3901,9 @@ function limpiarModalKit() {
   const kprecio = document.getElementById('k-precio'); if(kprecio) kprecio.value = '';
   const kactivo = document.getElementById('k-activo'); if(kactivo) kactivo.checked = true;
   const ktemp   = document.getElementById('k-temporada'); if(ktemp) ktemp.value = 'general';
-  document.getElementById('kit-modal-title').textContent = 'Nou kit';
-  document.getElementById('kit-modal-sub').textContent   = 'Es mostrarà a la secció Manualitats de la web';
-  document.getElementById('kit-save-btn').textContent    = 'Guardar kit';
+  const ktitle  = document.getElementById('kit-modal-title'); if(ktitle) ktitle.textContent = 'Nou kit';
+  const ksub    = document.getElementById('kit-modal-sub');   if(ksub)   ksub.textContent   = 'Es mostrarà a la secció Manualitats de la web';
+  const kbtn    = document.getElementById('kit-save-btn');    if(kbtn)   kbtn.textContent    = 'Guardar kit';
 }
 
 // ── DASHBOARD KPIs ────────────────────────────────────────────
