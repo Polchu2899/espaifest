@@ -2038,6 +2038,14 @@ function pagoBadge(r) {
   return '<span class="badge bg-x">—</span>';
 }
 
+// Reservas creadas antes de esta fecha nunca se muestran como "nueva"
+const CUTOFF_NUEVA = new Date('2026-05-13T00:00:00').getTime();
+
+function esReservaNueva(r) {
+  const ts = r.createdAt?.toMillis?.() || new Date(r.createdAt || 0).getTime();
+  return !r.vista && ts >= CUTOFF_NUEVA;
+}
+
 function renderReservas(list) {
   const el = document.getElementById('reservas-list');
   if (!list.length) { el.innerHTML = '<div class="empty">No hay reservas todavía. ¡Crea la primera!</div>'; return; }
@@ -2049,7 +2057,7 @@ function renderReservas(list) {
       : '';
     // "Nueva" = llegó de la web y Laura aún no la ha confirmado
     const tsCreado = r.createdAt?.toMillis?.() || new Date(r.createdAt||0).getTime();
-    const esNueva = !r.vista;
+    const esNueva = esReservaNueva(r);
     const badgeNueva = esNueva ? '<span class="badge-nueva">✦ Nueva</span>' : '';
     const rowClass = esNueva ? 'trow rc nueva' : 'trow rc';
     // Fecha creación formateada
@@ -2088,7 +2096,7 @@ function renderReservas(list) {
     <div class="atime">${fmtDate(r.createdAt)}</div></div>`).join('');
 
   // Badge: todas las reservas que Laura aún no ha marcado como vistas
-  const noVistas = allReservas.filter(r => !r.vista).length;
+  const noVistas = allReservas.filter(esReservaNueva).length;
   document.getElementById('badge-res').textContent = noVistas;
 };
 
@@ -2720,7 +2728,7 @@ window.confirmarReserva = async (id) => {
     if(badge) badge.remove();
   }
   // Actualizar contador del menú
-  const noVistas = allReservas.filter(r => !r.vista).length;
+  const noVistas = allReservas.filter(esReservaNueva).length;
   const badgeEl = document.getElementById('badge-res');
   if(badgeEl) badgeEl.textContent = noVistas;
 };
@@ -2728,7 +2736,7 @@ window.confirmarReserva = async (id) => {
 window.marcarVista = async (id) => {
   await updateDoc(doc(db,'reservas',id), { vista: true });
   actualizarReservaLocal(id, { vista: true });
-  const noVistas = allReservas.filter(r => !r.vista).length;
+  const noVistas = allReservas.filter(esReservaNueva).length;
   const badgeEl = document.getElementById('badge-res');
   if(badgeEl) badgeEl.textContent = noVistas;
   showToast('Reserva marcada como vista ✓');
