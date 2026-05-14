@@ -4059,6 +4059,18 @@ async function loadServiciosWeb() {
     if(typeof scrollObs !== 'undefined') {
       grid.querySelectorAll('[data-a]').forEach(el=>scrollObs.observe(el));
     }
+
+    // Actualizar el select "Tipus d'esdeveniment" del formulari de reserva
+    const selTipo = document.getElementById('r-tipo');
+    if(selTipo && servicios.length > 0) {
+      const valActual = selTipo.value;
+      selTipo.innerHTML = '<option value="">Selecciona...</option>' +
+        servicios.map(function(s) {
+          const nom = (s.nombre_ca || s.nombre || '').replace(/"/g,'&quot;');
+          return `<option value="${nom}">${nom}</option>`;
+        }).join('');
+      if(valActual && selTipo.querySelector(`option[value="${valActual}"]`)) selTipo.value = valActual;
+    }
   } catch(e){ console.warn('Servicios web error:',e.message); }
 }
 
