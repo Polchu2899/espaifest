@@ -3984,7 +3984,14 @@ function updateCrumb() {
   document.getElementById('pcrumb').textContent = now.toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
 
-window.openModal = id => document.getElementById('modal-'+id).classList.add('open');
+window.openModal = function(id) {
+  document.getElementById('modal-'+id).classList.add('open');
+  if(id === 'recurrente') setTimeout(() => initRecModal(), 50);
+  if(id === 'res')        setTimeout(() => { renderExtrasChecks(); ajustarHoraExtReservify(''); }, 50);
+  if(id === 'bloqueo')    setTimeout(() => { typeof blqSetTab === 'function' && blqSetTab('rango'); typeof blqActualizarPreview === 'function' && blqActualizarPreview(); }, 50);
+  if(id === 'promo' && !document.getElementById('p-edit-id')?.value) setTimeout(() => typeof limpiarModalPromo === 'function' && limpiarModalPromo(), 50);
+  if(id === 'kit'   && !document.getElementById('k-edit-id')?.value) setTimeout(() => typeof limpiarModalKit   === 'function' && limpiarModalKit(), 50);
+};
 window.closeModal = id => document.getElementById('modal-'+id).classList.remove('open');
 document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 
@@ -5946,6 +5953,7 @@ window.loadFranjasPorFecha = function(fechaStr) {
   const franjaRef = primeraLibre || disponibles[0];
   if(franjaRef) loadHorasExtra(franjaRef);
   renderExtrasChecks(franjaRef || null);
+  ajustarHoraExtReservify(sel?.value || '');
   calcPrecioAuto();
 };
 
@@ -6025,9 +6033,42 @@ document.addEventListener('change', function(e) {
     const row = todas.find(f => f.turno === turnoMatch) || null;
     loadHorasExtra(row);
     renderExtrasChecks(row);
+    ajustarHoraExtReservify(val);
     calcPrecioAuto();
   }
 });
+
+// Bloquea hora extra incompatible con los turnos de Espaifest:
+// - Turno mañana (11:00-15:00): no permite +1h después (dejaría solo 30min antes del turno tarde 16:30)
+// - Turno tarde (16:30-20:30): no permite +1h antes (dejaría solo 30min tras el turno mañana 15:00)
+function ajustarHoraExtReservify(slotVal) {
+  const cbAntes     = document.getElementById('r-horaext-antes');
+  const cbDespues   = document.getElementById('r-horaext-despues');
+  if(!cbAntes || !cbDespues) return;
+  const lblAntes    = cbAntes.closest('label');
+  const lblDespues  = cbDespues.closest('label');
+
+  const esMañana = slotVal.includes('11:00') && slotVal.includes('15:00');
+  const esTarde  = slotVal.includes('16:30');
+
+  if(esMañana) {
+    cbDespues.disabled = true;
+    cbDespues.checked  = false;
+    if(lblDespues) { lblDespues.style.opacity = '.4'; lblDespues.title = 'No disponible: conflicto con el turno de tarde (16:30–20:30)'; }
+  } else {
+    cbDespues.disabled = false;
+    if(lblDespues) { lblDespues.style.opacity = ''; lblDespues.title = ''; }
+  }
+
+  if(esTarde) {
+    cbAntes.disabled = true;
+    cbAntes.checked  = false;
+    if(lblAntes) { lblAntes.style.opacity = '.4'; lblAntes.title = 'No disponible: conflicto con el turno de mañana (11:00–15:00)'; }
+  } else {
+    cbAntes.disabled = false;
+    if(lblAntes) { lblAntes.style.opacity = ''; lblAntes.title = ''; }
+  }
+}
 
 // Calcula y muestra el precio automáticamente
 window.calcPrecioAuto = function() {
