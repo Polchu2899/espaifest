@@ -2089,6 +2089,13 @@ async function loadReservas() {
     renderReservas(allReservas);
     updateDashboard();
 
+    // Sincronización automática del calendario al cargar (una vez por sesión)
+    // Actualiza nocheOcupada y diaOcupado en documentos de calendario_publico antiguos
+    if(!sessionStorage.getItem('cal_synced')) {
+      sessionStorage.setItem('cal_synced', '1');
+      setTimeout(() => sincronizarCalendarioSilencioso(), 2000);
+    }
+
     // Migración silenciosa: marcar vista:true en confirmadas que no lo tienen
     const sinVista = allReservas.filter(r =>
       r.origen === 'web' && !r.vista &&
@@ -2731,7 +2738,7 @@ function getHorario(r) {
 // Devuelve el rango real {ini, fin} de una reserva aplicando la hora extra
 function getRangoReal(r) {
   const horario = getHorario(r);
-  const base = FRANJAS_RANGOS[horario];
+  const base = buscarRangoHorario(horario);
   if (!base) return null;
 
   let { ini, fin } = base;
@@ -2745,6 +2752,29 @@ function getRangoReal(r) {
 // Dos rangos se solapan si uno empieza antes de que termine el otro
 function seSuperponen(a, b) {
   return a.ini < b.fin && b.ini < a.fin;
+}
+
+// Búsqueda robusta en FRANJAS_RANGOS: prueba el string original y variantes normalizadas
+// para evitar fallos por distintos tipos de guión (–, -) o espacios alrededor
+function buscarRangoHorario(horario) {
+  if(!horario) return null;
+  if(FRANJAS_RANGOS[horario]) return FRANJAS_RANGOS[horario];
+  // Normalizar espacios y tipo de guión
+  const n1 = horario.trim().replace(/\s*[–\-]\s*/g, '–');
+  if(FRANJAS_RANGOS[n1]) return FRANJAS_RANGOS[n1];
+  const n2 = horario.trim().replace(/\s*[–\-]\s*/g, '-');
+  if(FRANJAS_RANGOS[n2]) return FRANJAS_RANGOS[n2];
+  // Si viene con paréntesis: "Turno (horario)" → extraer horario
+  const m = horario.match(/\(([^)]+)\)/);
+  if(m) {
+    const inside = m[1].trim();
+    if(FRANJAS_RANGOS[inside]) return FRANJAS_RANGOS[inside];
+    const n3 = inside.replace(/\s*[–\-]\s*/g, '–');
+    if(FRANJAS_RANGOS[n3]) return FRANJAS_RANGOS[n3];
+    const n4 = inside.replace(/\s*[–\-]\s*/g, '-');
+    if(FRANJAS_RANGOS[n4]) return FRANJAS_RANGOS[n4];
+  }
+  return null;
 }
 
 // Dado un conjunto de reservas confirmadas, detecta qué turnos quedan bloqueados
@@ -2761,10 +2791,13 @@ function calcOcupacion(reservasConfirmadas) {
   const franjasTarde = [
     { ini: 16*60+30, fin: 20*60+30 }, // 16:30h–20:30h
   ];
+  // Representativo noche: SOLO 21:15h–01:30h.
+  // 16:30-20:30 termina a las 20:30 y NO solapa con 21:15 (gap 45 min) → pueden coexistir.
+  // 10:00-20:00 termina a las 20:00 y tampoco solapa → pueden coexistir.
+  // El 19:30-23:30 SÍ solapa con 21:15 (y con 16:30-20:30) → si se reserva, bloquea noche.
+  // El 16:30-01:30 SÍ solapa → bloquea noche.
   const franjasNoche = [
-    { ini: 19*60+30, fin: 23*60+30 }, // 19:30h–23:30h
-    { ini: 21*60+15, fin: 25*60+30 }, // 21:15h–01:30h
-    { ini: 16*60+30, fin: 25*60+30 }, // 16:30h–01:30h (tarde-noche)
+    { ini: 21*60+15, fin: 25*60+30 }, // 21:15h–01:30h — punto de referencia noche
   ];
 
   const mananaOcupada = franjasManana.some(f =>
@@ -3209,7 +3242,7 @@ window.renderRecFechas = function() {
     return;
   }
   const horario = document.getElementById('rec-horario')?.value || '';
-  const rango   = horario ? FRANJAS_RANGOS[horario] : null;
+  const rango   = horario ? buscarRangoHorario(horario) : null;
   const dayNames = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
   el.innerHTML = recFechas.map(function(f) {
     const parts = f.split('-');
@@ -4691,6 +4724,33 @@ async function loadMigLog() {
   } catch(e){}
 }
 
+// ── SINCRONIZACIÓN SILENCIOSA (automática al cargar) ─────────
+// Recalcula nocheOcupada y diaOcupado para fechas futuras con reservas confirmadas
+async function sincronizarCalendarioSilencioso() {
+  try {
+    const hoy  = new Date().toISOString().split('T')[0];
+    const snap = await getDocs(query(collection(db,'reservas'), where('estado','==','Confirmada')));
+    const porFecha = {};
+    snap.docs.forEach(d => {
+      const r = { id: d.id, ...d.data() };
+      if(!r.fecha || r.fecha < hoy) return;
+      if(!porFecha[r.fecha]) porFecha[r.fecha] = [];
+      porFecha[r.fecha].push(r);
+    });
+    for(const fecha of Object.keys(porFecha)) {
+      try {
+        const { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado } = calcOcupacion(porFecha[fecha]);
+        await setDoc(doc(db,'calendario_publico', fecha), {
+          fecha, mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, updatedAt: serverTimestamp()
+        });
+      } catch(e) { /* silencioso */ }
+    }
+    console.log('[Sync cal] Sincronización silenciosa completada:', Object.keys(porFecha).length, 'fechas');
+  } catch(e) {
+    console.warn('[Sync cal] Error en sincronización silenciosa:', e.message);
+  }
+}
+
 // ── SINCRONIZAR CALENDARIO DESDE RESERVAS CONFIRMADAS ────────
 window.sincronizarCalendario = async function() {
   const btn    = document.getElementById('btn-sync-cal');
@@ -5970,7 +6030,7 @@ window.loadFranjasPorFecha = function(fechaStr) {
     const optE = document.createElement('option');
     optE.value = `${esp.celebracion} (${esp.horario}) — ${esp.precio}€`;
     optE.dataset.precio = esp.precio;
-    const espRango = FRANJAS_RANGOS[esp.horario];
+    const espRango = buscarRangoHorario(esp.horario);
     const espOcupado = espRango && rangosOcupados.some(rc => seSuperponen(espRango, rc));
     if(espOcupado) {
       optE.disabled = true;
@@ -6001,7 +6061,7 @@ window.loadFranjasPorFecha = function(fechaStr) {
     const opt = document.createElement('option');
     opt.value = `${f.turno} (${f.horario}) — ${precio}€`;
     opt.dataset.precio = precio;
-    const rango = FRANJAS_RANGOS[f.horario];
+    const rango = buscarRangoHorario(f.horario);
     const ocupado = rango && rangosOcupados.some(rc => seSuperponen(rango, rc));
     if(ocupado) {
       opt.disabled = true;
