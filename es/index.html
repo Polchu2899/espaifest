@@ -3104,6 +3104,10 @@ function webLoadFranjasPorFecha(fechaStr) {
   const ddmm = String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
   const esp = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
 
+  // Info de ocupación para este día (CAL_DATA se actualiza en tiempo real desde Firebase)
+  const info       = CAL_DATA[fechaStr] || {};
+  const diaOcupado = info.diaOcupado    || false;
+
   // Añadir opción placeholder siempre
   const opt0 = document.createElement('option');
   opt0.value = '';
@@ -3113,10 +3117,16 @@ function webLoadFranjasPorFecha(fechaStr) {
   // Si hay día especial, añadirlo primero (pero NO hacer return — seguir cargando todas las franjas)
   if(esp) {
     const optEsp = document.createElement('option');
-    optEsp.value = `${esp.celebracion} · ${esp.horario}`;
-    optEsp.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
-    optEsp.dataset.precio = esp.precio;
     optEsp.dataset.esDiaEsp = '1';
+    if(diaOcupado) {
+      optEsp.disabled = true;
+      optEsp.value = '';
+      optEsp.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — 🔴 Ocupado`;
+    } else {
+      optEsp.value = `${esp.celebracion} · ${esp.horario}`;
+      optEsp.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
+      optEsp.dataset.precio = esp.precio;
+    }
     sel.appendChild(optEsp);
   }
 
@@ -3131,7 +3141,6 @@ function webLoadFranjasPorFecha(fechaStr) {
 
   if(!disponibles.length) {
     if(sel.options.length <= 1) {
-      // Solo el placeholder, sin franjas normales ni especiales
       sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
     }
     calcularTotal();
@@ -3141,9 +3150,20 @@ function webLoadFranjasPorFecha(fechaStr) {
   disponibles.forEach(f => {
     const precio = f[diaKey];
     const opt = document.createElement('option');
-    opt.value = `${f.turno} (${f.horario})`;
-    opt.textContent = `${f.turno} · ${f.horario} — ${precio} €`;
-    opt.dataset.precio = precio;
+    const grupo  = clasificarTurno(f.turno);
+    const ocupado = diaOcupado
+      || (grupo === 'manana' && info.mananaOcupada)
+      || (grupo === 'tarde'  && info.tardeOcupada)
+      || (grupo === 'noche'  && info.nocheOcupada);
+    if(ocupado) {
+      opt.disabled = true;
+      opt.value = '';
+      opt.textContent = `${f.turno} · ${f.horario} — 🔴 Ocupado`;
+    } else {
+      opt.value = `${f.turno} (${f.horario})`;
+      opt.textContent = `${f.turno} · ${f.horario} — ${precio} €`;
+      opt.dataset.precio = precio;
+    }
     sel.appendChild(opt);
   });
 
@@ -3183,8 +3203,9 @@ function ajustarHoraExtWeb() {
   const lblAntes  = rbAntes?.closest('label');
   const lblDespues= rbDespues?.closest('label');
 
-  const esMañana = horario.includes('11:00') && horario.includes('15:00');
-  const esTarde  = horario.includes('16:30');
+  const esMañana = (horario.includes('11:00') || horario.includes('11h')) &&
+                   (horario.includes('15:00') || horario.includes('15h'));
+  const esTarde  = horario.includes('16:30') || horario.includes('16h30');
 
   if(rbDespues) {
     if(esMañana) {
