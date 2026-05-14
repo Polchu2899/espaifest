@@ -3172,21 +3172,59 @@ let recFechas = [];
 window.initRecModal = function() {
   recFechas = [];
   window.renderRecFechas();
+  recActualizarSelectHorario();
+};
+
+// Reconstruye el select de franja horaria mostrando conflictos para las fechas seleccionadas.
+// Se llama al abrir el modal y cada vez que cambian las fechas.
+function recActualizarSelectHorario() {
   const sel = document.getElementById('rec-horario');
   if(!sel) return;
-  sel.innerHTML = '<option value="">— Selecciona franja —</option>';
+  const valorActual = sel.value;
+
   const todas = [...(window.tarifasData?.estandar||[]), ...(window.tarifasData?.ampliados||[])];
-  const vistas = new Set();
+  const vistos = new Set();
+  const opciones = [];
+
   todas.forEach(f => {
-    if(!vistas.has(f.horario)) {
-      vistas.add(f.horario);
-      const opt = document.createElement('option');
-      opt.value = f.horario;
-      opt.textContent = f.turno + ' · ' + f.horario;
-      sel.appendChild(opt);
+    if(vistos.has(f.horario)) return;
+    vistos.add(f.horario);
+
+    const rango = buscarRangoHorario(f.horario);
+    let conflictos = 0;
+
+    if(rango && recFechas.length > 0) {
+      recFechas.forEach(function(fecha) {
+        const confirmadasDia = (allReservas||[]).filter(function(r) {
+          return r.fecha === fecha && (r.estado||'').toLowerCase() === 'confirmada';
+        });
+        const hayConflicto = confirmadasDia.some(function(r) {
+          const rc = getRangoReal(r); return rc && seSuperponen(rango, rc);
+        });
+        if(hayConflicto) conflictos++;
+      });
     }
+
+    opciones.push({ horario: f.horario, turno: f.turno, conflictos });
   });
-};
+
+  sel.innerHTML = '<option value="">— Selecciona franja —</option>';
+  opciones.forEach(function(o) {
+    const opt = document.createElement('option');
+    opt.value = o.horario;
+    if(o.conflictos > 0) {
+      opt.textContent = `⚠ ${o.turno} · ${o.horario}  (${o.conflictos}/${recFechas.length} días ocupados)`;
+      opt.style.color  = '#ef4444';
+    } else {
+      opt.textContent = `${o.turno} · ${o.horario}`;
+    }
+    sel.appendChild(opt);
+  });
+
+  // Restaurar selección anterior si sigue siendo válida
+  if(valorActual) sel.value = valorActual;
+  window.renderRecFechas();
+}
 
 window.recAddFecha = function() {
   const input = document.getElementById('rec-fecha-add');
@@ -3196,7 +3234,7 @@ window.recAddFecha = function() {
   recFechas.push(fecha);
   recFechas.sort();
   input.value = '';
-  window.renderRecFechas();
+  recActualizarSelectHorario();
 };
 
 window.recToggleRango = function() {
@@ -3222,14 +3260,14 @@ window.recGenerarRango = function() {
     d.setDate(d.getDate() + 1);
   }
   recFechas.sort();
-  window.renderRecFechas();
+  recActualizarSelectHorario();
   document.getElementById('rec-rango-wrap').style.display = 'none';
   showToast(added + ' fechas añadidas');
 };
 
 window.recRemoveFecha = function(fecha) {
   recFechas = recFechas.filter(f => f !== fecha);
-  window.renderRecFechas();
+  recActualizarSelectHorario();
 };
 
 window.renderRecFechas = function() {
@@ -3273,6 +3311,7 @@ window.renderRecFechas = function() {
 };
 
 window.recActualizarResumen = function() {
+  // Al cambiar la franja, actualizar la lista de fechas con sus conflictos
   window.renderRecFechas();
 };
 
