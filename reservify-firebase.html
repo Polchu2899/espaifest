@@ -1441,19 +1441,19 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div id="rec-rango-wrap" style="display:none;background:var(--s3);border:1px solid var(--b2);border-radius:10px;padding:12px 14px;margin-bottom:10px;">
       <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:10px;">Generar fechas automáticamente</div>
       <div class="fr2">
-        <div class="fg"><label class="fl">Desde</label><input type="date" class="fi" id="rec-rango-desde"></div>
-        <div class="fg"><label class="fl">Hasta</label><input type="date" class="fi" id="rec-rango-hasta"></div>
+        <div class="fg"><label class="fl">Desde</label><input type="date" class="fi" id="rec-rango-desde" onchange="recActualizarSelectHorario()"></div>
+        <div class="fg"><label class="fl">Hasta</label><input type="date" class="fi" id="rec-rango-hasta" onchange="recActualizarSelectHorario()"></div>
       </div>
       <div class="fg" style="margin-bottom:10px">
         <label class="fl">Días de la semana</label>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="0" style="accent-color:var(--teal)"> Lu</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="1" style="accent-color:var(--teal)"> Ma</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="2" style="accent-color:var(--teal)"> Mi</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="3" style="accent-color:var(--teal)"> Ju</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="4" style="accent-color:var(--teal)"> Vi</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="5" style="accent-color:var(--teal)"> Sá</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="6" style="accent-color:var(--teal)"> Do</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="0" style="accent-color:var(--teal)" onchange="recActualizarSelectHorario()"> Lu</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="1" style="accent-color:var(--teal)" onchange="recActualizarSelectHorario()"> Ma</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="2" style="accent-color:var(--teal)" onchange="recActualizarSelectHorario()"> Mi</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="3" style="accent-color:var(--teal)" onchange="recActualizarSelectHorario()"> Ju</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="4" style="accent-color:var(--teal)" onchange="recActualizarSelectHorario()"> Vi</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="5" style="accent-color:var(--teal)" onchange="recActualizarSelectHorario()"> Sá</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="rec-dow" value="6" style="accent-color:var(--teal)" onchange="recActualizarSelectHorario()"> Do</label>
         </div>
       </div>
       <div style="display:flex;gap:8px">
@@ -3195,8 +3195,11 @@ function recActualizarSelectHorario() {
     const rango = buscarRangoHorario(f.horario);
     let conflictos = 0;
 
-    if(rango && recFechas.length > 0) {
-      recFechas.forEach(function(fecha) {
+    // Fechas a comprobar: las ya añadidas, o vista previa del rango si aún no se han generado
+    let fechasCheck = recFechas.length > 0 ? recFechas : recGetFechasPrevia();
+
+    if(rango && fechasCheck.length > 0) {
+      fechasCheck.forEach(function(fecha) {
         const confirmadasDia = (allReservas||[]).filter(function(r) {
           return r.fecha === fecha && (r.estado||'').toLowerCase() === 'confirmada';
         });
@@ -3207,7 +3210,7 @@ function recActualizarSelectHorario() {
       });
     }
 
-    opciones.push({ horario: f.horario, turno: f.turno, conflictos });
+    opciones.push({ horario: f.horario, turno: f.turno, conflictos, total: fechasCheck.length });
   });
 
   sel.innerHTML = '<option value="">— Selecciona franja —</option>';
@@ -3215,7 +3218,7 @@ function recActualizarSelectHorario() {
     const opt = document.createElement('option');
     opt.value = o.horario;
     if(o.conflictos > 0) {
-      opt.textContent = `⚠ ${o.turno} · ${o.horario}  (${o.conflictos}/${recFechas.length} días ocupados)`;
+      opt.textContent = `⚠ ${o.turno} · ${o.horario}  (${o.conflictos}/${o.total} días ocupados)`;
       opt.style.color  = '#ef4444';
     } else {
       opt.textContent = `${o.turno} · ${o.horario}`;
@@ -3226,6 +3229,23 @@ function recActualizarSelectHorario() {
   // Restaurar selección anterior si sigue siendo válida
   if(valorActual) sel.value = valorActual;
   window.renderRecFechas();
+}
+
+// Calcula las fechas que se generarían desde el rango actual (vista previa sin guardar en recFechas)
+function recGetFechasPrevia() {
+  const desde = document.getElementById('rec-rango-desde')?.value;
+  const hasta  = document.getElementById('rec-rango-hasta')?.value;
+  if(!desde || !hasta) return [];
+  const dows = Array.from(document.querySelectorAll('.rec-dow:checked')).map(function(c){ return parseInt(c.value); });
+  const d = new Date(desde + 'T12:00:00');
+  const fin = new Date(hasta  + 'T12:00:00');
+  const result = [];
+  while(d <= fin && result.length < 120) {
+    const dow = (d.getDay() + 6) % 7;
+    if(dows.length === 0 || dows.includes(dow)) result.push(d.toISOString().split('T')[0]);
+    d.setDate(d.getDate() + 1);
+  }
+  return result;
 }
 
 window.recAddFecha = function() {
