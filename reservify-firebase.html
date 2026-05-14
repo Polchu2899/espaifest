@@ -3607,6 +3607,23 @@ async function loadServicios() {
     const snap = await getDocs(collection(db,'servicios'));
     const servicios = snap.docs.map(d => ({id:d.id,...d.data()}));
     const el = document.getElementById('servicios-list');
+
+    // Actualizar los selects de tipo de evento en todos los modales de reserva
+    const activos = servicios.filter(s => s.activo !== false);
+    if(activos.length > 0) {
+      const opcionesHtml = activos.map(s =>
+        `<option value="${(s.nombre||'').replace(/"/g,'&quot;')}">${s.nombre||'—'}</option>`
+      ).join('');
+      ['r-servicio', 'rec-servicio', 'er-servicio'].forEach(function(selId) {
+        const sel = document.getElementById(selId);
+        if(!sel) return;
+        const valActual = sel.value;
+        sel.innerHTML = opcionesHtml;
+        // Mantener selección si sigue existiendo
+        if(valActual && sel.querySelector(`option[value="${valActual}"]`)) sel.value = valActual;
+      });
+    }
+
     if(!servicios.length) {
       el.innerHTML = '<div class="empty">No hay servicios. Añade el primero.</div>';
       return;
