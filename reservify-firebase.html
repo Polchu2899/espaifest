@@ -519,7 +519,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             <div class="chwrap"><div class="chbars" id="chart"></div></div>
           </div>
           <div class="card">
-            <div class="chead"><div><div class="ctitle">Próximas reservas</div><div class="csub">En los próximos días</div></div><button class="btn bg sm" onclick="showPanel('reservas',document.querySelector('[onclick*=reservas]'))">Ver todas</button></div>
+            <div class="chead"><div><div class="ctitle">Reservas este mes</div><div class="csub">Pendientes desde hoy hasta fin de mes</div></div><button class="btn bg sm" onclick="showPanel('reservas',document.querySelector('[onclick*=reservas]'))">Ver todas</button></div>
             <div id="upcoming-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
           </div>
         </div>
@@ -2179,12 +2179,14 @@ function renderReservas(list) {
     </div>`;
   }).join('');
 
-  // Upcoming (próximas 5)
-  const hoy = new Date().toISOString().split('T')[0];
-  const prox = list.filter(r => r.fecha >= hoy && (r.estado||'').toLowerCase() !== 'cancelada').slice(0,4);
+  // Upcoming (mes en curso, desde hoy hasta fin de mes)
+  const _hoyDate = new Date();
+  const hoy = _hoyDate.toISOString().split('T')[0];
+  const _finMes = new Date(_hoyDate.getFullYear(), _hoyDate.getMonth()+1, 0).toISOString().split('T')[0];
+  const prox = list.filter(r => r.fecha >= hoy && r.fecha <= _finMes && (r.estado||'').toLowerCase() !== 'cancelada');
   document.getElementById('upcoming-list').innerHTML = prox.length
     ? prox.map(r => `<div class="trow" style="display:grid;grid-template-columns:1.4fr .9fr .8fr;gap:12px;cursor:pointer" onclick="openDet('${r.id}')"><div><div class="c cs">${r.nombre}</div><div class="c cm" style="font-size:11px">${r.servicio}</div></div><div class="c cm">${r.fecha}</div><div>${estadoBadge(r.estado)}</div></div>`).join('')
-    : '<div class="empty">Sin reservas próximas</div>';
+    : '<div class="empty">Sin reservas este mes</div>';
 
   // Activity
   document.getElementById('activity-list').innerHTML = list.slice(0,5).map(r => `
@@ -3940,8 +3942,9 @@ function updateDashboard() {
     <div class="cfitem"><div class="cflbl">Email</div><div class="cfval">info@espaifest.com</div></div>
     <div class="cfitem"><div class="cflbl">Estado</div><div class="cfval" style="color:var(--green)">Activo</div></div>`;
   // Chart
-  const meses = ['Oct','Nov','Dic','Ene','Feb','Mar'];
-  const vals = meses.map((m,i) => {
+  const mesNames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const meses = Array.from({length:6},(_,i)=>mesNames[(mes-5+i+12)%12]);
+  const vals = meses.map((_,i) => {
     const mi = (mes-5+i+12)%12;
     return allReservas.filter(r=>{
       if(!r.fecha) return false;
@@ -3952,7 +3955,7 @@ function updateDashboard() {
   document.getElementById('chart').innerHTML = meses.map((m,i)=>{
     const pct = Math.round(vals[i]/mx*100);
     const isNow = i===5;
-    return `<div class="bcol"><div class="bar" style="height:${pct||4}%;background:${isNow?'linear-gradient(180deg,#22d3ee,#0fd4c4)':'rgba(255,255,255,0.06)'}" title="${vals[i]} reservas"></div><span class="blbl">${m}</span></div>`;
+    return `<div class="bcol" style="justify-content:flex-end"><span style="font-size:10px;color:var(--t2);font-family:'DM Mono',monospace;font-weight:600;margin-bottom:2px">${vals[i]}</span><div class="bar" style="height:${pct||4}%;background:${isNow?'linear-gradient(180deg,#22d3ee,#0fd4c4)':'rgba(255,255,255,0.06)'}" title="${vals[i]} reservas"></div><span class="blbl">${m}</span></div>`;
   }).join('');
 }
 
