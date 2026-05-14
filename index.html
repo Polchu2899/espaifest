@@ -2894,24 +2894,17 @@ function renderFranjas(ds) {
   const info       = CAL_DATA[ds] || {};
   const diaOcupado = info.diaOcupado || (info.mananaOcupada && info.tardeOcupada) || false;
   const rangos     = info.rangos || [];
-
-  // Comprobación precisa: usa rangos reales si existen, fallback a flags de grupo
+  // Si no hay rangos reales (docs antiguos), construir rangos aproximados desde los flags.
+  // Esto permite comprobación precisa por solapamiento incluso sin datos nuevos.
+  const _rangosEfect = rangos.length > 0 ? rangos : [
+    ...(info.mananaOcupada ? [{ ini: 10*60,    fin: 15*60    }] : []),  // cubre 10h-14h y 11h-15h
+    ...(info.tardeOcupada  ? [{ ini: 16*60+30, fin: 20*60+30 }] : []),  // 16:30-20:30
+    ...(info.nocheOcupada  ? [{ ini: 21*60+15, fin: 25*60+30 }] : []),  // 21:15-01:30
+  ];
   const esSlotBloq = (horarioLabel) => {
     if(diaOcupado) return true;
-    if(rangos.length > 0) {
-      const sr = parseHorarioWeb(horarioLabel);
-      if(sr) return rangos.some(rc => seSuperponen(sr, rc));
-    }
-    // Fallback flags de grupo para docs antiguos
-    const t = (horarioLabel || '').toLowerCase().replace(/\s/g,'');
-    const esMati  = (t.startsWith('10') || t.startsWith('11')) && (t.includes('14') || t.includes('15'));
-    const esTarda = t.includes('16:30') || t.includes('16h30');
-    const esNit   = t.includes('01:30') || t.includes('01h') || t.includes('23:30') || t.includes('21:15');
-    const esDia   = (t.startsWith('10') || t.startsWith('9')) && (t.includes('20') || t.includes('21'));
-    if(esMati) return info.mananaOcupada;
-    if(esDia)  return info.mananaOcupada || info.tardeOcupada || info.nocheOcupada;
-    if(esTarda && !esNit) return info.tardeOcupada;
-    if(esNit)  return info.nocheOcupada;
+    const sr = parseHorarioWeb(horarioLabel);
+    if(sr) return _rangosEfect.some(rc => seSuperponen(sr, rc));
     return false;
   };
 
@@ -3048,24 +3041,19 @@ function renderCal() {
     // diaOcupado calculado: del campo Firebase o inferido si mañana+tarde están ocupadas
     const _diaOc = info.diaOcupado || (info.mananaOcupada && info.tardeOcupada) || false;
     const _rangos = info.rangos || [];
-    // Comprobación precisa por slot usando rangos reales
+    const _rEfect = _rangos.length > 0 ? _rangos : [
+      ...(info.mananaOcupada ? [{ ini: 10*60,    fin: 15*60    }] : []),
+      ...(info.tardeOcupada  ? [{ ini: 16*60+30, fin: 20*60+30 }] : []),
+      ...(info.nocheOcupada  ? [{ ini: 21*60+15, fin: 25*60+30 }] : []),
+    ];
     const _esSlotBloq = (slotLabel) => {
       if(_diaOc) return true;
-      if(_rangos.length > 0) {
-        const sr = parseHorarioWeb(slotLabel);
-        if(sr) return _rangos.some(rc => seSuperponen(sr, rc));
-      }
+      const sr = parseHorarioWeb(slotLabel);
+      if(sr) return _rEfect.some(rc => seSuperponen(sr, rc));
       return false;
     };
     const isFullOcc = _diaOc ||
-      (slotsDisp.length > 0 && slotsDisp.every(s => {
-        if(_rangos.length > 0) return _esSlotBloq(s.label);
-        if(s.grupo==='manana')  return info.mananaOcupada;
-        if(s.grupo==='tarde')   return info.tardeOcupada;
-        if(s.grupo==='noche')   return info.nocheOcupada;
-        if(s.grupo==='diacomp') return _diaOc || info.mananaOcupada || info.tardeOcupada || info.nocheOcupada;
-        return false;
-      }));
+      (slotsDisp.length > 0 && slotsDisp.every(s => _esSlotBloq(s.label)));
     const isPartial = !isFullOcc && (info.mananaOcupada || info.tardeOcupada || info.nocheOcupada);
     const isDiaEsp  = info.esDiaEspecial && !isFullOcc;
     const noHayFranjas = !isPast && slotsDisp.length === 0 && !isDiaEsp;
@@ -3167,17 +3155,18 @@ function webLoadFranjasPorFecha(fechaStr) {
   const ddmm = String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
   const esp = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
 
-  const info       = CAL_DATA[fechaStr] || {};
-  const diaOcupado = info.diaOcupado || (info.mananaOcupada && info.tardeOcupada) || false;
-  const rangos     = info.rangos || []; // Rangos reales para comprobación precisa
-
-  // Determina si un horario (string) está bloqueado comparando su rango real con los rangos ocupados
+  const info         = CAL_DATA[fechaStr] || {};
+  const diaOcupado   = info.diaOcupado || (info.mananaOcupada && info.tardeOcupada) || false;
+  const rangos       = info.rangos || [];
+  const _rangosEfect = rangos.length > 0 ? rangos : [
+    ...(info.mananaOcupada ? [{ ini: 10*60,    fin: 15*60    }] : []),
+    ...(info.tardeOcupada  ? [{ ini: 16*60+30, fin: 20*60+30 }] : []),
+    ...(info.nocheOcupada  ? [{ ini: 21*60+15, fin: 25*60+30 }] : []),
+  ];
   const esHorarioBloq = (horario) => {
     if(diaOcupado) return true;
-    if(rangos.length > 0) {
-      const sr = parseHorarioWeb(horario);
-      if(sr) return rangos.some(rc => seSuperponen(sr, rc));
-    }
+    const sr = parseHorarioWeb(horario);
+    if(sr) return _rangosEfect.some(rc => seSuperponen(sr, rc));
     return false;
   };
 
