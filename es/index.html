@@ -2903,9 +2903,10 @@ function renderFranjas(ds) {
     }).join('');
   };
 
+  const diaCompBloq = diaOcupado || mananaOcupada || tardeOcupada || nocheOcupada;
   renderGrupo('cf-manana', grupos.manana, mananaOcupada);
   renderGrupo('cf-tarde', grupos.tarde, tardeOcupada);
-  renderGrupo('cf-diacomp', grupos.diacomp, diaOcupado);
+  renderGrupo('cf-diacomp', grupos.diacomp, diaCompBloq);
 
   // Grupo noche — franjas normales + franja especial si la hay
   const gNoche = document.getElementById('cf-grupo-noche');
@@ -3007,14 +3008,15 @@ function renderCal() {
     const diaSemIdx = (new Date(ds+'T12:00:00').getDay()+6)%7;
     const slotsDisp = getSlotsPorDia(diaSemIdx);
 
+    const _diaOc = info.diaOcupado || (info.mananaOcupada && info.tardeOcupada) || false;
     // Ocupación real considerando todos los grupos
-    const isFullOcc = info.diaOcupado ||
+    const isFullOcc = _diaOc ||
       (info.mananaOcupada && info.tardeOcupada && info.nocheOcupada) ||
       (slotsDisp.length > 0 && slotsDisp.every(s => {
-        if(s.grupo==='manana') return info.mananaOcupada;
-        if(s.grupo==='tarde')  return info.tardeOcupada;
-        if(s.grupo==='noche')  return info.nocheOcupada;
-        if(s.grupo==='diacomp') return info.diaOcupado;
+        if(s.grupo==='manana')  return info.mananaOcupada;
+        if(s.grupo==='tarde')   return info.tardeOcupada;
+        if(s.grupo==='noche')   return info.nocheOcupada;
+        if(s.grupo==='diacomp') return _diaOc || info.mananaOcupada || info.tardeOcupada || info.nocheOcupada;
         return false;
       }));
     const isPartial = !isFullOcc && (info.mananaOcupada || info.tardeOcupada || info.nocheOcupada);
@@ -3106,7 +3108,7 @@ function webLoadFranjasPorFecha(fechaStr) {
 
   // Info de ocupación para este día (CAL_DATA se actualiza en tiempo real desde Firebase)
   const info       = CAL_DATA[fechaStr] || {};
-  const diaOcupado = info.diaOcupado    || false;
+  const diaOcupado = info.diaOcupado || (info.mananaOcupada && info.tardeOcupada) || false;
 
   // Añadir opción placeholder siempre
   const opt0 = document.createElement('option');
@@ -3152,6 +3154,7 @@ function webLoadFranjasPorFecha(fechaStr) {
     const opt = document.createElement('option');
     const grupo  = clasificarTurno(f.turno);
     const ocupado = diaOcupado
+      || (grupo === 'diacomp' && (info.mananaOcupada || info.tardeOcupada || info.nocheOcupada))
       || (grupo === 'manana' && info.mananaOcupada)
       || (grupo === 'tarde'  && info.tardeOcupada)
       || (grupo === 'noche'  && info.nocheOcupada);
@@ -3709,11 +3712,15 @@ async function loadFechasOcupadas() {
           const fd = d.data();
           const fecha = fd.fecha || d.id;
           if(fecha >= hoy) {
+            const mana  = fd.mananaOcupada || false;
+            const tarde = fd.tardeOcupada  || false;
+            const noche = fd.nocheOcupada  || false;
+            const diaOc = fd.diaOcupado || (mana && tarde) || false;
             data[fecha] = {
-              mananaOcupada: fd.mananaOcupada || false,
-              tardeOcupada:  fd.tardeOcupada  || false,
-              nocheOcupada:  fd.nocheOcupada  || false,
-              diaOcupado:    fd.diaOcupado    || false,
+              mananaOcupada: mana,
+              tardeOcupada:  tarde,
+              nocheOcupada:  noche,
+              diaOcupado:    diaOc,
             };
           }
         });
