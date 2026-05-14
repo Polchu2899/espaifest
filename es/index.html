@@ -2883,64 +2883,78 @@ function renderFranjas(ds) {
 
   const d = new Date(ds+'T12:00:00');
   const diaSemanaIdx = (d.getDay()+6)%7;
-  const info = CAL_DATA[ds] || {};
-  const mananaOcupada = info.mananaOcupada || false;
-  const tardeOcupada  = info.tardeOcupada  || false;
-  const nocheOcupada  = info.nocheOcupada  || false;
-  const diaOcupado    = info.diaOcupado    || false;
+  const info       = CAL_DATA[ds] || {};
+  const diaOcupado = info.diaOcupado || (info.mananaOcupada && info.tardeOcupada) || false;
+  const rangos     = info.rangos || [];
 
-  // Mostrar siempre todos los grupos
+  const esSlotBloq = (horarioLabel) => {
+    if(diaOcupado) return true;
+    if(rangos.length > 0) {
+      const sr = parseHorarioWeb(horarioLabel);
+      if(sr) return rangos.some(rc => seSuperponen(sr, rc));
+    }
+    const t = (horarioLabel||'').toLowerCase().replace(/\s/g,'');
+    const esMati=(t.startsWith('10')||t.startsWith('11'))&&(t.includes('14')||t.includes('15'));
+    const esTarda=t.includes('16:30')||t.includes('16h30');
+    const esNit=t.includes('01:30')||t.includes('01h')||t.includes('23:30')||t.includes('21:15');
+    const esDia=(t.startsWith('10')||t.startsWith('9'))&&(t.includes('20')||t.includes('21'));
+    if(esMati) return info.mananaOcupada;
+    if(esDia)  return info.mananaOcupada||info.tardeOcupada||info.nocheOcupada;
+    if(esTarda&&!esNit) return info.tardeOcupada;
+    if(esNit)  return info.nocheOcupada;
+    return false;
+  };
+
   document.getElementById('cf-grupo-manana').style.display = '';
   document.getElementById('cf-grupo-tarde').style.display = '';
   document.getElementById('cf-grupo-diacomp').style.display = '';
 
-  // Franjas normales según día de semana
   const slots = getSlotsPorDia(diaSemanaIdx);
   const grupos = {manana:[],tarde:[],noche:[],diacomp:[]};
   slots.forEach(s => grupos[s.grupo]?.push(s));
 
-  const renderGrupo = (elId, grupoSlots, ocupado) => {
+  const renderGrupo = (elId, grupoSlots) => {
     const el = document.getElementById(elId);
     if(!el) return;
     el.innerHTML = grupoSlots.map(s => {
-      const occ = (ocupado||diaOcupado) ? 'ocupado' : '';
-      const sel = calSelectedSlot === s.label ? 'selected' : '';
-      const click = (!ocupado && !diaOcupado) ? `onclick="selectSlot('${s.label}','${s.grupo}',${s.precio})"` : '';
-      return `<div class="cf-slot ${occ} ${sel}" ${click}>
+      const ocupado = esSlotBloq(s.label);
+      const occ  = ocupado ? 'ocupado' : '';
+      const selC = calSelectedSlot === s.label ? 'selected' : '';
+      const click = !ocupado ? `onclick="selectSlot('${s.label}','${s.grupo}',${s.precio})"` : '';
+      return `<div class="cf-slot ${occ} ${selC}" ${click}>
         <div>${s.label}</div>
         <div class="cf-slot-precio">${s.precio}€</div>
       </div>`;
     }).join('');
   };
 
-  const diaCompBloq = diaOcupado || mananaOcupada || tardeOcupada || nocheOcupada;
-  renderGrupo('cf-manana', grupos.manana, mananaOcupada);
-  renderGrupo('cf-tarde', grupos.tarde, tardeOcupada);
-  renderGrupo('cf-diacomp', grupos.diacomp, diaCompBloq);
+  renderGrupo('cf-manana', grupos.manana);
+  renderGrupo('cf-tarde', grupos.tarde);
+  renderGrupo('cf-diacomp', grupos.diacomp);
 
-  // Grupo noche — franjas normales + franja especial si la hay
   const gNoche = document.getElementById('cf-grupo-noche');
   const elNoche = document.getElementById('cf-noche');
 
   let nocheHtml = grupos.noche.map(s => {
-    const occ = (nocheOcupada||diaOcupado) ? 'ocupado' : '';
-    const sel = calSelectedSlot === s.label ? 'selected' : '';
-    const click = (!nocheOcupada && !diaOcupado) ? `onclick="selectSlot('${s.label}','noche',${s.precio})"` : '';
-    return `<div class="cf-slot ${occ} ${sel}" ${click}>
+    const ocupado = esSlotBloq(s.label);
+    const occ  = ocupado ? 'ocupado' : '';
+    const selC = calSelectedSlot === s.label ? 'selected' : '';
+    const click = !ocupado ? `onclick="selectSlot('${s.label}','noche',${s.precio})"` : '';
+    return `<div class="cf-slot ${occ} ${selC}" ${click}>
       <div>${s.label}</div>
       <div class="cf-slot-precio">${s.precio}€</div>
     </div>`;
   }).join('');
 
-  // Si es día especial, añadir la franja especial en el grupo noche
   if(info.esDiaEspecial) {
     const ddmm = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
     const esp = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
     if(esp) {
-      const occ = nocheOcupada ? 'ocupado' : '';
-      const sel = calSelectedSlot === esp.horario ? 'selected' : '';
-      const click = !nocheOcupada ? `onclick="selectSlot('${esp.horario}','noche',${esp.precio})"` : '';
-      nocheHtml += `<div class="cf-slot ${occ} ${sel}" ${click} style="border-color:oklch(66% .24 355/.4);background:oklch(66% .24 355/.05)">
+      const ocupado = esSlotBloq(esp.horario);
+      const occ  = ocupado ? 'ocupado' : '';
+      const selC = calSelectedSlot === esp.horario ? 'selected' : '';
+      const click = !ocupado ? `onclick="selectSlot('${esp.horario}','noche',${esp.precio})"` : '';
+      nocheHtml += `<div class="cf-slot ${occ} ${selC}" ${click} style="border-color:oklch(66% .24 355/.4);background:oklch(66% .24 355/.05)">
         <div style="font-size:11px;font-weight:700;color:oklch(66% .24 355);margin-bottom:2px">${esp.celebracion}</div>
         <div>${esp.horario}</div>
         <div class="cf-slot-precio" style="color:oklch(66% .24 355)">${esp.precio}€ · especial</div>
@@ -3018,11 +3032,19 @@ function renderCal() {
     const diaSemIdx = (new Date(ds+'T12:00:00').getDay()+6)%7;
     const slotsDisp = getSlotsPorDia(diaSemIdx);
 
-    const _diaOc = info.diaOcupado || (info.mananaOcupada && info.tardeOcupada) || false;
-    // Ocupación real considerando todos los grupos
+    const _diaOc  = info.diaOcupado || (info.mananaOcupada && info.tardeOcupada) || false;
+    const _rangos = info.rangos || [];
+    const _esSlotBloq = (slotLabel) => {
+      if(_diaOc) return true;
+      if(_rangos.length > 0) {
+        const sr = parseHorarioWeb(slotLabel);
+        if(sr) return _rangos.some(rc => seSuperponen(sr, rc));
+      }
+      return false;
+    };
     const isFullOcc = _diaOc ||
-      (info.mananaOcupada && info.tardeOcupada && info.nocheOcupada) ||
       (slotsDisp.length > 0 && slotsDisp.every(s => {
+        if(_rangos.length > 0) return _esSlotBloq(s.label);
         if(s.grupo==='manana')  return info.mananaOcupada;
         if(s.grupo==='tarde')   return info.tardeOcupada;
         if(s.grupo==='noche')   return info.nocheOcupada;
@@ -3099,6 +3121,19 @@ const _TIPO_MAP = {
 // ── TOTAL EN TIEMPO REAL ──────────────────────────────────────
 
 // Carga las franjas del formulario web según la fecha elegida
+function parseHorarioWeb(horario) {
+  if(!horario) return null;
+  const h = (horario).replace(/\s/g,'');
+  const m = h.match(/(\d{1,2})(?:[h:](\d{2}))?h?[–—\-](\d{1,2})(?:[h:](\d{2}))?/);
+  if(!m) return null;
+  const h1=parseInt(m[1]), m1=parseInt(m[2]||'0');
+  const h2=parseInt(m[3]), m2=parseInt(m[4]||'0');
+  let ini=h1*60+m1, fin=h2*60+m2;
+  if(fin<=ini) fin+=24*60;
+  return { ini, fin };
+}
+function seSuperponen(a,b){ return a.ini<b.fin && b.ini<a.fin; }
+
 function webLoadFranjasPorFecha(fechaStr) {
   const sel  = document.getElementById('r-horario');
   const prev = document.getElementById('web-price-preview');
@@ -3116,21 +3151,29 @@ function webLoadFranjasPorFecha(fechaStr) {
   const ddmm = String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
   const esp = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
 
-  // Info de ocupación para este día (CAL_DATA se actualiza en tiempo real desde Firebase)
   const info       = CAL_DATA[fechaStr] || {};
   const diaOcupado = info.diaOcupado || (info.mananaOcupada && info.tardeOcupada) || false;
+  const rangos     = info.rangos || [];
 
-  // Añadir opción placeholder siempre
+  const esHorarioBloq = (horario) => {
+    if(diaOcupado) return true;
+    if(rangos.length > 0) {
+      const sr = parseHorarioWeb(horario);
+      if(sr) return rangos.some(rc => seSuperponen(sr, rc));
+    }
+    return false;
+  };
+
   const opt0 = document.createElement('option');
   opt0.value = '';
   opt0.textContent = '— Selecciona franja —';
   sel.appendChild(opt0);
 
-  // Si hay día especial, añadirlo primero (pero NO hacer return — seguir cargando todas las franjas)
   if(esp) {
     const optEsp = document.createElement('option');
     optEsp.dataset.esDiaEsp = '1';
-    if(diaOcupado) {
+    const espBloq = esHorarioBloq(esp.horario);
+    if(espBloq) {
       optEsp.disabled = true;
       optEsp.value = '';
       optEsp.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — 🔴 Ocupado`;
@@ -3162,12 +3205,14 @@ function webLoadFranjasPorFecha(fechaStr) {
   disponibles.forEach(f => {
     const precio = f[diaKey];
     const opt = document.createElement('option');
-    const grupo  = clasificarTurno(f.turno, f.horario);
-    const ocupado = diaOcupado
-      || (grupo === 'diacomp' && (info.mananaOcupada || info.tardeOcupada || info.nocheOcupada))
-      || (grupo === 'manana' && info.mananaOcupada)
-      || (grupo === 'tarde'  && info.tardeOcupada)
-      || (grupo === 'noche'  && info.nocheOcupada);
+    let ocupado = esHorarioBloq(f.horario);
+    if(!ocupado && rangos.length === 0) {
+      const grupo = clasificarTurno(f.turno, f.horario);
+      ocupado = (grupo === 'diacomp' && (info.mananaOcupada || info.tardeOcupada || info.nocheOcupada))
+             || (grupo === 'manana' && info.mananaOcupada)
+             || (grupo === 'tarde'  && info.tardeOcupada)
+             || (grupo === 'noche'  && info.nocheOcupada);
+    }
     if(ocupado) {
       opt.disabled = true;
       opt.value = '';
@@ -3731,6 +3776,7 @@ async function loadFechasOcupadas() {
               tardeOcupada:  tarde,
               nocheOcupada:  noche,
               diaOcupado:    diaOc,
+              rangos:        fd.rangos || [],
             };
           }
         });
