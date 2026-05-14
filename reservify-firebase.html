@@ -6048,8 +6048,9 @@ function ajustarHoraExtReservify(slotVal) {
   const lblAntes    = cbAntes.closest('label');
   const lblDespues  = cbDespues.closest('label');
 
-  const esMañana = slotVal.includes('11:00') && slotVal.includes('15:00');
-  const esTarde  = slotVal.includes('16:30');
+  const esMañana = (slotVal.includes('11:00') || slotVal.includes('11h')) &&
+                   (slotVal.includes('15:00') || slotVal.includes('15h'));
+  const esTarde  = slotVal.includes('16:30') || slotVal.includes('16h30');
 
   if(esMañana) {
     cbDespues.disabled = true;
