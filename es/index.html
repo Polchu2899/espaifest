@@ -3192,9 +3192,6 @@ function getPrecioSalaWeb() {
   return opt?.dataset.precio ? parseFloat(opt.dataset.precio) : 0;
 }
 
-// Bloquea la hora extra incompatible con los turnos de Espaifest:
-// - Turno mañana (11:00–15:00): no permite +1h después (dejaría 30min antes del turno tarde 16:30)
-// - Turno tarde (16:30–20:30): no permite +1h antes (dejaría 30min tras el turno mañana 15:00)
 function ajustarHoraExtWeb() {
   const horario   = document.getElementById('r-horario')?.value || '';
   const rbAntes   = document.querySelector('input[name="r-horaext"][value^="antes"]');
@@ -3203,28 +3200,40 @@ function ajustarHoraExtWeb() {
   const lblAntes  = rbAntes?.closest('label');
   const lblDespues= rbDespues?.closest('label');
 
-  const esMañana = (horario.includes('11:00') || horario.includes('11h')) &&
-                   (horario.includes('15:00') || horario.includes('15h'));
-  const esTarde  = horario.includes('16:30') || horario.includes('16h30');
+  const esMañana     = (horario.includes('11:00') || horario.includes('11h')) &&
+                       (horario.includes('15:00') || horario.includes('15h'));
+  const es16h30      = horario.includes('16:30') || horario.includes('16h30');
+  const esTardePura  = es16h30 && !horario.includes('01:30');
+  const esTardeNoche = es16h30 && horario.includes('01:30');
+  const esNoche      = horario.includes('21:15');
 
-  if(rbDespues) {
-    if(esMañana) {
-      rbDespues.disabled = true;
-      if(rbDespues.checked) { rbDespues.checked = false; if(rbNinguna) rbNinguna.checked = true; }
-      if(lblDespues) { lblDespues.style.opacity = '.4'; lblDespues.style.cursor = 'not-allowed'; lblDespues.title = 'No disponible: conflicto con el turno de tarde (16:30–20:30)'; }
-    } else {
-      rbDespues.disabled = false;
-      if(lblDespues) { lblDespues.style.opacity = ''; lblDespues.style.cursor = ''; lblDespues.title = ''; }
-    }
-  }
+  const bloqAntes   = esTardePura || esTardeNoche || esNoche;
+  const bloqDespues = esMañana || esTardePura;
+
   if(rbAntes) {
-    if(esTarde) {
+    if(bloqAntes) {
       rbAntes.disabled = true;
       if(rbAntes.checked) { rbAntes.checked = false; if(rbNinguna) rbNinguna.checked = true; }
-      if(lblAntes) { lblAntes.style.opacity = '.4'; lblAntes.style.cursor = 'not-allowed'; lblAntes.title = 'No disponible: conflicto con el turno de mañana (11:00–15:00)'; }
+      const msg = esNoche
+        ? 'No disponible: conflicto con el turno de tarde (termina a las 20:30)'
+        : 'No disponible: conflicto con el turno de mañana (termina a las 15:00)';
+      if(lblAntes) { lblAntes.style.opacity = '.4'; lblAntes.style.cursor = 'not-allowed'; lblAntes.title = msg; }
     } else {
       rbAntes.disabled = false;
       if(lblAntes) { lblAntes.style.opacity = ''; lblAntes.style.cursor = ''; lblAntes.title = ''; }
+    }
+  }
+  if(rbDespues) {
+    if(bloqDespues) {
+      rbDespues.disabled = true;
+      if(rbDespues.checked) { rbDespues.checked = false; if(rbNinguna) rbNinguna.checked = true; }
+      const msg = esTardePura
+        ? 'No disponible: conflicto con el turno de noche (empieza a las 21:15)'
+        : 'No disponible: conflicto con el turno de tarde (empieza a las 16:30)';
+      if(lblDespues) { lblDespues.style.opacity = '.4'; lblDespues.style.cursor = 'not-allowed'; lblDespues.title = msg; }
+    } else {
+      rbDespues.disabled = false;
+      if(lblDespues) { lblDespues.style.opacity = ''; lblDespues.style.cursor = ''; lblDespues.title = ''; }
     }
   }
 }
