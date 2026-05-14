@@ -3177,13 +3177,26 @@ window.renderRecFechas = function() {
     if(res) res.style.display = 'none';
     return;
   }
+  const horario = document.getElementById('rec-horario')?.value || '';
+  const rango   = horario ? FRANJAS_RANGOS[horario] : null;
   const dayNames = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
   el.innerHTML = recFechas.map(function(f) {
     const parts = f.split('-');
     const label = parts[2] + '/' + parts[1] + '/' + parts[0];
     const dow = dayNames[(new Date(f + 'T12:00:00').getDay() + 6) % 7];
-    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--s3);border:1px solid var(--b2);border-radius:7px;font-size:13px">' +
-      '<span><strong>' + label + '</strong> <span style="color:var(--t3);font-size:11px">' + dow + '</span></span>' +
+    let conflicto = false;
+    if(rango) {
+      const confirmadasDia = (allReservas||[]).filter(function(r) {
+        return r.fecha === f && (r.estado||'').toLowerCase() === 'confirmada';
+      });
+      conflicto = confirmadasDia.some(function(r) {
+        const rc = getRangoReal(r); return rc && seSuperponen(rango, rc);
+      });
+    }
+    const bg    = conflicto ? 'background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.35)' : 'background:var(--s3);border:1px solid var(--b2)';
+    const badge = conflicto ? '<span style="font-size:10px;color:#ef4444;font-weight:700;margin-left:7px;background:rgba(239,68,68,.12);padding:1px 6px;border-radius:4px;">⚠ OCUPADO</span>' : '';
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;' + bg + ';border-radius:7px;font-size:13px">' +
+      '<span><strong>' + label + '</strong> <span style="color:var(--t3);font-size:11px">' + dow + '</span>' + badge + '</span>' +
       '<button onclick="window.recRemoveFecha(\'' + f + '\')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:18px;padding:0 4px;line-height:1">&times;</button>' +
       '</div>';
   }).join('');
@@ -3191,7 +3204,7 @@ window.renderRecFechas = function() {
     res.style.display = 'block';
     const precio = parseFloat(document.getElementById('rec-precio')?.value) || 0;
     document.getElementById('rec-resumen-n').textContent = recFechas.length;
-    document.getElementById('rec-resumen-total').textContent = (recFechas.length * precio).toFixed(2).replace('.', ',') + ' \u20ac';
+    document.getElementById('rec-resumen-total').textContent = (recFechas.length * precio).toFixed(2).replace('.', ',') + ' €';
   }
 };
 
@@ -3265,6 +3278,20 @@ window.saveRecurrente = async function() {
   if(!nombre)           { showToast('Falta el nombre del cliente'); return; }
   if(!horario)          { showToast('Selecciona la franja horaria'); return; }
   if(!recFechas.length) { showToast('Añade al menos una fecha'); return; }
+
+  // Detectar fechas con conflicto antes de guardar
+  const rangoRec = FRANJAS_RANGOS[horario];
+  const fechasConflicto = rangoRec ? recFechas.filter(function(f) {
+    const conf = (allReservas||[]).filter(function(r) {
+      return r.fecha === f && (r.estado||'').toLowerCase() === 'confirmada';
+    });
+    return conf.some(function(r) { const rc = getRangoReal(r); return rc && seSuperponen(rangoRec, rc); });
+  }) : [];
+  if(fechasConflicto.length > 0) {
+    const lista = fechasConflicto.map(function(f) { const p=f.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }).join(', ');
+    const ok2 = confirm('⚠️ Conflicto detectado en ' + fechasConflicto.length + ' fecha(s):\n' + lista + '\n\nYa hay reservas confirmadas en esas fechas y franja. ¿Guardar de todas formas?');
+    if(!ok2) return;
+  }
 
   const btn = document.getElementById('btn-guardar-rec');
   if(btn) btn.disabled = true;
@@ -6042,32 +6069,49 @@ document.addEventListener('change', function(e) {
 // - Turno mañana (11:00-15:00): no permite +1h después (dejaría solo 30min antes del turno tarde 16:30)
 // - Turno tarde (16:30-20:30): no permite +1h antes (dejaría solo 30min tras el turno mañana 15:00)
 function ajustarHoraExtReservify(slotVal) {
-  const cbAntes     = document.getElementById('r-horaext-antes');
-  const cbDespues   = document.getElementById('r-horaext-despues');
+  const cbAntes    = document.getElementById('r-horaext-antes');
+  const cbDespues  = document.getElementById('r-horaext-despues');
   if(!cbAntes || !cbDespues) return;
-  const lblAntes    = cbAntes.closest('label');
-  const lblDespues  = cbDespues.closest('label');
+  const lblAntes   = cbAntes.closest('label');
+  const lblDespues = cbDespues.closest('label');
 
-  const esMañana = (slotVal.includes('11:00') || slotVal.includes('11h')) &&
-                   (slotVal.includes('15:00') || slotVal.includes('15h'));
-  const esTarde  = slotVal.includes('16:30') || slotVal.includes('16h30');
+  const esMañana      = (slotVal.includes('11:00') || slotVal.includes('11h')) &&
+                        (slotVal.includes('15:00') || slotVal.includes('15h'));
+  const es16h30       = slotVal.includes('16:30') || slotVal.includes('16h30');
+  // Tarde pura: 16:30–20:30 (choca con noche 21:15 si se añade +1h después)
+  const esTardePura   = es16h30 && !slotVal.includes('01:30');
+  // Tarde-noche: 16:30–01:30 (no hay conflicto +1h después, termina a las 01:30)
+  const esTardeNoche  = es16h30 && slotVal.includes('01:30');
+  // Noche: 21:15–01:30 (choca con tarde 20:30 si se añade +1h antes)
+  const esNoche       = slotVal.includes('21:15');
 
-  if(esMañana) {
-    cbDespues.disabled = true;
-    cbDespues.checked  = false;
-    if(lblDespues) { lblDespues.style.opacity = '.4'; lblDespues.title = 'No disponible: conflicto con el turno de tarde (16:30–20:30)'; }
-  } else {
-    cbDespues.disabled = false;
-    if(lblDespues) { lblDespues.style.opacity = ''; lblDespues.title = ''; }
-  }
+  // +1h ANTES bloqueado cuando el turno empieza cerca de otro que ya ocupa la franja anterior
+  const bloqAntes   = esTardePura || esTardeNoche || esNoche;
+  // +1h DESPUÉS bloqueado solo para mañana (choca tarde 16:30) y tarde pura (choca noche 21:15)
+  const bloqDespues = esMañana || esTardePura;
 
-  if(esTarde) {
+  if(bloqAntes) {
     cbAntes.disabled = true;
     cbAntes.checked  = false;
-    if(lblAntes) { lblAntes.style.opacity = '.4'; lblAntes.title = 'No disponible: conflicto con el turno de mañana (11:00–15:00)'; }
+    const msg = esNoche
+      ? 'No disponible: conflicto con el turno de tarde (termina a las 20:30)'
+      : 'No disponible: conflicto con el turno de mañana (termina a las 15:00)';
+    if(lblAntes) { lblAntes.style.opacity = '.4'; lblAntes.title = msg; }
   } else {
     cbAntes.disabled = false;
     if(lblAntes) { lblAntes.style.opacity = ''; lblAntes.title = ''; }
+  }
+
+  if(bloqDespues) {
+    cbDespues.disabled = true;
+    cbDespues.checked  = false;
+    const msg = esTardePura
+      ? 'No disponible: conflicto con el turno de noche (empieza a las 21:15)'
+      : 'No disponible: conflicto con el turno de tarde (empieza a las 16:30)';
+    if(lblDespues) { lblDespues.style.opacity = '.4'; lblDespues.title = msg; }
+  } else {
+    cbDespues.disabled = false;
+    if(lblDespues) { lblDespues.style.opacity = ''; lblDespues.title = ''; }
   }
 }
 
