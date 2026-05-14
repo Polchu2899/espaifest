@@ -3172,7 +3172,44 @@ function getPrecioSalaWeb() {
   return opt?.dataset.precio ? parseFloat(opt.dataset.precio) : 0;
 }
 
+// Bloquea la hora extra incompatible con los turnos de Espaifest:
+// - Turno mañana (11:00–15:00): no permite +1h después (dejaría 30min antes del turno tarde 16:30)
+// - Turno tarde (16:30–20:30): no permite +1h antes (dejaría 30min tras el turno mañana 15:00)
+function ajustarHoraExtWeb() {
+  const horario   = document.getElementById('r-horario')?.value || '';
+  const rbAntes   = document.querySelector('input[name="r-horaext"][value^="antes"]');
+  const rbDespues = document.querySelector('input[name="r-horaext"][value^="despues"]');
+  const rbNinguna = document.querySelector('input[name="r-horaext"][value^="ninguna"]');
+  const lblAntes  = rbAntes?.closest('label');
+  const lblDespues= rbDespues?.closest('label');
+
+  const esMañana = horario.includes('11:00') && horario.includes('15:00');
+  const esTarde  = horario.includes('16:30');
+
+  if(rbDespues) {
+    if(esMañana) {
+      rbDespues.disabled = true;
+      if(rbDespues.checked) { rbDespues.checked = false; if(rbNinguna) rbNinguna.checked = true; }
+      if(lblDespues) { lblDespues.style.opacity = '.4'; lblDespues.style.cursor = 'not-allowed'; lblDespues.title = 'No disponible: conflicto con el turno de tarde (16:30–20:30)'; }
+    } else {
+      rbDespues.disabled = false;
+      if(lblDespues) { lblDespues.style.opacity = ''; lblDespues.style.cursor = ''; lblDespues.title = ''; }
+    }
+  }
+  if(rbAntes) {
+    if(esTarde) {
+      rbAntes.disabled = true;
+      if(rbAntes.checked) { rbAntes.checked = false; if(rbNinguna) rbNinguna.checked = true; }
+      if(lblAntes) { lblAntes.style.opacity = '.4'; lblAntes.style.cursor = 'not-allowed'; lblAntes.title = 'No disponible: conflicto con el turno de mañana (11:00–15:00)'; }
+    } else {
+      rbAntes.disabled = false;
+      if(lblAntes) { lblAntes.style.opacity = ''; lblAntes.style.cursor = ''; lblAntes.title = ''; }
+    }
+  }
+}
+
 function calcularTotal() {
+  ajustarHoraExtWeb();
   const hor   = document.getElementById('r-horario')?.value || '';
   const pSala = getPrecioSalaWeb();
 
