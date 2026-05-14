@@ -2585,10 +2585,10 @@ window.saveReserva = async () => {
       // Horario limpio (sin "Turno — precio€") para que getRangoReal lo reconozca
       const horarioLimpio = getHorario({ horario });
       const reservaNueva  = { horario: horarioLimpio || horario, horaExtra: horaExtStr, estado: 'Confirmada' };
-      const { mananaOcupada, tardeOcupada, nocheOcupada } = calcOcupacion([...confirmadasHoy, reservaNueva]);
+      const { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado } = calcOcupacion([...confirmadasHoy, reservaNueva]);
 
       await setDoc(doc(db,'calendario_publico', fecha), {
-        fecha, mananaOcupada, tardeOcupada, nocheOcupada, updatedAt: serverTimestamp()
+        fecha, mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, updatedAt: serverTimestamp()
       });
     } catch(e) { console.warn('Error bloqueando calendario:', e); }
   }
@@ -2776,8 +2776,11 @@ function calcOcupacion(reservasConfirmadas) {
   const nocheOcupada = franjasNoche.some(f =>
     rangosConfirmados.some(rc => seSuperponen(f, rc))
   );
+  // Un día está completamente bloqueado si mañana y tarde están ambas ocupadas
+  // (cubre "Todo el día", o dos reservas independientes que llenan el día)
+  const diaOcupado = mananaOcupada && tardeOcupada;
 
-  return { mananaOcupada, tardeOcupada, nocheOcupada };
+  return { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado };
 }
 
 function getTurno(horario) {
@@ -2886,12 +2889,13 @@ window.confirmarReserva = async (id) => {
     );
     // Incluir la actual como confirmada para calcular bien
     const todasConfirmadas = [...otrasConfirmadas, {...reserva, estado:'Confirmada'}];
-    const { mananaOcupada, tardeOcupada, nocheOcupada } = calcOcupacion(todasConfirmadas);
+    const { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado } = calcOcupacion(todasConfirmadas);
     await setDoc(doc(db, 'calendario_publico', reserva.fecha), {
       fecha: reserva.fecha,
       mananaOcupada,
       tardeOcupada,
       nocheOcupada,
+      diaOcupado,
       updatedAt: serverTimestamp()
     });
     showToast('Reserva confirmada ✓ — Calendario actualizado');
@@ -2936,12 +2940,13 @@ window.cancelarReserva = async (id) => {
     if (confirmadasHoy.length === 0) {
       await deleteDoc(doc(db, 'calendario_publico', reserva.fecha));
     } else {
-      const { mananaOcupada, tardeOcupada, nocheOcupada } = calcOcupacion(confirmadasHoy);
+      const { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado } = calcOcupacion(confirmadasHoy);
       await setDoc(doc(db, 'calendario_publico', reserva.fecha), {
         fecha: reserva.fecha,
         mananaOcupada,
         tardeOcupada,
         nocheOcupada,
+        diaOcupado,
         updatedAt: serverTimestamp()
       });
     }
@@ -2976,11 +2981,11 @@ window.eliminarReserva = async (id) => {
 
       if(confirmadasRestantes.length > 0) {
         // Si quedan confirmadas, volver a escribir el bloqueo correctamente
-        const { mananaOcupada, tardeOcupada, nocheOcupada } = calcOcupacion(confirmadasRestantes);
+        const { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado } = calcOcupacion(confirmadasRestantes);
         await setDoc(doc(db,'calendario_publico', fechaReserva), {
-          fecha: fechaReserva, mananaOcupada, tardeOcupada, nocheOcupada, updatedAt: serverTimestamp()
+          fecha: fechaReserva, mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, updatedAt: serverTimestamp()
         });
-        console.log('[eliminar] calendario recalculado →', {mananaOcupada, tardeOcupada, nocheOcupada});
+        console.log('[eliminar] calendario recalculado →', {mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado});
       }
     } catch(e) {
       console.warn('[eliminar] Error actualizando calendario:', e.code, e.message);
@@ -3356,6 +3361,7 @@ window.saveRecurrente = async function() {
           mananaOcupada: ocupacion.mananaOcupada,
           tardeOcupada:  ocupacion.tardeOcupada,
           nocheOcupada:  ocupacion.nocheOcupada,
+          diaOcupado:    ocupacion.diaOcupado,
           updatedAt: serverTimestamp()
         });
       } catch(e) { console.warn('Error bloqueando', fecha, e); }
@@ -3476,6 +3482,7 @@ window.saveBloqueo = async function() {
         fecha,
         mananaOcupada: manana || diaComp,
         tardeOcupada:  tarde  || diaComp,
+        nocheOcupada:  diaComp,
         diaOcupado:    diaComp,
         motivo,
         updatedAt: serverTimestamp()
@@ -4711,9 +4718,9 @@ window.sincronizarCalendario = async function() {
     let ok = 0;
     for(const fecha of fechas) {
       try {
-        const { mananaOcupada, tardeOcupada, nocheOcupada } = calcOcupacion(porFecha[fecha]);
+        const { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado } = calcOcupacion(porFecha[fecha]);
         await setDoc(doc(db,'calendario_publico', fecha), {
-          fecha, mananaOcupada, tardeOcupada, nocheOcupada, updatedAt: serverTimestamp()
+          fecha, mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, updatedAt: serverTimestamp()
         });
         ok++;
       } catch(e) { console.warn('Error sync calendario', fecha, e); }
