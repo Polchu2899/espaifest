@@ -2850,15 +2850,25 @@ function getSlotsPorDia(diaSemanaIdx) {
     label: f.horario,
     precio: f[diaKey],
     turno: f.turno,
-    grupo: clasificarTurno(f.turno)
+    grupo: clasificarTurno(f.turno, f.horario)
   }));
 }
 
-function clasificarTurno(turno) {
-  const t = turno.toLowerCase();
+function clasificarTurno(turno, horario) {
+  const t = (turno || '').toLowerCase();
   if(t.includes('noche') || t.includes('nit')) return 'noche';
   if(t.includes('todo') || t.includes('tot') || t.includes('complet') || t.includes('dia complet') || t.includes('día comp')) return 'diacomp';
   if(t.includes('tarde') || t.includes('tarda')) return 'tarde';
+
+  // Fallback por horario cuando el nombre del turno no se reconoce
+  if(horario) {
+    const h = (horario).toLowerCase().replace(/\s/g, '');
+    if((h.startsWith('10h') || h.startsWith('10:')) &&
+       (h.includes('–20h') || h.includes('-20h') || h.includes('–20:') || h.includes('-20:'))) return 'diacomp';
+    if(/^10[h:].*20[h:]/.test(h)) return 'diacomp';
+    if(h.includes('01:30') || h.includes('01h') || h.includes('23:30') || h.includes('23h')) return 'noche';
+    if(h.includes('16:30') || h.includes('16h30')) return 'tarde';
+  }
   return 'manana';
 }
 
@@ -3152,7 +3162,7 @@ function webLoadFranjasPorFecha(fechaStr) {
   disponibles.forEach(f => {
     const precio = f[diaKey];
     const opt = document.createElement('option');
-    const grupo  = clasificarTurno(f.turno);
+    const grupo  = clasificarTurno(f.turno, f.horario);
     const ocupado = diaOcupado
       || (grupo === 'diacomp' && (info.mananaOcupada || info.tardeOcupada || info.nocheOcupada))
       || (grupo === 'manana' && info.mananaOcupada)
