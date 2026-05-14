@@ -2856,9 +2856,9 @@ function getSlotsPorDia(diaSemanaIdx) {
 
 function clasificarTurno(turno) {
   const t = turno.toLowerCase();
-  if(t.includes('noche') || (t.includes('tarde') && t.includes('noche'))) return 'noche';
-  if(t.includes('todo')) return 'diacomp';
-  if(t.includes('tarde')) return 'tarde';
+  if(t.includes('noche') || t.includes('nit')) return 'noche';
+  if(t.includes('todo') || t.includes('tot') || t.includes('complet') || t.includes('dia complet') || t.includes('día comp')) return 'diacomp';
+  if(t.includes('tarde') || t.includes('tarda')) return 'tarde';
   return 'manana';
 }
 
