@@ -2848,18 +2848,35 @@ function getSlotsPorDia(diaSemanaIdx) {
     label: f.horario,
     precio: f[diaKey],
     turno: f.turno,
-    grupo: clasificarTurno(f.turno)
+    grupo: clasificarTurno(f.turno, f.horario)
   }));
 }
 
-function clasificarTurno(turno) {
-  const t = turno.toLowerCase();
-  // Noche / Nit (es+ca) — también cubre "Tarda-Nit" y "Tarde-Noche"
+// Clasifica un turno en 'manana'|'tarde'|'noche'|'diacomp'
+// Usa primero el nombre del turno y, si no coincide, el horario como fallback fiable
+function clasificarTurno(turno, horario) {
+  const t = (turno || '').toLowerCase();
+  // Noche / Nit (es+ca)
   if(t.includes('noche') || t.includes('nit')) return 'noche';
   // Día completo / Tot el dia (es+ca)
   if(t.includes('todo') || t.includes('tot') || t.includes('complet') || t.includes('dia complet') || t.includes('día comp')) return 'diacomp';
   // Tarde / Tarda (es+ca)
   if(t.includes('tarde') || t.includes('tarda')) return 'tarde';
+
+  // FALLBACK: clasificar por el horario cuando el nombre del turno no se reconoce
+  // (p.ej. si el admin escribió "Dia", "All day", "10-20h", etc.)
+  if(horario) {
+    const h = (horario).toLowerCase().replace(/\s/g, '');
+    // Día completo: empieza en 10h y termina en 20h
+    if((h.startsWith('10h') || h.startsWith('10:')) &&
+       (h.includes('–20h') || h.includes('-20h') || h.includes('–20:') || h.includes('-20:'))) return 'diacomp';
+    // También: "10h-20h", "10:00-20:00"
+    if(/^10[h:].*20[h:]/.test(h)) return 'diacomp';
+    // Noche: termina pasada la medianoche (01:30, 01h) o muy tarde (23:30)
+    if(h.includes('01:30') || h.includes('01h') || h.includes('23:30') || h.includes('23h')) return 'noche';
+    // Tarde: empieza a las 16:30 pero NO termina pasada medianoche → tarde pura
+    if(h.includes('16:30') || h.includes('16h30')) return 'tarde';
+  }
   return 'manana';
 }
 
@@ -3158,9 +3175,8 @@ function webLoadFranjasPorFecha(fechaStr) {
   disponibles.forEach(f => {
     const precio = f[diaKey];
     const opt = document.createElement('option');
-    const grupo  = clasificarTurno(f.turno);
+    const grupo  = clasificarTurno(f.turno, f.horario);
     const ocupado = diaOcupado
-      // diacomp se bloquea si hay CUALQUIER reserva ese día (solaparía con todo)
       || (grupo === 'diacomp' && (info.mananaOcupada || info.tardeOcupada || info.nocheOcupada))
       || (grupo === 'manana' && info.mananaOcupada)
       || (grupo === 'tarde'  && info.tardeOcupada)
