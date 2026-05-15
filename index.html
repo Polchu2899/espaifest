@@ -3369,19 +3369,22 @@ function fmtEur(n) {
 
 async function getNextNumReserva() {
   if(!window._fsDB || !window._fsRunTransaction || !window._fsDoc) return 'EF-????';
+  const hoy = new Date();
+  const fechaKey = `${hoy.getFullYear()}${String(hoy.getMonth()+1).padStart(2,'0')}${String(hoy.getDate()).padStart(2,'0')}`;
   const counterRef = window._fsDoc(window._fsDB, 'config', 'reservaCounter');
   try {
     const next = await window._fsRunTransaction(window._fsDB, async tx => {
       const snap = await tx.get(counterRef);
-      const last = snap.exists() ? (snap.data().last || 0) : 0;
+      const data = snap.exists() ? snap.data() : {};
+      const last = data[fechaKey] || 0;
       const n = last + 1;
-      tx.set(counterRef, { last: n }, { merge: true });
+      tx.set(counterRef, { [fechaKey]: n }, { merge: true });
       return n;
     });
-    return `EF-${String(next).padStart(4, '0')}`;
+    return `EF-${fechaKey}-${String(next).padStart(3, '0')}`;
   } catch(e) {
     console.warn('Error generando nº reserva:', e);
-    return `EF-${Date.now().toString().slice(-4)}`;
+    return `EF-${fechaKey}-???`;
   }
 }
 
@@ -3794,47 +3797,40 @@ async function loadTarifasIndex() {
 async function loadFechasOcupadas() {
   try {
     const hoy = new Date().toISOString().split('T')[0];
-    onSnapshot(
-      collection(_db, 'calendario_publico'),
-      (snap) => {
-        const data = {};
-        snap.docs.forEach(d => {
-          const fd = d.data();
-          const fecha = fd.fecha || d.id;
-          if(fecha >= hoy) {
-            const mana  = fd.mananaOcupada || false;
-            const tarde = fd.tardeOcupada  || false;
-            const noche = fd.nocheOcupada  || false;
-            const diaOc = fd.diaOcupado || (mana && tarde) || false;
-            data[fecha] = {
-              mananaOcupada: mana,
-              tardeOcupada:  tarde,
-              nocheOcupada:  noche,
-              diaOcupado:    diaOc,
-              rangos:        fd.rangos || [],  // Rangos reales para comprobación precisa por slot
-            };
-          }
-        });
-        (indexTarifas?.especiales || []).forEach(esp => {
-          if(!esp.dia) return;
-          const [dd, mm] = esp.dia.split('/');
-          const anyo = new Date().getFullYear();
-          [anyo, anyo+1, anyo+2, anyo+3, anyo+4].forEach(y => {
-            const ds = `${y}-${mm}-${dd}`;
-            if(ds >= hoy) {
-              if(!data[ds]) data[ds] = {};
-              data[ds].esDiaEspecial = true;
-              data[ds].celebracion = esp.celebracion;
-              data[ds].precioEsp = esp.precio;
-            }
-          });
-        });
-        if(typeof updateCalOccupied === 'function') updateCalOccupied(data);
-      },
-      (err) => {
-        console.warn('onSnapshot calendario_publico error:', err.code, err.message);
+    const snap = await getDocs(collection(_db, 'calendario_publico'));
+    const data = {};
+    snap.docs.forEach(d => {
+      const fd = d.data();
+      const fecha = fd.fecha || d.id;
+      if(fecha >= hoy) {
+        const mana  = fd.mananaOcupada || false;
+        const tarde = fd.tardeOcupada  || false;
+        const noche = fd.nocheOcupada  || false;
+        const diaOc = fd.diaOcupado || (mana && tarde) || false;
+        data[fecha] = {
+          mananaOcupada: mana,
+          tardeOcupada:  tarde,
+          nocheOcupada:  noche,
+          diaOcupado:    diaOc,
+          rangos:        fd.rangos || [],
+        };
       }
-    );
+    });
+    (indexTarifas?.especiales || []).forEach(esp => {
+      if(!esp.dia) return;
+      const [dd, mm] = esp.dia.split('/');
+      const anyo = new Date().getFullYear();
+      [anyo, anyo+1, anyo+2, anyo+3, anyo+4].forEach(y => {
+        const ds = `${y}-${mm}-${dd}`;
+        if(ds >= hoy) {
+          if(!data[ds]) data[ds] = {};
+          data[ds].esDiaEspecial = true;
+          data[ds].celebracion = esp.celebracion;
+          data[ds].precioEsp = esp.precio;
+        }
+      });
+    });
+    if(typeof updateCalOccupied === 'function') updateCalOccupied(data);
   } catch(e) {
     console.warn('Fechas ocupadas error:', e.message);
   }
