@@ -3094,6 +3094,10 @@ function selectDate(ds) {
   const fi = document.getElementById('r-f');
   if(fi) fi.value = ds;
   showToast(`${d}/${m}/${y} — Elige tu franja horaria ↓`);
+  setTimeout(() => {
+    const franjaEl = document.getElementById('cal-franjas');
+    if(franjaEl) franjaEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 120);
 }
 function calPrev(){ if(calMonth===0){calMonth=11;calYear--;}else calMonth--; renderCal(); }
 function calNext(){ if(calMonth===11){calMonth=0;calYear++;}else calMonth++; renderCal(); }
