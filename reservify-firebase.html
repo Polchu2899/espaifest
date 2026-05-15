@@ -3667,20 +3667,28 @@ async function loadServicios() {
     const el = document.getElementById('servicios-list');
 
     // Actualizar los selects de tipo de evento en todos los modales de reserva
+    // Los servicios estándar siempre están; Firestore añade los extras/especiales
+    const SERVICIOS_BASE = [
+      'Fiesta infantil','Fiesta adultos','Reunión familiar',
+      'Business / Empresa','Clases / Taller','Otro'
+    ];
     const activos = servicios.filter(s => s.activo !== false);
-    if(activos.length > 0) {
-      const opcionesHtml = activos.map(s =>
-        `<option value="${(s.nombre||'').replace(/"/g,'&quot;')}">${s.nombre||'—'}</option>`
-      ).join('');
-      ['r-servicio', 'rec-servicio', 'er-servicio'].forEach(function(selId) {
-        const sel = document.getElementById(selId);
-        if(!sel) return;
-        const valActual = sel.value;
-        sel.innerHTML = opcionesHtml;
-        // Mantener selección si sigue existiendo
-        if(valActual && sel.querySelector(`option[value="${valActual}"]`)) sel.value = valActual;
-      });
-    }
+    const nombresFs = new Set(activos.map(s => (s.nombre||'').toLowerCase()));
+    // Construir lista: base + extras de Firestore que no estén ya
+    const nombresBase = SERVICIOS_BASE.map(n => ({ nombre: n, _base: true }));
+    const extras = activos.filter(s => !SERVICIOS_BASE.map(b=>b.toLowerCase()).includes((s.nombre||'').toLowerCase()));
+    const todosServicios = [...nombresBase, ...extras];
+    const opcionesHtml = todosServicios.map(s =>
+      `<option value="${(s.nombre||'').replace(/"/g,'&quot;')}">${s.nombre||'—'}</option>`
+    ).join('');
+    ['r-servicio', 'rec-servicio', 'er-servicio'].forEach(function(selId) {
+      const sel = document.getElementById(selId);
+      if(!sel) return;
+      const valActual = sel.value;
+      sel.innerHTML = opcionesHtml;
+      // Mantener selección si sigue existiendo
+      if(valActual && sel.querySelector(`option[value="${valActual}"]`)) sel.value = valActual;
+    });
 
     if(!servicios.length) {
       el.innerHTML = '<div class="empty">No hay servicios. Añade el primero.</div>';
