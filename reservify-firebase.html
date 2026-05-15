@@ -4766,6 +4766,14 @@ window.importarBookly = async function() {
               reservas: 0,
               importado: true
             };
+          } else if(r.telefono && clientes_map[r.telefono]) {
+            // Enriquecer con datos no vacíos de reservas posteriores
+            const cm = clientes_map[r.telefono];
+            if(!cm.fechaNac  && r.fechaNac)  cm.fechaNac  = r.fechaNac;
+            if(!cm.dni       && r.dni)       cm.dni       = r.dni;
+            if(!cm.email     && r.email)     cm.email     = r.email;
+            if(!cm.localidad && r.localidad) cm.localidad = r.localidad;
+            if(!cm.cp        && r.cp)        cm.cp        = r.cp;
           }
           if(clientes_map[r.telefono]) clientes_map[r.telefono].reservas++;
         } catch(e){ errores++; console.warn('Error reserva:', r.referencia, e); }
