@@ -2437,19 +2437,22 @@ async function resendSend(to, subject, html) {
 }
 
 async function getNextNumReserva() {
+  const hoy = new Date();
+  const fechaKey = `${hoy.getFullYear()}${String(hoy.getMonth()+1).padStart(2,'0')}${String(hoy.getDate()).padStart(2,'0')}`;
   const counterRef = doc(db, 'config', 'reservaCounter');
   try {
     const next = await runTransaction(db, async tx => {
       const snap = await tx.get(counterRef);
-      const last = snap.exists() ? (snap.data().last || 0) : 0;
+      const data = snap.exists() ? snap.data() : {};
+      const last = data[fechaKey] || 0;
       const n = last + 1;
-      tx.set(counterRef, { last: n }, { merge: true });
+      tx.set(counterRef, { [fechaKey]: n }, { merge: true });
       return n;
     });
-    return `EF-${String(next).padStart(4, '0')}`;
+    return `EF-${fechaKey}-${String(next).padStart(3, '0')}`;
   } catch(e) {
     console.warn('Error generando nº reserva:', e);
-    return `EF-${Date.now().toString().slice(-4)}`;
+    return `EF-${fechaKey}-???`;
   }
 }
 
