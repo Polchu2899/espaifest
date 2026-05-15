@@ -971,11 +971,15 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
                   <div id="xls-prog-bar" style="height:100%;width:0%;background:var(--grad);border-radius:4px;transition:width .3s"></div>
                 </div>
               </div>
-              <div style="display:flex;gap:10px">
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
                 <button class="btn bg" onclick="resetXlsModal()">Cancelar</button>
                 <button class="btn bp" id="btn-xls-import" onclick="importarBookly()">
                   <svg width="13" height="13" stroke="currentColor"><use href="#i-import"/></svg>Importar a Firebase
                 </button>
+                <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2);cursor:pointer;margin-left:4px" title="Usar solo en la importación final antes de ir en vivo. Sobreescribe los registros ya importados con los datos más recientes del XLS.">
+                  <input type="checkbox" id="xls-actualizar" style="accent-color:var(--amber)">
+                  <span>⚠️ Actualizar registros existentes <em style="color:var(--t3)">(importación final)</em></span>
+                </label>
               </div>
             </div>
           </div>
@@ -2786,8 +2790,8 @@ function seSuperponen(a, b) {
   return a.ini < b.fin && b.ini < a.fin;
 }
 
-// Búsqueda robusta en FRANJAS_RANGOS: prueba el string original y variantes normalizadas
-// para evitar fallos por distintos tipos de guión (–, -) o espacios alrededor
+// Búsqueda robusta en FRANJAS_RANGOS: prueba el string original y variantes normalizadas.
+// Si no se encuentra en el diccionario, intenta parsear el rango directamente.
 function buscarRangoHorario(horario) {
   if(!horario) return null;
   if(FRANJAS_RANGOS[horario]) return FRANJAS_RANGOS[horario];
@@ -2805,8 +2809,26 @@ function buscarRangoHorario(horario) {
     if(FRANJAS_RANGOS[n3]) return FRANJAS_RANGOS[n3];
     const n4 = inside.replace(/\s*[–\-]\s*/g, '-');
     if(FRANJAS_RANGOS[n4]) return FRANJAS_RANGOS[n4];
+    // Parser directo sobre el contenido del paréntesis
+    const pr = _parsearRango(inside);
+    if(pr) return pr;
   }
-  return null;
+  // Parser genérico: interpreta cualquier "HH:MM–HH:MM" o "HHh–HHh"
+  return _parsearRango(horario);
+}
+
+// Parsea cualquier cadena de rango horario como "10:00–01:30", "21:15h-01:30h", etc.
+// Si el horario de fin es menor que el de inicio, asume que cruza medianoche (+24h).
+function _parsearRango(str) {
+  if(!str) return null;
+  const clean = str.replace(/h/gi, '').trim();
+  const rx = /^(\d{1,2})(?::(\d{2}))?\s*[–\-]\s*(\d{1,2})(?::(\d{2}))?$/;
+  const mt = clean.match(rx);
+  if(!mt) return null;
+  const ini = parseInt(mt[1]) * 60 + (parseInt(mt[2] || '0'));
+  let   fin = parseInt(mt[3]) * 60 + (parseInt(mt[4] || '0'));
+  if(fin <= ini) fin += 24 * 60; // cruza medianoche
+  return { ini, fin, turno: 'custom' };
 }
 
 // Dado un conjunto de reservas confirmadas, detecta qué turnos quedan bloqueados
@@ -2866,8 +2888,8 @@ window.openDet = function(id) {
   const nombreCompleto = r.nombre || '—';
 
   document.getElementById('det-nombre').textContent        = nombreCompleto;
-  document.getElementById('det-sub').textContent           = `${r.numReserva || '—'} · ${r.origen === 'web' ? 'Solicitud web' : 'Creada en panel'}`;
-  document.getElementById('det-numreserva').textContent    = r.numReserva || '—';
+  document.getElementById('det-sub').textContent           = `${r.numReserva || r.referencia || '—'} · ${r.origen === 'web' ? 'Solicitud web' : 'Creada en panel'}`;
+  document.getElementById('det-numreserva').textContent    = r.numReserva || r.referencia || '—';
   document.getElementById('det-nombre-completo').textContent = nombreCompleto;
   document.getElementById('det-dni').textContent           = r.dni || '—';
   document.getElementById('det-fnac').textContent          = r.fechaNac || r.fechaNacimiento || '—';
@@ -4509,6 +4531,7 @@ loadNiveles();
 let xlsDataRaw = [];      // Todas las filas parseadas
 let xlsDataFiltrado = []; // Filas después de filtro fecha
 let xlsRefsExistentes = new Set(); // Referencias ya en Firestore
+let xlsRefToDocId = {};   // referencia → docId de Firestore (para modo actualizar)
 
 // Drag & drop XLS
 (function(){
@@ -4590,8 +4613,10 @@ window.parseXlsBookly = async function(file) {
   xlsDataRaw = dataRows.map(r => {
     const nombre = g(r,6); const apellidos = g(r,7);
     const entrada = g(r,2); const salida = g(r,3);
+    const ref = g(r,0);
     return {
-      referencia:      g(r,0),
+      referencia:      ref,
+      numReserva:      ref, // Número de reserva Bookly → se muestra como nº de reserva
       fecha:           parsearFecha(g(r,1)),
       horario:         (entrada && salida) ? `${entrada.slice(0,5)}–${salida.slice(0,5)}` : '',
       horaEntrada:     entrada.slice(0,5),
@@ -4630,7 +4655,9 @@ window.parseXlsBookly = async function(file) {
   try {
     const snap = await getDocs(query(collection(db,'reservas'), where('importado','==',true)));
     xlsRefsExistentes = new Set(snap.docs.map(d=>d.data().referencia).filter(Boolean));
-  } catch(e){ xlsRefsExistentes = new Set(); }
+    xlsRefToDocId = {};
+    snap.docs.forEach(d => { const ref = d.data().referencia; if(ref) xlsRefToDocId[ref] = d.id; });
+  } catch(e){ xlsRefsExistentes = new Set(); xlsRefToDocId = {}; }
 
   xlsDataFiltrado = [...xlsDataRaw];
   actualizarPreviewXls();
@@ -4690,8 +4717,15 @@ window.filtrarXls = function() {
 };
 
 window.importarBookly = async function() {
-  const nuevas = xlsDataFiltrado.filter(r => !xlsRefsExistentes.has(r.referencia));
-  if(!nuevas.length){ showToast('No hay reservas nuevas para importar'); return; }
+  const modoActualizar = document.getElementById('xls-actualizar')?.checked;
+  const nuevas  = xlsDataFiltrado.filter(r => !xlsRefsExistentes.has(r.referencia));
+  const existentes = modoActualizar ? xlsDataFiltrado.filter(r => xlsRefsExistentes.has(r.referencia)) : [];
+  const toProcess = [...nuevas, ...existentes];
+
+  if(!toProcess.length){ showToast('No hay reservas para importar'); return; }
+  if(modoActualizar && existentes.length) {
+    if(!confirm(`Se actualizarán ${existentes.length} registros existentes con los datos del XLS.\n${nuevas.length} registros nuevos también se añadirán.\n\n¿Continuar?`)) return;
+  }
 
   const btn = document.getElementById('btn-xls-import');
   btn.disabled = true;
@@ -4699,11 +4733,11 @@ window.importarBookly = async function() {
 
   let ok = 0; let errores = 0;
   const clientes_map = {};
-  const total = nuevas.length;
+  const total = toProcess.length;
   const BATCH_SIZE = 50; // Firestore límite 500 ops/batch — usamos 50 para seguridad
 
   for(let i = 0; i < total; i += BATCH_SIZE) {
-    const lote = nuevas.slice(i, i + BATCH_SIZE);
+    const lote = toProcess.slice(i, i + BATCH_SIZE);
     try {
       // Escritura paralela dentro del lote
       await Promise.all(lote.map(async r => {
@@ -4711,7 +4745,12 @@ window.importarBookly = async function() {
           // createdAt como Timestamp real de Firestore (usa fechaRegistro del XLS o ahora)
           const tsReg = r.fechaRegistro ? new Date(r.fechaRegistro) : new Date();
           const docData = { ...r, createdAt: Timestamp.fromDate(tsReg), vista: true };
-          await addDoc(collection(db,'reservas'), docData);
+          const docIdExistente = xlsRefToDocId[r.referencia];
+          if(modoActualizar && docIdExistente) {
+            await updateDoc(doc(db,'reservas', docIdExistente), docData);
+          } else {
+            await addDoc(collection(db,'reservas'), docData);
+          }
           ok++;
           // Acumular cliente
           if(r.telefono && !clientes_map[r.telefono]) {
@@ -6464,8 +6503,8 @@ window.loadGestoria = async function() {
       const bi    = parseFloat((r.baseImponible || total / 1.21).toFixed(2));
       const iva   = parseFloat((r.cuotaIva     || total - bi).toFixed(2));
       const cp    = r.cp || (r.direccion ? (r.direccion.match(/\b\d{5}\b/)||['—'])[0] : '—');
-      // Usar numReserva guardado, o generar uno de display
-      const numRes = r.numReserva || `EF-${(r.fecha||'').replace(/-/g,'')}-${String(idx+1).padStart(4,'0')}`;
+      // Usar numReserva guardado → referencia Bookly → fallback por fecha
+      const numRes = r.numReserva || r.referencia || `EF-${(r.fecha||'').replace(/-/g,'')}-${String(idx+1).padStart(4,'0')}`;
       return {
         numRes,
         fecha:   r.fecha || '',
