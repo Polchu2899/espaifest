@@ -1700,6 +1700,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="det-field"><div class="det-label">Email</div><div class="det-value" id="det-email">—</div></div>
       <!-- Reserva -->
       <div class="det-field full" style="grid-column:1/-1;font:700 .65rem var(--t2);text-transform:uppercase;letter-spacing:.08em;padding-bottom:4px;border-bottom:1px solid var(--b2);margin-bottom:4px;margin-top:8px;">Detalles de la reserva</div>
+      <div class="det-field"><div class="det-label">Nº Reserva</div><div class="det-value" id="det-numreserva" style="font-family:monospace;font-weight:700;color:var(--teal)">—</div></div>
       <div class="det-field"><div class="det-label">Fecha del evento</div><div class="det-value" id="det-fecha">—</div></div>
       <div class="det-field"><div class="det-label">Reservado el</div><div class="det-value" id="det-creado" style="color:var(--t3);font-size:.85rem">—</div></div>
       <div class="det-field"><div class="det-label">Franja horaria</div><div class="det-value" id="det-horario">—</div></div>
@@ -2576,6 +2577,7 @@ window.saveReserva = async () => {
 
   if(btn) btn.disabled = true;
 
+  try {
   // ── 1. Guardar en Firestore ────────────────────────────────
   const numReserva = await getNextNumReserva();
   const data = {
@@ -2692,6 +2694,12 @@ window.saveReserva = async () => {
   if(selEl) selEl.style.display = 'none';
   const extCont = document.getElementById('r-extras-checks');
   if(extCont) extCont.innerHTML = '<span style="font-size:12px;color:var(--t3)">Selecciona fecha y franja para ver extras disponibles</span>';
+
+  } catch(err) {
+    console.error('Error guardando reserva:', err);
+    showToast('Error al guardar la reserva: ' + (err.message || err));
+    if(btn) btn.disabled = false;
+  }
 };
 
 // ── Rangos horarios base (minutos desde medianoche) ──────────────
@@ -2855,7 +2863,8 @@ window.openDet = function(id) {
   const nombreCompleto = r.nombre || '—';
 
   document.getElementById('det-nombre').textContent        = nombreCompleto;
-  document.getElementById('det-sub').textContent           = `Reserva · ${r.origen === 'web' ? 'Solicitud web' : 'Creada en panel'}`;
+  document.getElementById('det-sub').textContent           = `${r.numReserva || '—'} · ${r.origen === 'web' ? 'Solicitud web' : 'Creada en panel'}`;
+  document.getElementById('det-numreserva').textContent    = r.numReserva || '—';
   document.getElementById('det-nombre-completo').textContent = nombreCompleto;
   document.getElementById('det-dni').textContent           = r.dni || '—';
   document.getElementById('det-fnac').textContent          = r.fechaNac || r.fechaNacimiento || '—';
@@ -3054,11 +3063,14 @@ window.eliminarReserva = async (id) => {
 
 // ── CLIENTES ──────────────────────────────────────────────────
 let allClientes = [];
+let _clientesLoaded = false;
 
-async function loadClientes() {
+async function loadClientes(force = false) {
+  if(!force && _clientesLoaded) { renderClientes(); return; }
   try {
     const snap = await getDocs(collection(db,'clientes'));
     allClientes = snap.docs.map(d => ({id:d.id,...d.data()}));
+    _clientesLoaded = true;
     renderClientes();
   } catch(e) { console.log('clientes err',e); }
 }
@@ -4267,21 +4279,18 @@ window.saveNuevoCliente = async function() {
   const apellidos = document.getElementById('nc-apellidos').value.trim();
   const tel       = document.getElementById('nc-tel').value.trim().replace(/\s/g,'');
   if(!nombre || !tel) { showToast('Rellena nombre y teléfono'); return; }
-  // Verificar duplicado
   const snap = await getDocs(query(collection(db,'clientes'), where('telefono','==',tel)));
   if(!snap.empty) { showToast('Ya existe un cliente con ese teléfono'); return; }
-  await addDoc(collection(db,'clientes'), {
-    nombre, apellidos,
-    dni:      document.getElementById('nc-dni').value.trim(),
-    fechaNac: document.getElementById('nc-fnac').value || '',
-    direccion:document.getElementById('nc-dir').value.trim(),
-    localidad:document.getElementById('nc-loc').value.trim(),
-    cp:       document.getElementById('nc-cp').value.trim(),
-    telefono: tel,
-    email:    document.getElementById('nc-email').value.trim(),
-    notas:    document.getElementById('nc-notas').value.trim(),
-    reservas: 0,
-    createdAt: serverTimestamp()
+  const dni       = document.getElementById('nc-dni').value.trim();
+  const fechaNac  = document.getElementById('nc-fnac').value || '';
+  const direccion = document.getElementById('nc-dir').value.trim();
+  const localidad = document.getElementById('nc-loc').value.trim();
+  const cp        = document.getElementById('nc-cp').value.trim();
+  const email     = document.getElementById('nc-email').value.trim();
+  const notas     = document.getElementById('nc-notas').value.trim();
+  const docRef = await addDoc(collection(db,'clientes'), {
+    nombre, apellidos, dni, fechaNac, direccion, localidad, cp, telefono: tel, email, notas,
+    reservas: 0, createdAt: serverTimestamp()
   });
   closeModal('nuevo-cli');
   showToast('Cliente guardado ✓');
@@ -4289,7 +4298,9 @@ window.saveNuevoCliente = async function() {
     const el = document.getElementById(id); if(el) el.value='';
   });
   document.getElementById('nc-fnac').value='';
-  loadClientes();
+  // Añadir en memoria sin releer los 806 clientes
+  allClientes.unshift({ id: docRef.id, nombre, apellidos, dni, fechaNac, direccion, localidad, cp, telefono: tel, email, notas, reservas: 0, createdAt: new Date() });
+  renderClientes(allClientes);
 };
 
 // ── IMPORTAR CSV ──────────────────────────────────────────────
@@ -4394,7 +4405,7 @@ window.importarClientes = async function() {
   closeModal('importcsv');
   resetCsvModal();
   showToast(`✓ ${importados} nuevos · ${actualizados} actualizados`);
-  loadClientes();
+  loadClientes(true); // Importación masiva: forzar refresco desde Firestore
 };
 
 window.resetCsvModal = function() {
@@ -4481,7 +4492,7 @@ window.saveNiveles = async function() {
     renderNiveles();     // Actualizar tabla inmediatamente
     closeModal('edit-niveles');
     showToast('Niveles guardados ✓ — se reflejarán en la web al recargarla');
-    loadClientes();      // Recalcular contadores por nivel
+    renderClientes();    // Recalcular contadores por nivel (datos ya en memoria)
   } catch(e) {
     console.error('saveNiveles error:', e);
     showToast('Error al guardar niveles');
@@ -4796,7 +4807,7 @@ window.importarBookly = async function() {
 
   showToast(`✓ ${ok} reservas · ${cliOk} clientes sincronizados${errores?' · '+errores+' errores':''}`);
   loadReservas();
-  loadClientes();
+  loadClientes(true); // Importación XLS masiva: forzar refresco
   loadMigLog();
   resetXlsModal();
 };
@@ -4921,15 +4932,14 @@ window.switchMigTab = function(tab) {
 })();
 
 async function actualizarStatsBackup() {
+  // Usar datos ya en memoria — sin releer Firestore
+  document.getElementById('bk-res').textContent = allReservas.length || '—';
+  document.getElementById('bk-cli').textContent = allClientes.length || '—';
   try {
-    const [res, cli, svc, pro] = await Promise.all([
-      getDocs(collection(db,'reservas')),
-      getDocs(collection(db,'clientes')),
+    const [svc, pro] = await Promise.all([
       getDocs(collection(db,'servicios')),
       getDocs(collection(db,'promociones'))
     ]);
-    document.getElementById('bk-res').textContent = res.size;
-    document.getElementById('bk-cli').textContent = cli.size;
     document.getElementById('bk-svc').textContent = svc.size;
     document.getElementById('bk-pro').textContent = pro.size;
   } catch(e){}
@@ -6112,9 +6122,9 @@ window.loadFranjasPorFecha = function(fechaStr) {
     return;
   }
 
-  // Rangos ya ocupados ese día (solo reservas confirmadas)
+  // Rangos ya ocupados ese día (todas las reservas no canceladas)
   const rangosOcupados = (allReservas||[])
-    .filter(r => r.fecha === fechaStr && (r.estado||'').toLowerCase() === 'confirmada')
+    .filter(r => r.fecha === fechaStr && (r.estado||'').toLowerCase() !== 'cancelada')
     .map(r => getRangoReal(r))
     .filter(Boolean);
 
