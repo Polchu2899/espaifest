@@ -4066,16 +4066,20 @@ async function loadServiciosWeb() {
       grid.querySelectorAll('[data-a]').forEach(el=>scrollObs.observe(el));
     }
 
-    // Actualizar el select "Tipo de evento" del formulario de reserva
+    // Añadir al select "Tipo de evento" los servicios de Firestore que no estén ya
     const selTipo = document.getElementById('r-tipo');
     if(selTipo && servicios.length > 0) {
-      const valActual = selTipo.value;
-      selTipo.innerHTML = '<option value="">Selecciona...</option>' +
-        servicios.map(function(s) {
-          const nom = (s.nombre || '').replace(/"/g,'&quot;');
-          return `<option value="${nom}">${nom}</option>`;
-        }).join('');
-      if(valActual && selTipo.querySelector(`option[value="${valActual}"]`)) selTipo.value = valActual;
+      const existingVals = new Set(Array.from(selTipo.options).map(o => o.value.toLowerCase()));
+      servicios.forEach(function(s) {
+        const nom = (s.nombre || '').trim();
+        if(nom && !existingVals.has(nom.toLowerCase())) {
+          const opt = document.createElement('option');
+          opt.value = nom.replace(/"/g,'&quot;');
+          opt.textContent = nom;
+          selTipo.appendChild(opt);
+          existingVals.add(nom.toLowerCase());
+        }
+      });
     }
   } catch(e){ console.warn('Servicios web error:',e.message); }
 }
