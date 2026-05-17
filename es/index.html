@@ -2392,6 +2392,24 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
             <div style="font-size:.72rem;color:var(--tx3);margin-top:7px;">* Catering calculado por unidad al confirmar · Señal: 50% del total</div>
           </div>
 
+          <!-- Código de promoción -->
+          <div class="fg" style="margin-top:14px;">
+            <label class="fl">Código de promoción <span style="color:var(--tx3);font-weight:400;font-size:.78rem;">(opcional)</span></label>
+            <input type="text" class="fi" id="r-promo" placeholder="Introduce tu código..." style="text-transform:uppercase;letter-spacing:.04em;">
+          </div>
+
+          <!-- Aceptación legal -->
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;padding:14px 16px;background:oklch(0% 0 0/.04);border:1px solid var(--bd);border-radius:12px;">
+            <label style="display:flex;align-items:flex-start;gap:10px;font-size:.84rem;cursor:pointer;line-height:1.45;">
+              <input type="checkbox" id="r-legal1" style="accent-color:var(--co);margin-top:3px;flex-shrink:0;">
+              <span>Soy mayor de edad y acepto las <a href="../condiciones.html" target="_blank" style="color:var(--co);text-decoration:underline;">condiciones de uso</a></span>
+            </label>
+            <label style="display:flex;align-items:flex-start;gap:10px;font-size:.84rem;cursor:pointer;line-height:1.45;">
+              <input type="checkbox" id="r-legal2" style="accent-color:var(--co);margin-top:3px;flex-shrink:0;">
+              <span>He leído y acepto el <a href="../aviso-legal.html" target="_blank" style="color:var(--co);text-decoration:underline;">aviso legal</a> y la <a href="../privacidad.html" target="_blank" style="color:var(--co);text-decoration:underline;">política de privacidad</a></span>
+            </label>
+          </div>
+
           <button class="submit-btn" onclick="enviarReserva()" type="button">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             <span>Solicitar reserva</span>
@@ -3398,9 +3416,13 @@ async function enviarReserva() {
   const f    = document.getElementById('r-f')?.value;
   const hor  = document.getElementById('r-horario')?.value;
   const no   = document.getElementById('r-no')?.value.trim();
+  const promo = (document.getElementById('r-promo')?.value.trim() || '').toUpperCase();
 
   if(!n||!ap||!dni||!dir||!loc||!cp||!t||!e||!tipo||!pers||!f||!hor){
     showToast('Rellena todos los campos obligatorios'); return;
+  }
+  if(!document.getElementById('r-legal1')?.checked || !document.getElementById('r-legal2')?.checked){
+    showToast('Debes aceptar las condiciones legales para continuar'); return;
   }
 
   const servicioLabel = _TIPO_MAP[tipo] || tipo;
@@ -3476,6 +3498,7 @@ async function enviarReserva() {
     total_estimado: fmtEur(totalEstimado),
     senal_50:      fmtEur(senalPago),
     comentarios:   no || 'Ninguno',
+    codigo_promo:  promo || '—',
     fecha_envio:   fechaHoy
   };
 
@@ -3490,7 +3513,7 @@ async function enviarReserva() {
         extras:     extObjs.length ? extrasNombres.join(', ') : 'Ninguno',
         metodoPago: 'Transferencia bancaria / Bizum',
         importe:    totalEstimado, senal: senalPago,
-        notas:      no || '', numReserva, origen: 'web', estado: 'Pendiente',
+        notas:      no || '', codigoPromo: promo || '', numReserva, origen: 'web', estado: 'Pendiente',
         createdAt:  window._fsServerTimestamp()
       });
     } catch(err) { console.warn('Firestore error:', err.message); }
@@ -3512,13 +3535,14 @@ async function enviarReserva() {
   const linExt   = extObjs.length ? `\n🍽️ Extras: ${extrasNombres.join(', ')}` : '';
   const linHrExt = horaExtLabel !== 'ninguna' ? `\n⏱️ Hora extra: ${horaExtStr} (${fmtEur(horaExtPrecio)})` : '';
   const linNota  = no ? `\n📝 ${no}` : '';
+  const linPromo = promo ? `\n🏷️ Código promo: ${promo}` : '';
   const msg = encodeURIComponent(
     `🎉 NUEVA RESERVA — EspaiFest\n\n` +
     `👤 ${n} ${ap}${linDni}${linDir}\n` +
     `📞 ${t} · ✉️ ${e}\n` +
     `🎊 ${servicioLabel} · ${pers}\n` +
     `📅 ${fmtFecha(f)} · 🕐 ${hor}` +
-    `${linHrExt}${linExt}${linNota}\n\n` +
+    `${linHrExt}${linExt}${linNota}${linPromo}\n\n` +
     `💶 Total estimado: ${fmtEur(totalEstimado)}\n` +
     `💳 Señal 50%: ${fmtEur(senalPago)}`
   );
