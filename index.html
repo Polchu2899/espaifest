@@ -2976,10 +2976,27 @@ function renderFranjas(ds) {
   const gNoche = document.getElementById('cf-grupo-noche');
   const elNoche = document.getElementById('cf-noche');
 
+  const esFinDeSemana = diaSemanaIdx === 4 || diaSemanaIdx === 5; // Vi o Sa
   let nocheHtml = grupos.noche.map(s => {
     const ocupado = esSlotBloq(s.label);
     const occ  = ocupado ? 'ocupado' : '';
     const selC = calSelectedSlot === s.label ? 'selected' : '';
+
+    // Torn de nit 21:15 en cap de setmana → a consultar per WhatsApp
+    if(!ocupado && esFinDeSemana && s.label.includes('21:15')) {
+      const waMsg = encodeURIComponent('Hola! Volia consultar la disponibilitat del torn de nit (21:15h–01:30h) per a una reserva a EspaiFest. Podeu confirmar si teniu alguna data disponible?');
+      return `<div class="cf-slot" style="cursor:default;border-color:oklch(73% .14 190/.4);background:oklch(73% .14 190/.06)">
+        <div style="font-size:10px;font-weight:700;color:oklch(45% .12 200);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px">A consultar</div>
+        <div>${s.label}</div>
+        <div class="cf-slot-precio" style="color:oklch(45% .12 200)">${s.precio}€</div>
+        <a href="https://wa.me/34674379709?text=${waMsg}" target="_blank" rel="noopener"
+           style="display:flex;align-items:center;justify-content:center;gap:5px;margin-top:7px;background:#25d366;color:#fff;border-radius:6px;padding:5px 6px;font-size:11px;font-weight:700;text-decoration:none">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="${_WA_PATH}"/></svg>
+          Preguntar per WhatsApp
+        </a>
+      </div>`;
+    }
+
     const click = !ocupado ? `onclick="selectSlot('${s.label}','noche',${s.precio})"` : '';
     return `<div class="cf-slot ${occ} ${selC}" ${click}>
       <div>${s.label}</div>
@@ -2990,16 +3007,21 @@ function renderFranjas(ds) {
   // Si es día especial, añadir la franja especial en el grupo noche
   if(info.esDiaEspecial) {
     const ddmm = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
-    const esp = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
-    if(esp) {
-      const ocupado = esSlotBloq(esp.horario);
+    const recurring = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
+    // Prioridad: datos concretos de calendario_publico; fallback a lista recurrente DD/MM
+    const espHorario = info.horarioEsp  || recurring?.horario    || null;
+    const espPrecio  = info.precioEsp   ?? recurring?.precio     ?? null;
+    const espNom     = info.celebracion || recurring?.celebracion || '⭐ Día especial';
+    if(espNom || espHorario) {
+      const ocupado = espHorario ? esSlotBloq(espHorario) : false;
       const occ  = ocupado ? 'ocupado' : '';
-      const selC = calSelectedSlot === esp.horario ? 'selected' : '';
-      const click = !ocupado ? `onclick="selectSlot('${esp.horario}','noche',${esp.precio})"` : '';
+      const selC = (espHorario && calSelectedSlot === espHorario) ? 'selected' : '';
+      const click = (!ocupado && espHorario) ? `onclick="selectSlot('${espHorario}','noche',${espPrecio||0})"` : '';
+      const precioTxt = espPrecio != null ? `${espPrecio}€ · especial` : 'especial';
       nocheHtml += `<div class="cf-slot ${occ} ${selC}" ${click} style="border-color:oklch(66% .24 355/.4);background:oklch(66% .24 355/.05)">
-        <div style="font-size:11px;font-weight:700;color:oklch(66% .24 355);margin-bottom:2px">${esp.celebracion}</div>
-        <div>${esp.horario}</div>
-        <div class="cf-slot-precio" style="color:oklch(66% .24 355)">${esp.precio}€ · especial</div>
+        <div style="font-size:11px;font-weight:700;color:oklch(66% .24 355);margin-bottom:2px">${espNom}</div>
+        ${espHorario ? `<div>${espHorario}</div>` : ''}
+        <div class="cf-slot-precio" style="color:oklch(66% .24 355)">${precioTxt}</div>
       </div>`;
     }
   }
@@ -3903,7 +3925,11 @@ async function loadFechasOcupadas() {
           tardeOcupada:  tarde,
           nocheOcupada:  noche,
           diaOcupado:    diaOc,
-          rangos:        fd.rangos || [],
+          rangos:        fd.rangos      || [],
+          esDiaEspecial: fd.esDiaEspecial || false,
+          celebracion:   fd.celebracion   || null,
+          precioEsp:     fd.precioEsp     ?? null,
+          horarioEsp:    fd.horarioEsp    || null,
         };
       }
     });
@@ -3915,9 +3941,12 @@ async function loadFechasOcupadas() {
         const ds = `${y}-${mm}-${dd}`;
         if(ds >= hoy) {
           if(!data[ds]) data[ds] = {};
-          data[ds].esDiaEspecial = true;
-          data[ds].celebracion = esp.celebracion;
-          data[ds].precioEsp = esp.precio;
+          // Solo aplicar datos recurrentes si no hay ya un override concreto en calendario_publico
+          if(!data[ds].esDiaEspecial) {
+            data[ds].esDiaEspecial = true;
+            data[ds].celebracion = esp.celebracion;
+            data[ds].precioEsp = esp.precio;
+          }
         }
       });
     });
