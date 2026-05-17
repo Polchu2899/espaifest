@@ -52,84 +52,81 @@
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": [
-        "LocalBusiness",
-        "EventVenue"
-      ],
+      "@type": ["LocalBusiness", "EventVenue"],
       "@id": "https://espaifest.com/#business",
       "name": "EspaiFest",
-      "alternateName": "Espai Fest Martorell",
-      "image": "https://i.ibb.co/v699pDng/Panoramica-Espai-Fest-Martorell-1024x375.jpg",
+      "alternateName": ["Espai Fest Martorell", "EspaiFest Martorell"],
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://i.ibb.co/v699pDng/Panoramica-Espai-Fest-Martorell-1024x375.jpg",
+        "width": 1024,
+        "height": 375
+      },
       "logo": {
         "@type": "ImageObject",
         "url": "https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png",
         "width": 400,
         "height": 120
       },
-      "description": "Sala de eventos privada e insonorizada de 115m² en Martorell. Fiestas infantiles, cumpleaños adultos, baby showers, reuniones de empresa, clases de pilates y yoga. Hasta 50 personas.",
-      "description_es": "Sala de eventos privada e insonorizada de 115m² en Martorell. Fiestas infantiles, cumpleaños adultos, baby showers, reuniones de empresa, clases de pilates y yoga. Hasta 50 personas.",
+      "description": "Sala de eventos privada e insonorizada de 115m² en Martorell. Fiestas infantiles, cumpleaños adultos, baby showers, reuniones de empresa, clases de pilates y yoga. Hasta 50 personas. Desde 85€/4h.",
       "url": "https://espaifest.com/es/",
       "telephone": "+34674379709",
       "email": "info@espaifest.com",
       "priceRange": "€€",
       "currenciesAccepted": "EUR",
-      "paymentAccepted": "Cash, Bizum, Transfer",
+      "paymentAccepted": "Cash, Bizum, Bank Transfer",
+      "foundingDate": "2023",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "C/ Francesc Macià, 37",
         "addressLocality": "Martorell",
         "postalCode": "08760",
-        "addressRegion": "Cataluña",
+        "addressRegion": "Catalunya",
         "addressCountry": "ES"
       },
       "geo": {
         "@type": "GeoCoordinates",
         "latitude": 41.4747,
-        "longitude": 1.931
+        "longitude": 1.9310
       },
+      "hasMap": "https://maps.google.com/?q=EspaiFest+Martorell",
       "openingHoursSpecification": [
         {
           "@type": "OpeningHoursSpecification",
-          "dayOfWeek": [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday"
-          ],
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
           "opens": "10:00",
           "closes": "20:00"
         }
       ],
-      "maximumAttendeeCapacity": 50,
-      "amenityFeature": [
-        {
-          "@type": "LocationFeatureSpecification",
-          "name": "Proyector HD",
-          "value": true
-        },
-        {
-          "@type": "LocationFeatureSpecification",
-          "name": "WiFi fibra",
-          "value": true
-        },
-        {
-          "@type": "LocationFeatureSpecification",
-          "name": "Insonorización",
-          "value": true
-        },
-        {
-          "@type": "LocationFeatureSpecification",
-          "name": "Parque infantil",
-          "value": true
-        },
-        {
-          "@type": "LocationFeatureSpecification",
-          "name": "Aire acondicionado",
-          "value": true
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+34674379709",
+        "email": "info@espaifest.com",
+        "contactType": "reservations",
+        "availableLanguage": ["Spanish", "Catalan"],
+        "hoursAvailable": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+          "opens": "10:00",
+          "closes": "20:00"
         }
+      },
+      "maximumAttendeeCapacity": 50,
+      "floorSize": {
+        "@type": "QuantitativeValue",
+        "value": 115,
+        "unitCode": "MTK"
+      },
+      "amenityFeature": [
+        {"@type": "LocationFeatureSpecification", "name": "Proyector HD", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "WiFi fibra óptica", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Sala insonorizada", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Parque infantil interior", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Piscina de bolas", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Aire acondicionado", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Cocina office", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Cambiador bebés", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Zona business", "value": true}
       ],
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
@@ -138,22 +135,27 @@
           {
             "@type": "Offer",
             "name": "Alquiler sala 4 horas",
+            "description": "Sala privada insonorizada de 115m² durante 4 horas",
             "price": "85",
-            "priceCurrency": "EUR"
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock"
           },
           {
             "@type": "Offer",
             "name": "Fiestas infantiles",
-            "description": "Zona bebés y parque infantil incluidos"
+            "description": "Sala con parque infantil, piscina de bolas y zona de bebés incluidos",
+            "priceCurrency": "EUR"
           },
           {
             "@type": "Offer",
-            "name": "Eventos Business",
-            "description": "Reuniones, formaciones, talleres y clases"
+            "name": "Eventos adultos y reuniones",
+            "description": "Reuniones de empresa, formaciones, talleres, clases de yoga y pilates",
+            "priceCurrency": "EUR"
           }
         ]
       },
       "sameAs": [
+        "https://espaifest.com/",
         "https://www.facebook.com/espaifest",
         "https://www.instagram.com/espaifest"
       ]
@@ -162,17 +164,21 @@
       "@type": "WebSite",
       "@id": "https://espaifest.com/#website",
       "url": "https://espaifest.com/es/",
-      "name": "EspaiFest",
-      "description": "Sala de fiestas y eventos en Martorell",
-      "inLanguage": [
-        "ca-ES",
-        "es-ES"
-      ],
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://espaifest.com/#{search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
+      "name": "EspaiFest Martorell",
+      "description": "Sala de fiestas y eventos privada en Martorell — 115m², hasta 50 personas, desde 85€",
+      "inLanguage": ["es-ES", "ca-ES"],
+      "publisher": {"@id": "https://espaifest.com/#business"}
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "EspaiFest Martorell",
+          "item": "https://espaifest.com/es/"
+        }
+      ]
     }
   ]
 }
@@ -234,6 +240,7 @@
 <meta name="geo.position" content="41.4747;1.9310">
 <meta name="ICBM" content="41.4747, 1.9310">
 <meta name="DC.title" content="EspaiFest — Sala de Fiestas Martorell">
+<link rel="alternate" type="text/plain" title="LLMs.txt" href="https://espaifest.com/llms.txt">
 
 <!-- ══ FUENTES ═══════════════════════════════════════════ -->
 <link rel="preload" as="image" href="https://i.ibb.co/v699pDng/Panoramica-Espai-Fest-Martorell-1024x375.jpg" fetchpriority="high">
@@ -2396,6 +2403,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
           <div class="fg" style="margin-top:14px;">
             <label class="fl">Código de promoción <span style="color:var(--tx3);font-weight:400;font-size:.78rem;">(opcional)</span></label>
             <input type="text" class="fi" id="r-promo" placeholder="Introduce tu código..." style="text-transform:uppercase;letter-spacing:.04em;">
+            <div id="promo-feedback" style="display:none;font-size:.8rem;font-weight:600;margin-top:6px;padding:6px 10px;border-radius:8px;"></div>
           </div>
 
           <!-- Aceptación legal -->
@@ -3320,6 +3328,36 @@ function ajustarHoraExtWeb() {
   }
 }
 
+let _promoAplicada = null;
+
+function aplicarCodigoPromo(codigo) {
+  const promos = window._promocionesActivas || [];
+  const feedback = document.getElementById('promo-feedback');
+  const codigoUp = (codigo || '').trim().toUpperCase();
+  const match = codigoUp ? promos.find(p => (p.codigo || '').toUpperCase() === codigoUp) : null;
+  if (!codigoUp) {
+    _promoAplicada = null;
+    if (feedback) { feedback.textContent = ''; feedback.style.display = 'none'; }
+  } else if (match) {
+    _promoAplicada = match;
+    if (feedback) {
+      feedback.innerHTML = `✓ Código aplicado: <strong>-${match.descuento}%</strong> — ${match.nombre || match.nombre_ca || 'Promoción'}`;
+      feedback.style.color = 'oklch(52% .22 150)';
+      feedback.style.background = 'oklch(52% .22 150/.08)';
+      feedback.style.display = 'block';
+    }
+  } else {
+    _promoAplicada = null;
+    if (feedback) {
+      feedback.textContent = 'Código no válido o caducado';
+      feedback.style.color = '#ef4444';
+      feedback.style.background = 'oklch(50% .2 25/.08)';
+      feedback.style.display = 'block';
+    }
+  }
+  calcularTotal();
+}
+
 function calcularTotal() {
   ajustarHoraExtWeb();
   const hor   = document.getElementById('r-horario')?.value || '';
@@ -3339,7 +3377,11 @@ function calcularTotal() {
                             .reduce((s,cb) => s + parseFloat(cb.dataset.precio), 0);
   const hasConsulta = extChecked.some(cb => parseFloat(cb.dataset.precio) === 0);
 
-  const total = pSala + pHora + pExtras;
+  const subtotal = pSala + pHora + pExtras;
+  const descuentoEur = (_promoAplicada && _promoAplicada.descuento > 0)
+    ? Math.round(subtotal * _promoAplicada.descuento) / 100
+    : 0;
+  const total = subtotal - descuentoEur;
 
   // Construir líneas
   const lineas = [];
@@ -3347,6 +3389,7 @@ function calcularTotal() {
   if(pHora > 0) lineas.push(`<div style="display:flex;justify-content:space-between;"><span>${horaLabel}</span><span style="font-weight:700;color:var(--tx1)">${pHora.toFixed(2)} €</span></div>`);
   if(pExtras > 0) lineas.push(`<div style="display:flex;justify-content:space-between;"><span>Extras (${extChecked.filter(cb=>parseFloat(cb.dataset.precio)>0).length} seleccionados)</span><span style="font-weight:700;color:var(--tx1)">${pExtras.toFixed(2)} €</span></div>`);
   if(hasConsulta) lineas.push(`<div style="color:var(--tx3);font-size:.78rem;">+ artículos a consultar</div>`);
+  if(descuentoEur > 0) lineas.push(`<div style="display:flex;justify-content:space-between;font-weight:700;color:oklch(52% .22 150);"><span>Descuento promo (−${_promoAplicada.descuento}%)</span><span>−${descuentoEur.toFixed(2)} €</span></div>`);
 
   document.getElementById('rt-lineas').innerHTML = lineas.join('');
   document.getElementById('rt-total').textContent = `${total.toFixed(2)} €`;
@@ -3358,6 +3401,10 @@ document.addEventListener('change', function(e) {
   if(e.target.classList.contains('r-ext') || e.target.name === 'r-horaext' || e.target.id === 'r-horario') {
     calcularTotal();
   }
+});
+
+document.getElementById('r-promo')?.addEventListener('input', function() {
+  aplicarCodigoPromo(this.value);
 });
 
 // ── TOGGLE EXTRAS ────────────────────────────────────────────
@@ -3446,7 +3493,14 @@ async function enviarReserva() {
   const horaExtStr = horaExtLabel !== 'ninguna' ? `+1h ${horaExtLabel}` : 'Sin horas extra';
 
   // ── Cálculo totales ──────────────────────────────────────────
-  const totalEstimado = precioSala + horaExtPrecio + extrasPrecio;
+  const subtotalEstimado = precioSala + horaExtPrecio + extrasPrecio;
+  if(promo && !_promoAplicada) {
+    const _pm = (window._promocionesActivas||[]).find(p=>(p.codigo||'').toUpperCase()===promo);
+    if(_pm) _promoAplicada = _pm;
+  }
+  const promoDescuentoPct = _promoAplicada ? (_promoAplicada.descuento || 0) : 0;
+  const promoDescuentoEur = promoDescuentoPct > 0 ? Math.round(subtotalEstimado * promoDescuentoPct) / 100 : 0;
+  const totalEstimado = subtotalEstimado - promoDescuentoEur;
   const senalPago     = totalEstimado * 0.5;
 
   // ── Línea extras para emails ─────────────────────────────────
@@ -3499,6 +3553,7 @@ async function enviarReserva() {
     senal_50:      fmtEur(senalPago),
     comentarios:   no || 'Ninguno',
     codigo_promo:  promo || '—',
+    descuento_promo: promoDescuentoPct > 0 ? `${promoDescuentoPct}% (-${fmtEur(promoDescuentoEur)})` : '—',
     fecha_envio:   fechaHoy
   };
 
@@ -3513,7 +3568,7 @@ async function enviarReserva() {
         extras:     extObjs.length ? extrasNombres.join(', ') : 'Ninguno',
         metodoPago: 'Transferencia bancaria / Bizum',
         importe:    totalEstimado, senal: senalPago,
-        notas:      no || '', codigoPromo: promo || '', numReserva, origen: 'web', estado: 'Pendiente',
+        notas:      no || '', codigoPromo: promo || '', descuentoPromo: promoDescuentoPct || 0, numReserva, origen: 'web', estado: 'Pendiente',
         createdAt:  window._fsServerTimestamp()
       });
     } catch(err) { console.warn('Firestore error:', err.message); }
@@ -3535,7 +3590,7 @@ async function enviarReserva() {
   const linExt   = extObjs.length ? `\n🍽️ Extras: ${extrasNombres.join(', ')}` : '';
   const linHrExt = horaExtLabel !== 'ninguna' ? `\n⏱️ Hora extra: ${horaExtStr} (${fmtEur(horaExtPrecio)})` : '';
   const linNota  = no ? `\n📝 ${no}` : '';
-  const linPromo = promo ? `\n🏷️ Código promo: ${promo}` : '';
+  const linPromo = promo ? `\n🏷️ Código promo: ${promo}${promoDescuentoPct > 0 ? ` (-${promoDescuentoPct}%, -${fmtEur(promoDescuentoEur)})` : ' (no aplicado)'}` : '';
   const msg = encodeURIComponent(
     `🎉 NUEVA RESERVA — EspaiFest\n\n` +
     `👤 ${n} ${ap}${linDni}${linDir}\n` +
@@ -4123,6 +4178,7 @@ async function loadPromocionesWeb() {
       .filter(p => p.hasta && p.hasta >= hoy)
       .sort((a,b) => (b.descuento||0) - (a.descuento||0)); // la más grande primero
 
+    window._promocionesActivas = activas;
     if(!activas.length) return;
 
     // ── Banner hero con la promo de mayor descuento ──
