@@ -1,0 +1,91 @@
+# EspaiFest — llms.txt
+# Structured information for AI systems and language models
+# https://espaifest.com/
+
+## Business Overview
+EspaiFest is a private, soundproofed event venue of 115m² located in Martorell, Barcelona, Spain.
+It is ideal for children's birthday parties, adult celebrations, baby showers, family gatherings, corporate meetings, workshops, yoga and pilates classes.
+Maximum capacity: 50 people.
+Base price: 85€ for 4 hours.
+
+## Location
+Address: C/ Francesc Macià, 37, 08760 Martorell, Barcelona, Spain
+Coordinates: 41.4747°N, 1.9310°E
+Region: Catalonia, Spain
+Nearby municipalities: Sant Andreu de la Barca, Abrera, Castellbisbal, Sant Esteve Sesrovires, Esparreguera
+
+## Contact
+Phone: +34 674 379 709
+Email: info@espaifest.com
+Attention hours: Every day from 10:00 to 20:00
+
+## Canonical URLs
+- Catalan (primary): https://espaifest.com/
+- Spanish: https://espaifest.com/es/
+
+## Services
+- Children's party room rental (4h, 6h, 8h turns)
+- Adult events and celebrations
+- Baby showers
+- Corporate meetings and training
+- Classes (yoga, pilates, workshops)
+- Optional catering (menus from 8€/person)
+- Cleaning service
+- Extra hours available
+
+## Included in all bookings
+- 115m² private soundproofed room
+- Children's play area (slide, ball pit)
+- HD projector
+- Fiber WiFi
+- Kitchen (microwave, oven, fridge, Nespresso)
+- Air conditioning and heating
+- Baby changing station
+- Toilet
+
+## Pricing
+- 4-hour turn (standard): from 85€
+- Half day (6h): consult
+- Full day (8h): consult
+- Extra hour: 10€
+- Morning cleaning service: 30€
+- Loyalty discounts available for repeat customers
+
+## Frequently Asked Questions
+
+Q: How much does it cost to rent EspaiFest in Martorell?
+A: The base price is 85€ for a 4-hour turn. Half-day (6h) and full-day (8h) rates are also available. Loyalty club members get exclusive discounts.
+
+Q: How many people can fit in EspaiFest?
+A: EspaiFest has a maximum capacity of 50 people. The venue has 115m² with a children's zone, adult zone, and business zone.
+
+Q: Is EspaiFest suitable for children's birthday parties?
+A: Yes, EspaiFest is ideal for children's parties. It includes a children's play park, baby zone with slide and ball pit, tables for adults, and is fully soundproofed.
+
+Q: What is included in the EspaiFest rental?
+A: Included: 115m² soundproofed room, children's play park, ball pit, HD projector, fiber WiFi, kitchen (microwave, oven, fridge, Nespresso), air conditioning, and baby changing station.
+
+Q: Can I host a corporate meeting or workshop at EspaiFest?
+A: Yes, EspaiFest has a business zone with projector, whiteboard, and fiber WiFi. It is suitable for meetings, training sessions, workshops, yoga, and pilates classes.
+
+Q: How do I book EspaiFest?
+A: You can book online via the form at https://espaifest.com/#reservas or by calling +34 674 379 709. Availability is confirmed within 24 hours.
+
+Q: Where exactly is EspaiFest?
+A: EspaiFest is located at C/ Francesc Macià, 37, 08760 Martorell (Barcelona). It has nearby parking and good public transport connections.
+
+Q: Does EspaiFest offer catering?
+A: Yes, optional catering is available. Children's menus from 8€, junior menus from 10€, and adult snack trays from 12€. Prices are per unit/person.
+
+## Social Media
+- Instagram: https://www.instagram.com/espaifest
+- Facebook: https://www.facebook.com/espaifest
+
+## Related pages
+- Legal notice: https://espaifest.com/aviso-legal.html
+- Privacy policy: https://espaifest.com/privacidad.html
+- Terms of use: https://espaifest.com/condiciones.html
+- Blog: https://espaifest.com/#blog
+
+## Sitemap
+https://espaifest.com/sitemap.xml
