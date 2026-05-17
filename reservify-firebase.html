@@ -619,6 +619,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <button class="tar-tab" onclick="tarSwitch('ampliados',this)">Turnos ampliados</button>
           <button class="tar-tab" onclick="tarSwitch('especiales',this)">Días especiales</button>
           <button class="tar-tab" onclick="tarSwitch('extras',this)">Extras</button>
+          <button class="tar-tab" onclick="tarSwitch('fechas-concretas',this);loadFechasConcretas()">Fechas concretas</button>
           <button class="btn bp sm" onclick="saveTodasTarifas()" style="margin-left:auto;white-space:nowrap;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
             Guardar TODO
@@ -721,6 +722,57 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             <input class="fi tar-inp wide" id="tar-es-hora" placeholder="Horario">
             <input class="fi tar-inp" id="tar-es-precio" placeholder="€" type="number">
             <button class="btn bg sm" onclick="tarAddEspecial()">+ Añadir</button>
+          </div>
+        </div>
+
+        <!-- FECHAS CONCRETAS -->
+        <div class="tar-section" id="tar-fechas-concretas">
+          <div class="tar-save-bar">
+            <h3>Horarios y precios por fecha concreta</h3>
+          </div>
+          <p class="tar-hint">Define precio, horario y bloqueos para días concretos del calendario. Se aplican con prioridad sobre las tarifas recurrentes y aparecen en la web al seleccionar esa fecha.</p>
+
+          <div style="background:var(--s1);border:1px solid var(--b2);border-radius:10px;padding:16px;margin-bottom:16px">
+            <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">Añadir / editar fecha especial</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+              <div><label class="fl">Fecha *</label><input type="date" class="fi" id="fc-fecha" style="margin-top:4px"></div>
+              <div><label class="fl">Celebración *</label><input type="text" class="fi" id="fc-nom" placeholder="Ej: Nochebuena" style="margin-top:4px"></div>
+              <div><label class="fl">Precio especial (€)</label><input type="number" class="fi" id="fc-precio" placeholder="150" style="margin-top:4px"></div>
+              <div><label class="fl">Horario especial</label><input type="text" class="fi" id="fc-horario" placeholder="21:00–02:00" style="margin-top:4px"></div>
+            </div>
+            <div style="margin-bottom:14px">
+              <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Bloquear franjas ese día</div>
+              <div style="display:flex;gap:16px;flex-wrap:wrap">
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="fc-blq-manana"> Mañana</label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="fc-blq-tarde"> Tarde</label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="fc-blq-noche"> Noche</label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="fc-blq-dia"> Día completo (bloquea todo)</label>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn bp sm" onclick="saveFechaConcreta()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Guardar en calendario
+              </button>
+              <button class="btn bg sm" onclick="limpiarFcForm()">Limpiar</button>
+            </div>
+          </div>
+
+          <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Fechas especiales configuradas</div>
+          <div class="tar-table-wrap">
+            <table class="tar-table" id="tar-table-fechas-concretas">
+              <thead><tr>
+                <th style="text-align:left">Fecha</th>
+                <th style="text-align:left">Celebración</th>
+                <th style="text-align:left">Horario especial</th>
+                <th>Precio</th>
+                <th style="text-align:left">Franjas bloqueadas</th>
+                <th></th>
+              </tr></thead>
+              <tbody id="tar-body-fechas-concretas">
+                <tr><td colspan="6" style="text-align:center;color:var(--t3);font-size:13px;padding:16px">Pulsa la pestaña para cargar...</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -6096,6 +6148,120 @@ window.tarAddEspecial = function() {
   window.tarifasData.especiales.push({celebracion:nom,dia,horario:hora,precio:prec});
   renderTarTablaEspeciales();
   ['tar-es-nom','tar-es-dia','tar-es-hora','tar-es-precio'].forEach(id=>{document.getElementById(id).value='';});
+};
+
+// ── Fechas concretas: días especiales con fecha exacta ────────
+window.loadFechasConcretas = async function() {
+  const tbody = document.getElementById('tar-body-fechas-concretas');
+  if(!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);font-size:13px;padding:16px">Cargando...</td></tr>';
+  try {
+    const hoy = new Date().toISOString().split('T')[0];
+    const snap = await getDocs(collection(db, 'calendario_publico'));
+    const fechas = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(d => d.esDiaEspecial && (d.fecha || d.id) >= hoy)
+      .sort((a, b) => (a.fecha||a.id).localeCompare(b.fecha||b.id));
+
+    if(!fechas.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);font-size:13px;padding:16px">No hay fechas especiales configuradas. Las de "Días especiales" son recurrentes por DD/MM — usa este panel para fechas concretas.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = fechas.map(d => {
+      const fecha = d.fecha || d.id;
+      const blq = [
+        d.mananaOcupada ? '<span style="background:rgba(249,115,22,.15);color:#f97316;padding:2px 7px;border-radius:12px;font-size:11px;font-weight:700">Mañana</span>' : '',
+        d.tardeOcupada  ? '<span style="background:rgba(249,115,22,.15);color:#f97316;padding:2px 7px;border-radius:12px;font-size:11px;font-weight:700">Tarde</span>' : '',
+        d.nocheOcupada  ? '<span style="background:rgba(249,115,22,.15);color:#f97316;padding:2px 7px;border-radius:12px;font-size:11px;font-weight:700">Noche</span>' : '',
+        d.diaOcupado    ? '<span style="background:rgba(239,68,68,.15);color:#ef4444;padding:2px 7px;border-radius:12px;font-size:11px;font-weight:700">Día completo</span>' : '',
+      ].filter(Boolean).join(' ');
+      const nomEsc = (d.celebracion||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      const horEsc = (d.horarioEsp||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      return `<tr>
+        <td style="font-weight:700">${fecha}</td>
+        <td>${d.celebracion||'—'}</td>
+        <td>${d.horarioEsp||'—'}</td>
+        <td style="text-align:center;font-weight:700;color:var(--teal)">${d.precioEsp!=null ? d.precioEsp+'€' : '—'}</td>
+        <td>${blq||'<span style="font-size:11px;color:var(--t3)">Ninguna</span>'}</td>
+        <td style="display:flex;gap:4px;white-space:nowrap">
+          <button class="btn bg sm" style="font-size:11px;padding:4px 8px" onclick="editarFechaConcreta('${fecha}','${nomEsc}','${horEsc}',${d.precioEsp||0},${!!d.mananaOcupada},${!!d.tardeOcupada},${!!d.nocheOcupada},${!!d.diaOcupado})">Editar</button>
+          <button class="tar-row-del" onclick="deleteFechaConcreta('${fecha}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="6" style="color:#ef4444;font-size:13px;padding:12px">Error: ${e.message}</td></tr>`;
+  }
+};
+
+window.saveFechaConcreta = async function() {
+  const fecha   = document.getElementById('fc-fecha')?.value;
+  const nom     = document.getElementById('fc-nom')?.value.trim();
+  const precio  = parseFloat(document.getElementById('fc-precio')?.value);
+  const horario = document.getElementById('fc-horario')?.value.trim() || null;
+  const blqMa   = !!document.getElementById('fc-blq-manana')?.checked;
+  const blqTa   = !!document.getElementById('fc-blq-tarde')?.checked;
+  const blqNo   = !!document.getElementById('fc-blq-noche')?.checked;
+  const blqDia  = !!document.getElementById('fc-blq-dia')?.checked;
+
+  if(!fecha) { showToast('Selecciona una fecha'); return; }
+  if(!nom)   { showToast('Escribe el nombre de la celebración'); return; }
+
+  try {
+    const ref = doc(db, 'calendario_publico', fecha);
+    const existing = await getDoc(ref);
+    const base = existing.exists() ? existing.data() : {};
+    await setDoc(ref, {
+      ...base,
+      fecha,
+      esDiaEspecial: true,
+      celebracion:   nom,
+      precioEsp:     isNaN(precio) ? null : precio,
+      horarioEsp:    horario,
+      mananaOcupada: blqDia || blqMa,
+      tardeOcupada:  blqDia || blqTa,
+      nocheOcupada:  blqDia || blqNo,
+      diaOcupado:    blqDia,
+    });
+    showToast(`${fecha} · ${nom} guardado ✓`);
+    limpiarFcForm();
+    loadFechasConcretas();
+  } catch(e) {
+    showToast('Error: ' + e.message);
+    console.error(e);
+  }
+};
+
+window.editarFechaConcreta = function(fecha, nom, horario, precio, blqMa, blqTa, blqNo, blqDia) {
+  document.getElementById('fc-fecha').value   = fecha;
+  document.getElementById('fc-nom').value     = nom;
+  document.getElementById('fc-horario').value = horario;
+  document.getElementById('fc-precio').value  = precio || '';
+  document.getElementById('fc-blq-manana').checked = blqMa;
+  document.getElementById('fc-blq-tarde').checked  = blqTa;
+  document.getElementById('fc-blq-noche').checked  = blqNo;
+  document.getElementById('fc-blq-dia').checked    = blqDia;
+  document.getElementById('fc-fecha').scrollIntoView({ behavior:'smooth', block:'center' });
+};
+
+window.deleteFechaConcreta = async function(fecha) {
+  if(!confirm(`¿Eliminar el día especial ${fecha}?\nSe borrarán los datos de celebración, precio y bloqueos de ese día.`)) return;
+  try {
+    await deleteDoc(doc(db, 'calendario_publico', fecha));
+    showToast(`${fecha} eliminado ✓`);
+    loadFechasConcretas();
+  } catch(e) {
+    showToast('Error: ' + e.message);
+  }
+};
+
+window.limpiarFcForm = function() {
+  ['fc-fecha','fc-nom','fc-precio','fc-horario'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  ['fc-blq-manana','fc-blq-tarde','fc-blq-noche','fc-blq-dia'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.checked = false;
+  });
 };
 
 // ── Extras ──
