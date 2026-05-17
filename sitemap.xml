@@ -2,100 +2,70 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
-  <!-- ══ PÁGINA PRINCIPAL ══════════════════════════════ -->
+  <!-- ══ PÁGINA PRINCIPAL — CATALÁN ═══════════════════════ -->
   <url>
     <loc>https://espaifest.com/</loc>
-    <lastmod>2026-04-22</lastmod>
+    <lastmod>2026-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="es" href="https://espaifest.com/"/>
     <xhtml:link rel="alternate" hreflang="ca" href="https://espaifest.com/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://espaifest.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://espaifest.com/"/>
   </url>
 
-  <!-- ══ SECCIONES SPA (anclas como URLs canónicas) ═══ -->
+  <!-- ══ PÁGINA PRINCIPAL — CASTELLANO ════════════════════ -->
   <url>
-    <loc>https://espaifest.com/#fiestas</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://espaifest.com/es/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://espaifest.com/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://espaifest.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://espaifest.com/"/>
   </url>
+
+  <!-- ══ PÁGINAS BLOG / SEO ════════════════════════════════ -->
   <url>
-    <loc>https://espaifest.com/#adultos</loc>
-    <lastmod>2026-04-22</lastmod>
+    <loc>https://espaifest.com/donde-celebrar-fiestas-martorell.html</loc>
+    <lastmod>2026-05-17</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://espaifest.com/#business</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://espaifest.com/#precios</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://espaifest.com/#galeria</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://espaifest.com/#calendario</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://espaifest.com/#manualidades</loc>
-    <lastmod>2026-04-22</lastmod>
+    <loc>https://espaifest.com/ventajas-de-alquilar-un-local-privado-para-una-fiesta.html</loc>
+    <lastmod>2026-05-17</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://espaifest.com/#fidelizacion</loc>
-    <lastmod>2026-04-22</lastmod>
+    <loc>https://espaifest.com/ideas-personalizar-local-eventos.html</loc>
+    <lastmod>2026-05-17</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://espaifest.com/#reservas</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://espaifest.com/#blog</loc>
-    <lastmod>2026-04-22</lastmod>
-    <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <!-- ══ PÁGINAS LEGALES ═══════════════════════════════ -->
+  <!-- ══ PÁGINAS LEGALES ═══════════════════════════════════ -->
   <url>
     <loc>https://espaifest.com/aviso-legal.html</loc>
-    <lastmod>2026-04-22</lastmod>
+    <lastmod>2026-05-17</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
     <loc>https://espaifest.com/privacidad.html</loc>
-    <lastmod>2026-04-22</lastmod>
+    <lastmod>2026-05-17</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
     <loc>https://espaifest.com/cookies.html</loc>
-    <lastmod>2026-04-22</lastmod>
+    <lastmod>2026-05-17</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
     <loc>https://espaifest.com/condiciones.html</loc>
-    <lastmod>2026-04-22</lastmod>
+    <lastmod>2026-05-17</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
