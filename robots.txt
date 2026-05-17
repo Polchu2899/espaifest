@@ -1,11 +1,83 @@
 # EspaiFest — robots.txt
 # https://espaifest.com/
 
+# ── Crawlers generales ────────────────────────────────────
 User-agent: *
 Allow: /
-
-# Bloquear archivos de sistema que no deben indexarse
 Disallow: /404.html
+Disallow: /admin.html
+Disallow: /reservify-firebase.html
 
-# Sitemap
+# ── Google ───────────────────────────────────────────────
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+# ── Google AI (Gemini, AI Overviews) ─────────────────────
+User-agent: Google-Extended
+Allow: /
+
+# ── OpenAI / ChatGPT ─────────────────────────────────────
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+# ── Anthropic / Claude ────────────────────────────────────
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# ── Perplexity AI ─────────────────────────────────────────
+User-agent: PerplexityBot
+Allow: /
+
+# ── Meta AI ───────────────────────────────────────────────
+User-agent: FacebookBot
+Allow: /
+
+# ── Microsoft Copilot / Bing ──────────────────────────────
+User-agent: Bingbot
+Allow: /
+
+User-agent: msnbot
+Allow: /
+
+# ── Apple ─────────────────────────────────────────────────
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# ── Common Crawl (fuente de entrenamiento de LLMs) ────────
+User-agent: CCBot
+Allow: /
+
+# ── Otros crawlers de IA ──────────────────────────────────
+User-agent: Bytespider
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+# ── Sitemaps ──────────────────────────────────────────────
 Sitemap: https://espaifest.com/sitemap.xml
+Sitemap: https://espaifest.com/llms.txt
