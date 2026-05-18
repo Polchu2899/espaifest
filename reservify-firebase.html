@@ -2048,7 +2048,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js';
-import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, setDoc, query, orderBy, serverTimestamp, where, Timestamp, runTransaction, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
+import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, setDoc, query, orderBy, serverTimestamp, where, Timestamp, runTransaction } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
 
 // ── CONFIG — reemplaza con tu nueva API key tras regenerarla ──
 const firebaseConfig = {
@@ -2123,12 +2123,11 @@ function metodoBadge(m) {
   return `<span class="badge ${map[m]||'bg-x'}">${m||'—'}</span>`;
 }
 
-// ── Caché de calendario_publico (listener en tiempo real) ─────
+// ── Caché de calendario_publico (lectura única al login) ──────
 let adminCalData = {};
-let _adminCalUnsub = null;
-function loadAdminCalData() {
-  if(_adminCalUnsub) { _adminCalUnsub(); _adminCalUnsub = null; }
-  _adminCalUnsub = onSnapshot(collection(db, 'calendario_publico'), snap => {
+async function loadAdminCalData() {
+  try {
+    const snap = await getDocs(collection(db, 'calendario_publico'));
     adminCalData = {};
     snap.docs.forEach(d => {
       const fd = d.data();
@@ -2145,16 +2144,19 @@ function loadAdminCalData() {
         diaOcupado:    fd.diaOcupado    || false,
       };
     });
-    // Si hay una fecha seleccionada en el formulario de reserva, refrescar sus franjas
-    const fechaSeleccionada = document.getElementById('r-fecha')?.value;
-    if(fechaSeleccionada) loadFranjasPorFecha(fechaSeleccionada);
-  }, e => { console.warn('adminCalData error:', e.message); });
+  } catch(e) { console.warn('adminCalData error:', e.message); }
+}
+
+// Actualiza adminCalData en memoria para una fecha concreta (sin releer Firebase)
+function adminCalDataPatch(fecha, patch) {
+  adminCalData[fecha] = { ...(adminCalData[fecha] || {}), ...patch };
+  const sel = document.getElementById('r-fecha');
+  if(sel?.value === fecha) loadFranjasPorFecha(fecha);
 }
 
 // ── LOAD ALL ──────────────────────────────────────────────────
 window.loadAllData = async () => {
-  loadAdminCalData(); // listener tiempo real — no necesita await
-  await Promise.all([loadReservas(), loadClientes(), loadServicios(), loadPromos()]);
+  await Promise.all([loadReservas(), loadClientes(), loadServicios(), loadPromos(), loadAdminCalData()]);
 };
 
 // ── RESERVAS ──────────────────────────────────────────────────
@@ -6268,6 +6270,19 @@ window.saveFechaConcreta = async function() {
     await setDoc(ref, {
       ...base,
       fecha,
+      esDiaEspecial: true,
+      celebracion:   nom,
+      precioEsp:     isNaN(precio) ? null : precio,
+      horarioEsp:    franjas.length ? (franjas[0].horario || null) : null,
+      franjasCustom: franjas.length ? franjas : null,
+      mananaOcupada: blqDia,
+      tardeOcupada:  blqDia,
+      nocheOcupada:  blqDia,
+      diaOcupado:    blqDia,
+    });
+
+    // Actualizar caché en memoria (sin releer Firebase)
+    adminCalDataPatch(fecha, {
       esDiaEspecial: true,
       celebracion:   nom,
       precioEsp:     isNaN(precio) ? null : precio,
