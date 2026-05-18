@@ -6329,11 +6329,9 @@ window.saveFechaConcreta = async function() {
       nocheOcupada:  blqDia,
       diaOcupado:    blqDia,
     };
-    // Firebase: fuente principal para el admin
+    // Firebase: merge para no borrar campos de reservas existentes (sin leer primero)
     const ref = doc(db, 'calendario_publico', fecha);
-    const existing = await getDoc(ref);
-    const base = existing.exists() ? existing.data() : {};
-    await setDoc(ref, { ...base, ..._fcData });
+    await setDoc(ref, _fcData, { merge: true });
     // PHP: sync para la web pública (fire-and-forget, no falla si PHP no existe)
     _syncCalPHP(fecha, _fcData);
 
