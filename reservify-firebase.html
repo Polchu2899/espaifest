@@ -741,11 +741,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             </div>
             <div style="margin-bottom:12px">
               <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Franjas horarias de este día especial</div>
-              <div style="display:grid;grid-template-columns:1fr 100px 100px 80px 28px;gap:6px;margin-bottom:4px;padding:0 2px">
+              <div style="display:grid;grid-template-columns:1fr 100px 100px 80px 28px 28px;gap:6px;margin-bottom:4px;padding:0 2px">
                 <span style="font-size:10px;color:var(--t3);font-weight:600;text-transform:uppercase">Nombre de la franja</span>
                 <span style="font-size:10px;color:var(--t3);font-weight:600;text-transform:uppercase;text-align:center">Hora inicio</span>
                 <span style="font-size:10px;color:var(--t3);font-weight:600;text-transform:uppercase;text-align:center">Hora fin</span>
                 <span style="font-size:10px;color:var(--t3);font-weight:600;text-transform:uppercase;text-align:right">Precio €</span>
+                <span style="font-size:10px;color:var(--t3);font-weight:600;text-transform:uppercase;text-align:center" title="Bloquear">🔒</span>
                 <span></span>
               </div>
               <div id="fc-franjas-list" style="display:flex;flex-direction:column;gap:6px"></div>
@@ -6244,12 +6245,13 @@ window.saveFechaConcreta = async function() {
 
   // Recoger franjas personalizadas
   const franjas = [...document.querySelectorAll('.fc-franja-row')].map(row => {
-    const nombre = row.querySelector('.fc-fr-nom')?.value.trim() || '';
-    const inicio = row.querySelector('.fc-fr-ini')?.value.trim() || '';
-    const fin    = row.querySelector('.fc-fr-fin')?.value.trim() || '';
-    const pre    = parseFloat(row.querySelector('.fc-fr-pre')?.value);
-    const horario = (inicio && fin) ? `${inicio}–${fin}` : '';
-    return { nombre, inicio, fin, horario: horario || null, precio: isNaN(pre) ? null : pre };
+    const nombre   = row.querySelector('.fc-fr-nom')?.value.trim() || '';
+    const inicio   = row.querySelector('.fc-fr-ini')?.value.trim() || '';
+    const fin      = row.querySelector('.fc-fr-fin')?.value.trim() || '';
+    const pre      = parseFloat(row.querySelector('.fc-fr-pre')?.value);
+    const horario  = (inicio && fin) ? `${inicio}–${fin}` : '';
+    const bloqueada = row.dataset.bloqueada === '1';
+    return { nombre, inicio, fin, horario: horario || null, precio: isNaN(pre) ? null : pre, bloqueada };
   }).filter(f => f.nombre || f.horario);
 
   if(!fecha) { showToast('Selecciona una fecha'); return; }
@@ -6296,7 +6298,7 @@ window.editarFechaConcreta = function(fecha) {
   list.innerHTML = '';
   const franjas = d.franjasCustom?.length ? d.franjasCustom
     : (d.horarioEsp ? [{ nombre: d.celebracion||'', inicio: d.horarioEsp.split('–')[0]||'', fin: d.horarioEsp.split('–')[1]||'', precio: d.precioEsp }] : []);
-  franjas.forEach(f => fcAddFranja(f.nombre||'', f.inicio||'', f.fin||'', f.precio??''));
+  franjas.forEach(f => fcAddFranja(f.nombre||'', f.inicio||'', f.fin||'', f.precio??'', !!f.bloqueada));
   document.getElementById('fc-fecha').scrollIntoView({ behavior:'smooth', block:'center' });
 };
 
@@ -6322,20 +6324,53 @@ window.limpiarFcForm = function() {
   if(list) list.innerHTML = '';
 };
 
-window.fcAddFranja = function(nombre='', inicio='', fin='', precio='') {
+window.fcAddFranja = function(nombre='', inicio='', fin='', precio='', bloqueada=false) {
   const list = document.getElementById('fc-franjas-list');
   if(!list) return;
   const row = document.createElement('div');
   row.className = 'fc-franja-row';
-  row.style.cssText = 'display:grid;grid-template-columns:1fr 100px 100px 80px 28px;gap:6px;align-items:center';
+  row.dataset.bloqueada = bloqueada ? '1' : '0';
+  const blqStyle = bloqueada
+    ? 'background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:4px 6px;'
+    : 'background:transparent;border:1px solid transparent;border-radius:8px;padding:4px 6px;';
+  row.style.cssText = `display:grid;grid-template-columns:1fr 100px 100px 80px 28px 28px;gap:6px;align-items:center;${blqStyle}`;
+  const lockTitle = bloqueada ? 'Desbloquear esta franja' : 'Bloquear esta franja (aparece como ocupada en la web)';
+  const lockStyle = bloqueada
+    ? 'background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.4);'
+    : 'background:rgba(100,116,139,.1);color:var(--t2);border:1px solid var(--b2);';
+  const lockIcon = bloqueada ? '🔒' : '🔓';
   row.innerHTML = `
-    <input type="text" class="fi fc-fr-nom" placeholder="Nombre (ej: Nochevieja especial)" value="${nombre}" style="font-size:12px;height:32px;padding:4px 8px">
-    <input type="text" class="fi fc-fr-ini" placeholder="21:00" value="${inicio}" style="font-size:12px;height:32px;padding:4px 8px;text-align:center">
-    <input type="text" class="fi fc-fr-fin" placeholder="02:00" value="${fin}" style="font-size:12px;height:32px;padding:4px 8px;text-align:center">
-    <input type="number" class="fi fc-fr-pre" placeholder="€" value="${precio}" style="font-size:12px;height:32px;padding:4px 8px;text-align:right">
-    <button onclick="this.closest('.fc-franja-row').remove()" title="Eliminar franja" style="background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0">✕</button>
+    <input type="text" class="fi fc-fr-nom" placeholder="Nombre (ej: Nochevieja especial)" value="${nombre}" style="font-size:12px;height:32px;padding:4px 8px;${bloqueada?'opacity:.55;text-decoration:line-through;':''}">
+    <input type="text" class="fi fc-fr-ini" placeholder="21:00" value="${inicio}" style="font-size:12px;height:32px;padding:4px 8px;text-align:center;${bloqueada?'opacity:.55;':''}">
+    <input type="text" class="fi fc-fr-fin" placeholder="02:00" value="${fin}" style="font-size:12px;height:32px;padding:4px 8px;text-align:center;${bloqueada?'opacity:.55;':''}">
+    <input type="number" class="fi fc-fr-pre" placeholder="€" value="${precio}" style="font-size:12px;height:32px;padding:4px 8px;text-align:right;${bloqueada?'opacity:.55;':''}">
+    <button onclick="fcToggleBloqueo(this)" title="${lockTitle}" style="${lockStyle}border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0">${lockIcon}</button>
+    <button onclick="this.closest('.fc-franja-row').remove()" title="Eliminar franja completamente" style="background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0">✕</button>
   `;
   list.appendChild(row);
+};
+
+window.fcToggleBloqueo = function(btn) {
+  const row = btn.closest('.fc-franja-row');
+  const esBloqueada = row.dataset.bloqueada === '1';
+  const inputs = row.querySelectorAll('input');
+  if(esBloqueada) {
+    row.dataset.bloqueada = '0';
+    row.style.background = 'transparent';
+    row.style.border = '1px solid transparent';
+    btn.style.cssText = 'background:rgba(100,116,139,.1);color:var(--t2);border:1px solid var(--b2);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0';
+    btn.textContent = '🔓';
+    btn.title = 'Bloquear esta franja (aparece como ocupada en la web)';
+    inputs.forEach(i => { i.style.opacity='1'; i.style.textDecoration='none'; });
+  } else {
+    row.dataset.bloqueada = '1';
+    row.style.background = 'rgba(239,68,68,.07)';
+    row.style.border = '1px solid rgba(239,68,68,.25)';
+    btn.style.cssText = 'background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.4);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0';
+    btn.textContent = '🔒';
+    btn.title = 'Desbloquear esta franja';
+    inputs.forEach((i,idx) => { i.style.opacity='.55'; if(idx===0) i.style.textDecoration='line-through'; });
+  }
 };
 
 // Extrae inicio/fin de un string de horario como "10h–14h", "16:30h–20:30h", "21:15h-01:30h"
@@ -6524,7 +6559,7 @@ window.loadFranjasPorFecha = function(fechaStr) {
       const hor = f.horario || (f.inicio && f.fin ? `${f.inicio}–${f.fin}` : '');
       if(!hor) return;
       const opt = document.createElement('option');
-      const ocupado = isRangoOcupado(hor);
+      const ocupado = f.bloqueada || isRangoOcupado(hor);
       const nom = f.nombre || calInfo.celebracion || '⭐ Especial';
       const pre = f.precio ?? calInfo.precioEsp ?? '';
       if(ocupado) {
