@@ -1258,6 +1258,18 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           </div></div>
         </div>
 
+        <!-- MIGRACIÓN FIREBASE → PHP (una sola vez al migrar a Indedmedia) -->
+        <div class="card" style="margin-top:20px;border:1px solid rgba(15,212,196,.3)">
+          <div class="chead">
+            <div><div class="ctitle">Sincronizar datos a servidor PHP</div><div class="csub">Copia tarifas y calendario de Firebase a los archivos del servidor (Indedmedia). Hazlo una vez tras subir la web.</div></div>
+            <button class="btn bp sm" onclick="migrarAphp()" id="btn-migrar-php">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              Sincronizar ahora
+            </button>
+          </div>
+          <div id="migrar-php-status" style="font-size:12px;color:var(--t2);margin-top:6px;line-height:1.6"></div>
+        </div>
+
         <!-- GESTIÓN MANUAL DE BLOQUEOS DE CALENDARIO -->
         <div class="card" style="margin-top:20px">
           <div class="chead">
@@ -3069,14 +3081,9 @@ window.confirmarReserva = async (id) => {
     // Incluir la actual como confirmada para calcular bien
     const todasConfirmadas = [...otrasConfirmadas, {...reserva, estado:'Confirmada'}];
     const { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, rangos } = calcOcupacion(todasConfirmadas);
-    await setDoc(doc(db, 'calendario_publico', reserva.fecha), {
-      fecha: reserva.fecha,
-      mananaOcupada,
-      tardeOcupada,
-      nocheOcupada,
-      diaOcupado,
-      updatedAt: serverTimestamp()
-    });
+    const _calConf = { fecha: reserva.fecha, mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado };
+    await setDoc(doc(db, 'calendario_publico', reserva.fecha), { ..._calConf, updatedAt: serverTimestamp() });
+    _syncCalPHP(reserva.fecha, _calConf);
     showToast('Reserva confirmada ✓ — Calendario actualizado');
   } else {
     showToast('Reserva confirmada ✓');
@@ -3118,16 +3125,12 @@ window.cancelarReserva = async (id) => {
     );
     if (confirmadasHoy.length === 0) {
       await deleteDoc(doc(db, 'calendario_publico', reserva.fecha));
+      _syncCalPHP(reserva.fecha, null, 'DELETE');
     } else {
       const { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, rangos } = calcOcupacion(confirmadasHoy);
-      await setDoc(doc(db, 'calendario_publico', reserva.fecha), {
-        fecha: reserva.fecha,
-        mananaOcupada,
-        tardeOcupada,
-        nocheOcupada,
-        diaOcupado,
-        updatedAt: serverTimestamp()
-      });
+      const _calCanc = { fecha: reserva.fecha, mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado };
+      await setDoc(doc(db, 'calendario_publico', reserva.fecha), { ..._calCanc, updatedAt: serverTimestamp() });
+      _syncCalPHP(reserva.fecha, _calCanc);
     }
   }
   showToast('Reserva cancelada');
@@ -3147,9 +3150,9 @@ window.eliminarReserva = async (id) => {
     try {
       // Borrar el bloqueo del día SIEMPRE primero (evita documentos huérfanos)
       await deleteDoc(doc(db,'calendario_publico', fechaReserva));
+      _syncCalPHP(fechaReserva, null, 'DELETE');
       console.log('[eliminar] calendario_publico borrado para', fechaReserva);
 
-      // Recalcular solo con un where (evita requerir índice compuesto en Firestore)
       const snapRest = await getDocs(query(
         collection(db,'reservas'),
         where('fecha','==',fechaReserva)
@@ -3159,11 +3162,10 @@ window.eliminarReserva = async (id) => {
         .filter(r => (r.estado||'').toLowerCase() === 'confirmada');
 
       if(confirmadasRestantes.length > 0) {
-        // Si quedan confirmadas, volver a escribir el bloqueo correctamente
         const { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, rangos } = calcOcupacion(confirmadasRestantes);
-        await setDoc(doc(db,'calendario_publico', fechaReserva), {
-          fecha: fechaReserva, mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, rangos, updatedAt: serverTimestamp()
-        });
+        const _calElim = { fecha: fechaReserva, mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, rangos };
+        await setDoc(doc(db,'calendario_publico', fechaReserva), { ..._calElim, updatedAt: serverTimestamp() });
+        _syncCalPHP(fechaReserva, _calElim);
         console.log('[eliminar] calendario recalculado →', {mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado});
       }
     } catch(e) {
@@ -6077,8 +6079,50 @@ window.tarifasData = tarifasData; // exponer al scope global para onchange inlin
 const DIAS = ['lu','ma','mi','ju','vi','sa','do'];
 const DIAS_LABEL = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
 
-// ── Cargar desde Firestore ──
+// ── PHP API — backend Indedmedia (sin cuota de Firebase) ──────
+const _PHP = {
+  token: 'espaifest_CAMBIA_ESTO_2026', // igual que api/config.php
+  base:  '/api/'                        // ruta relativa al servidor
+};
+
+// Escribe tarifas en PHP (fire-and-forget — no bloquea UI)
+function _syncTarifasPHP(tipo, filas) {
+  fetch(_PHP.base + 'tarifas.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Token': _PHP.token },
+    body: JSON.stringify({ tipo, filas })
+  }).catch(() => {});
+}
+
+// Escribe/elimina una fecha en el calendario PHP (fire-and-forget)
+function _syncCalPHP(fecha, data, method) {
+  const body = (method === 'DELETE') ? { fecha } : { fecha, data: { ...data, updatedAt: undefined } };
+  fetch(_PHP.base + 'calendario.php', {
+    method: method || 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Token': _PHP.token },
+    body: JSON.stringify(body)
+  }).catch(() => {});
+}
+
+// ── Cargar desde PHP o Firebase ──
 window.loadTarifas = async function() {
+  try {
+    const resp = await fetch(_PHP.base + 'tarifas.php');
+    if (resp.ok) {
+      const phpData = await resp.json();
+      if (phpData && Object.keys(phpData).length > 0) {
+        Object.keys(phpData).forEach(k => {
+          if (window.tarifasData[k] !== undefined) window.tarifasData[k] = phpData[k];
+        });
+        renderTarTabla('estandar');
+        renderTarTabla('ampliados');
+        renderTarTablaEspeciales();
+        renderTarTablaExtras();
+        return;
+      }
+    }
+  } catch(_) {}
+  // Fallback Firebase
   try {
     const snap = await getDocs(collection(db,'tarifas'));
     if(!snap.empty) {
@@ -6257,11 +6301,7 @@ window.saveFechaConcreta = async function() {
   if(!nom)   { showToast('Escribe el nombre de la celebración'); return; }
 
   try {
-    const ref = doc(db, 'calendario_publico', fecha);
-    const existing = await getDoc(ref);
-    const base = existing.exists() ? existing.data() : {};
-    await setDoc(ref, {
-      ...base,
+    const _fcData = {
       fecha,
       esDiaEspecial: true,
       celebracion:   nom,
@@ -6272,7 +6312,14 @@ window.saveFechaConcreta = async function() {
       tardeOcupada:  blqDia,
       nocheOcupada:  blqDia,
       diaOcupado:    blqDia,
-    });
+    };
+    // Firebase: fuente principal para el admin
+    const ref = doc(db, 'calendario_publico', fecha);
+    const existing = await getDoc(ref);
+    const base = existing.exists() ? existing.data() : {};
+    await setDoc(ref, { ...base, ..._fcData });
+    // PHP: sync para la web pública (fire-and-forget, no falla si PHP no existe)
+    _syncCalPHP(fecha, _fcData);
 
     // Sincronizar con Días especiales (tarifas) si el DD/MM coincide con una entrada recurrente
     await fcSyncEspecialRecurrente(fecha, nom, franjas, isNaN(precio) ? null : precio);
@@ -6505,26 +6552,32 @@ window.tarAddExtra = function() {
   ['tar-ex-concepto','tar-ex-turno','tar-ex-precio'].forEach(id=>{document.getElementById(id).value='';});
 };
 
-// ── Invalidar caché pública tras cualquier cambio visible en la web ──
+// ── Invalidar caché pública — escribe en PHP y también Firebase (fallback) ──
 async function bustPublicCache() {
   try {
+    await fetch(_PHP.base + 'cache_bust.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Token': _PHP.token },
+      body: '{}'
+    });
+  } catch(_) {}
+  // Mantener Firebase cache_bust como fallback (cuando PHP no está disponible)
+  try {
     await setDoc(doc(db, 'config', 'cache_bust'), { ts: Date.now() });
-  } catch(e) { console.warn('cache_bust error:', e.message); }
+  } catch(_) {}
 }
 
-// ── Guardar en Firestore ──
+// ── Guardar tarifas → Firebase (siempre) + PHP (cuando esté disponible) ──
 window.saveTarifas = async function(tipo) {
-  // Forzar blur del input activo para que oninput/onblur actualicen tarifasData
   if(document.activeElement && document.activeElement.tagName==='INPUT') document.activeElement.blur();
   try {
-    console.log('[saveTarifas] guardando tipo:', tipo, 'filas:', JSON.stringify(window.tarifasData[tipo]));
     await setDoc(doc(db,'tarifas',tipo), { filas: window.tarifasData[tipo], updatedAt: serverTimestamp() });
-    console.log('[saveTarifas] OK');
+    _syncTarifasPHP(tipo, window.tarifasData[tipo]); // fire-and-forget, no falla si PHP no existe
     bustPublicCache();
     showToast('Tarifas guardadas ✓');
   } catch(e) {
-    console.error('[saveTarifas] ERROR:', e.code, e.message, e);
-    showToast('Error: '+e.message);
+    console.error('[saveTarifas] ERROR:', e.message);
+    showToast('Error: ' + e.message);
   }
 };
 
@@ -6532,17 +6585,19 @@ window.saveTodasTarifas = async function() {
   if(document.activeElement && document.activeElement.tagName==='INPUT') document.activeElement.blur();
   try {
     const tipos = ['estandar','ampliados','especiales','extras'];
-    console.log('[saveTodasTarifas] guardando todos los tipos...');
-    await Promise.all(tipos.map(t => {
-      console.log(' >', t, window.tarifasData[t]?.length, 'filas');
-      return setDoc(doc(db,'tarifas',t), { filas: window.tarifasData[t], updatedAt: serverTimestamp() });
-    }));
-    console.log('[saveTodasTarifas] OK');
-    const total = tipos.reduce((s,t) => s+(window.tarifasData[t]?.length||0), 0);
+    await Promise.all(tipos.map(t => setDoc(doc(db,'tarifas',t), { filas: window.tarifasData[t], updatedAt: serverTimestamp() })));
+    // PHP sync fire-and-forget
+    const allData = {};
+    tipos.forEach(t => { allData[t] = window.tarifasData[t]; });
+    fetch(_PHP.base + 'tarifas.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Token': _PHP.token },
+      body: JSON.stringify(allData)
+    }).catch(()=>{});
     bustPublicCache();
     showToast(`✓ Publicadas: ${window.tarifasData.estandar?.length||0} franjas estándar · ${window.tarifasData.ampliados?.length||0} ampliadas`);
   } catch(e) {
-    console.error('[saveTodasTarifas] ERROR:', e.code, e.message, e);
+    console.error('[saveTodasTarifas] ERROR:', e.message);
     showToast('Error: '+e.message);
   }
 };
@@ -7241,6 +7296,55 @@ td.r{text-align:right;white-space:nowrap}
   if(!win) { showToast('Activa los pop-ups del navegador para generar la factura'); return; }
   win.document.write(html);
   win.document.close();
+};
+
+// ── Migración única Firebase → archivos PHP del servidor ──────
+window.migrarAphp = async function() {
+  const btn = document.getElementById('btn-migrar-php');
+  const st  = document.getElementById('migrar-php-status');
+  if(btn) btn.disabled = true;
+  if(st) st.textContent = '⏳ Leyendo datos de Firebase...';
+
+  try {
+    // 1. Tarifas
+    const tarSnap = await getDocs(collection(db, 'tarifas'));
+    const tarifasObj = {};
+    tarSnap.forEach(d => { if(d.data().filas) tarifasObj[d.id] = d.data().filas; });
+    const r1 = await fetch(_PHP.base + 'tarifas.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Token': _PHP.token },
+      body: JSON.stringify(tarifasObj)
+    });
+    if(!r1.ok) throw new Error('Tarifas PHP: ' + r1.status);
+
+    if(st) st.textContent = '⏳ Sincronizando calendario...';
+
+    // 2. Calendario
+    const calSnap = await getDocs(collection(db, 'calendario_publico'));
+    const calObj = {};
+    calSnap.forEach(d => { calObj[d.id] = d.data(); });
+    const r2 = await fetch(_PHP.base + 'calendario.php?bulk=1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Token': _PHP.token },
+      body: JSON.stringify({ bulk: true, data: calObj })
+    });
+    if(!r2.ok) throw new Error('Calendario PHP: ' + r2.status);
+
+    // 3. Cache bust
+    await fetch(_PHP.base + 'cache_bust.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Token': _PHP.token },
+      body: '{}'
+    }).catch(()=>{});
+
+    if(st) st.innerHTML = `✅ <strong>Sincronización completada.</strong> ${Object.keys(tarifasObj).length} tipos de tarifa · ${Object.keys(calObj).length} fechas de calendario.`;
+    showToast('✓ Datos sincronizados al servidor PHP');
+  } catch(e) {
+    if(st) st.innerHTML = `❌ <strong>Error:</strong> ${e.message}. Comprueba que los archivos PHP están subidos y que el token en api/config.php coincide con el de reservify.`;
+    showToast('Error en sincronización: ' + e.message);
+  } finally {
+    if(btn) btn.disabled = false;
+  }
 };
 </script>
 </body>
