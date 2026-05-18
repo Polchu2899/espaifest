@@ -6341,7 +6341,7 @@ window.saveFechaConcreta = async function() {
     // Sincronizar con Días especiales (tarifas) si el DD/MM coincide con una entrada recurrente
     await fcSyncEspecialRecurrente(fecha, nom, franjas, isNaN(precio) ? null : precio);
 
-    bustPublicCache();
+    await bustPublicCache();
     showToast(`${fecha} · ${nom} guardado ✓`);
     limpiarFcForm();
     loadAdminCalData();
@@ -6589,8 +6589,8 @@ window.saveTarifas = async function(tipo) {
   if(document.activeElement && document.activeElement.tagName==='INPUT') document.activeElement.blur();
   try {
     await setDoc(doc(db,'tarifas',tipo), { filas: window.tarifasData[tipo], updatedAt: serverTimestamp() });
-    _syncTarifasPHP(tipo, window.tarifasData[tipo]); // fire-and-forget, no falla si PHP no existe
-    bustPublicCache();
+    _syncTarifasPHP(tipo, window.tarifasData[tipo]);
+    await bustPublicCache();
     showToast('Tarifas guardadas ✓');
   } catch(e) {
     console.error('[saveTarifas] ERROR:', e.message);
@@ -6611,7 +6611,7 @@ window.saveTodasTarifas = async function() {
       headers: { 'Content-Type': 'application/json', 'X-Token': _PHP.token },
       body: JSON.stringify(allData)
     }).catch(()=>{});
-    bustPublicCache();
+    await bustPublicCache();
     showToast(`✓ Publicadas: ${window.tarifasData.estandar?.length||0} franjas estándar · ${window.tarifasData.ampliados?.length||0} ampliadas`);
   } catch(e) {
     console.error('[saveTodasTarifas] ERROR:', e.message);
