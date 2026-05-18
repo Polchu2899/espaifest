@@ -3730,16 +3730,16 @@ function showToast(msg) {
 
 // ══ BLOG — FIREBASE ══════════════════════════════════════
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, getDocs, addDoc, query, orderBy, where, limit, serverTimestamp, onSnapshot, doc, runTransaction }
+import { getFirestore, collection, getDocs, getDoc, addDoc, query, orderBy, where, limit, serverTimestamp, onSnapshot, doc, runTransaction }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const _fbConfig = {
-  apiKey: "AIzaSyAGhtCNHbKDnb4rcwQiq8qFMdgaayd73Wg",
-  authDomain: "reservify-espaifest.firebaseapp.com",
-  projectId: "reservify-espaifest",
-  storageBucket: "reservify-espaifest.firebasestorage.app",
-  messagingSenderId: "991446001833",
-  appId: "1:991446001833:web:bc3b5d197ff13b5163a1b8"
+  apiKey: "AIzaSyBTSD1VXjm734T3c8dGhnUWtSP4cTRlzoQ",
+  authDomain: "reservify-espaifest-2c567.firebaseapp.com",
+  projectId: "reservify-espaifest-2c567",
+  storageBucket: "reservify-espaifest-2c567.firebasestorage.app",
+  messagingSenderId: "318928901437",
+  appId: "1:318928901437:web:58df2d7f5ac1c3438ca154"
 };
 
 const _fbApp = getApps().length ? getApps()[0] : initializeApp(_fbConfig);
@@ -3774,13 +3774,16 @@ const CAT_COLORS = {
 async function loadBlogPosts() {
   const grid = document.getElementById('blog-grid');
   if(!grid) return;
+  const _CK = 'espaifest_blog_v1', _CT = 24*3600*1000;
   try {
-    // Sin where ni limit — evita necesidad de índice compuesto en Firestore.
-    // Filtramos y limitamos en cliente.
-    const snap = await getDocs(collection(_db, 'blog_posts'));
-
-    const allDocs = [];
-    snap.forEach(docSnap => allDocs.push({ id: docSnap.id, data: docSnap.data() }));
+    let allDocs;
+    try { const h=localStorage.getItem(_CK); if(h){const c=JSON.parse(h);if(Date.now()-c.ts<_CT) allDocs=c.d;} } catch(_){}
+    if(!allDocs) {
+      const snap = await getDocs(collection(_db, 'blog_posts'));
+      allDocs = [];
+      snap.forEach(d => allDocs.push({ id: d.id, data: d.data() }));
+      try { localStorage.setItem(_CK, JSON.stringify({ts:Date.now(),d:allDocs})); } catch(_){}
+    }
 
     // Filtrar publicados y ordenar por fecha desc
     const publicados = allDocs
@@ -3873,14 +3876,57 @@ async function loadBlogPosts() {
 
 // ══ TARIFAS DESDE FIRESTORE → PRECIOS INDEX + CALENDARIO ════
 async function loadTarifasIndex() {
+  const _CKEY  = 'espaifest_tar_v1';
+  const _CTTL  = 6 * 3600 * 1000;
+  const _CBUST = 'espaifest_bust';
+  const _ALL_CACHE_KEYS = ['espaifest_tar_v1','espaifest_cal_v1','espaifest_blog_v1',
+                           'espaifest_svc_v1','espaifest_promo_v1','espaifest_niv_v1','espaifest_kits_v1'];
+  const _PROJ_KEY = 'espaifest_proj';
+  if(localStorage.getItem(_PROJ_KEY) !== _fbConfig.projectId) {
+    _ALL_CACHE_KEYS.forEach(k => localStorage.removeItem(k));
+    localStorage.removeItem(_CBUST);
+    localStorage.setItem(_PROJ_KEY, _fbConfig.projectId);
+  }
+  try {
+    const resp = await fetch('/api/tarifas.php');
+    if(resp.ok) {
+      const phpData = await resp.json();
+      if(phpData && Object.keys(phpData).length > 0) {
+        Object.keys(phpData).forEach(k => { if(indexTarifas[k] !== undefined) indexTarifas[k] = phpData[k]; });
+        renderTodosPreciosIndex();
+        loadFechasOcupadas();
+        if(calSelected) renderFranjas(calSelected);
+        return;
+      }
+    }
+  } catch(_) {}
+  try {
+    let srvTs = 0, bustExists = false;
+    try {
+      const br = await fetch('/api/cache_bust.php');
+      if(br.ok) { srvTs = (await br.json()).ts || 0; bustExists = true; }
+    } catch(_) {}
+    if(!srvTs) {
+      const bustSnap = await getDoc(doc(_db, 'config', 'cache_bust'));
+      bustExists = bustSnap.exists();
+      if(bustExists) srvTs = bustSnap.data().ts || 0;
+    }
+    const locTs = parseInt(localStorage.getItem(_CBUST) || '0');
+    if(srvTs > locTs || (!bustExists && !locTs)) {
+      _ALL_CACHE_KEYS.forEach(k => localStorage.removeItem(k));
+      localStorage.setItem(_CBUST, String(srvTs));
+    }
+  } catch(_) {}
+  try {
+    const hit = localStorage.getItem(_CKEY);
+    if(hit) { const {ts,d} = JSON.parse(hit); if(Date.now()-ts < _CTTL) { Object.keys(d).forEach(k => { if(indexTarifas[k] !== undefined) indexTarifas[k] = d[k]; }); renderTodosPreciosIndex(); loadFechasOcupadas(); if(calSelected) renderFranjas(calSelected); return; } }
+  } catch(_) {}
   try {
     const snap = await getDocs(collection(_db,'tarifas'));
     if(!snap.empty) {
-      snap.forEach(d => {
-        if(indexTarifas[d.id] !== undefined && d.data().filas) {
-          indexTarifas[d.id] = d.data().filas;
-        }
-      });
+      const fresh = {};
+      snap.forEach(d => { if(indexTarifas[d.id] !== undefined && d.data().filas) { indexTarifas[d.id] = d.data().filas; fresh[d.id] = d.data().filas; } });
+      try { localStorage.setItem(_CKEY, JSON.stringify({ ts: Date.now(), d: fresh })); } catch(_) {}
     }
   } catch(e) { console.warn('Tarifas index: usando defaults',e); }
   renderTodosPreciosIndex();
@@ -3888,54 +3934,38 @@ async function loadTarifasIndex() {
   if(calSelected) renderFranjas(calSelected);
 }
 
-// ══ FECHAS OCUPADAS — CALENDARIO ═════════════════════════════
+// ══ FECHAS OCUPADAS — CALENDARIO (con caché) ══════════════════
 async function loadFechasOcupadas() {
-  try {
-    const hoy = new Date().toISOString().split('T')[0];
-    const snap = await getDocs(collection(_db, 'calendario_publico'));
+  const _CKEY = 'espaifest_cal_v1', _CTTL = 3600*1000;
+  const hoy = new Date().toISOString().split('T')[0];
+  const buildData = (rawDocs) => {
     const data = {};
-    snap.docs.forEach(d => {
-      const fd = d.data();
-      const fecha = fd.fecha || d.id;
+    rawDocs.forEach(({id,fd}) => {
+      const fecha = fd.fecha || id;
       if(fecha >= hoy) {
-        const mana  = fd.mananaOcupada || false;
-        const tarde = fd.tardeOcupada  || false;
-        const noche = fd.nocheOcupada  || false;
-        const diaOc = fd.diaOcupado || (mana && tarde) || false;
-        data[fecha] = {
-          mananaOcupada: mana,
-          tardeOcupada:  tarde,
-          nocheOcupada:  noche,
-          diaOcupado:    diaOc,
-          rangos:        fd.rangos      || [],
-          esDiaEspecial: fd.esDiaEspecial || false,
-          celebracion:   fd.celebracion   || null,
-          precioEsp:     fd.precioEsp     ?? null,
-          horarioEsp:    fd.horarioEsp    || null,
-        };
+        const mana=fd.mananaOcupada||false, tarde=fd.tardeOcupada||false, noche=fd.nocheOcupada||false;
+        data[fecha] = { mananaOcupada:mana, tardeOcupada:tarde, nocheOcupada:noche, diaOcupado:fd.diaOcupado||(mana&&tarde)||false, rangos:fd.rangos||[], esDiaEspecial:fd.esDiaEspecial||false, celebracion:fd.celebracion||null, precioEsp:fd.precioEsp??null, horarioEsp:fd.horarioEsp||null, franjasCustom:fd.franjasCustom||null };
       }
     });
-    (indexTarifas?.especiales || []).forEach(esp => {
+    (indexTarifas?.especiales||[]).forEach(esp => {
       if(!esp.dia) return;
-      const [dd, mm] = esp.dia.split('/');
+      const [dd,mm] = esp.dia.split('/');
       const anyo = new Date().getFullYear();
-      [anyo, anyo+1, anyo+2, anyo+3, anyo+4].forEach(y => {
+      [anyo,anyo+1,anyo+2,anyo+3,anyo+4].forEach(y => {
         const ds = `${y}-${mm}-${dd}`;
-        if(ds >= hoy) {
-          if(!data[ds]) data[ds] = {};
-          // Solo aplicar datos recurrentes si no hay ya un override concreto en calendario_publico
-          if(!data[ds].esDiaEspecial) {
-            data[ds].esDiaEspecial = true;
-            data[ds].celebracion = esp.celebracion;
-            data[ds].precioEsp = esp.precio;
-          }
-        }
+        if(ds>=hoy) { if(!data[ds]) data[ds]={}; if(!data[ds].esDiaEspecial) { data[ds].esDiaEspecial=true; data[ds].celebracion=esp.celebracion; data[ds].precioEsp=esp.precio; } }
       });
     });
-    if(typeof updateCalOccupied === 'function') updateCalOccupied(data);
-  } catch(e) {
-    console.warn('Fechas ocupadas error:', e.message);
-  }
+    return data;
+  };
+  try { const r=await fetch('/api/calendario.php'); if(r.ok){const c=await r.json(); if(c&&Object.keys(c).length>0){if(typeof updateCalOccupied==='function') updateCalOccupied(buildData(Object.entries(c).map(([id,fd])=>({id,fd})))); return;}}} catch(_){}
+  try { const hit=localStorage.getItem(_CKEY); if(hit){const {ts,hoyKey,docs}=JSON.parse(hit); if(Date.now()-ts<_CTTL&&hoyKey===hoy){if(typeof updateCalOccupied==='function') updateCalOccupied(buildData(docs)); return;}}} catch(_){}
+  try {
+    const snap = await getDocs(collection(_db, 'calendario_publico'));
+    const rawDocs = snap.docs.map(d=>({id:d.id,fd:d.data()}));
+    try { localStorage.setItem(_CKEY, JSON.stringify({ts:Date.now(),hoyKey:hoy,docs:rawDocs})); } catch(_) {}
+    if(typeof updateCalOccupied==='function') updateCalOccupied(buildData(rawDocs));
+  } catch(e) { console.warn('Fechas ocupadas error:', e.message); }
 }
 
 // ── KITS DESDE FIRESTORE ──────────────────────────────────────
@@ -3949,10 +3979,16 @@ async function loadKits() {
   const grid = document.getElementById('manu-grid');
   const sec  = document.getElementById('manualidades');
   if (!grid) return;
+  const _CK = 'espaifest_kits_v1', _CT = 24*3600*1000;
   try {
-    const snap = await getDocs(collection(_db, 'kits'));
-    const kits = snap.docs
-      .map(d => ({id: d.id, ...d.data()}))
+    let kitsRaw;
+    try { const h=localStorage.getItem(_CK); if(h){const c=JSON.parse(h);if(Date.now()-c.ts<_CT) kitsRaw=c.d;} } catch(_){}
+    if(!kitsRaw) {
+      const snap = await getDocs(collection(_db, 'kits'));
+      kitsRaw = snap.docs.map(d=>({id:d.id,...d.data()}));
+      try { localStorage.setItem(_CK, JSON.stringify({ts:Date.now(),d:kitsRaw})); } catch(_){}
+    }
+    const kits = kitsRaw
       .filter(k => k.activo !== false)
       .sort((a, b) => (a.orden||99) - (b.orden||99));
 
@@ -4075,13 +4111,18 @@ loadKits();
 
 // ── FIDELIZACIÓN DESDE FIRESTORE (config/niveles) ─────────────
 async function loadFidelizacionWeb() {
+  const _CK = 'espaifest_niv_v1', _CT = 24*3600*1000;
   try {
-    // Importar getDoc para leer un documento específico
-    const { doc: fsDoc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-    const snap = await getDoc(fsDoc(_db, 'config', 'niveles'));
-    if(!snap.exists()) return; // Sin config — mantener valores del HTML
-
-    const niveles = snap.data();
+    let niveles;
+    try { const h=localStorage.getItem(_CK); if(h){const c=JSON.parse(h);if(Date.now()-c.ts<_CT) niveles=c.d;} } catch(_){}
+    if(!niveles) {
+      const { doc: fsDoc, getDoc: _getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      const snap = await _getDoc(fsDoc(_db, 'config', 'niveles'));
+      if(!snap.exists()) return;
+      niveles = snap.data();
+      try { localStorage.setItem(_CK, JSON.stringify({ts:Date.now(),d:niveles})); } catch(_){}
+    }
+    if(!niveles) return;
     const { bas, pla, oro } = niveles;
     if(!bas || !pla || !oro) return;
 
@@ -4127,10 +4168,17 @@ function setFidEl(id, texto, idAttr, esVal, caVal) {
 
 // ── SERVICIOS EXTRA DESDE FIRESTORE ──────────────────────────
 async function loadServiciosWeb() {
+  const _CK = 'espaifest_svc_v1', _CT = 24*3600*1000;
   try {
-    const snap = await getDocs(collection(_db,'servicios'));
-    if(snap.empty) return;
-    const servicios = snap.docs.map(d=>({id:d.id,...d.data()})).filter(s=>s.activo!==false);
+    let rawDocs;
+    try { const h=localStorage.getItem(_CK); if(h){const c=JSON.parse(h);if(Date.now()-c.ts<_CT) rawDocs=c.d;} } catch(_){}
+    if(!rawDocs) {
+      const snap = await getDocs(collection(_db,'servicios'));
+      rawDocs = snap.docs.map(d=>({id:d.id,...d.data()}));
+      try { localStorage.setItem(_CK, JSON.stringify({ts:Date.now(),d:rawDocs})); } catch(_){}
+    }
+    if(!rawDocs.length) return;
+    const servicios = rawDocs.filter(s=>s.activo!==false);
     if(!servicios.length) return;
 
     const grid = document.getElementById('svc-extra-grid');
@@ -4198,12 +4246,18 @@ async function loadServiciosWeb() {
 
 // ── PROMOCIONES DESDE FIRESTORE ───────────────────────────────
 async function loadPromocionesWeb() {
+  const _CK = 'espaifest_promo_v1', _CT = 2*3600*1000;
   try {
-    const snap = await getDocs(collection(_db,'promociones'));
-    if(snap.empty) return;
+    let rawDocs;
+    try { const h=localStorage.getItem(_CK); if(h){const c=JSON.parse(h);if(Date.now()-c.ts<_CT) rawDocs=c.d;} } catch(_){}
+    if(!rawDocs) {
+      const snap = await getDocs(collection(_db,'promociones'));
+      rawDocs = snap.docs.map(d=>({id:d.id,...d.data()}));
+      try { localStorage.setItem(_CK, JSON.stringify({ts:Date.now(),d:rawDocs})); } catch(_){}
+    }
+    if(!rawDocs.length) return;
     const hoy = new Date().toISOString().split('T')[0];
-    const activas = snap.docs
-      .map(d=>({id:d.id,...d.data()}))
+    const activas = rawDocs
       .filter(p => p.hasta && p.hasta >= hoy)
       .sort((a,b) => (b.descuento||0) - (a.descuento||0)); // la más grande primero
 
