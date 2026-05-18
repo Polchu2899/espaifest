@@ -6604,7 +6604,16 @@ window.loadFranjasPorFecha = function(fechaStr) {
     sel.appendChild(optE);
   }
 
-  // 2. Franjas normales del día de la semana (deshabilitadas si hay bloqueo de turno)
+  // 2. Franjas normales del día de la semana
+  // Si el día tiene franjas custom, las normales no se muestran (las reemplazan)
+  if(calInfo.franjasCustom?.length) {
+    const franjaRef = null;
+    renderExtrasChecks(franjaRef);
+    ajustarHoraExtReservify(sel?.value || '');
+    calcPrecioAuto();
+    return;
+  }
+
   const idx = diaSemanaIdx(fechaStr);
   const diaKey = DIAS[idx];
   const todas = [...(window.tarifasData.estandar||[]), ...(window.tarifasData.ampliados||[])];
@@ -6613,7 +6622,7 @@ window.loadFranjasPorFecha = function(fechaStr) {
     return v !== '—' && v !== '' && v != null;
   });
 
-  if(!disponibles.length && !calInfo.franjasCustom && !calInfo.horarioEsp && !esp) {
+  if(!disponibles.length && !calInfo.horarioEsp && !esp) {
     sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
     renderExtrasChecks(null);
     return;
