@@ -3830,7 +3830,7 @@ function showToast(msg) {
 
 // ══ BLOG — FIREBASE ══════════════════════════════════════
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, getDocs, addDoc, query, orderBy, where, limit, serverTimestamp, onSnapshot, doc, runTransaction }
+import { getFirestore, collection, getDocs, getDoc, addDoc, query, orderBy, where, limit, serverTimestamp, onSnapshot, doc, runTransaction }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const _fbConfig = {
@@ -3971,10 +3971,46 @@ async function loadBlogPosts() {
   }
 }
 
-// ══ TARIFAS DESDE FIRESTORE → PRECIOS INDEX + CALENDARIO ════
+// ══ TARIFAS → PHP (principal) con Firebase + caché como fallback ════
 async function loadTarifasIndex() {
-  const _CKEY = 'espaifest_tar_v1';
-  const _CTTL = 6 * 3600 * 1000; // 6 horas
+  const _CKEY  = 'espaifest_tar_v1';
+  const _CTTL  = 6 * 3600 * 1000;
+  const _CBUST = 'espaifest_bust';
+
+  // ── PHP: fuente sin cuota ───────────────────────────────────
+  try {
+    const resp = await fetch('/api/tarifas.php');
+    if(resp.ok) {
+      const phpData = await resp.json();
+      if(phpData && Object.keys(phpData).length > 0) {
+        Object.keys(phpData).forEach(k => { if(indexTarifas[k] !== undefined) indexTarifas[k] = phpData[k]; });
+        renderTodosPreciosIndex();
+        loadFechasOcupadas();
+        if(calSelected) renderFranjas(calSelected);
+        return;
+      }
+    }
+  } catch(_) {}
+
+  // ── Fallback Firebase: comprobar cache_bust (PHP o Firebase) ──
+  try {
+    let srvTs = 0;
+    try {
+      const br = await fetch('/api/cache_bust.php');
+      if(br.ok) srvTs = (await br.json()).ts || 0;
+    } catch(_) {}
+    if(!srvTs) {
+      const bustSnap = await getDoc(doc(_db, 'config', 'cache_bust'));
+      if(bustSnap.exists()) srvTs = bustSnap.data().ts || 0;
+    }
+    const locTs = parseInt(localStorage.getItem(_CBUST) || '0');
+    if(srvTs > locTs) {
+      localStorage.removeItem(_CKEY);
+      localStorage.removeItem('espaifest_cal_v1');
+      localStorage.setItem(_CBUST, String(srvTs));
+    }
+  } catch(_) {}
+
   try {
     const hit = localStorage.getItem(_CKEY);
     if(hit) {
@@ -3988,6 +4024,7 @@ async function loadTarifasIndex() {
       }
     }
   } catch(_) {}
+
   try {
     const snap = await getDocs(collection(_db,'tarifas'));
     if(!snap.empty) {
@@ -4006,10 +4043,10 @@ async function loadTarifasIndex() {
   if(calSelected) renderFranjas(calSelected);
 }
 
-// ══ FECHAS OCUPADAS — CALENDARIO (con caché localStorage) ════
+// ══ FECHAS OCUPADAS — PHP (principal) con Firebase + caché como fallback ════
 async function loadFechasOcupadas() {
   const _CKEY = 'espaifest_cal_v1';
-  const _CTTL = 3600 * 1000; // 1 hora
+  const _CTTL = 3600 * 1000;
   const hoy = new Date().toISOString().split('T')[0];
 
   const buildData = (rawDocs) => {
@@ -4054,6 +4091,20 @@ async function loadFechasOcupadas() {
     return data;
   };
 
+  // ── PHP: sin cuota ──────────────────────────────────────────
+  try {
+    const resp = await fetch('/api/calendario.php');
+    if(resp.ok) {
+      const phpCal = await resp.json();
+      if(phpCal && Object.keys(phpCal).length > 0) {
+        const rawDocs = Object.entries(phpCal).map(([id, fd]) => ({ id, fd }));
+        if(typeof updateCalOccupied === 'function') updateCalOccupied(buildData(rawDocs));
+        return;
+      }
+    }
+  } catch(_) {}
+
+  // ── Fallback Firebase + caché localStorage ──────────────────
   try {
     const hit = localStorage.getItem(_CKEY);
     if(hit) {
