@@ -3874,13 +3874,19 @@ const CAT_COLORS = {
 async function loadBlogPosts() {
   const grid = document.getElementById('blog-grid');
   if(!grid) return;
+  const _CK = 'espaifest_blog_v1', _CT = 24*3600*1000;
   try {
-    // Sin where ni limit — evita necesidad de índice compuesto en Firestore.
-    // Filtramos y limitamos en cliente.
-    const snap = await getDocs(collection(_db, 'blog_posts'));
-
-    const allDocs = [];
-    snap.forEach(docSnap => allDocs.push({ id: docSnap.id, data: docSnap.data() }));
+    let allDocs;
+    try {
+      const hit = localStorage.getItem(_CK);
+      if(hit) { const c = JSON.parse(hit); if(Date.now()-c.ts < _CT) allDocs = c.d; }
+    } catch(_) {}
+    if(!allDocs) {
+      const snap = await getDocs(collection(_db, 'blog_posts'));
+      allDocs = [];
+      snap.forEach(d => allDocs.push({ id: d.id, data: d.data() }));
+      try { localStorage.setItem(_CK, JSON.stringify({ ts: Date.now(), d: allDocs })); } catch(_) {}
+    }
 
     // Filtrar publicados y ordenar por fecha desc
     const publicados = allDocs
@@ -4005,8 +4011,9 @@ async function loadTarifasIndex() {
     }
     const locTs = parseInt(localStorage.getItem(_CBUST) || '0');
     if(srvTs > locTs) {
-      localStorage.removeItem(_CKEY);
-      localStorage.removeItem('espaifest_cal_v1');
+      ['espaifest_tar_v1','espaifest_cal_v1','espaifest_blog_v1',
+       'espaifest_svc_v1','espaifest_promo_v1','espaifest_niv_v1','espaifest_kits_v1']
+        .forEach(k => localStorage.removeItem(k));
       localStorage.setItem(_CBUST, String(srvTs));
     }
   } catch(_) {}
@@ -4137,10 +4144,16 @@ async function loadKits() {
   const grid = document.getElementById('manu-grid');
   const sec  = document.getElementById('manualidades');
   if (!grid) return;
+  const _CK = 'espaifest_kits_v1', _CT = 24*3600*1000;
   try {
-    const snap = await getDocs(collection(_db, 'kits'));
-    const kits = snap.docs
-      .map(d => ({id: d.id, ...d.data()}))
+    let kitsRaw;
+    try { const h = localStorage.getItem(_CK); if(h){const c=JSON.parse(h);if(Date.now()-c.ts<_CT) kitsRaw=c.d;} } catch(_){}
+    if(!kitsRaw) {
+      const snap = await getDocs(collection(_db, 'kits'));
+      kitsRaw = snap.docs.map(d => ({id: d.id, ...d.data()}));
+      try { localStorage.setItem(_CK, JSON.stringify({ts:Date.now(),d:kitsRaw})); } catch(_){}
+    }
+    const kits = kitsRaw
       .filter(k => k.activo !== false)
       .sort((a, b) => (a.orden||99) - (b.orden||99));
 
@@ -4266,13 +4279,18 @@ loadKits();
 
 // ── FIDELIZACIÓN DESDE FIRESTORE (config/niveles) ─────────────
 async function loadFidelizacionWeb() {
+  const _CK = 'espaifest_niv_v1', _CT = 24*3600*1000;
   try {
-    // Importar getDoc para leer un documento específico
-    const { doc: fsDoc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-    const snap = await getDoc(fsDoc(_db, 'config', 'niveles'));
-    if(!snap.exists()) return; // Sin config — mantener valores del HTML
-
-    const niveles = snap.data();
+    let niveles;
+    try { const h=localStorage.getItem(_CK); if(h){const c=JSON.parse(h);if(Date.now()-c.ts<_CT) niveles=c.d;} } catch(_){}
+    if(!niveles) {
+      const { doc: fsDoc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      const snap = await getDoc(fsDoc(_db, 'config', 'niveles'));
+      if(!snap.exists()) return;
+      niveles = snap.data();
+      try { localStorage.setItem(_CK, JSON.stringify({ts:Date.now(),d:niveles})); } catch(_){}
+    }
+    if(!niveles) return;
     const { bas, pla, oro } = niveles;
     if(!bas || !pla || !oro) return;
 
@@ -4322,10 +4340,17 @@ function setFidEl(id, texto, idAttr, esVal, caVal) {
 
 // ── SERVICIOS EXTRA DESDE FIRESTORE ──────────────────────────
 async function loadServiciosWeb() {
+  const _CK = 'espaifest_svc_v1', _CT = 24*3600*1000;
   try {
-    const snap = await getDocs(collection(_db,'servicios'));
-    if(snap.empty) return;
-    const servicios = snap.docs.map(d=>({id:d.id,...d.data()})).filter(s=>s.activo!==false);
+    let rawDocs;
+    try { const h=localStorage.getItem(_CK); if(h){const c=JSON.parse(h);if(Date.now()-c.ts<_CT) rawDocs=c.d;} } catch(_){}
+    if(!rawDocs) {
+      const snap = await getDocs(collection(_db,'servicios'));
+      rawDocs = snap.docs.map(d=>({id:d.id,...d.data()}));
+      try { localStorage.setItem(_CK, JSON.stringify({ts:Date.now(),d:rawDocs})); } catch(_){}
+    }
+    if(!rawDocs.length) return;
+    const servicios = rawDocs.filter(s=>s.activo!==false);
     if(!servicios.length) return;
 
     const grid = document.getElementById('svc-extra-grid');
@@ -4393,12 +4418,18 @@ async function loadServiciosWeb() {
 
 // ── PROMOCIONES DESDE FIRESTORE ───────────────────────────────
 async function loadPromocionesWeb() {
+  const _CK = 'espaifest_promo_v1', _CT = 2*3600*1000; // 2h — son time-sensitive
   try {
-    const snap = await getDocs(collection(_db,'promociones'));
-    if(snap.empty) return;
+    let rawDocs;
+    try { const h=localStorage.getItem(_CK); if(h){const c=JSON.parse(h);if(Date.now()-c.ts<_CT) rawDocs=c.d;} } catch(_){}
+    if(!rawDocs) {
+      const snap = await getDocs(collection(_db,'promociones'));
+      rawDocs = snap.docs.map(d=>({id:d.id,...d.data()}));
+      try { localStorage.setItem(_CK, JSON.stringify({ts:Date.now(),d:rawDocs})); } catch(_){}
+    }
+    if(!rawDocs.length) return;
     const hoy = new Date().toISOString().split('T')[0];
-    const activas = snap.docs
-      .map(d=>({id:d.id,...d.data()}))
+    const activas = rawDocs
       .filter(p => p.hasta && p.hasta >= hoy)
       .sort((a,b) => (b.descuento||0) - (a.descuento||0)); // la más grande primero
 
