@@ -2912,6 +2912,7 @@ function clasificarTurno(turno, horario) {
 function updateCalOccupied(data) {
   CAL_DATA = data;
   renderCal();
+  if(calSelected) renderFranjas(calSelected);
 }
 
 function renderFranjas(ds) {
@@ -2942,6 +2943,14 @@ function renderFranjas(ds) {
   const slots = getSlotsPorDia(diaSemanaIdx);
   const grupos = {manana:[],tarde:[],noche:[],diacomp:[]};
   slots.forEach(s => grupos[s.grupo]?.push(s));
+
+  // Si el día tiene franjas custom, las normales no se muestran (el horario especial las reemplaza)
+  if(info.franjasCustom?.length) {
+    grupos.manana = [];
+    grupos.tarde  = [];
+    grupos.diacomp = [];
+    grupos.noche   = [];
+  }
 
   const renderGrupo = (elId, grupoSlots) => {
     const el = document.getElementById(elId);
@@ -3223,13 +3232,51 @@ function webLoadFranjasPorFecha(fechaStr) {
   opt0.textContent = '— Selecciona franja —';
   sel.appendChild(opt0);
 
-  if(esp) {
+  // Franjas personalizadas de fecha concreta (sistema nuevo)
+  if(info.franjasCustom?.length) {
+    info.franjasCustom.forEach(f => {
+      const hor = f.horario || (f.inicio && f.fin ? `${f.inicio}–${f.fin}` : '');
+      if(!hor) return;
+      const opt = document.createElement('option');
+      opt.dataset.esDiaEsp = '1';
+      const bloq = f.bloqueada || esHorarioBloq(hor);
+      const nom = f.nombre || info.celebracion || '⭐ Especial';
+      const pre = f.precio ?? info.precioEsp ?? null;
+      if(bloq) {
+        opt.disabled = true; opt.value = '';
+        opt.textContent = `⭐ ${nom} · ${hor} — 🔴 Ocupado`;
+      } else {
+        opt.value = hor;
+        opt.textContent = `⭐ ${nom} · ${hor}${pre != null ? ' — '+pre+' €' : ''}`;
+        if(pre != null) opt.dataset.precio = pre;
+      }
+      sel.appendChild(opt);
+    });
+  } else if(info.horarioEsp && info.esDiaEspecial) {
+    const hor = info.horarioEsp;
+    const opt = document.createElement('option');
+    opt.dataset.esDiaEsp = '1';
+    const bloq = esHorarioBloq(hor);
+    const nom = info.celebracion || '⭐ Especial';
+    const pre = info.precioEsp ?? null;
+    if(bloq) {
+      opt.disabled = true; opt.value = '';
+      opt.textContent = `⭐ ${nom} · ${hor} — 🔴 Ocupado`;
+    } else {
+      opt.value = hor;
+      opt.textContent = `⭐ ${nom} · ${hor}${pre != null ? ' — '+pre+' €' : ''}`;
+      if(pre != null) opt.dataset.precio = pre;
+    }
+    sel.appendChild(opt);
+  }
+
+  // Día especial recurrente (DD/MM) solo si no hay franjas custom ni horarioEsp
+  if(esp && !info.franjasCustom?.length && !info.horarioEsp) {
     const optEsp = document.createElement('option');
     optEsp.dataset.esDiaEsp = '1';
     const espBloq = esHorarioBloq(esp.horario);
     if(espBloq) {
-      optEsp.disabled = true;
-      optEsp.value = '';
+      optEsp.disabled = true; optEsp.value = '';
       optEsp.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — 🔴 Ocupado`;
     } else {
       optEsp.value = `${esp.celebracion} · ${esp.horario}`;
@@ -3237,6 +3284,13 @@ function webLoadFranjasPorFecha(fechaStr) {
       optEsp.dataset.precio = esp.precio;
     }
     sel.appendChild(optEsp);
+  }
+
+  // Si hay franjas custom, no mostrar franjas normales
+  if(info.franjasCustom?.length) {
+    if(sel.options.length <= 1) sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
+    calcularTotal();
+    return;
   }
 
   // Franjas normales según día de semana
@@ -3249,9 +3303,7 @@ function webLoadFranjasPorFecha(fechaStr) {
   });
 
   if(!disponibles.length) {
-    if(sel.options.length <= 1) {
-      sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
-    }
+    if(sel.options.length <= 1) sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
     calcularTotal();
     return;
   }
@@ -3268,8 +3320,7 @@ function webLoadFranjasPorFecha(fechaStr) {
              || (grupo === 'noche'  && info.nocheOcupada);
     }
     if(ocupado) {
-      opt.disabled = true;
-      opt.value = '';
+      opt.disabled = true; opt.value = '';
       opt.textContent = `${f.turno} · ${f.horario} — 🔴 Ocupado`;
     } else {
       opt.value = `${f.turno} (${f.horario})`;
