@@ -3004,25 +3004,48 @@ function renderFranjas(ds) {
     </div>`;
   }).join('');
 
-  // Si es día especial, añadir la franja especial en el grupo noche
+  // Si es día especial, añadir las franjas especiales al grupo noche
   if(info.esDiaEspecial) {
     const ddmm = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
     const recurring = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
-    // Prioridad: datos concretos de calendario_publico; fallback a lista recurrente DD/MM
-    const espHorario = info.horarioEsp  || recurring?.horario    || null;
-    const espPrecio  = info.precioEsp   ?? recurring?.precio     ?? null;
-    const espNom     = info.celebracion || recurring?.celebracion || '⭐ Día especial';
-    if(espNom || espHorario) {
-      const ocupado = espHorario ? esSlotBloq(espHorario) : false;
-      const occ  = ocupado ? 'ocupado' : '';
-      const selC = (espHorario && calSelectedSlot === espHorario) ? 'selected' : '';
-      const click = (!ocupado && espHorario) ? `onclick="selectSlot('${espHorario}','noche',${espPrecio||0})"` : '';
-      const precioTxt = espPrecio != null ? `${espPrecio}€ · especial` : 'especial';
-      nocheHtml += `<div class="cf-slot ${occ} ${selC}" ${click} style="border-color:oklch(66% .24 355/.4);background:oklch(66% .24 355/.05)">
-        <div style="font-size:11px;font-weight:700;color:oklch(66% .24 355);margin-bottom:2px">${espNom}</div>
-        ${espHorario ? `<div>${espHorario}</div>` : ''}
-        <div class="cf-slot-precio" style="color:oklch(66% .24 355)">${precioTxt}</div>
-      </div>`;
+    const espNomBase = info.celebracion || recurring?.celebracion || '⭐ Día especial';
+    const espPrecioBase = info.precioEsp ?? recurring?.precio ?? null;
+
+    if(info.franjasCustom?.length) {
+      // Nuevo sistema: mostrar todas las franjas personalizadas
+      info.franjasCustom.forEach(f => {
+        const hor = f.horario || (f.inicio && f.fin ? `${f.inicio}–${f.fin}` : null);
+        if(!hor) return;
+        const ocupado = esSlotBloq(hor);
+        const occ  = ocupado ? 'ocupado' : '';
+        const selC = calSelectedSlot === hor ? 'selected' : '';
+        const pre  = f.precio ?? espPrecioBase ?? 0;
+        const click = !ocupado ? `onclick="selectSlot('${hor}','noche',${pre})"` : '';
+        const nom = f.nombre || espNomBase;
+        const precioTxt = f.precio != null ? `${f.precio}€ · especial` : (espPrecioBase != null ? `${espPrecioBase}€ · especial` : 'especial');
+        nocheHtml += `<div class="cf-slot ${occ} ${selC}" ${click} style="border-color:oklch(66% .24 355/.4);background:oklch(66% .24 355/.05)">
+          <div style="font-size:11px;font-weight:700;color:oklch(66% .24 355);margin-bottom:2px">${nom}</div>
+          <div>${hor}</div>
+          <div class="cf-slot-precio" style="color:oklch(66% .24 355)">${precioTxt}</div>
+        </div>`;
+      });
+    } else {
+      // Fallback: horarioEsp o recurrente (sistema anterior)
+      const espHorario = info.horarioEsp || recurring?.horario || null;
+      const espPrecio  = espPrecioBase;
+      const espNom     = espNomBase;
+      if(espNom || espHorario) {
+        const ocupado = espHorario ? esSlotBloq(espHorario) : false;
+        const occ  = ocupado ? 'ocupado' : '';
+        const selC = (espHorario && calSelectedSlot === espHorario) ? 'selected' : '';
+        const click = (!ocupado && espHorario) ? `onclick="selectSlot('${espHorario}','noche',${espPrecio||0})"` : '';
+        const precioTxt = espPrecio != null ? `${espPrecio}€ · especial` : 'especial';
+        nocheHtml += `<div class="cf-slot ${occ} ${selC}" ${click} style="border-color:oklch(66% .24 355/.4);background:oklch(66% .24 355/.05)">
+          <div style="font-size:11px;font-weight:700;color:oklch(66% .24 355);margin-bottom:2px">${espNom}</div>
+          ${espHorario ? `<div>${espHorario}</div>` : ''}
+          <div class="cf-slot-precio" style="color:oklch(66% .24 355)">${precioTxt}</div>
+        </div>`;
+      }
     }
   }
 
@@ -3238,8 +3261,49 @@ function webLoadFranjasPorFecha(fechaStr) {
   opt0.textContent = '— Selecciona franja —';
   sel.appendChild(opt0);
 
-  // Si hay día especial, añadirlo primero
-  if(esp) {
+  // Franjas personalizadas de fecha concreta (nuevo sistema)
+  if(info.franjasCustom?.length) {
+    info.franjasCustom.forEach(f => {
+      const hor = f.horario || (f.inicio && f.fin ? `${f.inicio}–${f.fin}` : '');
+      if(!hor) return;
+      const opt = document.createElement('option');
+      opt.dataset.esDiaEsp = '1';
+      const bloq = esHorarioBloq(hor);
+      const nom = f.nombre || info.celebracion || '⭐ Especial';
+      const pre = f.precio ?? info.precioEsp ?? null;
+      if(bloq) {
+        opt.disabled = true;
+        opt.value = '';
+        opt.textContent = `⭐ ${nom} · ${hor} — 🔴 Ocupat`;
+      } else {
+        opt.value = hor;
+        opt.textContent = `⭐ ${nom} · ${hor}${pre != null ? ' — '+pre+' €' : ''}`;
+        if(pre != null) opt.dataset.precio = pre;
+      }
+      sel.appendChild(opt);
+    });
+  } else if(info.horarioEsp && info.esDiaEspecial) {
+    // Fallback: horarioEsp antiguo (sin franjasCustom)
+    const hor = info.horarioEsp;
+    const opt = document.createElement('option');
+    opt.dataset.esDiaEsp = '1';
+    const bloq = esHorarioBloq(hor);
+    const nom = info.celebracion || '⭐ Especial';
+    const pre = info.precioEsp ?? null;
+    if(bloq) {
+      opt.disabled = true;
+      opt.value = '';
+      opt.textContent = `⭐ ${nom} · ${hor} — 🔴 Ocupat`;
+    } else {
+      opt.value = hor;
+      opt.textContent = `⭐ ${nom} · ${hor}${pre != null ? ' — '+pre+' €' : ''}`;
+      if(pre != null) opt.dataset.precio = pre;
+    }
+    sel.appendChild(opt);
+  }
+
+  // Si hay día especial recurrente (DD/MM), añadirlo si no está ya cubierto
+  if(esp && !info.franjasCustom?.length && !info.horarioEsp) {
     const optEsp = document.createElement('option');
     optEsp.dataset.esDiaEsp = '1';
     const espBloq = esHorarioBloq(esp.horario);
@@ -3930,6 +3994,7 @@ async function loadFechasOcupadas() {
           celebracion:   fd.celebracion   || null,
           precioEsp:     fd.precioEsp     ?? null,
           horarioEsp:    fd.horarioEsp    || null,
+          franjasCustom: fd.franjasCustom || null,
         };
       }
     });
