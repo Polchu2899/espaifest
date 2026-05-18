@@ -1259,6 +1259,22 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </div>
 
         <!-- MIGRACIÓN FIREBASE → PHP (una sola vez al migrar a Indedmedia) -->
+        <!-- EXPORTAR / IMPORTAR Firebase entre proyectos -->
+        <div class="card" style="margin-top:20px;border:1px solid rgba(234,179,8,.3)">
+          <div class="chead">
+            <div><div class="ctitle">Copia de seguridad Firebase</div><div class="csub">Exporta todos los datos del proyecto actual (reservas, clientes, tarifas, blog…) a un archivo JSON. Úsalo para migrar a un nuevo proyecto Firebase.</div></div>
+            <button class="btn bg sm" onclick="exportarFirebase()" id="btn-export-fb">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Exportar todo
+            </button>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <label style="font-size:13px;color:var(--t2);font-weight:600">Importar backup JSON:</label>
+            <input type="file" accept=".json" onchange="importarFirebase(this.files[0])" style="font-size:12px;color:var(--t2)">
+          </div>
+          <div id="fb-backup-status" style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.6"></div>
+        </div>
+
         <div class="card" style="margin-top:20px;border:1px solid rgba(15,212,196,.3)">
           <div class="chead">
             <div><div class="ctitle">Sincronizar datos a servidor PHP</div><div class="csub">Copia tarifas y calendario de Firebase a los archivos del servidor (Indedmedia). Hazlo una vez tras subir la web.</div></div>
@@ -7296,6 +7312,83 @@ td.r{text-align:right;white-space:nowrap}
   if(!win) { showToast('Activa los pop-ups del navegador para generar la factura'); return; }
   win.document.write(html);
   win.document.close();
+};
+
+// ── Exportar todo Firebase a JSON ────────────────────────────
+window.exportarFirebase = async function() {
+  const btn = document.getElementById('btn-export-fb');
+  const st  = document.getElementById('fb-backup-status');
+  if(btn) btn.disabled = true;
+  if(st) st.textContent = '⏳ Leyendo colecciones...';
+
+  try {
+    const colecciones = ['reservas','clientes','tarifas','calendario_publico','blog_posts','servicios','kits','promociones'];
+    const backup = { _meta: { fecha: new Date().toISOString(), proyecto: firebaseConfig.projectId }, collections: {} };
+
+    for(const c of colecciones) {
+      if(st) st.textContent = `⏳ Leyendo ${c}...`;
+      const snap = await getDocs(collection(db, c));
+      backup.collections[c] = {};
+      snap.forEach(d => { backup.collections[c][d.id] = d.data(); });
+    }
+    // Config docs especiales
+    try {
+      const niv = await getDoc(doc(db, 'config', 'niveles'));
+      if(niv.exists()) backup.collections['config__niveles'] = niv.data();
+    } catch(_) {}
+
+    const total = Object.values(backup.collections).reduce((s,c) => s + Object.keys(c).length, 0);
+    const blob  = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url   = URL.createObjectURL(blob);
+    const a     = document.createElement('a');
+    a.href = url;
+    a.download = `firebase-backup-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    if(st) st.innerHTML = `✅ <strong>Backup descargado.</strong> ${total} documentos en ${colecciones.length} colecciones.`;
+    showToast('✓ Backup descargado');
+  } catch(e) {
+    if(st) st.innerHTML = `❌ Error: ${e.message}`;
+    showToast('Error: ' + e.message);
+  } finally {
+    if(btn) btn.disabled = false;
+  }
+};
+
+// ── Importar JSON a Firebase (usar en el NUEVO proyecto) ──────
+window.importarFirebase = async function(file) {
+  if(!file) return;
+  const st = document.getElementById('fb-backup-status');
+  if(!confirm(`¿Importar "${file.name}" a este proyecto Firebase (${firebaseConfig.projectId})?\n\nSolo hazlo en el NUEVO proyecto de Laura, no en el original.`)) return;
+  if(st) st.textContent = '⏳ Importando...';
+
+  try {
+    const text   = await file.text();
+    const backup = JSON.parse(text);
+    if(!backup.collections) throw new Error('Archivo no válido — no tiene el campo "collections"');
+
+    let total = 0;
+    for(const [collName, docs] of Object.entries(backup.collections)) {
+      if(!docs || typeof docs !== 'object') continue;
+      // config__niveles → doc config/niveles
+      if(collName === 'config__niveles') {
+        await setDoc(doc(db, 'config', 'niveles'), docs);
+        total++;
+        continue;
+      }
+      const entries = Object.entries(docs);
+      if(st) st.textContent = `⏳ Importando ${collName} (${entries.length} docs)...`;
+      for(const [id, data] of entries) {
+        await setDoc(doc(db, collName, id), data);
+        total++;
+      }
+    }
+    if(st) st.innerHTML = `✅ <strong>Importación completada.</strong> ${total} documentos importados al proyecto ${firebaseConfig.projectId}.`;
+    showToast(`✓ ${total} documentos importados`);
+  } catch(e) {
+    if(st) st.innerHTML = `❌ Error: ${e.message}`;
+    showToast('Error: ' + e.message);
+  }
 };
 
 // ── Migración única Firebase → archivos PHP del servidor ──────
