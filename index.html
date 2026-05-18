@@ -2919,6 +2919,8 @@ function clasificarTurno(turno, horario) {
 function updateCalOccupied(data) {
   CAL_DATA = data;
   renderCal();
+  // Si hay una fecha seleccionada, re-renderizar sus franjas con los datos actualizados
+  if(calSelected) renderFranjas(calSelected);
 }
 
 function renderFranjas(ds) {
@@ -3987,52 +3989,57 @@ async function loadTarifasIndex() {
   if(calSelected) renderFranjas(calSelected);
 }
 
-// ══ FECHAS OCUPADAS — CALENDARIO ═════════════════════════════
-async function loadFechasOcupadas() {
+// ══ FECHAS OCUPADAS — CALENDARIO (listener en tiempo real) ════
+let _calSnapshotUnsub = null;
+function loadFechasOcupadas() {
+  // Cancelar listener anterior si existe
+  if(_calSnapshotUnsub) { _calSnapshotUnsub(); _calSnapshotUnsub = null; }
   try {
     const hoy = new Date().toISOString().split('T')[0];
-    const snap = await getDocs(collection(_db, 'calendario_publico'));
-    const data = {};
-    snap.docs.forEach(d => {
-      const fd = d.data();
-      const fecha = fd.fecha || d.id;
-      if(fecha >= hoy) {
-        const mana  = fd.mananaOcupada || false;
-        const tarde = fd.tardeOcupada  || false;
-        const noche = fd.nocheOcupada  || false;
-        const diaOc = fd.diaOcupado || (mana && tarde) || false;
-        data[fecha] = {
-          mananaOcupada: mana,
-          tardeOcupada:  tarde,
-          nocheOcupada:  noche,
-          diaOcupado:    diaOc,
-          rangos:        fd.rangos      || [],
-          esDiaEspecial: fd.esDiaEspecial || false,
-          celebracion:   fd.celebracion   || null,
-          precioEsp:     fd.precioEsp     ?? null,
-          horarioEsp:    fd.horarioEsp    || null,
-          franjasCustom: fd.franjasCustom || null,
-        };
-      }
-    });
-    (indexTarifas?.especiales || []).forEach(esp => {
-      if(!esp.dia) return;
-      const [dd, mm] = esp.dia.split('/');
-      const anyo = new Date().getFullYear();
-      [anyo, anyo+1, anyo+2, anyo+3, anyo+4].forEach(y => {
-        const ds = `${y}-${mm}-${dd}`;
-        if(ds >= hoy) {
-          if(!data[ds]) data[ds] = {};
-          // Solo aplicar datos recurrentes si no hay ya un override concreto en calendario_publico
-          if(!data[ds].esDiaEspecial) {
-            data[ds].esDiaEspecial = true;
-            data[ds].celebracion = esp.celebracion;
-            data[ds].precioEsp = esp.precio;
-          }
+    _calSnapshotUnsub = onSnapshot(collection(_db, 'calendario_publico'), snap => {
+      const data = {};
+      snap.docs.forEach(d => {
+        const fd = d.data();
+        const fecha = fd.fecha || d.id;
+        if(fecha >= hoy) {
+          const mana  = fd.mananaOcupada || false;
+          const tarde = fd.tardeOcupada  || false;
+          const noche = fd.nocheOcupada  || false;
+          const diaOc = fd.diaOcupado || (mana && tarde) || false;
+          data[fecha] = {
+            mananaOcupada: mana,
+            tardeOcupada:  tarde,
+            nocheOcupada:  noche,
+            diaOcupado:    diaOc,
+            rangos:        fd.rangos        || [],
+            esDiaEspecial: fd.esDiaEspecial || false,
+            celebracion:   fd.celebracion   || null,
+            precioEsp:     fd.precioEsp     ?? null,
+            horarioEsp:    fd.horarioEsp    || null,
+            franjasCustom: fd.franjasCustom || null,
+          };
         }
       });
+      (indexTarifas?.especiales || []).forEach(esp => {
+        if(!esp.dia) return;
+        const [dd, mm] = esp.dia.split('/');
+        const anyo = new Date().getFullYear();
+        [anyo, anyo+1, anyo+2, anyo+3, anyo+4].forEach(y => {
+          const ds = `${y}-${mm}-${dd}`;
+          if(ds >= hoy) {
+            if(!data[ds]) data[ds] = {};
+            if(!data[ds].esDiaEspecial) {
+              data[ds].esDiaEspecial = true;
+              data[ds].celebracion = esp.celebracion;
+              data[ds].precioEsp = esp.precio;
+            }
+          }
+        });
+      });
+      if(typeof updateCalOccupied === 'function') updateCalOccupied(data);
+    }, e => {
+      console.warn('Fechas ocupadas error:', e.message);
     });
-    if(typeof updateCalOccupied === 'function') updateCalOccupied(data);
   } catch(e) {
     console.warn('Fechas ocupadas error:', e.message);
   }
