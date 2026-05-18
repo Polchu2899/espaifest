@@ -3982,6 +3982,16 @@ async function loadTarifasIndex() {
   const _CKEY  = 'espaifest_tar_v1';
   const _CTTL  = 6 * 3600 * 1000;
   const _CBUST = 'espaifest_bust';
+  const _ALL_CACHE_KEYS = ['espaifest_tar_v1','espaifest_cal_v1','espaifest_blog_v1',
+                           'espaifest_svc_v1','espaifest_promo_v1','espaifest_niv_v1','espaifest_kits_v1'];
+
+  // ── Detectar cambio de proyecto Firebase → limpiar toda la caché ──
+  const _PROJ_KEY = 'espaifest_proj';
+  if(localStorage.getItem(_PROJ_KEY) !== _fbConfig.projectId) {
+    _ALL_CACHE_KEYS.forEach(k => localStorage.removeItem(k));
+    localStorage.removeItem(_CBUST);
+    localStorage.setItem(_PROJ_KEY, _fbConfig.projectId);
+  }
 
   // ── PHP: fuente sin cuota ───────────────────────────────────
   try {
@@ -4001,19 +4011,20 @@ async function loadTarifasIndex() {
   // ── Fallback Firebase: comprobar cache_bust (PHP o Firebase) ──
   try {
     let srvTs = 0;
+    let bustExists = false;
     try {
       const br = await fetch('/api/cache_bust.php');
-      if(br.ok) srvTs = (await br.json()).ts || 0;
+      if(br.ok) { srvTs = (await br.json()).ts || 0; bustExists = true; }
     } catch(_) {}
     if(!srvTs) {
       const bustSnap = await getDoc(doc(_db, 'config', 'cache_bust'));
-      if(bustSnap.exists()) srvTs = bustSnap.data().ts || 0;
+      bustExists = bustSnap.exists();
+      if(bustExists) srvTs = bustSnap.data().ts || 0;
     }
     const locTs = parseInt(localStorage.getItem(_CBUST) || '0');
-    if(srvTs > locTs) {
-      ['espaifest_tar_v1','espaifest_cal_v1','espaifest_blog_v1',
-       'espaifest_svc_v1','espaifest_promo_v1','espaifest_niv_v1','espaifest_kits_v1']
-        .forEach(k => localStorage.removeItem(k));
+    // Si hay timestamp nuevo o no existe doc cache_bust (proyecto recién creado), limpiar caché
+    if(srvTs > locTs || (!bustExists && !locTs)) {
+      _ALL_CACHE_KEYS.forEach(k => localStorage.removeItem(k));
       localStorage.setItem(_CBUST, String(srvTs));
     }
   } catch(_) {}
