@@ -766,6 +766,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
               </button>
               <button class="btn bg sm" onclick="limpiarFcForm()">Limpiar</button>
             </div>
+            <div style="margin-top:10px;padding:10px 12px;background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.3);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.5">
+              <strong style="color:rgba(161,120,0,1)">⚠ Nota sobre la tabla de precios pública:</strong>
+              Los cambios de precio aquí solo afectan al calendario y al formulario de reserva cuando el cliente selecciona esta fecha. Si quieres que el precio también se actualice en la sección <em>"Precios transparentes"</em> de la web, ve a <strong>Tarifas → Días especiales</strong>, edita el precio de esa celebración y pulsa <strong>"Guardar cambios"</strong>.
+            </div>
           </div>
 
           <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Fechas especiales configuradas</div>
@@ -2119,12 +2123,11 @@ function metodoBadge(m) {
   return `<span class="badge ${map[m]||'bg-x'}">${m||'—'}</span>`;
 }
 
-// ── Caché de calendario_publico (listener en tiempo real) ─────
+// ── Caché de calendario_publico — carga única por sesión ──
 let adminCalData = {};
-let _adminCalUnsub = null;
-function loadAdminCalData() {
-  if(_adminCalUnsub) { _adminCalUnsub(); _adminCalUnsub = null; }
-  _adminCalUnsub = onSnapshot(collection(db, 'calendario_publico'), snap => {
+async function loadAdminCalData() {
+  try {
+    const snap = await getDocs(collection(db, 'calendario_publico'));
     adminCalData = {};
     snap.docs.forEach(d => {
       const fd = d.data();
@@ -2141,16 +2144,12 @@ function loadAdminCalData() {
         diaOcupado:    fd.diaOcupado    || false,
       };
     });
-    // Si hay una fecha seleccionada en el formulario de reserva, refrescar sus franjas
-    const fechaSeleccionada = document.getElementById('r-fecha')?.value;
-    if(fechaSeleccionada) loadFranjasPorFecha(fechaSeleccionada);
-  }, e => { console.warn('adminCalData error:', e.message); });
+  } catch(e) { console.warn('adminCalData error:', e.message); }
 }
 
 // ── LOAD ALL ──────────────────────────────────────────────────
 window.loadAllData = async () => {
-  loadAdminCalData(); // listener tiempo real — no necesita await
-  await Promise.all([loadReservas(), loadClientes(), loadServicios(), loadPromos()]);
+  await Promise.all([loadAdminCalData(), loadReservas(), loadClientes(), loadServicios(), loadPromos()]);
 };
 
 // ── RESERVAS ──────────────────────────────────────────────────
@@ -6274,14 +6273,58 @@ window.saveFechaConcreta = async function() {
       nocheOcupada:  blqDia,
       diaOcupado:    blqDia,
     });
+
+    // Sincronizar con Días especiales (tarifas) si el DD/MM coincide con una entrada recurrente
+    await fcSyncEspecialRecurrente(fecha, nom, franjas, isNaN(precio) ? null : precio);
+
     showToast(`${fecha} · ${nom} guardado ✓`);
     limpiarFcForm();
+    loadAdminCalData();
     loadFechasConcretas();
   } catch(e) {
     showToast('Error: ' + e.message);
     console.error(e);
   }
 };
+
+// Actualiza tarifas.especiales si la fecha coincide con una celebración recurrente DD/MM
+async function fcSyncEspecialRecurrente(fechaISO, nom, franjas, precioEsp) {
+  try {
+    const d = new Date(fechaISO + 'T12:00:00');
+    const ddmm = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+
+    // Leer siempre de Firestore para no sobreescribir con datos en caché desactualizados
+    const snapEsp = await getDoc(doc(db, 'tarifas', 'especiales'));
+    if(!snapEsp.exists()) return;
+    const especiales = snapEsp.data().filas;
+    if(!Array.isArray(especiales)) return;
+
+    const idx = especiales.findIndex(e => e.dia === ddmm);
+    if(idx === -1) return; // No hay entrada recurrente para este DD/MM
+
+    // Precio y horario: primera franja disponible (no bloqueada), o precioEsp de la fecha
+    const franjaDisp = franjas.find(f => !f.bloqueada);
+    const nuevoPrecio = franjaDisp?.precio ?? precioEsp ?? especiales[idx].precio;
+    const nuevoHorario = franjaDisp?.horario || especiales[idx].horario;
+
+    especiales[idx] = {
+      ...especiales[idx],
+      celebracion: nom || especiales[idx].celebracion,
+      precio:      nuevoPrecio,
+      horario:     nuevoHorario,
+    };
+
+    // Actualizar también la caché en memoria si ya está cargada
+    if(Array.isArray(window.tarifasData?.especiales)) {
+      window.tarifasData.especiales[idx] = { ...especiales[idx] };
+    }
+
+    // Guardar en Firestore → actualiza la tabla de precios pública
+    await setDoc(doc(db, 'tarifas', 'especiales'), { filas: especiales, updatedAt: serverTimestamp() });
+  } catch(e) {
+    console.warn('fcSyncEspecialRecurrente error:', e.message);
+  }
+}
 
 window.editarFechaConcreta = function(fecha) {
   const d = (window._fcFechasData || []).find(x => (x.fecha||x.id) === fecha);
