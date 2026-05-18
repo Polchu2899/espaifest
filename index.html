@@ -2953,6 +2953,14 @@ function renderFranjas(ds) {
   const grupos = {manana:[],tarde:[],noche:[],diacomp:[]};
   slots.forEach(s => grupos[s.grupo]?.push(s));
 
+  // Si el día tiene franjas custom, las normales no se muestran (el horario especial las reemplaza)
+  if(info.franjasCustom?.length) {
+    grupos.manana = [];
+    grupos.tarde  = [];
+    grupos.diacomp = [];
+    grupos.noche   = [];
+  }
+
   const renderGrupo = (elId, grupoSlots) => {
     const el = document.getElementById(elId);
     if(!el) return;
@@ -3317,6 +3325,15 @@ function webLoadFranjasPorFecha(fechaStr) {
       optEsp.dataset.precio = esp.precio;
     }
     sel.appendChild(optEsp);
+  }
+
+  // Si el día tiene franjas custom, no mostrar franjas normales (las reemplazan)
+  if(info.franjasCustom?.length) {
+    if(sel.options.length <= 1) {
+      sel.innerHTML = '<option value="">— Sense franges per a aquest dia —</option>';
+    }
+    calcularTotal();
+    return;
   }
 
   // Franjas normales según día de semana
