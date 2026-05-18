@@ -6381,19 +6381,24 @@ window.fcOnFechaChange = function() {
   const list = document.getElementById('fc-franjas-list');
   list.innerHTML = '';
 
+  // Primero: si hay festivo recurrente, añadirlo al inicio con destacado
   if(espRec) {
-    // Día festivo recurrente: precarga el horario especial recurrente
     const { inicio, fin } = fcParseHorario(espRec.horario);
     fcAddFranja(espRec.celebracion, inicio, fin, espRec.precio || '');
     document.getElementById('fc-nom').value = document.getElementById('fc-nom').value || espRec.celebracion;
     document.getElementById('fc-precio').value = document.getElementById('fc-precio').value || espRec.precio || '';
-    if(hint) hint.innerHTML = `<span style="color:oklch(66% .24 355);font-weight:700">⭐ Día festivo: ${espRec.celebracion}.</span> Horario especial precargado — edita a tu gusto y bloquea los turnos normales.`;
+  }
+
+  // Siempre: cargar todas las franjas normales del día de la semana
+  disponibles.forEach(f => {
+    const { inicio, fin } = fcParseHorario(f.horario);
+    fcAddFranja(f.turno, inicio, fin, f[diaKey]);
+  });
+
+  if(espRec) {
+    if(hint) hint.innerHTML = `<span style="color:oklch(66% .24 355);font-weight:700">⭐ Día festivo: ${espRec.celebracion}.</span> Cargados el horario especial + todas las franjas del ${diaNombre}. Edita, elimina o añade lo que necesites.`;
   } else if(disponibles.length) {
-    disponibles.forEach(f => {
-      const { inicio, fin } = fcParseHorario(f.horario);
-      fcAddFranja(f.turno, inicio, fin, f[diaKey]);
-    });
-    if(hint) hint.innerHTML = `Horarios normales del <strong>${diaNombre}</strong> cargados. Edítalos, elimínalos o añade franjas nuevas. Usa los bloqueos de abajo para ocultar las franjas normales del día de la semana.`;
+    if(hint) hint.innerHTML = `Horarios normales del <strong>${diaNombre}</strong> cargados. Edítalos, elimínalos o añade franjas nuevas.`;
   } else {
     if(hint) hint.innerHTML = `No hay franjas configuradas para el <strong>${diaNombre}</strong>. Añade las franjas que quieras para este día especial.`;
   }
