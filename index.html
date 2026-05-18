@@ -2919,7 +2919,6 @@ function clasificarTurno(turno, horario) {
 function updateCalOccupied(data) {
   CAL_DATA = data;
   renderCal();
-  // Si hay una fecha seleccionada, re-renderizar sus franjas con los datos actualizados
   if(calSelected) renderFranjas(calSelected);
 }
 
@@ -3974,14 +3973,32 @@ async function loadBlogPosts() {
 
 // ══ TARIFAS DESDE FIRESTORE → PRECIOS INDEX + CALENDARIO ════
 async function loadTarifasIndex() {
+  const _CKEY = 'espaifest_tar_v1';
+  const _CTTL = 6 * 3600 * 1000; // 6 horas
+  try {
+    const hit = localStorage.getItem(_CKEY);
+    if(hit) {
+      const { ts, d } = JSON.parse(hit);
+      if(Date.now() - ts < _CTTL) {
+        Object.keys(d).forEach(k => { if(indexTarifas[k] !== undefined) indexTarifas[k] = d[k]; });
+        renderTodosPreciosIndex();
+        loadFechasOcupadas();
+        if(calSelected) renderFranjas(calSelected);
+        return;
+      }
+    }
+  } catch(_) {}
   try {
     const snap = await getDocs(collection(_db,'tarifas'));
     if(!snap.empty) {
+      const fresh = {};
       snap.forEach(d => {
         if(indexTarifas[d.id] !== undefined && d.data().filas) {
           indexTarifas[d.id] = d.data().filas;
+          fresh[d.id] = d.data().filas;
         }
       });
+      try { localStorage.setItem(_CKEY, JSON.stringify({ ts: Date.now(), d: fresh })); } catch(_) {}
     }
   } catch(e) { console.warn('Tarifas index: usando defaults',e); }
   renderTodosPreciosIndex();
@@ -3989,57 +4006,70 @@ async function loadTarifasIndex() {
   if(calSelected) renderFranjas(calSelected);
 }
 
-// ══ FECHAS OCUPADAS — CALENDARIO (listener en tiempo real) ════
-let _calSnapshotUnsub = null;
-function loadFechasOcupadas() {
-  // Cancelar listener anterior si existe
-  if(_calSnapshotUnsub) { _calSnapshotUnsub(); _calSnapshotUnsub = null; }
-  try {
-    const hoy = new Date().toISOString().split('T')[0];
-    _calSnapshotUnsub = onSnapshot(collection(_db, 'calendario_publico'), snap => {
-      const data = {};
-      snap.docs.forEach(d => {
-        const fd = d.data();
-        const fecha = fd.fecha || d.id;
-        if(fecha >= hoy) {
-          const mana  = fd.mananaOcupada || false;
-          const tarde = fd.tardeOcupada  || false;
-          const noche = fd.nocheOcupada  || false;
-          const diaOc = fd.diaOcupado || (mana && tarde) || false;
-          data[fecha] = {
-            mananaOcupada: mana,
-            tardeOcupada:  tarde,
-            nocheOcupada:  noche,
-            diaOcupado:    diaOc,
-            rangos:        fd.rangos        || [],
-            esDiaEspecial: fd.esDiaEspecial || false,
-            celebracion:   fd.celebracion   || null,
-            precioEsp:     fd.precioEsp     ?? null,
-            horarioEsp:    fd.horarioEsp    || null,
-            franjasCustom: fd.franjasCustom || null,
-          };
+// ══ FECHAS OCUPADAS — CALENDARIO (con caché localStorage) ════
+async function loadFechasOcupadas() {
+  const _CKEY = 'espaifest_cal_v1';
+  const _CTTL = 3600 * 1000; // 1 hora
+  const hoy = new Date().toISOString().split('T')[0];
+
+  const buildData = (rawDocs) => {
+    const data = {};
+    rawDocs.forEach(({ id, fd }) => {
+      const fecha = fd.fecha || id;
+      if(fecha >= hoy) {
+        const mana  = fd.mananaOcupada || false;
+        const tarde = fd.tardeOcupada  || false;
+        const noche = fd.nocheOcupada  || false;
+        const diaOc = fd.diaOcupado || (mana && tarde) || false;
+        data[fecha] = {
+          mananaOcupada: mana,
+          tardeOcupada:  tarde,
+          nocheOcupada:  noche,
+          diaOcupado:    diaOc,
+          rangos:        fd.rangos        || [],
+          esDiaEspecial: fd.esDiaEspecial || false,
+          celebracion:   fd.celebracion   || null,
+          precioEsp:     fd.precioEsp     ?? null,
+          horarioEsp:    fd.horarioEsp    || null,
+          franjasCustom: fd.franjasCustom || null,
+        };
+      }
+    });
+    (indexTarifas?.especiales || []).forEach(esp => {
+      if(!esp.dia) return;
+      const [dd, mm] = esp.dia.split('/');
+      const anyo = new Date().getFullYear();
+      [anyo, anyo+1, anyo+2, anyo+3, anyo+4].forEach(y => {
+        const ds = `${y}-${mm}-${dd}`;
+        if(ds >= hoy) {
+          if(!data[ds]) data[ds] = {};
+          if(!data[ds].esDiaEspecial) {
+            data[ds].esDiaEspecial = true;
+            data[ds].celebracion = esp.celebracion;
+            data[ds].precioEsp = esp.precio;
+          }
         }
       });
-      (indexTarifas?.especiales || []).forEach(esp => {
-        if(!esp.dia) return;
-        const [dd, mm] = esp.dia.split('/');
-        const anyo = new Date().getFullYear();
-        [anyo, anyo+1, anyo+2, anyo+3, anyo+4].forEach(y => {
-          const ds = `${y}-${mm}-${dd}`;
-          if(ds >= hoy) {
-            if(!data[ds]) data[ds] = {};
-            if(!data[ds].esDiaEspecial) {
-              data[ds].esDiaEspecial = true;
-              data[ds].celebracion = esp.celebracion;
-              data[ds].precioEsp = esp.precio;
-            }
-          }
-        });
-      });
-      if(typeof updateCalOccupied === 'function') updateCalOccupied(data);
-    }, e => {
-      console.warn('Fechas ocupadas error:', e.message);
     });
+    return data;
+  };
+
+  try {
+    const hit = localStorage.getItem(_CKEY);
+    if(hit) {
+      const { ts, hoyKey, docs } = JSON.parse(hit);
+      if(Date.now() - ts < _CTTL && hoyKey === hoy) {
+        if(typeof updateCalOccupied === 'function') updateCalOccupied(buildData(docs));
+        return;
+      }
+    }
+  } catch(_) {}
+
+  try {
+    const snap = await getDocs(collection(_db, 'calendario_publico'));
+    const rawDocs = snap.docs.map(d => ({ id: d.id, fd: d.data() }));
+    try { localStorage.setItem(_CKEY, JSON.stringify({ ts: Date.now(), hoyKey: hoy, docs: rawDocs })); } catch(_) {}
+    if(typeof updateCalOccupied === 'function') updateCalOccupied(buildData(rawDocs));
   } catch(e) {
     console.warn('Fechas ocupadas error:', e.message);
   }
