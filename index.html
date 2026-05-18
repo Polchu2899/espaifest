@@ -3016,7 +3016,7 @@ function renderFranjas(ds) {
       info.franjasCustom.forEach(f => {
         const hor = f.horario || (f.inicio && f.fin ? `${f.inicio}–${f.fin}` : null);
         if(!hor) return;
-        const ocupado = esSlotBloq(hor);
+        const ocupado = f.bloqueada || esSlotBloq(hor);
         const occ  = ocupado ? 'ocupado' : '';
         const selC = calSelectedSlot === hor ? 'selected' : '';
         const pre  = f.precio ?? espPrecioBase ?? 0;
@@ -3268,7 +3268,7 @@ function webLoadFranjasPorFecha(fechaStr) {
       if(!hor) return;
       const opt = document.createElement('option');
       opt.dataset.esDiaEsp = '1';
-      const bloq = esHorarioBloq(hor);
+      const bloq = f.bloqueada || esHorarioBloq(hor);
       const nom = f.nombre || info.celebracion || '⭐ Especial';
       const pre = f.precio ?? info.precioEsp ?? null;
       if(bloq) {
