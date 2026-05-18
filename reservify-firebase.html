@@ -6296,13 +6296,17 @@ async function fcSyncEspecialRecurrente(fechaISO, nom, franjas, precioEsp) {
   try {
     const d = new Date(fechaISO + 'T12:00:00');
     const ddmm = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
-    const especiales = window.tarifasData?.especiales;
+
+    // Leer siempre de Firestore para no sobreescribir con datos en caché desactualizados
+    const snapEsp = await getDoc(doc(db, 'tarifas', 'especiales'));
+    if(!snapEsp.exists()) return;
+    const especiales = snapEsp.data().filas;
     if(!Array.isArray(especiales)) return;
 
     const idx = especiales.findIndex(e => e.dia === ddmm);
     if(idx === -1) return; // No hay entrada recurrente para este DD/MM
 
-    // Determinar el precio a sincronizar: primera franja disponible o precioEsp
+    // Precio y horario: primera franja disponible (no bloqueada), o precioEsp de la fecha
     const franjaDisp = franjas.find(f => !f.bloqueada);
     const nuevoPrecio = franjaDisp?.precio ?? precioEsp ?? especiales[idx].precio;
     const nuevoHorario = franjaDisp?.horario || especiales[idx].horario;
@@ -6310,16 +6314,21 @@ async function fcSyncEspecialRecurrente(fechaISO, nom, franjas, precioEsp) {
     especiales[idx] = {
       ...especiales[idx],
       celebracion: nom || especiales[idx].celebracion,
-      precio:  nuevoPrecio,
-      horario: nuevoHorario,
+      precio:      nuevoPrecio,
+      horario:     nuevoHorario,
     };
+
+    // Actualizar también la caché en memoria si ya está cargada
+    if(Array.isArray(window.tarifasData?.especiales)) {
+      window.tarifasData.especiales[idx] = { ...especiales[idx] };
+    }
 
     // Guardar en Firestore → actualiza la tabla de precios pública
     await setDoc(doc(db, 'tarifas', 'especiales'), { filas: especiales, updatedAt: serverTimestamp() });
   } catch(e) {
     console.warn('fcSyncEspecialRecurrente error:', e.message);
   }
-};
+}
 
 window.editarFechaConcreta = function(fecha) {
   const d = (window._fcFechasData || []).find(x => (x.fecha||x.id) === fecha);
