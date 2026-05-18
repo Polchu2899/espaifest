@@ -735,7 +735,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div style="background:var(--s1);border:1px solid var(--b2);border-radius:10px;padding:16px;margin-bottom:16px">
             <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">Añadir / editar fecha especial</div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
-              <div><label class="fl">Fecha *</label><input type="date" class="fi" id="fc-fecha" style="margin-top:4px"></div>
+              <div><label class="fl">Fecha *</label><input type="date" class="fi" id="fc-fecha" onchange="fcOnFechaChange()" style="margin-top:4px"></div>
               <div><label class="fl">Celebración *</label><input type="text" class="fi" id="fc-nom" placeholder="Ej: Nochebuena" style="margin-top:4px"></div>
               <div><label class="fl">Precio base (€)</label><input type="number" class="fi" id="fc-precio" placeholder="150" style="margin-top:4px"></div>
             </div>
@@ -750,7 +750,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
               </div>
               <div id="fc-franjas-list" style="display:flex;flex-direction:column;gap:6px"></div>
               <button class="btn bg sm" onclick="fcAddFranja()" style="margin-top:8px;font-size:11px">+ Añadir franja</button>
-              <div style="font-size:11px;color:var(--t3);margin-top:5px">Las franjas que definas aquí reemplazan el horario normal del día en la web. Usa los bloqueos de abajo para ocultar las franjas normales del día de la semana.</div>
+              <div id="fc-franjas-hint" style="font-size:11px;color:var(--t3);margin-top:5px">Introduce la fecha para ver los horarios normales de ese día y modificarlos.</div>
             </div>
             <div style="margin-bottom:14px">
               <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Bloquear franjas ese día</div>
@@ -2122,9 +2122,33 @@ function metodoBadge(m) {
   return `<span class="badge ${map[m]||'bg-x'}">${m||'—'}</span>`;
 }
 
+// ── Caché de calendario_publico para el formulario de reservas ─
+let adminCalData = {};
+async function loadAdminCalData() {
+  try {
+    const snap = await getDocs(collection(db, 'calendario_publico'));
+    adminCalData = {};
+    snap.docs.forEach(d => {
+      const fd = d.data();
+      const fecha = fd.fecha || d.id;
+      adminCalData[fecha] = {
+        esDiaEspecial: fd.esDiaEspecial || false,
+        celebracion:   fd.celebracion   || null,
+        precioEsp:     fd.precioEsp     ?? null,
+        horarioEsp:    fd.horarioEsp    || null,
+        franjasCustom: fd.franjasCustom || null,
+        mananaOcupada: fd.mananaOcupada || false,
+        tardeOcupada:  fd.tardeOcupada  || false,
+        nocheOcupada:  fd.nocheOcupada  || false,
+        diaOcupado:    fd.diaOcupado    || false,
+      };
+    });
+  } catch(e) { console.warn('adminCalData error:', e.message); }
+}
+
 // ── LOAD ALL ──────────────────────────────────────────────────
 window.loadAllData = async () => {
-  await Promise.all([loadReservas(), loadClientes(), loadServicios(), loadPromos()]);
+  await Promise.all([loadReservas(), loadClientes(), loadServicios(), loadPromos(), loadAdminCalData()]);
 };
 
 // ── RESERVAS ──────────────────────────────────────────────────
@@ -6251,6 +6275,7 @@ window.saveFechaConcreta = async function() {
     showToast(`${fecha} · ${nom} guardado ✓`);
     limpiarFcForm();
     loadFechasConcretas();
+    loadAdminCalData(); // refrescar caché para el formulario de reservas
   } catch(e) {
     showToast('Error: ' + e.message);
     console.error(e);
@@ -6311,6 +6336,67 @@ window.fcAddFranja = function(nombre='', inicio='', fin='', precio='') {
     <button onclick="this.closest('.fc-franja-row').remove()" title="Eliminar franja" style="background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0">✕</button>
   `;
   list.appendChild(row);
+};
+
+// Extrae inicio/fin de un string de horario como "10h–14h", "16:30h–20:30h", "21:15h-01:30h"
+function fcParseHorario(horario) {
+  if(!horario) return { inicio: '', fin: '' };
+  const m = horario.replace(/\s/g,'').match(/(\d{1,2})(?::(\d{2}))?h?[–\-](\d{1,2})(?::(\d{2}))?/);
+  if(!m) return { inicio: '', fin: '' };
+  return {
+    inicio: `${m[1].padStart(2,'0')}:${m[2]||'00'}`,
+    fin:    `${m[3].padStart(2,'0')}:${m[4]||'00'}`,
+  };
+}
+
+window.fcOnFechaChange = function() {
+  const fechaVal = document.getElementById('fc-fecha')?.value;
+  const hint = document.getElementById('fc-franjas-hint');
+  if(!fechaVal) return;
+
+  // Si ya existe configuración guardada para esa fecha, cargarla
+  const existing = (window._fcFechasData || []).find(x => (x.fecha||x.id) === fechaVal);
+  if(existing) {
+    editarFechaConcreta(fechaVal);
+    if(hint) hint.innerHTML = '<span style="color:var(--teal);font-weight:700">✓ Configuración guardada cargada.</span> Modifica lo que necesites y pulsa Guardar.';
+    return;
+  }
+
+  // Nueva fecha: cargar los horarios normales de ese día de la semana
+  const d = new Date(fechaVal + 'T12:00:00');
+  const diaSemIdx = (d.getDay() + 6) % 7; // 0=lu ... 6=do
+  const diaKey    = ['lu','ma','mi','ju','vi','sa','do'][diaSemIdx];
+  const diaNombre = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'][diaSemIdx];
+
+  const todas = [...(window.tarifasData?.estandar||[]), ...(window.tarifasData?.ampliados||[])];
+  const disponibles = todas.filter(f => {
+    const v = f[diaKey];
+    return v !== '—' && v !== '' && v != null;
+  });
+
+  // También revisar si hay un especial recurrente DD/MM
+  const ddmm = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+  const espRec = (window.tarifasData?.especiales||[]).find(e => e.dia === ddmm);
+
+  const list = document.getElementById('fc-franjas-list');
+  list.innerHTML = '';
+
+  if(espRec) {
+    // Día festivo recurrente: precarga el horario especial recurrente
+    const { inicio, fin } = fcParseHorario(espRec.horario);
+    fcAddFranja(espRec.celebracion, inicio, fin, espRec.precio || '');
+    document.getElementById('fc-nom').value = document.getElementById('fc-nom').value || espRec.celebracion;
+    document.getElementById('fc-precio').value = document.getElementById('fc-precio').value || espRec.precio || '';
+    if(hint) hint.innerHTML = `<span style="color:oklch(66% .24 355);font-weight:700">⭐ Día festivo: ${espRec.celebracion}.</span> Horario especial precargado — edita a tu gusto y bloquea los turnos normales.`;
+  } else if(disponibles.length) {
+    disponibles.forEach(f => {
+      const { inicio, fin } = fcParseHorario(f.horario);
+      fcAddFranja(f.turno, inicio, fin, f[diaKey]);
+    });
+    if(hint) hint.innerHTML = `Horarios normales del <strong>${diaNombre}</strong> cargados. Edítalos, elimínalos o añade franjas nuevas. Usa los bloqueos de abajo para ocultar las franjas normales del día de la semana.`;
+  } else {
+    if(hint) hint.innerHTML = `No hay franjas configuradas para el <strong>${diaNombre}</strong>. Añade las franjas que quieras para este día especial.`;
+  }
 };
 
 // ── Extras ──
@@ -6395,36 +6481,90 @@ window.loadFranjasPorFecha = function(fechaStr) {
     return;
   }
 
-  // Rangos ya ocupados ese día (todas las reservas no canceladas)
+  // Rangos ya ocupados ese día (reservas no canceladas)
   const rangosOcupados = (allReservas||[])
     .filter(r => r.fecha === fechaStr && (r.estado||'').toLowerCase() !== 'cancelada')
     .map(r => getRangoReal(r))
     .filter(Boolean);
 
+  // Datos del día especial concreto guardados en Firebase
+  const calInfo = adminCalData[fechaStr] || {};
+  const diaBlq  = calInfo.diaOcupado;
+  const isRangoOcupado = (horario) => {
+    if(diaBlq) return true;
+    const rango = buscarRangoHorario(horario);
+    if(rango && rangosOcupados.some(rc => seSuperponen(rango, rc))) return true;
+    return false;
+  };
+  const isTurnoBlq = (turno) => {
+    if(diaBlq) return true;
+    const t = (turno||'').toLowerCase();
+    if(t.includes('maña') && calInfo.mananaOcupada) return true;
+    if(t.includes('tarde') && calInfo.tardeOcupada) return true;
+    if(t.includes('noche') && calInfo.nocheOcupada) return true;
+    return false;
+  };
+
   const esp = getDiaEspecial(fechaStr);
 
-  // Placeholder siempre primero
+  // Placeholder
   const opt0 = document.createElement('option');
   opt0.value = '';
   opt0.textContent = '— Selecciona franja —';
   sel.appendChild(opt0);
 
-  // Día especial como primera opción (sin return prematuro)
-  if(esp) {
+  // 1. Franjas personalizadas del día (nuevo sistema — prioridad máxima)
+  if(calInfo.franjasCustom?.length) {
+    calInfo.franjasCustom.forEach(f => {
+      const hor = f.horario || (f.inicio && f.fin ? `${f.inicio}–${f.fin}` : '');
+      if(!hor) return;
+      const opt = document.createElement('option');
+      const ocupado = isRangoOcupado(hor);
+      const nom = f.nombre || calInfo.celebracion || '⭐ Especial';
+      const pre = f.precio ?? calInfo.precioEsp ?? '';
+      if(ocupado) {
+        opt.disabled = true;
+        opt.textContent = `⭐ ${nom} · ${hor}${pre !== '' ? ' — '+pre+'€' : ''} · 🔴 OCUPADO`;
+      } else {
+        opt.value = `${nom} (${hor}) — ${pre}€`;
+        opt.dataset.precio = pre;
+        opt.textContent = `⭐ ${nom} · ${hor}${pre !== '' ? ' — '+pre+' €' : ''}`;
+      }
+      sel.appendChild(opt);
+    });
+  } else if(calInfo.horarioEsp) {
+    // Fallback: horarioEsp antiguo
+    const hor = calInfo.horarioEsp;
+    const opt = document.createElement('option');
+    const ocupado = isRangoOcupado(hor);
+    const nom = calInfo.celebracion || '⭐ Especial';
+    const pre = calInfo.precioEsp ?? '';
+    if(ocupado) {
+      opt.disabled = true;
+      opt.textContent = `⭐ ${nom} · ${hor} · 🔴 OCUPADO`;
+    } else {
+      opt.value = `${nom} (${hor}) — ${pre}€`;
+      opt.dataset.precio = pre;
+      opt.textContent = `⭐ ${nom} · ${hor}${pre !== '' ? ' — '+pre+' €' : ''}`;
+    }
+    sel.appendChild(opt);
+  } else if(esp && !calInfo.franjasCustom) {
+    // Especial recurrente (DD/MM) si no hay override concreto
     const optE = document.createElement('option');
-    optE.value = `${esp.celebracion} (${esp.horario}) — ${esp.precio}€`;
-    optE.dataset.precio = esp.precio;
     const espRango = buscarRangoHorario(esp.horario);
-    const espOcupado = espRango && rangosOcupados.some(rc => seSuperponen(espRango, rc));
+    const espOcupado = diaBlq || (espRango && rangosOcupados.some(rc => seSuperponen(espRango, rc)));
     if(espOcupado) {
       optE.disabled = true;
       optE.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} € · 🔴 OCUPADO`;
     } else {
+      optE.value = `${esp.celebracion} (${esp.horario}) — ${esp.precio}€`;
+      optE.dataset.precio = esp.precio;
       optE.textContent = `⭐ ${esp.celebracion} · ${esp.horario} — ${esp.precio} €`;
     }
     sel.appendChild(optE);
   }
 
+  // 2. Franjas normales del día de la semana (deshabilitadas si hay bloqueo de turno)
   const idx = diaSemanaIdx(fechaStr);
   const diaKey = DIAS[idx];
   const todas = [...(window.tarifasData.estandar||[]), ...(window.tarifasData.ampliados||[])];
@@ -6433,7 +6573,7 @@ window.loadFranjasPorFecha = function(fechaStr) {
     return v !== '—' && v !== '' && v != null;
   });
 
-  if(!disponibles.length && !esp) {
+  if(!disponibles.length && !calInfo.franjasCustom && !calInfo.horarioEsp && !esp) {
     sel.innerHTML = '<option value="">— Sin franjas para este día —</option>';
     renderExtrasChecks(null);
     return;
@@ -6445,11 +6585,11 @@ window.loadFranjasPorFecha = function(fechaStr) {
     const opt = document.createElement('option');
     opt.value = `${f.turno} (${f.horario}) — ${precio}€`;
     opt.dataset.precio = precio;
-    const rango = buscarRangoHorario(f.horario);
-    const ocupado = rango && rangosOcupados.some(rc => seSuperponen(rango, rc));
-    if(ocupado) {
+    const turnoBlq = isTurnoBlq(f.turno);
+    const rangoBlq = !turnoBlq && isRangoOcupado(f.horario);
+    if(turnoBlq || rangoBlq) {
       opt.disabled = true;
-      opt.textContent = `${f.turno} · ${f.horario} — ${precio} € · 🔴 OCUPADO`;
+      opt.textContent = `${f.turno} · ${f.horario} — ${precio} € · ${turnoBlq ? '🔒 BLOQUEADO' : '🔴 OCUPADO'}`;
     } else {
       opt.textContent = `${f.turno} · ${f.horario} — ${precio} €`;
       if(!primeraLibre) primeraLibre = f;
@@ -6457,7 +6597,6 @@ window.loadFranjasPorFecha = function(fechaStr) {
     sel.appendChild(opt);
   });
 
-  // Carga hora extra y extras para la primera franja libre (no la ocupada)
   const franjaRef = primeraLibre || disponibles[0];
   if(franjaRef) loadHorasExtra(franjaRef);
   renderExtrasChecks(franjaRef || null);
