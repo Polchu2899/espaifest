@@ -1,91 +1,135 @@
 # EspaiFest — llms.txt
-# Structured information for AI systems and language models
+# Información estructurada para sistemas de IA y modelos de lenguaje
 # https://espaifest.com/
 
-## Business Overview
-EspaiFest is a private, soundproofed event venue of 115m² located in Martorell, Barcelona, Spain.
-It is ideal for children's birthday parties, adult celebrations, baby showers, family gatherings, corporate meetings, workshops, yoga and pilates classes.
-Maximum capacity: 50 people.
-Base price: 85€ for 4 hours.
+## Resumen del negocio
 
-## Location
-Address: C/ Francesc Macià, 37, 08760 Martorell, Barcelona, Spain
-Coordinates: 41.4747°N, 1.9310°E
-Region: Catalonia, Spain
-Nearby municipalities: Sant Andreu de la Barca, Abrera, Castellbisbal, Sant Esteve Sesrovires, Esparreguera
+EspaiFest es una sala privada e insonorizada de 115m² ubicada en Martorell, Baix Llobregat, Barcelona, España.
+Ideal para fiestas infantiles, cumpleaños, aniversaris, baby showers, reuniones familiares, reuniones de empresa, talleres, clases de yoga y pilates.
+Capacidad máxima: 50 personas.
+Precio base: desde 85€ por 4 horas.
+Reserva online disponible en https://espaifest.com/#reservas
 
-## Contact
-Phone: +34 674 379 709
-Email: info@espaifest.com
-Attention hours: Every day from 10:00 to 20:00
+## Descripció del negoci (Català)
 
-## Canonical URLs
-- Catalan (primary): https://espaifest.com/
-- Spanish: https://espaifest.com/es/
+EspaiFest és una sala privada i insonoritzada de 115m² ubicada a Martorell, Baix Llobregat, Barcelona.
+Ideal per a festes infantils, aniversaris, baby showers, reunions familiars, reunions d'empresa, tallers i classes de ioga i pilates.
+Capacitat màxima: 50 persones.
+Preu base: des de 85€ per 4 hores.
 
-## Services
-- Children's party room rental (4h, 6h, 8h turns)
-- Adult events and celebrations
+## Business Overview (English)
+
+EspaiFest is a private, soundproofed event venue of 115m² located in Martorell, Baix Llobregat, Barcelona, Spain.
+Ideal for children's birthday parties, adult celebrations, baby showers, family gatherings, corporate meetings, workshops, yoga and pilates classes.
+Maximum capacity: 50 people. Base price: from 85€ for 4 hours.
+
+## Ubicación / Localització / Location
+
+Dirección: C/ Francesc Macià, 37, 08760 Martorell, Barcelona, España
+Coordenadas: 41.4747°N, 1.9310°E
+Comarca: Baix Llobregat, Cataluña, España
+Municipios cercanos: Sant Andreu de la Barca, Abrera, Castellbisbal, Sant Esteve Sesrovires, Esparreguera, Olesa de Montserrat, Gelida
+A 30 minutos de Barcelona ciudad en coche o tren (línea R4 FGC/Renfe)
+
+## Palabras clave principales (Keywords)
+
+Español: sala fiestas Martorell, fiestas infantiles Martorell, cumpleaños niños Martorell, alquiler sala eventos Martorell, local fiestas Baix Llobregat, sala cumpleaños infantil Martorell, baby shower Martorell, reuniones empresa Martorell, sala eventos Baix Llobregat, local privado fiestas Martorell
+
+Català: sala festes Martorell, festes infantils Martorell, aniversaris Martorell, lloguer sala Martorell, espai festes infantils Martorell, local festes Baix Llobregat, baby shower Martorell, reunions empresa Martorell
+
+English: party room Martorell, children's birthday party venue Barcelona, event space Martorell, private party room Baix Llobregat
+
+## Servicios / Serveis / Services
+
+- Alquiler de sala para fiestas infantiles (turnos de 4h, 6h, 8h)
+- Celebraciones de adultos y reuniones familiares
 - Baby showers
-- Corporate meetings and training
-- Classes (yoga, pilates, workshops)
-- Optional catering (menus from 8€/person)
-- Cleaning service
-- Extra hours available
+- Reuniones de empresa, formaciones y talleres
+- Clases (yoga, pilates, workshops)
+- Catering opcional (menús desde 8€/persona)
+- Servicio de limpieza
+- Horas extra disponibles
+- Tarjeta de fidelización con descuentos exclusivos
 
-## Included in all bookings
-- 115m² private soundproofed room
-- Children's play area (slide, ball pit)
-- HD projector
-- Fiber WiFi
-- Kitchen (microwave, oven, fridge, Nespresso)
-- Air conditioning and heating
-- Baby changing station
-- Toilet
+## Qué incluye el alquiler / Què inclou el lloguer
 
-## Pricing
-- 4-hour turn (standard): from 85€
-- Half day (6h): consult
-- Full day (8h): consult
-- Extra hour: 10€
-- Morning cleaning service: 30€
-- Loyalty discounts available for repeat customers
+- Sala privada insonorizada de 115m²
+- Zona infantil (tobogán, piscina de bolas)
+- Proyector HD
+- WiFi de fibra óptica
+- Cocina equipada (microondas, horno, nevera, Nespresso)
+- Aire acondicionado y calefacción
+- Cambiador de bebés
+- Baño completo
+- Aparcamiento cercano
 
-## Frequently Asked Questions
+## Precios / Preus / Pricing
 
-Q: How much does it cost to rent EspaiFest in Martorell?
-A: The base price is 85€ for a 4-hour turn. Half-day (6h) and full-day (8h) rates are also available. Loyalty club members get exclusive discounts.
+- Turno de 4 horas (estándar): desde 85€
+- Medio día (6h): consultar
+- Día completo (8h): consultar
+- Hora extra: 10€
+- Servicio de limpieza matinal: 30€
+- Descuentos para clientes habituales (tarjeta fidelización)
 
-Q: How many people can fit in EspaiFest?
-A: EspaiFest has a maximum capacity of 50 people. The venue has 115m² with a children's zone, adult zone, and business zone.
+## Catering opcional
 
-Q: Is EspaiFest suitable for children's birthday parties?
-A: Yes, EspaiFest is ideal for children's parties. It includes a children's play park, baby zone with slide and ball pit, tables for adults, and is fully soundproofed.
+- Menú infantil: desde 8€/persona
+- Menú júnior: desde 10€/persona
+- Bandeja snacks adultos: desde 12€/unidad
+- Servicio de pica-pica personalizable
 
-Q: What is included in the EspaiFest rental?
-A: Included: 115m² soundproofed room, children's play park, ball pit, HD projector, fiber WiFi, kitchen (microwave, oven, fridge, Nespresso), air conditioning, and baby changing station.
+## Preguntas frecuentes / FAQ
 
-Q: Can I host a corporate meeting or workshop at EspaiFest?
-A: Yes, EspaiFest has a business zone with projector, whiteboard, and fiber WiFi. It is suitable for meetings, training sessions, workshops, yoga, and pilates classes.
+P: ¿Cuánto cuesta alquilar EspaiFest en Martorell?
+R: El precio base es de 85€ por un turno de 4 horas. También hay tarifas de medio día (6h) y día completo (8h). Los socios del club de fidelización obtienen descuentos exclusivos.
 
-Q: How do I book EspaiFest?
-A: You can book online via the form at https://espaifest.com/#reservas or by calling +34 674 379 709. Availability is confirmed within 24 hours.
+P: ¿Cuántas personas caben en EspaiFest?
+R: EspaiFest tiene una capacidad máxima de 50 personas en sus 115m² con zona infantil, zona adultos y zona business.
 
-Q: Where exactly is EspaiFest?
-A: EspaiFest is located at C/ Francesc Macià, 37, 08760 Martorell (Barcelona). It has nearby parking and good public transport connections.
+P: ¿Es EspaiFest adecuado para fiestas infantiles?
+R: Sí, EspaiFest es ideal para fiestas infantiles. Incluye parque infantil, zona bebés con tobogán y piscina de bolas, mesas para adultos y está completamente insonorizado.
 
-Q: Does EspaiFest offer catering?
-A: Yes, optional catering is available. Children's menus from 8€, junior menus from 10€, and adult snack trays from 12€. Prices are per unit/person.
+P: ¿Qué incluye el alquiler de EspaiFest?
+R: Incluye sala privada insonorizada de 115m², parque infantil, piscina de bolas, proyector HD, WiFi de fibra, cocina completa (microondas, horno, nevera, Nespresso), aire acondicionado y cambiador de bebés.
 
-## Social Media
+P: ¿Se pueden hacer reuniones de empresa o talleres en EspaiFest?
+R: Sí, EspaiFest tiene zona business con proyector, pizarra y WiFi de fibra. Es apto para reuniones, formaciones, talleres, clases de yoga y pilates.
+
+P: ¿Cómo se reserva EspaiFest?
+R: Se puede reservar online en https://espaifest.com/#reservas o llamando al +34 674 379 709. La disponibilidad se confirma en 24 horas.
+
+P: ¿Dónde está EspaiFest exactamente?
+R: EspaiFest está en C/ Francesc Macià, 37, 08760 Martorell (Barcelona), en el Baix Llobregat. Tiene aparcamiento cercano y buenas conexiones de transporte público (tren R4).
+
+P: ¿Ofrece EspaiFest servicio de catering?
+R: Sí, catering opcional disponible. Menús infantiles desde 8€, menús júnior desde 10€ y bandejas de snacks para adultos desde 12€. Precios por unidad/persona.
+
+P: ¿Hay sala de fiestas infantiles cerca de Martorell?
+R: EspaiFest en Martorell es la sala de fiestas infantiles de referencia del Baix Llobregat. Sirve a familias de Martorell, Sant Andreu de la Barca, Abrera, Esparreguera, Castellbisbal y toda la comarca.
+
+P: ¿Dónde celebrar un cumpleaños en el Baix Llobregat?
+R: EspaiFest Martorell es la opción ideal para celebrar cumpleaños infantiles y de adultos en el Baix Llobregat. Sala privada, insonorizada, con catering opcional, desde 85€/4h.
+
+## URLs canónicas / Canonical URLs
+
+- Català (principal): https://espaifest.com/
+- Español: https://espaifest.com/es/
+
+## Páginas relacionadas / Related Pages
+
+- Avís legal / Aviso legal: https://espaifest.com/aviso-legal
+- Política de privacitat / Privacidad: https://espaifest.com/privacidad
+- Condicions d'ús / Condiciones de uso: https://espaifest.com/condiciones
+- Cookies: https://espaifest.com/cookies
+- Blog: https://espaifest.com/#blog
+- Reservas online: https://espaifest.com/#reservas
+
+## Redes sociales / Xarxes socials / Social Media
+
 - Instagram: https://www.instagram.com/espaifest
 - Facebook: https://www.facebook.com/espaifest
 
-## Related pages
-- Legal notice: https://espaifest.com/aviso-legal.html
-- Privacy policy: https://espaifest.com/privacidad.html
-- Terms of use: https://espaifest.com/condiciones.html
-- Blog: https://espaifest.com/#blog
-
 ## Sitemap
+
 https://espaifest.com/sitemap.xml
