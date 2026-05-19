@@ -4074,10 +4074,8 @@ async function loadTarifasIndex() {
   if(calSelected) renderFranjas(calSelected);
 }
 
-// ══ FECHAS OCUPADAS — PHP (principal) con Firebase + caché como fallback ════
+// ══ FECHAS OCUPADAS — PHP (principal) con Firebase como fallback ════
 async function loadFechasOcupadas() {
-  const _CKEY = 'espaifest_cal_v2';
-  const _CTTL = 10 * 60 * 1000;
   const hoy = new Date().toISOString().split('T')[0];
 
   const buildData = (rawDocs) => {
@@ -4135,22 +4133,10 @@ async function loadFechasOcupadas() {
     }
   } catch(_) {}
 
-  // ── Fallback Firebase + caché localStorage ──────────────────
+  // ── Firebase directo (sin caché — el calendario es tiempo real) ──
   try {
-    const hit = localStorage.getItem(_CKEY);
-    if(hit) {
-      const { ts, hoyKey, docs } = JSON.parse(hit);
-      if(Date.now() - ts < _CTTL && hoyKey === hoy) {
-        if(typeof updateCalOccupied === 'function') updateCalOccupied(buildData(docs));
-        return;
-      }
-    }
-  } catch(_) {}
-
-  try {
-    const snap = await getDocs(collection(_db, 'calendario_publico'));
+    const snap = await getDocs(query(collection(_db, 'calendario_publico'), where('fecha', '>=', hoy)));
     const rawDocs = snap.docs.map(d => ({ id: d.id, fd: d.data() }));
-    try { localStorage.setItem(_CKEY, JSON.stringify({ ts: Date.now(), hoyKey: hoy, docs: rawDocs })); } catch(_) {}
     if(typeof updateCalOccupied === 'function') updateCalOccupied(buildData(rawDocs));
   } catch(e) {
     console.warn('Fechas ocupadas error:', e.message);
