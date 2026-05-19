@@ -3995,7 +3995,7 @@ async function loadTarifasIndex() {
   const _CKEY  = 'espaifest_tar_v1';
   const _CTTL  = 6 * 3600 * 1000;
   const _CBUST = 'espaifest_bust';
-  const _ALL_CACHE_KEYS = ['espaifest_tar_v1','espaifest_cal_v1','espaifest_blog_v1',
+  const _ALL_CACHE_KEYS = ['espaifest_tar_v1','espaifest_cal_v1','espaifest_cal_v2','espaifest_blog_v1',
                            'espaifest_svc_v1','espaifest_promo_v1','espaifest_niv_v1','espaifest_kits_v1'];
 
   // ── Detectar cambio de proyecto Firebase → limpiar toda la caché ──
@@ -4076,8 +4076,8 @@ async function loadTarifasIndex() {
 
 // ══ FECHAS OCUPADAS — PHP (principal) con Firebase + caché como fallback ════
 async function loadFechasOcupadas() {
-  const _CKEY = 'espaifest_cal_v1';
-  const _CTTL = 3600 * 1000;
+  const _CKEY = 'espaifest_cal_v2';
+  const _CTTL = 10 * 60 * 1000;
   const hoy = new Date().toISOString().split('T')[0];
 
   const buildData = (rawDocs) => {
