@@ -3148,6 +3148,7 @@ window.cancelarReserva = async (id) => {
       await setDoc(doc(db, 'calendario_publico', reserva.fecha), { ..._calCanc, updatedAt: serverTimestamp() });
       _syncCalPHP(reserva.fecha, _calCanc);
     }
+    bustPublicCache().catch(()=>{});
   }
   showToast('Reserva cancelada');
   actualizarReservaLocal(id, { estado: 'Cancelada' });
@@ -3184,6 +3185,7 @@ window.eliminarReserva = async (id) => {
         _syncCalPHP(fechaReserva, _calElim);
         console.log('[eliminar] calendario recalculado →', {mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado});
       }
+      bustPublicCache().catch(()=>{});
     } catch(e) {
       console.warn('[eliminar] Error actualizando calendario:', e.code, e.message);
     }
