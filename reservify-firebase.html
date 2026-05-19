@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reservify · EspaiFest</title>
+<meta name="robots" content="noindex, nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1273,6 +1274,17 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             <input type="file" accept=".json" onchange="importarFirebase(this.files[0])" style="font-size:12px;color:var(--t2)">
           </div>
           <div id="fb-backup-status" style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.6"></div>
+        </div>
+
+        <div class="card" style="margin-top:20px;border:1px solid rgba(234,88,12,.3)">
+          <div class="chead">
+            <div><div class="ctitle">Reparar fechas de reservas importadas</div><div class="csub">Asigna "Reservado el" a las reservas antiguas que no tienen esa fecha. Usa la fecha del evento como referencia. Solo afecta a reservas sin createdAt.</div></div>
+            <button class="btn bg sm" onclick="repararFechasReservas()" id="btn-reparar-fechas">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              Reparar fechas
+            </button>
+          </div>
+          <div id="reparar-fechas-status" style="font-size:12px;color:var(--t2);margin-top:8px;line-height:1.6"></div>
         </div>
 
         <div class="card" style="margin-top:20px;border:1px solid rgba(15,212,196,.3)">
@@ -7364,6 +7376,41 @@ window.exportarFirebase = async function() {
 };
 
 // ── Importar JSON a Firebase (usar en el NUEVO proyecto) ──────
+// Repara reservas que no tienen createdAt (o lo tienen como {seconds,nanoseconds} inválido)
+window.repararFechasReservas = async function() {
+  const st = document.getElementById('reparar-fechas-status');
+  const btn = document.getElementById('btn-reparar-fechas');
+  if(!confirm('¿Reparar las fechas de reservas importadas?\n\nSe asignará la fecha del evento (a las 10:00) como "Reservado el" solo a las reservas que no tienen ese dato.')) return;
+  if(btn) btn.disabled = true;
+  if(st) st.textContent = '⏳ Comprobando reservas...';
+  try {
+    const snap = await getDocs(collection(db, 'reservas'));
+    let reparadas = 0, omitidas = 0;
+    for(const d of snap.docs) {
+      const data = d.data();
+      const ca = data.createdAt;
+      // Tiene createdAt válido (Timestamp real o {seconds,nanoseconds})
+      const tieneTs = ca && (typeof ca.toMillis === 'function' || typeof ca.seconds === 'number');
+      // Tiene createdAt como string ISO válido
+      const tieneStr = ca && typeof ca === 'string' && !isNaN(new Date(ca).getTime());
+      if(tieneTs || tieneStr) { omitidas++; continue; }
+      // Sin fecha válida → usar fecha del evento a las 10:00 como aproximación
+      const fechaEvento = data.fecha || new Date().toISOString().split('T')[0];
+      const fechaAprox = new Date(fechaEvento + 'T10:00:00');
+      await updateDoc(doc(db, 'reservas', d.id), { createdAt: fechaAprox });
+      reparadas++;
+    }
+    if(st) st.innerHTML = `✅ <strong>Reparación completada.</strong> ${reparadas} reservas actualizadas · ${omitidas} ya tenían fecha (sin cambios).`;
+    showToast(`✓ ${reparadas} reservas reparadas`);
+    if(reparadas > 0) { await loadReservas(true); }
+  } catch(e) {
+    if(st) st.innerHTML = `❌ Error: ${e.message}`;
+    showToast('Error: ' + e.message);
+  } finally {
+    if(btn) btn.disabled = false;
+  }
+};
+
 // Restaura objetos {seconds, nanoseconds} exportados como Date (Firestore los guarda como Timestamp)
 function _restoreTs(obj) {
   if(obj === null || typeof obj !== 'object') return obj;
