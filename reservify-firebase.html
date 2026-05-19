@@ -2128,10 +2128,19 @@ onAuthStateChanged(auth, user => {
 });
 
 // ── HELPERS ───────────────────────────────────────────────────
+// Convierte cualquier formato de timestamp a milisegundos
+function _tsMs(v) {
+  if(!v) return 0;
+  if(typeof v.toMillis === 'function') return v.toMillis();           // Firestore Timestamp real
+  if(typeof v.seconds === 'number') return v.seconds * 1000 + Math.floor((v.nanoseconds||0) / 1e6); // JSON exportado
+  const n = new Date(v).getTime();
+  return isNaN(n) ? 0 : n;
+}
 function fmtDate(ts) {
   if (!ts) return '—';
-  const d = ts.toDate ? ts.toDate() : new Date(ts);
-  return d.toLocaleDateString('es-ES', {day:'2-digit',month:'short',year:'numeric'});
+  const ms = _tsMs(ts);
+  if(!ms) return '—';
+  return new Date(ms).toLocaleDateString('es-ES', {day:'2-digit',month:'short',year:'numeric'});
 }
 
 function fmtMoney(n) {
@@ -2190,13 +2199,8 @@ async function loadReservas() {
     const snap = await getDocs(collection(db,'reservas'));
     allReservas = snap.docs.map(d => ({id:d.id,...d.data()}));
     // Ordenar por createdAt desc — soporta Firestore Timestamp, string ISO, string fecha, null
-    const tsOf = v => {
-      if(!v) return 0;
-      if(typeof v.toMillis === 'function') return v.toMillis(); // Firestore Timestamp real
-      const n = new Date(v).getTime();
-      return isNaN(n) ? 0 : n;
-    };
-    const esTimestampReal = v => v && typeof v.toMillis === 'function';
+    const tsOf = v => _tsMs(v);
+    const esTimestampReal = v => v && (typeof v.toMillis === 'function' || typeof v.seconds === 'number');
     allReservas.sort((a,b) => {
       const aReal = esTimestampReal(a.createdAt);
       const bReal = esTimestampReal(b.createdAt);
@@ -2263,7 +2267,7 @@ function pagoBadge(r) {
 const CUTOFF_NUEVA = new Date('2026-05-13T00:00:00').getTime();
 
 function esReservaNueva(r) {
-  const ts = r.createdAt?.toMillis?.() || new Date(r.createdAt || 0).getTime();
+  const ts = _tsMs(r.createdAt);
   return !r.vista && ts >= CUTOFF_NUEVA;
 }
 
@@ -2277,7 +2281,7 @@ function renderReservas(list) {
       ? `<span style="margin-left:4px;color:var(--amber);font-size:10px;cursor:default"${notasTip} title="${r.notas.replace(/"/g,'&quot;')}">📝</span>`
       : '';
     // "Nueva" = llegó de la web y Laura aún no la ha confirmado
-    const tsCreado = r.createdAt?.toMillis?.() || new Date(r.createdAt||0).getTime();
+    const tsCreado = _tsMs(r.createdAt);
     const esNueva = esReservaNueva(r);
     const badgeNueva = esNueva ? '<span class="badge-nueva">✦ Nueva</span>' : '';
     const rowClass = esNueva ? 'trow rc nueva' : 'trow rc';
@@ -2381,8 +2385,8 @@ window.filterReservas = () => {
   filtered.sort((a, b) => {
     let va, vb;
     if (_sortCampo === 'createdAt') {
-      va = a.createdAt?.toMillis?.() || new Date(a.createdAt || 0).getTime();
-      vb = b.createdAt?.toMillis?.() || new Date(b.createdAt || 0).getTime();
+      va = _tsMs(a.createdAt);
+      vb = _tsMs(b.createdAt);
     } else {
       va = (a.fecha || '').replace(/-/g, '');
       vb = (b.fecha || '').replace(/-/g, '');
@@ -3016,7 +3020,7 @@ window.openDet = function(id) {
   document.getElementById('det-tel').textContent           = r.telefono || '—';
   document.getElementById('det-email').textContent         = r.email || '—';
   document.getElementById('det-fecha').textContent         = r.fecha ? r.fecha.split('-').reverse().join('/') : '—';
-  const tsCr = r.createdAt?.toMillis?.() || new Date(r.createdAt||0).getTime();
+  const tsCr = _tsMs(r.createdAt);
   document.getElementById('det-creado').textContent        = tsCr > 0 ? new Date(tsCr).toLocaleString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
   document.getElementById('det-horario').textContent       = horario || r.horario || '—';
   document.getElementById('det-servicio').textContent      = r.servicio || '—';
@@ -7360,6 +7364,17 @@ window.exportarFirebase = async function() {
 };
 
 // ── Importar JSON a Firebase (usar en el NUEVO proyecto) ──────
+// Restaura objetos {seconds, nanoseconds} exportados como Date (Firestore los guarda como Timestamp)
+function _restoreTs(obj) {
+  if(obj === null || typeof obj !== 'object') return obj;
+  if(typeof obj.seconds === 'number' && 'nanoseconds' in obj)
+    return new Date(obj.seconds * 1000 + Math.floor((obj.nanoseconds||0) / 1e6));
+  if(Array.isArray(obj)) return obj.map(_restoreTs);
+  const r = {};
+  for(const [k,v] of Object.entries(obj)) r[k] = _restoreTs(v);
+  return r;
+}
+
 window.importarFirebase = async function(file) {
   if(!file) return;
   const st = document.getElementById('fb-backup-status');
@@ -7376,14 +7391,14 @@ window.importarFirebase = async function(file) {
       if(!docs || typeof docs !== 'object') continue;
       // config__niveles → doc config/niveles
       if(collName === 'config__niveles') {
-        await setDoc(doc(db, 'config', 'niveles'), docs);
+        await setDoc(doc(db, 'config', 'niveles'), _restoreTs(docs));
         total++;
         continue;
       }
       const entries = Object.entries(docs);
       if(st) st.textContent = `⏳ Importando ${collName} (${entries.length} docs)...`;
       for(const [id, data] of entries) {
-        await setDoc(doc(db, collName, id), data);
+        await setDoc(doc(db, collName, id), _restoreTs(data));
         total++;
       }
     }
