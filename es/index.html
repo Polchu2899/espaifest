@@ -4021,7 +4021,6 @@ async function loadTarifasIndex() {
 
 // ══ FECHAS OCUPADAS — CALENDARIO (con caché) ══════════════════
 async function loadFechasOcupadas() {
-  const _CKEY = 'espaifest_cal_v2', _CTTL = 10*60*1000;
   const hoy = new Date().toISOString().split('T')[0];
   const buildData = (rawDocs) => {
     const data = {};
@@ -4044,11 +4043,10 @@ async function loadFechasOcupadas() {
     return data;
   };
   try { const r=await fetch('/api/calendario.php'); if(r.ok){const c=await r.json(); if(c&&Object.keys(c).length>0){if(typeof updateCalOccupied==='function') updateCalOccupied(buildData(Object.entries(c).map(([id,fd])=>({id,fd})))); return;}}} catch(_){}
-  try { const hit=localStorage.getItem(_CKEY); if(hit){const {ts,hoyKey,docs}=JSON.parse(hit); if(Date.now()-ts<_CTTL&&hoyKey===hoy){if(typeof updateCalOccupied==='function') updateCalOccupied(buildData(docs)); return;}}} catch(_){}
+  // ── Firebase directo (sin caché — el calendario es tiempo real) ──
   try {
-    const snap = await getDocs(collection(_db, 'calendario_publico'));
+    const snap = await getDocs(query(collection(_db, 'calendario_publico'), where('fecha', '>=', hoy)));
     const rawDocs = snap.docs.map(d=>({id:d.id,fd:d.data()}));
-    try { localStorage.setItem(_CKEY, JSON.stringify({ts:Date.now(),hoyKey:hoy,docs:rawDocs})); } catch(_) {}
     if(typeof updateCalOccupied==='function') updateCalOccupied(buildData(rawDocs));
   } catch(e) { console.warn('Fechas ocupadas error:', e.message); }
 }
