@@ -3100,6 +3100,7 @@ window.confirmarReserva = async (id) => {
     const _calConf = { fecha: reserva.fecha, mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado };
     await setDoc(doc(db, 'calendario_publico', reserva.fecha), { ..._calConf, updatedAt: serverTimestamp() });
     _syncCalPHP(reserva.fecha, _calConf);
+    bustPublicCache().catch(()=>{});
     showToast('Reserva confirmada ✓ — Calendario actualizado');
   } else {
     showToast('Reserva confirmada ✓');
