@@ -961,6 +961,16 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   .prc-tab{padding:7px 14px;font-size:.75rem;}
   .prc-esp-grid{grid-template-columns:1fr 1fr;}
   .prc-extras-grid{grid-template-columns:1fr;}
+  /* Calendario móvil */
+  .cal-wrap{border-radius:14px;}
+  .cal-head{padding:12px 14px;}
+  .cal-day-hdr{padding:6px 2px;font-size:.62rem;letter-spacing:0;}
+  .cal-day{padding:6px 2px;font-size:.78rem;min-height:40px;gap:2px;}
+  .dot-occ,.dot-free,.dot-partial,.dot-esp{width:5px;height:5px;}
+  .cal-legend{padding:10px 14px;gap:10px;font-size:.72rem;}
+  .cal-note{padding:10px 14px;font-size:.78rem;}
+  .cal-franjas{padding:12px;}
+  .cf-slot{padding:6px 10px;font-size:.78rem;}
 }
 /* ── CALENDARIO FRANJAS EXTENDIDO ── */
 .cf-grupo-noche .cf-grupo-label{color:oklch(66% .24 355);}
@@ -981,13 +991,16 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 
 /* ── BANNER PROMOCIÓN ── */
 #promo-banner{
-  display:none;position:relative;z-index:700;
+  display:none;position:fixed;top:0;left:0;right:0;z-index:801;
   background:linear-gradient(90deg,oklch(55% .28 310),oklch(68% .22 38),oklch(55% .28 310));
   background-size:300% 100%;animation:promoBg 6s ease infinite;
   padding:10px 20px;text-align:center;
 }
 @keyframes promoBg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 #promo-banner.visible{display:block;}
+body.banner-on nav{top:var(--banner-h,44px);}
+body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
+@media(max-width:768px){body.banner-on .hero{padding-top:calc(110px + var(--banner-h,44px));}}
 .promo-banner-inner{
   display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
   max-width:900px;margin:0 auto;
@@ -4330,7 +4343,7 @@ async function loadPromocionesWeb() {
     if(!rawDocs.length) return;
     const hoy = new Date().toISOString().split('T')[0];
     const activas = rawDocs
-      .filter(p => p.hasta && p.hasta >= hoy)
+      .filter(p => p.hasta && p.hasta >= hoy && (!p.desde || p.desde <= hoy))
       .sort((a,b) => (b.descuento||0) - (a.descuento||0)); // la más grande primero
 
     window._promocionesActivas = activas;
@@ -4345,7 +4358,13 @@ async function loadPromocionesWeb() {
       if(pbTxt) pbTxt.innerHTML = `<strong>-${principal.descuento||0}% dto.</strong> ${principal.nombre||'Oferta especial'} · Hasta el ${principal.hasta}`;
       if(pbCode) { pbCode.textContent = principal.codigo || ''; pbCode.dataset.codigo = principal.codigo||''; }
       const banner = document.getElementById('promo-banner');
-      if(banner) banner.classList.add('visible');
+      if(banner) {
+        banner.classList.add('visible');
+        requestAnimationFrame(() => {
+          document.documentElement.style.setProperty('--banner-h', banner.offsetHeight + 'px');
+          document.body.classList.add('banner-on');
+        });
+      }
     }
 
     // ── Sección de cards de promos ──
@@ -4397,9 +4416,9 @@ window.cerrarBanner = function() {
     banner.style.opacity = '0';
     banner.style.maxHeight = '0';
     banner.style.overflow = 'hidden';
-    setTimeout(() => banner.classList.remove('visible'), 320);
+    setTimeout(() => { banner.classList.remove('visible'); document.body.classList.remove('banner-on'); }, 320);
   }
-  sessionStorage.setItem('promo-banner-closed', '1'); // No vuelve a aparecer en esta sesión
+  sessionStorage.setItem('promo-banner-closed', '1');
 };
 
 window.copiarCodigo = function(codigo, id) {
