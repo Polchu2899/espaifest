@@ -113,6 +113,19 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
+# -- Rutas conocidas de la nueva web -- proteccion explicita ---
+RewriteRule ^es/?$                     - [L]
+RewriteRule ^es/(.*)$                  - [L]
+RewriteRule ^aviso-legal\.html$        - [L]
+RewriteRule ^privacidad\.html$         - [L]
+RewriteRule ^condiciones\.html$        - [L]
+RewriteRule ^cookies\.html$            - [L]
+RewriteRule ^admin\.html$              - [L]
+RewriteRule ^reservify-firebase\.html$ - [L]
+RewriteRule ^sitemap\.xml$             - [L]
+RewriteRule ^robots\.txt$              - [L]
+RewriteRule ^llms\.txt$                - [L]
+
 # ── Cualquier otra URL no mapeada → home ─────────────────────
 RewriteRule ^(.*)$ https://espaifest.com/ [L,R=301]
 
