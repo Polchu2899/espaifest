@@ -4106,6 +4106,28 @@ async function loadBlogPosts() {
   }
 }
 
+// Tradueix noms de torns i celebracions de castellà a català
+function traducirTarifesAlCatala(data) {
+  const T = {
+    'Mañana':'Matí','Tarde':'Tarda','Tarde-Noche':'Tarda-Nit','Noche':'Nit','Todo el día':'Tot el dia',
+    'Limpieza':'Neteja','Hora extra':'Hora extra'
+  };
+  const C = {
+    'Año Nuevo':"Cap d'Any",'Reyes':'Reis Mags','Reyes Magos':'Reis Mags','Carnaval':'Carnestoltes',
+    'San Juan':'Verbena Sant Joan','La Castañada':'Castanyada','Castañada':'Castanyada',
+    'Nochebuena':'Nit de Nadal','Navidad mediodía':'Nadal migdia','Navidad noche':'Nadal nit',
+    'Navidad':'Nadal','San Esteban':'Sant Esteve','Nochevieja':"Nit de Cap d'Any",
+    'Fin de Año':"Nit de Cap d'Any",'Noche de Fin de Año':"Nit de Cap d'Any"
+  };
+  const tT = { 'Mañana (9h–15h)':'Matí (9h–15h)','Tarde (15h–22h)':'Tarda (15h–22h)',
+                'Noche (22h–03h)':'Nit (22h–03h)','Todo el día':'Tot el dia' };
+  if(data.estandar)   data.estandar   = data.estandar.map(r=>({...r, turno: T[r.turno]||r.turno}));
+  if(data.ampliados)  data.ampliados  = data.ampliados.map(r=>({...r, turno: T[r.turno]||r.turno}));
+  if(data.especiales) data.especiales = data.especiales.map(r=>({...r, celebracion: C[r.celebracion]||r.celebracion}));
+  if(data.extras)     data.extras     = data.extras.map(r=>({...r, turno: tT[r.turno]||r.turno}));
+  return data;
+}
+
 // ══ TARIFAS → PHP (principal) con Firebase + caché como fallback ════
 async function loadTarifasIndex() {
   const _CKEY  = 'espaifest_tar_v1';
@@ -4128,6 +4150,7 @@ async function loadTarifasIndex() {
     if(resp.ok) {
       const phpData = await resp.json();
       if(phpData && Object.keys(phpData).length > 0) {
+        traducirTarifesAlCatala(phpData);
         Object.keys(phpData).forEach(k => { if(indexTarifas[k] !== undefined) indexTarifas[k] = phpData[k]; });
         renderTodosPreciosIndex();
         loadFechasOcupadas();
@@ -4163,6 +4186,7 @@ async function loadTarifasIndex() {
     if(hit) {
       const { ts, d } = JSON.parse(hit);
       if(Date.now() - ts < _CTTL) {
+        traducirTarifesAlCatala(d);
         Object.keys(d).forEach(k => { if(indexTarifas[k] !== undefined) indexTarifas[k] = d[k]; });
         renderTodosPreciosIndex();
         loadFechasOcupadas();
@@ -4182,6 +4206,8 @@ async function loadTarifasIndex() {
           fresh[d.id] = d.data().filas;
         }
       });
+      traducirTarifesAlCatala(fresh);
+      Object.keys(fresh).forEach(k => { if(indexTarifas[k] !== undefined) indexTarifas[k] = fresh[k]; });
       try { localStorage.setItem(_CKEY, JSON.stringify({ ts: Date.now(), d: fresh })); } catch(_) {}
     }
   } catch(e) { console.warn('Tarifas index: usando defaults',e); }
