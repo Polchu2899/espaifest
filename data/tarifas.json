@@ -1,0 +1,35 @@
+{
+    "estandar": [
+        {"turno": "Matí",      "horario": "10h–14h",       "lu": 85, "ma": 85, "mi": 85, "ju": 85, "vi": 90,  "sa": 130, "do": 130},
+        {"turno": "Matí",      "horario": "11h–15h",       "lu": 85, "ma": 85, "mi": 85, "ju": 85, "vi": 90,  "sa": 130, "do": 130},
+        {"turno": "Tarda",     "horario": "16:30h–20:30h", "lu": 85, "ma": 85, "mi": 85, "ju": 85, "vi": 100, "sa": 140, "do": 140},
+        {"turno": "Tarda-Nit", "horario": "19:30h–23:30h", "lu": "—", "ma": "—", "mi": "—", "ju": "—", "vi": 170, "sa": 185, "do": "—"},
+        {"turno": "Nit",       "horario": "21:15h–01:30h", "lu": "—", "ma": "—", "mi": "—", "ju": "—", "vi": 200, "sa": 200, "do": "—"}
+    ],
+    "ampliados": [
+        {"turno": "Tot el dia", "horario": "10h–20h",       "lu": 150, "ma": 150, "mi": 150, "ju": 150, "vi": 170, "sa": 250, "do": 270},
+        {"turno": "Tarda-Nit",  "horario": "16:30h–01:30h", "lu": "—", "ma": "—", "mi": "—", "ju": "—", "vi": 390, "sa": 450, "do": "—"}
+    ],
+    "especiales": [
+        {"celebracion": "Cap d'Any",        "dia": "01/01", "horario": "12h–19h", "precio": 310},
+        {"celebracion": "Reis Mags",        "dia": "06/01", "horario": "12h–19h", "precio": 310},
+        {"celebracion": "Carnestoltes",     "dia": "",      "horario": "20h–02h", "precio": 280},
+        {"celebracion": "Verbena Sant Joan","dia": "23/06", "horario": "20h–02h", "precio": 280},
+        {"celebracion": "Castanyada",       "dia": "31/10", "horario": "20h–02h", "precio": 280},
+        {"celebracion": "Nit de Nadal",     "dia": "24/12", "horario": "20h–02h", "precio": 350},
+        {"celebracion": "Nadal migdia",     "dia": "25/12", "horario": "12h–19h", "precio": 310},
+        {"celebracion": "Nadal nit",        "dia": "25/12", "horario": "20h–02h", "precio": 310},
+        {"celebracion": "Sant Esteve",      "dia": "26/12", "horario": "12h–19h", "precio": 310},
+        {"celebracion": "Nit de Cap d'Any", "dia": "31/12", "horario": "20h–03h", "precio": 350}
+    ],
+    "extras": [
+        {"concepto": "Neteja",     "turno": "Matí (9h–15h)",   "precio": 30},
+        {"concepto": "Neteja",     "turno": "Tarda (15h–22h)", "precio": 30},
+        {"concepto": "Neteja",     "turno": "Nit (22h–03h)",   "precio": 50},
+        {"concepto": "Neteja",     "turno": "Tot el dia",      "precio": 50},
+        {"concepto": "Hora extra", "turno": "Matí (9h–15h)",   "precio": 20},
+        {"concepto": "Hora extra", "turno": "Tarda (15h–22h)", "precio": 25},
+        {"concepto": "Hora extra", "turno": "Nit (22h–03h)",   "precio": 40},
+        {"concepto": "Hora extra", "turno": "Tot el dia",      "precio": 30}
+    ]
+}
