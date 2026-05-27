@@ -2482,10 +2482,10 @@ body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
               <div style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;"><span>Mix Picoteo (adult)</span><div style="display:flex;align-items:center;gap:6px;"><span style="color:var(--tx3);font-size:.78rem;">12,00 €/ud.</span><div style="display:flex;align-items:center;border:1.5px solid oklch(50% 0 0/.18);border-radius:8px;overflow:hidden;"><button type="button" onclick="changeQty(this,-1)" style="width:26px;height:26px;border:none;background:oklch(50% 0 0/.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--tx2);line-height:1;padding:0;">−</button><input type="number" class="r-ext-qty" data-nombre="Mix Picoteo adulto" data-precio="12" min="0" max="99" value="0" style="width:30px;text-align:center;border:none;border-left:1px solid oklch(50% 0 0/.12);border-right:1px solid oklch(50% 0 0/.12);background:var(--bg);color:var(--tx1);font:700 .84rem var(--fd);padding:0;height:26px;-moz-appearance:textfield;"><button type="button" onclick="changeQty(this,1)" style="width:26px;height:26px;border:none;background:oklch(50% 0 0/.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--co);line-height:1;padding:0;">+</button></div></div></div>
               <div style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;"><span>Begudes FREDES Adults</span><div style="display:flex;align-items:center;gap:6px;"><span style="color:var(--tx3);font-size:.78rem;">18,00 €/ud.</span><div style="display:flex;align-items:center;border:1.5px solid oklch(50% 0 0/.18);border-radius:8px;overflow:hidden;"><button type="button" onclick="changeQty(this,-1)" style="width:26px;height:26px;border:none;background:oklch(50% 0 0/.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--tx2);line-height:1;padding:0;">−</button><input type="number" class="r-ext-qty" data-nombre="Begudes FREDES Adults" data-precio="18" min="0" max="99" value="0" style="width:30px;text-align:center;border:none;border-left:1px solid oklch(50% 0 0/.12);border-right:1px solid oklch(50% 0 0/.12);background:var(--bg);color:var(--tx1);font:700 .84rem var(--fd);padding:0;height:26px;-moz-appearance:textfield;"><button type="button" onclick="changeQty(this,1)" style="width:26px;height:26px;border:none;background:oklch(50% 0 0/.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--co);line-height:1;padding:0;">+</button></div></div></div>
             </div>
-            <!-- Limpieza -->
-            <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;">Limpieza</div>
+            <!-- Neteja -->
+            <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;">Neteja</div>
             <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
-              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Limpieza mañana-mediodía" data-precio="30" style="accent-color:var(--co);margin-right:7px;">Limpieza mañana-mediodía</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">30,00 €</span></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;cursor:pointer;"><span><input type="checkbox" class="r-ext" data-nombre="Neteja matí-migdia" data-precio="30" style="accent-color:var(--co);margin-right:7px;">Neteja matí-migdia</span><span style="color:var(--co);font-weight:700;font-size:.8rem;">30,00 €</span></label>
             </div>
             <!-- Horas extra -->
             <div style="font:600 .76rem var(--fb);color:var(--tx2);margin-bottom:6px;">Hores extra</div>
@@ -2873,37 +2873,37 @@ function toggleTheme() {
 const DIAS_IDX = ['lu','ma','mi','ju','vi','sa','do'];
 const TARIFAS_FB_DEFAULT = {
   estandar: [
-    {turno:'Mañana', horario:'10h–14h', lu:85,ma:85,mi:85,ju:85,vi:90,sa:130,do:130},
-    {turno:'Mañana', horario:'11h–15h', lu:85,ma:85,mi:85,ju:85,vi:90,sa:130,do:130},
-    {turno:'Tarde',  horario:'16:30h–20:30h', lu:85,ma:85,mi:85,ju:85,vi:100,sa:140,do:140},
-    {turno:'Tarde-Noche',horario:'19:30h–23:30h',lu:'—',ma:'—',mi:'—',ju:'—',vi:170,sa:185,do:'—'},
-    {turno:'Noche',  horario:'21:15h–01:30h', lu:'—',ma:'—',mi:'—',ju:'—',vi:200,sa:200,do:'—'},
+    {turno:'Matí',       horario:'10h–14h',       lu:85, ma:85, mi:85, ju:85, vi:90,  sa:130, do:130},
+    {turno:'Matí',       horario:'11h–15h',       lu:85, ma:85, mi:85, ju:85, vi:90,  sa:130, do:130},
+    {turno:'Tarda',      horario:'16:30h–20:30h', lu:85, ma:85, mi:85, ju:85, vi:100, sa:140, do:140},
+    {turno:'Tarda-Nit',  horario:'19:30h–23:30h', lu:'—',ma:'—',mi:'—',ju:'—',vi:170, sa:185, do:'—'},
+    {turno:'Nit',        horario:'21:15h–01:30h', lu:'—',ma:'—',mi:'—',ju:'—',vi:200, sa:200, do:'—'},
   ],
   ampliados: [
-    {turno:'Todo el día', horario:'10h–20h', lu:150,ma:150,mi:150,ju:150,vi:170,sa:250,do:270},
-    {turno:'Tarde-Noche', horario:'16:30h–01:30h',lu:'—',ma:'—',mi:'—',ju:'—',vi:390,sa:450,do:'—'},
+    {turno:'Tot el dia', horario:'10h–20h',       lu:150,ma:150,mi:150,ju:150,vi:170, sa:250, do:270},
+    {turno:'Tarda-Nit',  horario:'16:30h–01:30h', lu:'—',ma:'—',mi:'—',ju:'—',vi:390, sa:450, do:'—'},
   ],
   especiales: [
-    {celebracion:'Año Nuevo',        dia:'01/01',horario:'12h–19h',precio:310},
-    {celebracion:'Reyes',            dia:'06/01',horario:'12h–19h',precio:310},
-    {celebracion:'Carnaval',         dia:'',     horario:'20h–02h',precio:280},
-    {celebracion:'Verbena St. Joan', dia:'23/06',horario:'20h–02h',precio:280},
-    {celebracion:'Castañada',        dia:'31/10',horario:'20h–02h',precio:280},
-    {celebracion:'Nochebuena',       dia:'24/12',horario:'20h–02h',precio:350},
-    {celebracion:'Navidad mediodía', dia:'25/12',horario:'12h–19h',precio:310},
-    {celebracion:'Navidad noche',    dia:'25/12',horario:'20h–02h',precio:310},
-    {celebracion:'Sant Esteve',      dia:'26/12',horario:'12h–19h',precio:310},
-    {celebracion:'Fin de Año',       dia:'31/12',horario:'20h–03h',precio:350},
+    {celebracion:'Cap d\'Any',        dia:'01/01',horario:'12h–19h',precio:310},
+    {celebracion:'Reis Mags',         dia:'06/01',horario:'12h–19h',precio:310},
+    {celebracion:'Carnestoltes',      dia:'',     horario:'20h–02h',precio:280},
+    {celebracion:'Verbena Sant Joan', dia:'23/06',horario:'20h–02h',precio:280},
+    {celebracion:'Castanyada',        dia:'31/10',horario:'20h–02h',precio:280},
+    {celebracion:'Nit de Nadal',      dia:'24/12',horario:'20h–02h',precio:350},
+    {celebracion:'Nadal migdia',      dia:'25/12',horario:'12h–19h',precio:310},
+    {celebracion:'Nadal nit',         dia:'25/12',horario:'20h–02h',precio:310},
+    {celebracion:'Sant Esteve',       dia:'26/12',horario:'12h–19h',precio:310},
+    {celebracion:'Nit de Cap d\'Any', dia:'31/12',horario:'20h–03h',precio:350},
   ],
   extras: [
-    {concepto:'Limpieza',   turno:'Mañana (9h–15h)',  precio:30},
-    {concepto:'Limpieza',   turno:'Tarde (15h–22h)',   precio:30},
-    {concepto:'Limpieza',   turno:'Noche (22h–03h)',   precio:50},
-    {concepto:'Limpieza',   turno:'Todo el día',       precio:50},
-    {concepto:'Hora extra', turno:'Mañana (9h–15h)',   precio:20},
-    {concepto:'Hora extra', turno:'Tarde (15h–22h)',   precio:25},
-    {concepto:'Hora extra', turno:'Noche (22h–03h)',   precio:40},
-    {concepto:'Hora extra', turno:'Todo el día',       precio:30},
+    {concepto:'Neteja',     turno:'Matí (9h–15h)',   precio:30},
+    {concepto:'Neteja',     turno:'Tarda (15h–22h)', precio:30},
+    {concepto:'Neteja',     turno:'Nit (22h–03h)',   precio:50},
+    {concepto:'Neteja',     turno:'Tot el dia',      precio:50},
+    {concepto:'Hora extra', turno:'Matí (9h–15h)',   precio:20},
+    {concepto:'Hora extra', turno:'Tarda (15h–22h)', precio:25},
+    {concepto:'Hora extra', turno:'Nit (22h–03h)',   precio:40},
+    {concepto:'Hora extra', turno:'Tot el dia',      precio:30},
   ]
 };
 let indexTarifas = JSON.parse(JSON.stringify(TARIFAS_FB_DEFAULT));
@@ -2924,7 +2924,7 @@ function renderPreciosTablaSemana(tipo) {
   const wrap  = document.getElementById('prc-wrap-'+tipo);
   if(!tbody) return;
   const filas = indexTarifas[tipo] || [];
-  const DLAB = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+  const DLAB = ['Dl','Dt','Dc','Dj','Dv','Ds','Dg'];
   tbody.innerHTML = filas.map(row => {
     const celdas = DIAS_IDX.map((d,i) => {
       const v = row[d];
