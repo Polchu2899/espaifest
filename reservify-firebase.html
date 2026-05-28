@@ -2233,6 +2233,11 @@ async function loadReservas() {
     const esTimestampReal = v => v && (typeof v.toMillis === 'function' || typeof v.seconds === 'number');
     const ahoraLoad = Date.now();
     allReservas.sort((a,b) => {
+      // Reservas "Nueva" (sin vista) siempre primero
+      const aNueva = esReservaNueva(a);
+      const bNueva = esReservaNueva(b);
+      if(aNueva && !bNueva) return -1;
+      if(!aNueva && bNueva) return 1;
       const aReal = esTimestampReal(a.createdAt);
       const bReal = esTimestampReal(b.createdAt);
       const aSusp = tsOf(a.createdAt) > ahoraLoad + 60*24*60*60*1000;
@@ -2420,6 +2425,11 @@ window.filterReservas = () => {
 
   // Ordenar
   filtered.sort((a, b) => {
+    // Reservas "Nueva" (sin vista) siempre primero
+    const aNueva = esReservaNueva(a);
+    const bNueva = esReservaNueva(b);
+    if(aNueva && !bNueva) return -1;
+    if(!aNueva && bNueva) return 1;
     let va, vb;
     if (_sortCampo === 'createdAt') {
       const ahoraF = Date.now();
