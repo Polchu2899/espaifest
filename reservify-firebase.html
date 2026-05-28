@@ -2596,8 +2596,8 @@ async function getNextNumReserva() {
 function buildEmailCliente(params, lang) {
   const ca = lang === 'ca';
   const heroTitol  = ca ? 'Reserva rebuda!'         : '¡Reserva recibida!';
-  const heroSub    = ca ? 'En breu la Laura es posarà en contacte amb tu per confirmar-la.'
-                        : 'En breve Laura se pondrá en contacto contigo para confirmar.';
+  const heroSub    = ca ? 'Per confirmar la reserva, cal fer el pagament de la fiança i els extres. Tens 3 dies per fer el pagament; en cas contrari, la reserva s\'anul·larà automàticament.'
+                        : 'Para confirmar la reserva, debes realizar el pago de la fianza y los extras. Tienes 3 días para hacer el pago; de lo contrario, la reserva se cancelará automáticamente.';
   const intro      = ca ? 'Hem rebut la teva sol·licitud de reserva. Aquí tens el resum complet:'
                         : 'Hemos recibido tu solicitud de reserva. Aquí tienes el resumen completo:';
   const tDetalls   = ca ? 'Detalls de la reserva'   : 'Detalles de la reserva';
