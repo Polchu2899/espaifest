@@ -5038,6 +5038,8 @@ window.importarBookly = async function() {
   loadClientes(true); // Importación XLS masiva: forzar refresco
   loadMigLog();
   resetXlsModal();
+  // Sincronizar el calendario público con las nuevas reservas confirmadas
+  sincronizarCalendarioSilencioso().then(() => bustPublicCache()).catch(()=>{});
 };
 
 window.resetXlsModal = function() {
