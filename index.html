@@ -1620,7 +1620,7 @@ body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
       <span class="lang-btn on" aria-current="true">CA</span>
     </div>
     <button class="theme-btn" onclick="toggleTheme()" aria-label="Cambiar tema" id="tb"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
-    <a href="#reservas" class="n-cta btn btn-sm">Reservar ara</a>
+    <a href="#calendario" class="n-cta btn btn-sm">Reservar ara</a>
   </div>
   <!-- Hamburguesa — solo móvil -->
   <button class="ham-btn" id="ham-btn" aria-label="Abrir menú" aria-expanded="false" onclick="toggleMobMenu()">
@@ -1662,7 +1662,7 @@ body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
   </nav>
   <div class="mob-bottom-bar">
     <div class="mob-cta-wrap">
-      <a href="#reservas" class="btn btn-primary" onclick="closeMobMenu()"
+      <a href="#calendario" class="btn btn-primary" onclick="closeMobMenu()"
          style="display:flex;align-items:center;justify-content:center;width:100%;padding:13px;border-radius:12px;font-size:.93rem;text-decoration:none;font-weight:700;font-family:var(--fb);background:linear-gradient(135deg,var(--cp),var(--co));color:#fff;">Reservar ara</a>
     </div>
     <div class="mob-footer">
@@ -2033,7 +2033,7 @@ body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
 
     <!-- CTA -->
     <div style="text-align:center;margin-top:36px" data-a="up">
-      <a href="#reservas" class="btn btn-primary">Reservar ara<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <a href="#calendario" class="btn btn-primary">Reservar ara<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
       <p style="font-size:.78rem;color:var(--tx2);margin-top:12px">Necessites un horari diferent? <a href="https://api.whatsapp.com/send?phone=34674379709" target="_blank" rel="noopener" style="color:var(--ct);text-decoration:none">Escriu-nos i ho busquem →</a></p>
     </div>
@@ -2284,10 +2284,17 @@ body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
     <div class="tc" data-a="up">
       <div class="eyebrow ew-f" style="justify-content:center"><div class="ew-dot"></div><span>Extras per la teva celebració</span></div>
       <h2 class="sec-h2" data-blur="top">Càtering</h2>
-      <p class="sec-lead">Completa la teva reserva amb els nostres serveis de càtering. Selecciona les unitats que necessites i el preu s'afegirà automàticament al total.</p>
+      <p class="sec-lead">Sorprèn als teus convidats! Tria el teu menú preferit i afegeix-lo directament a la reserva. Tot preparat per EspaiFest, sense preocupacions.</p>
     </div>
 
-    <div class="eq-grid" style="margin-top:40px;">
+    <!-- Pills resum -->
+    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:28px 0 0;" data-a="up">
+      <span style="background:oklch(87% .19 90/.15);border:1px solid oklch(87% .19 90/.3);border-radius:30px;padding:6px 16px;font:600 .8rem var(--fd);color:oklch(40% .15 90);">🍱 Menús infantils des de 8€/persona</span>
+      <span style="background:oklch(68% .22 38/.12);border:1px solid oklch(68% .22 38/.25);border-radius:30px;padding:6px 16px;font:600 .8rem var(--fd);color:var(--co);">🥂 Snacks per a adults des de 12€/persona</span>
+      <span style="background:var(--s0);border:1px solid var(--bd);border-radius:30px;padding:6px 16px;font:600 .8rem var(--fd);color:var(--tx2);">✅ Preu s'afegeix automàticament a la reserva</span>
+    </div>
+
+    <div class="eq-grid" style="margin-top:24px;">
 
       <!-- Menús Infantils -->
       <div class="eq-card" data-a="up" data-d="0">
@@ -2295,28 +2302,49 @@ body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
           <div class="eq-ico" style="background:oklch(87% .19 90/.15);font-size:1.4rem;line-height:1;">🍱</div>
           <div>
             <div class="eq-card-title">Menús Infantils</div>
-            <div class="eq-card-sub">Per als més petits</div>
+            <div class="eq-card-sub">Per als més petits · Des de 8€/persona</div>
           </div>
         </div>
-        <div style="border-radius:12px;overflow:hidden;aspect-ratio:4/3;margin:12px 0;">
+        <div style="overflow:hidden;aspect-ratio:16/9;margin:0;position:relative;">
           <img src="https://i.ibb.co/xtjGmPdt/menu-infaltil.png" alt="Menú Infantil EspaiFest" style="width:100%;height:100%;object-fit:cover;display:block;">
+          <div style="position:absolute;bottom:10px;left:10px;background:oklch(75% .18 90);color:#fff;padding:4px 12px;border-radius:20px;font:700 .7rem var(--fd);backdrop-filter:blur(4px);">🍱 4 opcions disponibles</div>
         </div>
         <div class="eq-items">
-          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:3px;padding:8px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
-            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:600;">Menú Mini</span><span class="eq-pill" style="background:oklch(87% .19 90/.15);color:oklch(45% .15 90)">8,00 €/ud.</span></div>
-            <span style="font-size:.78rem;color:var(--tx3);">Sandvitx, fruita, suc natural i sorpresa</span>
+          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:6px;padding:10px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
+            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:700;font-size:.88rem;">Menú Mini</span><span class="eq-pill" style="background:oklch(87% .19 90/.2);color:oklch(40% .15 90);font-size:.7rem;padding:3px 10px;">8,00 €/ud.</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🥪 Sandvitx truita o pernil</span>
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🍎 Fruita natural</span>
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🧃 Suc de fruita</span>
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🎁 Sorpresa de festa</span>
+            </div>
           </div>
-          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:3px;padding:8px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
-            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:600;">Menú Júnior</span><span class="eq-pill" style="background:oklch(87% .19 90/.15);color:oklch(45% .15 90)">10,00 €/ud.</span></div>
-            <span style="font-size:.78rem;color:var(--tx3);">Entrepà artesà, patates, beguda i postres</span>
+          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:6px;padding:10px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
+            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:700;font-size:.88rem;">Menú Júnior</span><span class="eq-pill" style="background:oklch(87% .19 90/.2);color:oklch(40% .15 90);font-size:.7rem;padding:3px 10px;">10,00 €/ud.</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🥖 Entrepà artesà pernil/formatge</span>
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🥔 Patates amb salsa</span>
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🥤 Beguda a triar</span>
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🍮 Postres (iogurt o fruita)</span>
+            </div>
           </div>
-          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:3px;padding:8px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
-            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:600;">Mix Picoteo Infantil</span><span class="eq-pill" style="background:oklch(87% .19 90/.15);color:oklch(45% .15 90)">12,00 €/ud.</span></div>
-            <span style="font-size:.78rem;color:var(--tx3);">Selecció de snacks dolços i salats per a nens</span>
+          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:6px;padding:10px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
+            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:700;font-size:.88rem;">Mix Picoteo Infantil</span><span class="eq-pill" style="background:oklch(87% .19 90/.2);color:oklch(40% .15 90);font-size:.7rem;padding:3px 10px;">12,00 €/ud.</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🍿 Xips i crackers variats</span>
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🍬 Gominoles i llaminadures</span>
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🍫 Xocolata i fruits secs</span>
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🥪 Mini sandvitxos</span>
+            </div>
           </div>
-          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:3px;padding:8px 0;">
-            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:600;">Begudes Junior</span><span class="eq-pill" style="background:oklch(87% .19 90/.15);color:oklch(45% .15 90)">10,00 €/ud.</span></div>
-            <span style="font-size:.78rem;color:var(--tx3);">Pack de begudes infantils per a tota la festa</span>
+          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:6px;padding:10px 0;">
+            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:700;font-size:.88rem;">Begudes Junior</span><span class="eq-pill" style="background:oklch(87% .19 90/.2);color:oklch(40% .15 90);font-size:.7rem;padding:3px 10px;">10,00 €/ud.</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🧃 Sucs naturals variats</span>
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🥤 Refrescos infantils</span>
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">💧 Aigues minerals</span>
+              <span style="background:oklch(87% .19 90/.12);border:1px solid oklch(87% .19 90/.3);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🥛 Batut de fruita</span>
+            </div>
           </div>
         </div>
       </div>
@@ -2327,37 +2355,60 @@ body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
           <div class="eq-ico" style="background:oklch(68% .22 38/.12);font-size:1.4rem;line-height:1;">🥂</div>
           <div>
             <div class="eq-card-title">Snacks Adults</div>
-            <div class="eq-card-sub">Per als convidats grans</div>
+            <div class="eq-card-sub">Per als convidats grans · Des de 12€/persona</div>
           </div>
         </div>
-        <div style="border-radius:12px;overflow:hidden;aspect-ratio:4/3;margin:12px 0;">
+        <div style="overflow:hidden;aspect-ratio:16/9;margin:0;position:relative;">
           <img src="https://i.ibb.co/jPDGS5GF/snaks-adulto.png" alt="Snacks Adults EspaiFest" style="width:100%;height:100%;object-fit:cover;display:block;">
+          <div style="position:absolute;bottom:10px;left:10px;background:oklch(58% .2 38);color:#fff;padding:4px 12px;border-radius:20px;font:700 .7rem var(--fd);backdrop-filter:blur(4px);">🥂 4 opcions disponibles</div>
         </div>
         <div class="eq-items">
-          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:3px;padding:8px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
-            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:600;">Bandeja Dolça</span><span class="eq-pill" style="background:oklch(68% .22 38/.12);color:var(--co)">12,00 €/ud.</span></div>
-            <span style="font-size:.78rem;color:var(--tx3);">Pastisseria fina, macarons i dolços de temporada</span>
+          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:6px;padding:10px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
+            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:700;font-size:.88rem;">Bandeja Dolça</span><span class="eq-pill" style="background:oklch(68% .22 38/.12);color:var(--co);font-size:.7rem;padding:3px 10px;">12,00 €/ud.</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🍰 Pastisseria de temporada</span>
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🌈 Macarons artesans</span>
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🥐 Brioixeria fina</span>
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🍫 Dolços de xocolata</span>
+            </div>
           </div>
-          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:3px;padding:8px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
-            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:600;">Bandeja Salada</span><span class="eq-pill" style="background:oklch(68% .22 38/.12);color:var(--co)">12,00 €/ud.</span></div>
-            <span style="font-size:.78rem;color:var(--tx3);">Canapès, embotits seleccionats i formatges</span>
+          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:6px;padding:10px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
+            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:700;font-size:.88rem;">Bandeja Salada</span><span class="eq-pill" style="background:oklch(68% .22 38/.12);color:var(--co);font-size:.7rem;padding:3px 10px;">12,00 €/ud.</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🥖 Canapès variats</span>
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🥩 Embotits seleccionats</span>
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🧀 Formatges artesans</span>
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🍅 Pa amb tomàquet i oli</span>
+            </div>
           </div>
-          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:3px;padding:8px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
-            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:600;">Mix Picoteo Adult</span><span class="eq-pill" style="background:oklch(68% .22 38/.12);color:var(--co)">12,00 €/ud.</span></div>
-            <span style="font-size:.78rem;color:var(--tx3);">Combinació de bandeja dolça i bandeja salada</span>
+          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:6px;padding:10px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
+            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:700;font-size:.88rem;">Mix Picoteo Adult</span><span class="eq-pill" style="background:oklch(68% .22 38/.12);color:var(--co);font-size:.7rem;padding:3px 10px;">12,00 €/ud.</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">✅ Inclou bandeja dolça</span>
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">✅ Inclou bandeja salada</span>
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🍤 Croquetes casolanes</span>
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🥖 Montaditos variats</span>
+            </div>
           </div>
-          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:3px;padding:8px 0;">
-            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:600;">Begudes FREDES Adults</span><span class="eq-pill" style="background:oklch(68% .22 38/.12);color:var(--co)">18,00 €/ud.</span></div>
-            <span style="font-size:.78rem;color:var(--tx3);">Pack de begudes fredes (refrescos, aigues, ...)</span>
+          <div class="eq-item" style="flex-direction:column;align-items:flex-start;gap:6px;padding:10px 0;">
+            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:700;font-size:.88rem;">Begudes FREDES Adults</span><span class="eq-pill" style="background:oklch(68% .22 38/.12);color:var(--co);font-size:.7rem;padding:3px 10px;">18,00 €/ud.</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🥤 Refrescos variats</span>
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">💧 Aigues minerals</span>
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🍺 Cerveses sense alcohol</span>
+              <span style="background:oklch(68% .22 38/.08);border:1px solid oklch(68% .22 38/.2);border-radius:20px;padding:2px 8px;font-size:.69rem;color:var(--tx2);">🧃 Sucs naturals</span>
+            </div>
           </div>
         </div>
       </div>
 
     </div>
 
-    <div class="eq-notice" data-a="up" style="margin-top:24px;">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <p>Afegeix el càtering directament en fer la <a href="#reservas" style="color:var(--co);text-decoration:none;font-weight:700;">reserva</a>. Selecciona les unitats de cada producte i el preu s'actualitzarà en temps real.</p>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:32px;padding:28px 24px;background:linear-gradient(135deg,oklch(87% .19 90/.12),oklch(68% .22 38/.1));border:1px solid var(--bd);border-radius:20px;text-align:center;" data-a="up">
+      <div style="font-size:2rem;">🎉</div>
+      <div style="font:700 1.05rem var(--fd);color:var(--tx1);">Vols afegir càtering a la teva reserva?</div>
+      <p style="font-size:.83rem;color:var(--tx2);margin:0;max-width:480px;">Selecciona les unitats de cada producte directament en el formulari de reserva i el preu s'actualitzarà en temps real. Sense complicacions.</p>
+      <a href="#reservas" class="btn btn-fest" style="padding:12px 28px;font-size:.9rem;margin-top:4px;">Afegeix càtering a la reserva<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
     </div>
   </div>
 </section>
@@ -2526,7 +2577,7 @@ body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
 
           <button class="submit-btn" onclick="enviarReserva()" type="button">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            <span>Sol·licitar reserva</span>
+            <span>Realitza la teva reserva</span>
           </button>
           <div class="bizum-box">
             <div class="bizum-ico">
