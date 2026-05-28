@@ -4800,7 +4800,7 @@ window.parseXlsBookly = async function(file) {
       horaEntrada:     entrada.slice(0,5),
       horaSalida:      salida.slice(0,5),
       precioBase:      parseFloat(g(r,4))||0,
-      importe:         parseFloat(g(r,5))||0,
+      importe:         parseFloat(g(r,5)) || parseFloat(g(r,4)) || 0,
       nombre:          `${nombre} ${apellidos}`.trim(),
       apellidos,
       localidad:       g(r,8),
