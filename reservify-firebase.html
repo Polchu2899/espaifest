@@ -2210,13 +2210,20 @@ async function loadReservas() {
     // Ordenar en cliente por fecha de reserva desc para consistencia.
     const snap = await getDocs(collection(db,'reservas'));
     allReservas = snap.docs.map(d => ({id:d.id,...d.data()}));
-    // Ordenar por createdAt desc — soporta Firestore Timestamp, string ISO, string fecha, null
+    // Ordenar por createdAt desc — datos con fecha sospechosa (futuro >60d) al final
     const tsOf = v => _tsMs(v);
     const esTimestampReal = v => v && (typeof v.toMillis === 'function' || typeof v.seconds === 'number');
+    const ahoraLoad = Date.now();
     allReservas.sort((a,b) => {
       const aReal = esTimestampReal(a.createdAt);
       const bReal = esTimestampReal(b.createdAt);
-      // Timestamps reales siempre antes que strings importados
+      const aSusp = tsOf(a.createdAt) > ahoraLoad + 60*24*60*60*1000;
+      const bSusp = tsOf(b.createdAt) > ahoraLoad + 60*24*60*60*1000;
+      // Datos sospechosos (fecha inscripción en el futuro) siempre al final
+      if(aSusp && !bSusp) return 1;
+      if(!aSusp && bSusp) return -1;
+      if(aSusp && bSusp) return tsOf(b.createdAt) - tsOf(a.createdAt);
+      // Timestamps reales antes que strings importados
       if(aReal && !bReal) return -1;
       if(!aReal && bReal) return 1;
       // Ambos reales → más reciente primero
@@ -2397,6 +2404,12 @@ window.filterReservas = () => {
   filtered.sort((a, b) => {
     let va, vb;
     if (_sortCampo === 'createdAt') {
+      const ahoraF = Date.now();
+      const aSusp = _tsMs(a.createdAt) > ahoraF + 60*24*60*60*1000;
+      const bSusp = _tsMs(b.createdAt) > ahoraF + 60*24*60*60*1000;
+      // Datos sospechosos siempre al final independientemente de la dirección
+      if(aSusp && !bSusp) return 1;
+      if(!aSusp && bSusp) return -1;
       va = _tsMs(a.createdAt);
       vb = _tsMs(b.createdAt);
     } else {
