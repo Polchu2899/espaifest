@@ -6353,7 +6353,7 @@ function renderTarTablaEspeciales() {
     </tr>`).join('');
 }
 
-window.tarAddEspecial = function() {
+window.tarAddEspecial = async function() {
   const nom   = document.getElementById('tar-es-nom').value.trim();
   const dia   = document.getElementById('tar-es-dia').value.trim();
   const hora  = document.getElementById('tar-es-hora').value.trim();
@@ -6362,6 +6362,7 @@ window.tarAddEspecial = function() {
   window.tarifasData.especiales.push({celebracion:nom,dia,horario:hora,precio:prec});
   renderTarTablaEspeciales();
   ['tar-es-nom','tar-es-dia','tar-es-hora','tar-es-precio'].forEach(id=>{document.getElementById(id).value='';});
+  await saveTarifas('especiales');
 };
 
 // ── Fechas concretas: días especiales con fecha exacta ────────
