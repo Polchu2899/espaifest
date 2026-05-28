@@ -2028,7 +2028,25 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </select>
       </div>
     </div>
-    <div class="fg"><label class="fl">Extras</label><input type="text" class="fi" id="er-extras" placeholder="Extras contratados"></div>
+    <div class="fg"><label class="fl">Extras / Càtering</label>
+      <div id="er-extras-panel" style="border:1.5px solid var(--b2);border-radius:10px;padding:12px 14px;background:var(--s1);">
+        <div style="font:600 .72rem 'Plus Jakarta Sans',sans-serif;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;">Menú / Snacks Infantil</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;"><span>Menú mini</span><div style="display:flex;align-items:center;gap:6px;"><span style="color:var(--t3);font-size:.78rem;">8,00 €/ud.</span><div style="display:flex;align-items:center;border:1.5px solid rgba(0,0,0,0.18);border-radius:8px;overflow:hidden;"><button type="button" onclick="erChangeQty(this,-1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--t2);line-height:1;padding:0;">−</button><input type="number" class="er-ext-qty" data-nombre="Menú mini" data-precio="8" min="0" max="99" value="0" style="width:30px;text-align:center;border:none;border-left:1px solid rgba(0,0,0,0.12);border-right:1px solid rgba(0,0,0,0.12);background:var(--s1);color:var(--tx);font:700 .84rem 'Plus Jakarta Sans',sans-serif;padding:0;height:26px;-moz-appearance:textfield;"><button type="button" onclick="erChangeQty(this,1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--teal);line-height:1;padding:0;">+</button></div></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;"><span>Menú Júnior</span><div style="display:flex;align-items:center;gap:6px;"><span style="color:var(--t3);font-size:.78rem;">10,00 €/ud.</span><div style="display:flex;align-items:center;border:1.5px solid rgba(0,0,0,0.18);border-radius:8px;overflow:hidden;"><button type="button" onclick="erChangeQty(this,-1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--t2);line-height:1;padding:0;">−</button><input type="number" class="er-ext-qty" data-nombre="Menú Júnior" data-precio="10" min="0" max="99" value="0" style="width:30px;text-align:center;border:none;border-left:1px solid rgba(0,0,0,0.12);border-right:1px solid rgba(0,0,0,0.12);background:var(--s1);color:var(--tx);font:700 .84rem 'Plus Jakarta Sans',sans-serif;padding:0;height:26px;-moz-appearance:textfield;"><button type="button" onclick="erChangeQty(this,1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--teal);line-height:1;padding:0;">+</button></div></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;"><span>Mix Picoteo infantil</span><div style="display:flex;align-items:center;gap:6px;"><span style="color:var(--t3);font-size:.78rem;">12,00 €/ud.</span><div style="display:flex;align-items:center;border:1.5px solid rgba(0,0,0,0.18);border-radius:8px;overflow:hidden;"><button type="button" onclick="erChangeQty(this,-1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--t2);line-height:1;padding:0;">−</button><input type="number" class="er-ext-qty" data-nombre="Mix Picoteo infantil" data-precio="12" min="0" max="99" value="0" style="width:30px;text-align:center;border:none;border-left:1px solid rgba(0,0,0,0.12);border-right:1px solid rgba(0,0,0,0.12);background:var(--s1);color:var(--tx);font:700 .84rem 'Plus Jakarta Sans',sans-serif;padding:0;height:26px;-moz-appearance:textfield;"><button type="button" onclick="erChangeQty(this,1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--teal);line-height:1;padding:0;">+</button></div></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;"><span>Begudes Junior</span><div style="display:flex;align-items:center;gap:6px;"><span style="color:var(--t3);font-size:.78rem;">10,00 €/ud.</span><div style="display:flex;align-items:center;border:1.5px solid rgba(0,0,0,0.18);border-radius:8px;overflow:hidden;"><button type="button" onclick="erChangeQty(this,-1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--t2);line-height:1;padding:0;">−</button><input type="number" class="er-ext-qty" data-nombre="Begudes Junior" data-precio="10" min="0" max="99" value="0" style="width:30px;text-align:center;border:none;border-left:1px solid rgba(0,0,0,0.12);border-right:1px solid rgba(0,0,0,0.12);background:var(--s1);color:var(--tx);font:700 .84rem 'Plus Jakarta Sans',sans-serif;padding:0;height:26px;-moz-appearance:textfield;"><button type="button" onclick="erChangeQty(this,1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--teal);line-height:1;padding:0;">+</button></div></div></div>
+        </div>
+        <div style="font:600 .72rem 'Plus Jakarta Sans',sans-serif;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;">Snacks Adults</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;"><span>Bandeja Dolça</span><div style="display:flex;align-items:center;gap:6px;"><span style="color:var(--t3);font-size:.78rem;">12,00 €/ud.</span><div style="display:flex;align-items:center;border:1.5px solid rgba(0,0,0,0.18);border-radius:8px;overflow:hidden;"><button type="button" onclick="erChangeQty(this,-1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--t2);line-height:1;padding:0;">−</button><input type="number" class="er-ext-qty" data-nombre="Bandeja Dolça" data-precio="12" min="0" max="99" value="0" style="width:30px;text-align:center;border:none;border-left:1px solid rgba(0,0,0,0.12);border-right:1px solid rgba(0,0,0,0.12);background:var(--s1);color:var(--tx);font:700 .84rem 'Plus Jakarta Sans',sans-serif;padding:0;height:26px;-moz-appearance:textfield;"><button type="button" onclick="erChangeQty(this,1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--teal);line-height:1;padding:0;">+</button></div></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;"><span>Bandeja Salada</span><div style="display:flex;align-items:center;gap:6px;"><span style="color:var(--t3);font-size:.78rem;">12,00 €/ud.</span><div style="display:flex;align-items:center;border:1.5px solid rgba(0,0,0,0.18);border-radius:8px;overflow:hidden;"><button type="button" onclick="erChangeQty(this,-1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--t2);line-height:1;padding:0;">−</button><input type="number" class="er-ext-qty" data-nombre="Bandeja Salada" data-precio="12" min="0" max="99" value="0" style="width:30px;text-align:center;border:none;border-left:1px solid rgba(0,0,0,0.12);border-right:1px solid rgba(0,0,0,0.12);background:var(--s1);color:var(--tx);font:700 .84rem 'Plus Jakarta Sans',sans-serif;padding:0;height:26px;-moz-appearance:textfield;"><button type="button" onclick="erChangeQty(this,1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--teal);line-height:1;padding:0;">+</button></div></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;"><span>Mix Picoteo adulto</span><div style="display:flex;align-items:center;gap:6px;"><span style="color:var(--t3);font-size:.78rem;">12,00 €/ud.</span><div style="display:flex;align-items:center;border:1.5px solid rgba(0,0,0,0.18);border-radius:8px;overflow:hidden;"><button type="button" onclick="erChangeQty(this,-1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--t2);line-height:1;padding:0;">−</button><input type="number" class="er-ext-qty" data-nombre="Mix Picoteo adulto" data-precio="12" min="0" max="99" value="0" style="width:30px;text-align:center;border:none;border-left:1px solid rgba(0,0,0,0.12);border-right:1px solid rgba(0,0,0,0.12);background:var(--s1);color:var(--tx);font:700 .84rem 'Plus Jakarta Sans',sans-serif;padding:0;height:26px;-moz-appearance:textfield;"><button type="button" onclick="erChangeQty(this,1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--teal);line-height:1;padding:0;">+</button></div></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:.84rem;"><span>Begudes FREDES Adults</span><div style="display:flex;align-items:center;gap:6px;"><span style="color:var(--t3);font-size:.78rem;">18,00 €/ud.</span><div style="display:flex;align-items:center;border:1.5px solid rgba(0,0,0,0.18);border-radius:8px;overflow:hidden;"><button type="button" onclick="erChangeQty(this,-1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--t2);line-height:1;padding:0;">−</button><input type="number" class="er-ext-qty" data-nombre="Begudes FREDES Adults" data-precio="18" min="0" max="99" value="0" style="width:30px;text-align:center;border:none;border-left:1px solid rgba(0,0,0,0.12);border-right:1px solid rgba(0,0,0,0.12);background:var(--s1);color:var(--tx);font:700 .84rem 'Plus Jakarta Sans',sans-serif;padding:0;height:26px;-moz-appearance:textfield;"><button type="button" onclick="erChangeQty(this,1)" style="width:26px;height:26px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--teal);line-height:1;padding:0;">+</button></div></div></div>
+        </div>
+        <div id="er-extras-total" style="font:600 .82rem 'Plus Jakarta Sans',sans-serif;color:var(--teal);padding-top:8px;border-top:1px solid var(--b2);">Subtotal extras: 0,00 €</div>
+      </div>
+    </div>
     <div class="fg"><label class="fl">Notas</label><textarea class="fi" id="er-notas" style="min-height:60px;resize:vertical" placeholder="Observaciones..."></textarea></div>
 
     <div class="mfoot">
@@ -5332,6 +5350,38 @@ window.resetFiltroXls = function() {
   filtrarXls();
 };
 
+// ── EDITAR RESERVA — helpers extras ───────────────────────────
+window._erBaseImporte = 0;
+
+const _ER_CATALOG = [
+  { nombre:'Menú mini', precio:8 },
+  { nombre:'Menú Júnior', precio:10 },
+  { nombre:'Mix Picoteo infantil', precio:12 },
+  { nombre:'Begudes Junior', precio:10 },
+  { nombre:'Bandeja Dolça', precio:12 },
+  { nombre:'Bandeja Salada', precio:12 },
+  { nombre:'Mix Picoteo adulto', precio:12 },
+  { nombre:'Begudes FREDES Adults', precio:18 },
+];
+
+window.erChangeQty = function(btn, delta) {
+  const inp = btn.parentElement.querySelector('input.er-ext-qty');
+  if(!inp) return;
+  inp.value = Math.max(0, Math.min(99, (parseInt(inp.value)||0) + delta));
+  recalcularExtrasPanel();
+};
+
+function recalcularExtrasPanel() {
+  let total = 0;
+  document.querySelectorAll('#er-extras-panel .er-ext-qty').forEach(inp => {
+    total += (parseInt(inp.value)||0) * (parseFloat(inp.dataset.precio)||0);
+  });
+  const el = document.getElementById('er-extras-total');
+  if(el) el.textContent = `Subtotal extras: ${fmtMoney(total)}`;
+  const imp = document.getElementById('er-importe');
+  if(imp) imp.value = Math.max(0, window._erBaseImporte + total).toFixed(2);
+}
+
 // ── EDITAR RESERVA ────────────────────────────────────────────
 window.abrirEditarReserva = function(id) {
   const r = allReservas.find(x => x.id === id);
@@ -5351,9 +5401,26 @@ window.abrirEditarReserva = function(id) {
   // Reserva
   document.getElementById('er-fecha').value   = r.fecha    || '';
   document.getElementById('er-horario').value = r.horario  || '';
-  document.getElementById('er-extras').value  = r.extras   || '';
   document.getElementById('er-notas').value   = r.notas    || r.comentarios || '';
-  document.getElementById('er-importe').value = r.importe  || 0;
+
+  // Parse extras string → pre-fill qty selectors
+  document.querySelectorAll('#er-extras-panel .er-ext-qty').forEach(inp => { inp.value = 0; });
+  let _oldExtrasTotal = 0;
+  const _extrasStr = r.extras || '';
+  if(_extrasStr && _extrasStr !== 'Ninguno') {
+    _extrasStr.split(',').map(s => s.trim()).forEach(part => {
+      _ER_CATALOG.forEach(cat => {
+        if(part.startsWith(cat.nombre)) {
+          const m = part.match(/×(\d+)/);
+          const qty = m ? parseInt(m[1]) : 1;
+          const inp = document.querySelector(`#er-extras-panel .er-ext-qty[data-nombre="${cat.nombre}"]`);
+          if(inp) { inp.value = qty; _oldExtrasTotal += qty * cat.precio; }
+        }
+      });
+    });
+  }
+  window._erBaseImporte = (parseFloat(r.importe) || 0) - _oldExtrasTotal;
+  recalcularExtrasPanel();
   document.getElementById('er-cobrado').value = r.cobrado  || r.senal || 0;
 
   // Selects — buscar opción más cercana al valor guardado
@@ -5401,7 +5468,12 @@ window.guardarEdicionReserva = async function() {
     horario:    document.getElementById('er-horario').value.trim(),
     servicio:   document.getElementById('er-servicio').value,
     personas:   document.getElementById('er-personas').value,
-    extras:     document.getElementById('er-extras').value.trim() || 'Ninguno',
+    extras:     (()=>{
+      const objs = Array.from(document.querySelectorAll('#er-extras-panel .er-ext-qty'))
+        .filter(inp => (parseInt(inp.value)||0) > 0)
+        .map(inp => { const qty=parseInt(inp.value); const p=parseFloat(inp.dataset.precio)||0; return `${inp.dataset.nombre}${qty>1?' ×'+qty:''} (${fmtMoney(qty*p)})`; });
+      return objs.length ? objs.join(', ') : 'Ninguno';
+    })(),
     notas:      document.getElementById('er-notas').value.trim(),
     importe,
     cobrado,
