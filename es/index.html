@@ -1582,6 +1582,21 @@ body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
 .ft-legal-links a:hover{color:var(--co);}
 @media(max-width:600px){#cookie-banner{flex-direction:column;align-items:flex-start;}}
 
+/* ═══ SIDEBAR NAVEGACIÓN SECCIONES ════════════════════ */
+#sn-nav{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:700;opacity:0;pointer-events:none;transition:opacity .4s;}
+#sn-nav.visible{opacity:1;pointer-events:auto;}
+.sn-rail{display:flex;flex-direction:column;gap:5px;padding:10px 7px;background:oklch(12% .015 260/.85);border:1px solid var(--bd);border-radius:20px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+[data-theme="light"] .sn-rail{background:oklch(98% .003 260/.9);}
+.sn-item{position:relative;display:flex;align-items:center;padding:3px 0;cursor:pointer;}
+.sn-dot{width:7px;height:7px;border-radius:50%;background:var(--tx3);transition:all .25s var(--ease-b);flex-shrink:0;}
+.sn-item:hover .sn-dot{background:var(--tx1);transform:scale(1.5);}
+.sn-item.active .sn-dot{background:var(--co);box-shadow:0 0 10px oklch(68% .22 38/.6);transform:scale(1.5);}
+.sn-label{position:absolute;right:calc(100% + 12px);top:50%;transform:translateY(-50%);background:oklch(12% .015 260/.92);border:1px solid var(--bd);border-radius:8px;padding:4px 10px;font:600 .7rem var(--fb);color:var(--tx1);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .18s;backdrop-filter:blur(10px);}
+[data-theme="light"] .sn-label{background:oklch(98% .003 260/.96);}
+.sn-item:hover .sn-label{opacity:1;}
+.sn-cta .sn-dot{background:linear-gradient(135deg,var(--cp),var(--co));width:9px;height:9px;box-shadow:0 2px 10px oklch(68% .22 38/.4);}
+@media(max-width:1199px){#sn-nav{display:none;}}
+
 </style>
 </head>
 <body>
@@ -1630,6 +1645,24 @@ body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
     <span></span><span></span><span></span>
   </button>
 </nav>
+
+<!-- SIDEBAR NAVEGACIÓN SECCIONES -->
+<aside id="sn-nav" aria-label="Navegación de secciones" role="navigation">
+  <div class="sn-rail">
+    <div class="sn-item" data-section="hero"><div class="sn-dot"></div><span class="sn-label">Inicio</span></div>
+    <div class="sn-item" data-section="fiestas"><div class="sn-dot"></div><span class="sn-label">Fiestas</span></div>
+    <div class="sn-item" data-section="adultos"><div class="sn-dot"></div><span class="sn-label">Celebraciones</span></div>
+    <div class="sn-item" data-section="business"><div class="sn-dot"></div><span class="sn-label">Business</span></div>
+    <div class="sn-item" data-section="precios"><div class="sn-dot"></div><span class="sn-label">Precios</span></div>
+    <div class="sn-item" data-section="fidelizacion"><div class="sn-dot"></div><span class="sn-label">Fidelización</span></div>
+    <div class="sn-item" data-section="equipamiento"><div class="sn-dot"></div><span class="sn-label">Equipamiento</span></div>
+    <div class="sn-item" data-section="catering"><div class="sn-dot"></div><span class="sn-label">Catering</span></div>
+    <div class="sn-item" data-section="galeria"><div class="sn-dot"></div><span class="sn-label">Galería</span></div>
+    <div class="sn-item" data-section="calendario"><div class="sn-dot"></div><span class="sn-label">Calendario</span></div>
+    <div class="sn-item" data-section="blog"><div class="sn-dot"></div><span class="sn-label">Blog</span></div>
+    <div class="sn-item sn-cta" data-section="reservas"><div class="sn-dot"></div><span class="sn-label">Reservar</span></div>
+  </div>
+</aside>
 
 <!-- OVERLAY MÓVIL -->
 <div class="mob-overlay" id="mob-overlay" onclick="closeMobMenu()"></div>
@@ -4824,5 +4857,31 @@ document.addEventListener('keydown', e => {
   </div>
 </div>
 
+<script>
+(function(){
+  var nav=document.getElementById('sn-nav');
+  if(!nav)return;
+  var items=nav.querySelectorAll('.sn-item[data-section]');
+  var secIds=Array.from(items).map(function(i){return i.getAttribute('data-section');});
+  var secs=secIds.map(function(id){return document.getElementById(id);}).filter(Boolean);
+  window.addEventListener('scroll',function(){nav.classList.toggle('visible',window.scrollY>300);},{passive:true});
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        items.forEach(function(i){i.classList.remove('active');});
+        var a=nav.querySelector('[data-section="'+e.target.id+'"]');
+        if(a)a.classList.add('active');
+      }
+    });
+  },{threshold:0.25,rootMargin:'-10% 0px -10% 0px'});
+  secs.forEach(function(s){obs.observe(s);});
+  items.forEach(function(item){
+    item.addEventListener('click',function(){
+      var t=document.getElementById(item.getAttribute('data-section'));
+      if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
+})();
+</script>
 </body>
 </html>
