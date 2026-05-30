@@ -4847,12 +4847,12 @@ document.addEventListener('keydown', e => {
 (function(){
   var nav=document.getElementById('sn-nav');
   if(!nav)return;
-  var secs=['hero','fiestas','adultos','business','precios','fidelizacion','equipamiento','catering','galeria','calendario','blog','reservas']
-    .map(function(id){return document.getElementById(id);}).filter(Boolean);
+  var secs=Array.from(document.querySelectorAll('#hero,#fiestas,#adultos,#business,#calendario,#galeria,#precios,#fidelizacion,#equipamiento,#catering,#reservas,#blog'));
   function current(){
-    var mid=window.scrollY+window.innerHeight*0.5;
     var best=0;
-    secs.forEach(function(s,i){if(s.getBoundingClientRect().top+window.scrollY<=mid)best=i;});
+    secs.forEach(function(s,i){
+      if(s.getBoundingClientRect().top<=window.innerHeight*0.6)best=i;
+    });
     return best;
   }
   window.addEventListener('scroll',function(){
