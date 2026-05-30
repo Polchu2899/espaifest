@@ -4975,12 +4975,21 @@ document.addEventListener('keydown', e => {
   window.addEventListener('scroll',function(){
     nav.classList.toggle('visible',window.scrollY>200);
   },{passive:true});
-  document.getElementById('sn-up').addEventListener('click',function(){
-    window.scrollBy({top:-window.innerHeight*0.8,behavior:'smooth'});
-  });
-  document.getElementById('sn-down').addEventListener('click',function(){
-    window.scrollBy({top:window.innerHeight*0.8,behavior:'smooth'});
-  });
+  function smoothScroll(amount){
+    var start=window.scrollY;
+    var end=Math.max(0,start+amount);
+    var dur=500;var t0=null;
+    function ease(t){return t<0.5?2*t*t:-1+(4-2*t)*t;}
+    function step(ts){
+      if(!t0)t0=ts;
+      var p=Math.min((ts-t0)/dur,1);
+      window.scrollTo(0,start+(end-start)*ease(p));
+      if(p<1)requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  document.getElementById('sn-up').addEventListener('click',function(){smoothScroll(-350);});
+  document.getElementById('sn-down').addEventListener('click',function(){smoothScroll(350);});
 })();
 </script>
 </body>
