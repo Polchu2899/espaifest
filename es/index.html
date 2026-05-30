@@ -4847,22 +4847,14 @@ document.addEventListener('keydown', e => {
 (function(){
   var nav=document.getElementById('sn-nav');
   if(!nav)return;
-  var secs=Array.from(document.querySelectorAll('#hero,#fiestas,#adultos,#business,#calendario,#galeria,#precios,#fidelizacion,#equipamiento,#catering,#reservas,#blog'));
-  function current(){
-    var best=0;
-    secs.forEach(function(s,i){
-      if(s.getBoundingClientRect().top<=window.innerHeight*0.6)best=i;
-    });
-    return best;
-  }
   window.addEventListener('scroll',function(){
     nav.classList.toggle('visible',window.scrollY>200);
   },{passive:true});
   document.getElementById('sn-up').addEventListener('click',function(){
-    var c=current();if(c>0)secs[c-1].scrollIntoView({behavior:'smooth',block:'start'});
+    window.scrollBy({top:-window.innerHeight*0.8,behavior:'smooth'});
   });
   document.getElementById('sn-down').addEventListener('click',function(){
-    var c=current();if(c<secs.length-1)secs[c+1].scrollIntoView({behavior:'smooth',block:'start'});
+    window.scrollBy({top:window.innerHeight*0.8,behavior:'smooth'});
   });
 })();
 </script>
