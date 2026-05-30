@@ -4849,19 +4849,20 @@ document.addEventListener('keydown', e => {
   if(!nav)return;
   var secs=['hero','fiestas','adultos','business','precios','fidelizacion','equipamiento','catering','galeria','calendario','blog','reservas']
     .map(function(id){return document.getElementById(id);}).filter(Boolean);
-  var current=0;
-  window.addEventListener('scroll',function(){
-    nav.classList.toggle('visible',window.scrollY>200);
+  function current(){
     var mid=window.scrollY+window.innerHeight*0.5;
     var best=0;
     secs.forEach(function(s,i){if(s.getBoundingClientRect().top+window.scrollY<=mid)best=i;});
-    current=best;
+    return best;
+  }
+  window.addEventListener('scroll',function(){
+    nav.classList.toggle('visible',window.scrollY>200);
   },{passive:true});
   document.getElementById('sn-up').addEventListener('click',function(){
-    if(current>0)secs[current-1].scrollIntoView({behavior:'smooth',block:'start'});
+    var c=current();if(c>0)secs[c-1].scrollIntoView({behavior:'smooth',block:'start'});
   });
   document.getElementById('sn-down').addEventListener('click',function(){
-    if(current<secs.length-1)secs[current+1].scrollIntoView({behavior:'smooth',block:'start'});
+    var c=current();if(c<secs.length-1)secs[c+1].scrollIntoView({behavior:'smooth',block:'start'});
   });
 })();
 </script>
