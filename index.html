@@ -500,7 +500,7 @@ nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%
 .n-logo img:hover{transform:scale(1.04);}
 /* ---------------------------------------------- */
 
-.n-links{display:flex;align-items:center;gap:1px;flex-wrap:nowrap;}
+.n-links{display:flex;align-items:center;gap:1px;flex-wrap:nowrap;overflow:hidden;min-width:0;}
 .n-links a{padding:6px 10px;border-radius:40px;font-size:.82rem;font-weight:500;color:var(--tx2);transition:all .2s;white-space:nowrap;}
 .n-links a:hover{color:var(--tx1);background:var(--glass);}
 .lang-wrap{display:flex;background:var(--s3);border-radius:30px;padding:3px;gap:2px;margin:0 5px;}
@@ -984,7 +984,8 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   nav{height:90px;padding:0 1rem;background:var(--s0)!important;backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);}
   .n-links{display:none;}
   .n-logo img{height:72px;width:auto;}
-  .ham-btn{display:flex;}
+  .ham-btn{display:flex;background:var(--co);border-color:var(--co);box-shadow:0 2px 12px oklch(68% .22 38/.4);}
+  .ham-btn span{background:#fff;}
   .hero{grid-template-columns:1fr;padding-top:90px;}.h-side{min-height:58vh;}.h-div{display:none;}
   .split,.biz-grid,.res-grid,.fid-grid{grid-template-columns:1fr;}
   .eq-grid{grid-template-columns:1fr 1fr;}
@@ -995,8 +996,8 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   .ft-grid{grid-template-columns:1fr 1fr;gap:28px;}
 }
 
-/* Nav compacte per a pantalles mitjanes: Surface/laptop (1025-1450px) */
-@media(min-width:1025px) and (max-width:1450px){
+/* Nav compacte per a pantalles mitjanes: Surface/laptop (1025-1700px) */
+@media(min-width:1025px) and (max-width:1700px){
   nav{height:120px;}
   .n-logo img{height:96px;width:auto;}
   .hero{padding-top:120px;}
@@ -1017,7 +1018,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 #promo-banner.visible{display:block;}
 body.banner-on nav{top:var(--banner-h,44px);}
 body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
-@media(min-width:1025px) and (max-width:1450px){body.banner-on .hero{padding-top:calc(120px + var(--banner-h,44px));}}
+@media(min-width:1025px) and (max-width:1700px){body.banner-on .hero{padding-top:calc(120px + var(--banner-h,44px));}}
 @media(max-width:1024px){body.banner-on .hero{padding-top:calc(90px + var(--banner-h,44px));}}
 @media(max-width:768px){body.banner-on .hero{padding-top:calc(110px + var(--banner-h,44px));}}
 .promo-banner-inner{
