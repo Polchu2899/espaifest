@@ -483,14 +483,14 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9997;o
 @keyframes pdot{0%,100%{transform:scale(1)}50%{transform:scale(1.4);opacity:.6}}
 
 /* ═══ NAV ════════════════════════════════════════ */
-nav{position:fixed;top:0;left:0;right:0;z-index:800;height:180px;padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease-s);}
+nav{position:fixed;top:0;left:0;right:0;z-index:800;height:clamp(90px,calc(15vw - 108px),180px);padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease-s);}
 nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--bd);box-shadow:0 2px 24px oklch(0% 0 0/.25);}
 [data-theme="light"] nav.up{background:oklch(99% .003 260/.9);}
 
 /* --- LOGO GIGANTE Y DINÁMICO --- */
 .n-logo{display:flex;align-items:center;}
 .n-logo img {
-  height: 160px;
+  height: clamp(72px,calc(13vw - 90px),160px);
   width: auto;
   transition: transform .3s;
 }
@@ -511,7 +511,7 @@ nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%
 .n-cta{background:var(--co);color:#fff;padding:9px 20px!important;font-weight:700!important;box-shadow:0 3px 16px oklch(68% .22 38/.4);transition:all .25s var(--ease-b);}
 .n-cta:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 7px 24px oklch(68% .22 38/.5)!important;}
 /* ═══ HERO ════════════════════════════════════════ */
-.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:180px;overflow:hidden;position:relative;}
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:clamp(90px,calc(15vw - 108px),180px);overflow:hidden;position:relative;}
 .h-side{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:clamp(2rem,4vw,3.5rem);min-height:calc(100vh - 68px);cursor:pointer;}
 .h-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .9s var(--ease-s);will-change:transform;}
 .h-side:hover .h-bg{transform:scale(1.05);}
@@ -991,13 +991,6 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   .ft-grid{grid-template-columns:1fr 1fr;gap:28px;}
 }
 
-/* ── NAV MEDIUM (Surface, portàtils petits 769-1450px) ── */
-@media(max-width:1450px) and (min-width:769px){
-  nav{height:120px;}
-  .n-logo img{height:96px;}
-  .hero{padding-top:120px;}
-  body.banner-on .hero{padding-top:calc(120px + var(--banner-h,44px));}
-}
 
 /* ── BANNER PROMOCIÓN ── */
 #promo-banner{
@@ -1009,7 +1002,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 @keyframes promoBg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 #promo-banner.visible{display:block;}
 body.banner-on nav{top:var(--banner-h,44px);}
-body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
+body.banner-on .hero{padding-top:calc(clamp(90px,calc(15vw - 108px),180px) + var(--banner-h,44px));}
 @media(max-width:768px){body.banner-on .hero{padding-top:calc(110px + var(--banner-h,44px));}}
 .promo-banner-inner{
   display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
