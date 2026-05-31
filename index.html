@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ca" data-theme="dark">
+<html lang="ca" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
@@ -493,13 +493,10 @@ nav.up{background:oklch(8% .01 260/.88);backdrop-filter:blur(24px) saturate(180%
   height: 160px;
   width: auto;
   transition: transform .3s;
-  content: url('https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png');
 }
-
-[data-theme="light"] .n-logo img {
-  content: url('https://i.ibb.co/7J43XDW2/Dise-o-sin-t-tulo.png');
-}
-
+.n-logo .logo-light{display:none;}
+[data-theme="light"] .n-logo .logo-dark{display:none;}
+[data-theme="light"] .n-logo .logo-light{display:block;}
 .n-logo img:hover{transform:scale(1.04);}
 /* ---------------------------------------------- */
 
@@ -992,6 +989,14 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   .gc{grid-column:span 1!important;grid-row:span 1!important;aspect-ratio:4/3;}
   .gc-1{grid-column:1/-1!important;aspect-ratio:16/7!important;}
   .ft-grid{grid-template-columns:1fr 1fr;gap:28px;}
+}
+
+/* ── NAV MEDIUM (Surface, portàtils petits 769-1199px) ── */
+@media(max-width:1199px) and (min-width:769px){
+  nav{height:100px;}
+  .n-logo img{height:80px;}
+  .hero{padding-top:100px;}
+  body.banner-on .hero{padding-top:calc(100px + var(--banner-h,44px));}
 }
 
 /* ── BANNER PROMOCIÓN ── */
@@ -1608,7 +1613,8 @@ body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
 <nav id="nav" role="navigation" aria-label="Navegación principal">
   <div class="n-logo">
   <a href="#hero">
-    <img src="https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png" alt="EspaiFest Logo">
+    <img src="https://i.ibb.co/Y43mp6jn/Dise-o-sin-t-tulo-4.png" alt="EspaiFest Logo" class="logo-dark">
+    <img src="https://i.ibb.co/7J43XDW2/Dise-o-sin-t-tulo.png" alt="EspaiFest Logo" class="logo-light">
   </a>
 </div>
   <div class="n-links" role="menubar">
