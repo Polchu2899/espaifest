@@ -249,6 +249,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .bar{width:100%;border-radius:5px 5px 0 0;cursor:pointer;transition:opacity .15s;}
 .bar:hover{opacity:.7;}
 .blbl{font-size:10px;color:var(--t3);font-family:'DM Mono',monospace;}
+.chtab{background:none;border:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;color:var(--t3);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;}
+.chtab.on{background:var(--s2);color:var(--teal);box-shadow:0 1px 3px rgba(0,0,0,.15);}
+.chtab:hover:not(.on){color:var(--t2);}
+.chval{font-size:9.5px;font-family:'DM Mono',monospace;font-weight:700;margin-bottom:2px;text-align:center;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 /* ACTIVITY */
 .aitm{display:flex;gap:12px;padding:13px 20px;border-bottom:1px solid var(--b1);align-items:flex-start;transition:background .1s;}
@@ -516,7 +520,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </div>
         <div class="g2">
           <div class="card">
-            <div class="chead"><div><div class="ctitle">Reservas por mes</div><div class="csub">Últimos 6 meses</div></div></div>
+            <div class="chead"><div><div class="ctitle">Reservas por mes</div><div class="csub">Últimos 6 meses · <span id="chart-total-lbl" style="color:var(--teal);font-weight:700"></span></div></div><div style="display:flex;gap:3px;background:var(--s1);border-radius:8px;padding:3px;border:1px solid var(--b2)"><button class="chtab on" id="chtab-res" onclick="chartMode('res')">Reservas</button><button class="chtab" id="chtab-ing" onclick="chartMode('ing')">Ingresos</button></div></div>
             <div class="chwrap"><div class="chbars" id="chart"></div></div>
           </div>
           <div class="card">
@@ -4354,23 +4358,52 @@ function updateDashboard() {
     <div class="cfitem"><div class="cflbl">Localidad</div><div class="cfval">Martorell, Barcelona</div></div>
     <div class="cfitem"><div class="cflbl">Email</div><div class="cfval">info@espaifest.com</div></div>
     <div class="cfitem"><div class="cflbl">Estado</div><div class="cfval" style="color:var(--green)">Activo</div></div>`;
-  // Chart
+  // Chart — dual-metric (reservas / ingresos)
   const mesNames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  const meses = Array.from({length:6},(_,i)=>mesNames[(mes-5+i+12)%12]);
-  const vals = meses.map((_,i) => {
-    const mi = (mes-5+i+12)%12;
-    return allReservas.filter(r=>{
+  window._dashChartData = Array.from({length:6}, (_,i) => {
+    const d = new Date(anio, mes + (i - 5), 1);
+    const mi = d.getMonth(), ai = d.getFullYear();
+    const rows = allReservas.filter(r => {
       if(!r.fecha) return false;
-      return new Date(r.fecha).getMonth()===mi;
-    }).length;
+      const rd = new Date(r.fecha);
+      return rd.getMonth()===mi && rd.getFullYear()===ai;
+    });
+    return { label: mesNames[mi], res: rows.length, ing: rows.reduce((s,r)=>s+(parseFloat(r.importe)||0),0), isNow: i===5 };
   });
-  const mx = Math.max(...vals,1);
-  document.getElementById('chart').innerHTML = meses.map((m,i)=>{
-    const pct = Math.round(vals[i]/mx*100);
-    const isNow = i===5;
-    return `<div class="bcol" style="justify-content:flex-end"><span style="font-size:10px;color:var(--t2);font-family:'DM Mono',monospace;font-weight:600;margin-bottom:2px">${vals[i]}</span><div class="bar" style="height:${pct||4}%;background:${isNow?'linear-gradient(180deg,#22d3ee,#0fd4c4)':'rgba(255,255,255,0.06)'}" title="${vals[i]} reservas"></div><span class="blbl">${m}</span></div>`;
-  }).join('');
+  if(!window._dashChartMode) window._dashChartMode = 'res';
+  renderDashChart();
 }
+
+window.renderDashChart = function() {
+  const data = window._dashChartData || [];
+  const mode = window._dashChartMode || 'res';
+  document.querySelectorAll('.chtab').forEach(t => t.classList.remove('on'));
+  const tabEl = document.getElementById('chtab-' + mode);
+  if(tabEl) tabEl.classList.add('on');
+  const vals = data.map(d => mode==='res' ? d.res : d.ing);
+  const mx = Math.max(...vals, 1);
+  const total = vals.reduce((a,b) => a+b, 0);
+  const lbl = mode==='res' ? `${total} reservas` : fmtMoney(total);
+  const lblEl = document.getElementById('chart-total-lbl');
+  if(lblEl) { lblEl.textContent = lbl; lblEl.style.color = mode==='ing' ? 'var(--green)' : 'var(--teal)'; }
+  document.getElementById('chart').innerHTML = data.map(d => {
+    const v = mode==='res' ? d.res : d.ing;
+    const pct = Math.round(v / mx * 100);
+    const isIng = mode==='ing';
+    const valLabel = isIng ? fmtMoney(v) : v;
+    const barBg = isIng
+      ? (d.isNow ? 'linear-gradient(180deg,#34d399,#10b981)' : 'rgba(52,211,153,0.10)')
+      : (d.isNow ? 'linear-gradient(180deg,#22d3ee,#0fd4c4)' : 'rgba(255,255,255,0.07)');
+    const valColor = isIng ? (d.isNow ? 'var(--green)' : 'rgba(52,211,153,0.55)') : (d.isNow ? 'var(--teal)' : 'var(--t2)');
+    const lblColor = d.isNow ? (isIng ? 'var(--green)' : 'var(--teal)') : '';
+    return `<div class="bcol" style="justify-content:flex-end" title="${d.res} reservas · ${fmtMoney(d.ing)}"><span class="chval" style="color:${valColor}">${valLabel}</span><div class="bar" style="height:${pct||4}%;background:${barBg}"></div><span class="blbl" style="${lblColor ? 'color:'+lblColor : ''}">${d.label}</span></div>`;
+  }).join('');
+};
+
+window.chartMode = function(mode) {
+  window._dashChartMode = mode;
+  renderDashChart();
+};
 
 // ── UTILS ─────────────────────────────────────────────────────
 const titles = {dashboard:['Resumen general'],reservas:['Reservas'],pagos:['Control de pagos'],clientes:['Clientes'],servicios:['Servicios'],tarifas:['Tarifas y precios'],promociones:['Promociones'],manualidades:['Manualidades / Kits'],fidelizacion:['Fidelización'],recordatorios:['Recordatorios WhatsApp'],configuracion:['Configuración'],migracion:['Migración histórica'],informes:['Informes']};
