@@ -483,7 +483,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9997;o
 @keyframes pdot{0%,100%{transform:scale(1)}50%{transform:scale(1.4);opacity:.6}}
 
 /* ═══ NAV ════════════════════════════════════════ */
-nav{position:fixed;top:0;left:0;right:0;z-index:800;height:160px;padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease-s);background:oklch(8% .01 260/.7);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px);}
+nav{position:fixed;top:0;left:0;right:0;z-index:800;height:180px;padding:0 clamp(1rem,4vw,3rem);display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease-s);background:oklch(8% .01 260/.7);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px);}
 nav.up{background:oklch(8% .01 260/.92);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--bd);box-shadow:0 2px 24px oklch(0% 0 0/.25);}
 [data-theme="light"] nav{background:oklch(99% .003 260/.93);border-bottom:1px solid var(--bd);}
 [data-theme="light"] nav.up{background:oklch(99% .003 260/.97);box-shadow:0 2px 24px oklch(0% 0 0/.08);}
@@ -491,7 +491,7 @@ nav.up{background:oklch(8% .01 260/.92);backdrop-filter:blur(24px) saturate(180%
 /* --- LOGO GIGANTE Y DINÁMICO --- */
 .n-logo{display:flex;align-items:center;flex-shrink:0;}
 .n-logo img {
-  height: 150px;
+  height: 170px;
   width: auto;
   transition: transform .3s;
 }
@@ -513,7 +513,7 @@ nav.up{background:oklch(8% .01 260/.92);backdrop-filter:blur(24px) saturate(180%
 .n-cta:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 7px 24px oklch(68% .22 38/.5)!important;}
 .n-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 /* ═══ HERO ════════════════════════════════════════ */
-.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:160px;overflow:hidden;position:relative;}
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:180px;overflow:hidden;position:relative;}
 .h-side{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:clamp(2rem,4vw,3.5rem);min-height:calc(100vh - 68px);cursor:pointer;}
 .h-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .9s var(--ease-s);will-change:transform;}
 .h-side:hover .h-bg{transform:scale(1.05);}
@@ -1017,25 +1017,15 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   .ft-grid{grid-template-columns:1fr 1fr;gap:28px;}
 }
 
-/* Nav compacte amb links visibles: Surface/laptop (1280-1600px) */
+/* Nav compacte amb links: laptops (1280-1600px) */
 @media(min-width:1280px) and (max-width:1600px){
-  nav{height:130px;}
-  .n-logo img{height:110px;width:auto;}
-  .hero{padding-top:130px;}
+  nav{height:140px;}
+  .n-logo img{height:120px;width:auto;}
+  .hero{padding-top:140px;}
   .n-links a{padding:3px 6px;font-size:.72rem;}
   .lang-btn{padding:3px 8px;font-size:.64rem;}
   .theme-btn{width:30px;height:30px;}
   .n-cta{padding:7px 14px!important;font-size:.76rem!important;}
-}
-/* Nav hamburguesa: laptops petits (1025-1279px) */
-@media(min-width:1025px) and (max-width:1279px){
-  nav{height:90px;}
-  .n-logo img{height:80px;width:auto;}
-  .hero{padding-top:90px;}
-  .n-links{display:none;}
-  .n-actions{display:none;}
-  .ham-btn{display:flex;background:var(--co);border-color:var(--co);box-shadow:0 2px 12px oklch(68% .22 38/.4);}
-  .ham-btn span{background:#fff;}
 }
 
 /* ── BANNER PROMOCIÓN ── */
@@ -1048,9 +1038,8 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 @keyframes promoBg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 #promo-banner.visible{display:block;}
 body.banner-on nav{top:var(--banner-h,44px);}
-body.banner-on .hero{padding-top:calc(160px + var(--banner-h,44px));}
-@media(min-width:1280px) and (max-width:1600px){body.banner-on .hero{padding-top:calc(130px + var(--banner-h,44px));}}
-@media(min-width:1025px) and (max-width:1279px){body.banner-on .hero{padding-top:calc(90px + var(--banner-h,44px));}}
+body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}
+@media(min-width:1280px) and (max-width:1600px){body.banner-on .hero{padding-top:calc(140px + var(--banner-h,44px));}}
 @media(max-width:1024px){body.banner-on .hero{padding-top:calc(90px + var(--banner-h,44px));}}
 @media(max-width:768px){body.banner-on .hero{padding-top:calc(110px + var(--banner-h,44px));}}
 .promo-banner-inner{
@@ -1203,8 +1192,24 @@ body.banner-on .hero{padding-top:calc(160px + var(--banner-h,44px));}
 }
 
 /* Hero padding ajustado al alto del nav en móvil */
-@media(max-width:768px){
+@media(max-width:767px){
   .hero{padding-top:110px;}
+}
+
+/* ═══ OVERRIDE: links visibles en tablets/Surface/iPad (768-1279px) ═══ */
+@media(min-width:768px) and (max-width:1279px){
+  nav{height:100px!important;padding:0 12px!important;}
+  .n-logo img{height:85px!important;width:auto;}
+  .n-links{display:flex!important;flex:1;justify-content:center;overflow:hidden;}
+  .n-links a{padding:2px 5px!important;font-size:.58rem!important;}
+  .lang-wrap{margin:0 3px!important;}
+  .lang-btn{padding:2px 6px!important;font-size:.56rem!important;}
+  .n-actions{display:none!important;}
+  .ham-btn{display:none!important;}
+  .hero{padding-top:100px!important;}
+}
+@media(min-width:768px) and (max-width:1279px){
+  body.banner-on .hero{padding-top:calc(100px + var(--banner-h,44px))!important;}
 }
 
 /* ══ VIEW TRANSITIONS API ══════════════════════════════ */
