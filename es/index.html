@@ -1507,12 +1507,12 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
 .cf-slot.ocupado:hover{border-color:var(--bd);color:var(--tx3);}
 .cal-day.partial{background:oklch(83% .22 90/.22);box-shadow:inset 0 3px 0 oklch(76% .26 90/.6);}
 .dot-partial{width:8px;height:8px;border-radius:50%;background:oklch(83% .22 90);box-shadow:0 0 5px oklch(83% .22 90);}
-.cal-day.dia-especial{cursor:pointer;}
-.cal-day.dia-especial:hover{background:var(--glass);}
+.cal-day.dia-especial{background:oklch(62% .20 150/.15);border-color:oklch(62% .20 150/.35);cursor:pointer;}
+.cal-day.dia-especial:hover{background:oklch(62% .20 150/.25);}
 .dot-esp{width:8px;height:8px;border-radius:50%;background:oklch(62% .20 150);box-shadow:0 0 5px oklch(62% .20 150);}
 [data-theme="light"] .cal-day.partial{background:oklch(83% .22 90/.30);box-shadow:inset 0 3px 0 oklch(70% .26 90/.7);}
-[data-theme="light"] .cal-day.dia-especial{cursor:pointer;}
-[data-theme="light"] .cal-day.dia-especial:hover{background:var(--glass);}
+[data-theme="light"] .cal-day.dia-especial{background:oklch(62% .20 150/.18);border-color:oklch(62% .20 150/.4);}
+[data-theme="light"] .cal-day.dia-especial:hover{background:oklch(62% .20 150/.28);}
 
 /* ══ MODAL BLOG POST ════════════════════════════════════ */
 .blog-modal-ov{
@@ -3226,9 +3226,11 @@ function renderFranjas(ds) {
     const recurring = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
     const espNomBase   = info.celebracion || recurring?.celebracion || '⭐ Horario especial';
     const espPrecioBase = info.precioEsp ?? recurring?.precio ?? null;
+    const _NOMS_NORMALS = ['mañana','matí','mati','tarde','tarda','noche','nit','tarda-nit','dia complet','día completo','tot el dia','todo el día'];
 
     if(info.franjasCustom?.length) {
-      info.franjasCustom.forEach(f => {
+      const sorted = [...info.franjasCustom].sort((a,b) => (a.inicio||'99').localeCompare(b.inicio||'99'));
+      sorted.forEach(f => {
         const hor = f.horario || (f.inicio && f.fin ? `${f.inicio}–${f.fin}` : null);
         if(!hor) return;
         const ocupado = f.bloqueada || esSlotBloq(hor);
@@ -3237,12 +3239,22 @@ function renderFranjas(ds) {
         const pre  = f.precio ?? espPrecioBase ?? 0;
         const click = !ocupado ? `onclick="selectSlot('${hor}','noche',${pre})"` : '';
         const nom = f.nombre || espNomBase;
-        const precioTxt = f.precio != null ? `${f.precio}€ · especial` : (espPrecioBase != null ? `${espPrecioBase}€ · especial` : 'especial');
-        nocheHtml += `<div class="cf-slot ${occ} ${selC}" ${click} style="border-color:oklch(62% .20 150/.4);background:oklch(62% .20 150/.05)">
-          <div style="font-size:11px;font-weight:700;color:oklch(62% .20 150);margin-bottom:2px">${nom}</div>
-          <div>${hor}</div>
-          <div class="cf-slot-precio" style="color:oklch(62% .20 150)">${precioTxt}</div>
-        </div>`;
+        const esEspecial = !_NOMS_NORMALS.includes((f.nombre||'').trim().toLowerCase());
+        if(esEspecial) {
+          const precioTxt = f.precio != null ? `${f.precio}€ · especial` : (espPrecioBase != null ? `${espPrecioBase}€ · especial` : 'especial');
+          nocheHtml += `<div class="cf-slot ${occ} ${selC}" ${click} style="border-color:oklch(62% .20 150/.4);background:oklch(62% .20 150/.05)">
+            <div style="font-size:11px;font-weight:700;color:oklch(62% .20 150);margin-bottom:2px">${nom}</div>
+            <div>${hor}</div>
+            <div class="cf-slot-precio" style="color:oklch(62% .20 150)">${precioTxt}</div>
+          </div>`;
+        } else {
+          const precioTxt = f.precio != null ? `${f.precio}€` : '';
+          nocheHtml += `<div class="cf-slot ${occ} ${selC}" ${click}>
+            <div>${nom}</div>
+            <div>${hor}</div>
+            <div class="cf-slot-precio">${precioTxt}</div>
+          </div>`;
+        }
       });
     } else {
       const espHorario = info.horarioEsp || recurring?.horario || null;
@@ -3357,6 +3369,7 @@ function renderCal() {
     let cls = 'cal-day';
     if(isPast || noHayFranjas) cls+=' empty';
     else if(isFullOcc)  cls+=' occupied';
+    else if(isDiaEsp)   cls+=' dia-especial';
     else if(isPartial)  cls+=' partial';
     else if(isSel)      cls+=' selected';
     else if(isToday)    cls+=' today';
