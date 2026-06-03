@@ -1504,12 +1504,12 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
 .cf-slot.ocupado:hover{border-color:var(--bd);color:var(--tx3);}
 .cal-day.partial{background:oklch(83% .22 90/.22);box-shadow:inset 0 3px 0 oklch(76% .26 90/.6);}
 .dot-partial{width:8px;height:8px;border-radius:50%;background:oklch(83% .22 90);box-shadow:0 0 5px oklch(83% .22 90);}
-.cal-day.dia-especial{background:oklch(62% .20 150/.22);border-color:oklch(62% .20 150/.45);cursor:pointer;box-shadow:inset 0 3px 0 oklch(55% .22 150/.55);}
-.cal-day.dia-especial:hover{background:oklch(62% .20 150/.32);}
+.cal-day.dia-especial{cursor:pointer;}
+.cal-day.dia-especial:hover{background:var(--glass);}
 .dot-esp{width:8px;height:8px;border-radius:50%;background:oklch(62% .20 150);box-shadow:0 0 5px oklch(62% .20 150);}
 [data-theme="light"] .cal-day.partial{background:oklch(83% .22 90/.30);box-shadow:inset 0 3px 0 oklch(70% .26 90/.7);}
-[data-theme="light"] .cal-day.dia-especial{background:oklch(62% .20 150/.26);box-shadow:inset 0 3px 0 oklch(52% .22 150/.65);}
-[data-theme="light"] .cal-day.dia-especial:hover{background:oklch(62% .20 150/.36);}
+[data-theme="light"] .cal-day.dia-especial{cursor:pointer;}
+[data-theme="light"] .cal-day.dia-especial:hover{background:var(--glass);}
 
 /* ══ MODAL BLOG POST ════════════════════════════════════ */
 .blog-modal-ov{
@@ -1957,7 +1957,7 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
       <div style="display:flex;gap:16px;flex-wrap:wrap;padding:12px 20px;border-top:1px solid var(--bd);font-size:11px;color:var(--tx2);align-items:center;">
         <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--ct);display:inline-block;"></span><span>Disponible</span></span>
         <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:oklch(87% .19 90);display:inline-block;"></span><span>Parcial</span></span>
-        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:oklch(62% .20 150);display:inline-block;"></span><span>Dia especial</span></span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:oklch(62% .20 150);display:inline-block;"></span><span>Horari especial</span></span>
         <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--co);display:inline-block;"></span><span>Ocupat</span></span>
       </div>
         <div class="cal-franjas" id="cal-franjas">
@@ -3236,7 +3236,7 @@ function renderFranjas(ds) {
   if(info.esDiaEspecial) {
     const ddmm = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
     const recurring = (indexTarifas?.especiales||[]).find(e => e.dia === ddmm);
-    const espNomBase = info.celebracion || recurring?.celebracion || '⭐ Día especial';
+    const espNomBase = info.celebracion || recurring?.celebracion || '⭐ Horari especial';
     const espPrecioBase = info.precioEsp ?? recurring?.precio ?? null;
 
     if(info.franjasCustom?.length) {
@@ -3372,7 +3372,6 @@ function renderCal() {
     let cls = 'cal-day';
     if(isPast || noHayFranjas) cls+=' empty';
     else if(isFullOcc)  cls+=' occupied';
-    else if(isDiaEsp)   cls+=' dia-especial';
     else if(isPartial)  cls+=' partial';
     else if(isSel)      cls+=' selected';
     else if(isToday)    cls+=' today';
@@ -3609,7 +3608,7 @@ function webUpdatePricePreview(precio, esDiaEsp) {
   if(precio > 0) {
     prev.style.display = 'flex';
     val.textContent = precio + ' €';
-    label.textContent = esDiaEsp ? '⭐ Tarifa día especial' : 'Precio sala';
+    label.textContent = esDiaEsp ? '⭐ Tarifa horari especial' : 'Precio sala';
   } else {
     prev.style.display = 'none';
   }

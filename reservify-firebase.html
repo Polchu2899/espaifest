@@ -745,7 +745,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
               <div><label class="fl">Precio base (€)</label><input type="number" class="fi" id="fc-precio" placeholder="150" style="margin-top:4px"></div>
             </div>
             <div style="margin-bottom:12px">
-              <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Franjas horarias de este día especial</div>
+              <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Franjas horarias de este horario especial</div>
               <div style="display:grid;grid-template-columns:1fr 100px 100px 80px 28px 28px;gap:6px;margin-bottom:4px;padding:0 2px">
                 <span style="font-size:10px;color:var(--t3);font-weight:600;text-transform:uppercase">Nombre de la franja</span>
                 <span style="font-size:10px;color:var(--t3);font-weight:600;text-transform:uppercase;text-align:center">Hora inicio</span>
@@ -6560,7 +6560,7 @@ window.editarFechaConcreta = function(fecha) {
 };
 
 window.deleteFechaConcreta = async function(fecha) {
-  if(!confirm(`¿Eliminar el día especial ${fecha}?\nSe borrarán los datos de celebración, precio y bloqueos de ese día.`)) return;
+  if(!confirm(`¿Eliminar el horario especial ${fecha}?\nSe borrarán los datos de celebración, precio y bloqueos de ese día.`)) return;
   try {
     await deleteDoc(doc(db, 'calendario_publico', fecha));
     showToast(`${fecha} eliminado ✓`);
@@ -6695,7 +6695,7 @@ window.fcOnFechaChange = function() {
   } else if(disponibles.length) {
     if(hint) hint.innerHTML = `Horarios normales del <strong>${diaNombre}</strong> cargados. Edítalos, elimínalos o añade franjas nuevas.`;
   } else {
-    if(hint) hint.innerHTML = `No hay franjas configuradas para el <strong>${diaNombre}</strong>. Añade las franjas que quieras para este día especial.`;
+    if(hint) hint.innerHTML = `No hay franjas configuradas para el <strong>${diaNombre}</strong>. Añade las franjas que quieras para este horario especial.`;
   }
 };
 
@@ -7114,7 +7114,7 @@ window.calcPrecioAuto = function() {
 
   prev.classList.add('visible');
   prevV.textContent = total + ' €';
-  prevL.innerHTML = esp ? `<span class="dia-esp-badge">Día especial</span> Precio fijo` : 'Precio estimado';
+  prevL.innerHTML = esp ? `<span class="dia-esp-badge">Horario especial</span> Precio fijo` : 'Precio estimado';
   if(imp) imp.value = total;
 };
 
