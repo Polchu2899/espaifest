@@ -653,8 +653,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             </table>
           </div>
           <div class="tar-add-row" style="flex-wrap:wrap;gap:6px;">
-            <input class="fi tar-inp" id="tar-e-turno" placeholder="🐱 Turno CA (ej: Matí)" style="flex:1;min-width:100px;">
-            <input class="fi tar-inp" id="tar-e-turno-es" placeholder="🇪🇸 Turno ES (ej: Mañana)" style="flex:1;min-width:100px;">
+            <input class="fi tar-inp" id="tar-e-turno" placeholder="CA:Turno CA (ej: Matí)" style="flex:1;min-width:100px;">
+            <input class="fi tar-inp" id="tar-e-turno-es" placeholder="ES:Turno ES (ej: Mañana)" style="flex:1;min-width:100px;">
             <input class="fi tar-inp wide" id="tar-e-hora" placeholder="Horario (ej: 10h–14h)" style="flex:2;min-width:110px;">
             <input class="fi tar-inp" id="tar-e-lu" placeholder="Lu €" type="number" style="flex:1;min-width:58px;">
             <input class="fi tar-inp" id="tar-e-ma" placeholder="Ma €" type="number" style="flex:1;min-width:58px;">
@@ -688,8 +688,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             </table>
           </div>
           <div class="tar-add-row" style="flex-wrap:wrap;gap:6px;">
-            <input class="fi tar-inp" id="tar-a-turno" placeholder="🐱 Turno CA" style="flex:1;min-width:100px;">
-            <input class="fi tar-inp" id="tar-a-turno-es" placeholder="🇪🇸 Turno ES" style="flex:1;min-width:100px;">
+            <input class="fi tar-inp" id="tar-a-turno" placeholder="CA:Turno CA" style="flex:1;min-width:100px;">
+            <input class="fi tar-inp" id="tar-a-turno-es" placeholder="ES:Turno ES" style="flex:1;min-width:100px;">
             <input class="fi tar-inp wide" id="tar-a-hora" placeholder="Horario" style="flex:2;min-width:110px;">
             <input class="fi tar-inp" id="tar-a-lu" placeholder="Lu €" type="number" style="flex:1;min-width:58px;">
             <input class="fi tar-inp" id="tar-a-ma" placeholder="Ma €" type="number" style="flex:1;min-width:58px;">
@@ -726,8 +726,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             </table>
           </div>
           <div class="tar-add-row" style="flex-wrap:wrap;gap:6px;">
-            <input class="fi tar-inp" id="tar-es-nom" placeholder="🐱 Nombre CA" style="flex:1;min-width:110px;">
-            <input class="fi tar-inp" id="tar-es-nom-es" placeholder="🇪🇸 Nombre ES" style="flex:1;min-width:110px;">
+            <input class="fi tar-inp" id="tar-es-nom" placeholder="CA:Nombre CA" style="flex:1;min-width:110px;">
+            <input class="fi tar-inp" id="tar-es-nom-es" placeholder="ES:Nombre ES" style="flex:1;min-width:110px;">
             <input class="fi tar-inp" id="tar-es-dia" placeholder="DD/MM">
             <input class="fi tar-inp wide" id="tar-es-hora" placeholder="Horario">
             <input class="fi tar-inp" id="tar-es-precio" placeholder="€" type="number">
@@ -746,8 +746,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">Añadir / editar fecha especial</div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px">
               <div><label class="fl">Fecha *</label><input type="date" class="fi" id="fc-fecha" onchange="fcOnFechaChange()" style="margin-top:4px"></div>
-              <div><label class="fl">🐱 Celebración CA *</label><input type="text" class="fi" id="fc-nom" placeholder="Ej: Nit de Nadal" style="margin-top:4px"></div>
-              <div><label class="fl">🇪🇸 Celebración ES</label><input type="text" class="fi" id="fc-nom-es" placeholder="Ej: Nochebuena" style="margin-top:4px"></div>
+              <div><label class="fl">CA:Celebración CA *</label><input type="text" class="fi" id="fc-nom" placeholder="Ej: Nit de Nadal" style="margin-top:4px"></div>
+              <div><label class="fl">ES:Celebración ES</label><input type="text" class="fi" id="fc-nom-es" placeholder="Ej: Nochebuena" style="margin-top:4px"></div>
               <div><label class="fl">Precio base (€)</label><input type="number" class="fi" id="fc-precio" placeholder="150" style="margin-top:4px"></div>
             </div>
             <div style="margin-bottom:12px">
@@ -1508,7 +1508,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div id="r-email-lang-wrap" style="display:none;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(15,212,196,.15);">
         <span style="font-size:12px;color:var(--t2);font-weight:600;">Idioma del email:</span>
         <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;">
-          <input type="radio" name="r-email-lang" value="es" checked style="accent-color:var(--teal)"> 🇪🇸 Castellano
+          <input type="radio" name="r-email-lang" value="es" checked style="accent-color:var(--teal)"> ES:Castellano
         </label>
         <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;">
           <input type="radio" name="r-email-lang" value="ca" style="accent-color:var(--teal)"> 🟡 Català
@@ -1729,7 +1729,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="msub" id="svc-modal-sub">Se mostrará en la web en español y catalán</div>
     <input type="hidden" id="s-edit-id">
 
-    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🇪🇸 Castellano</div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">ES:Castellano</div>
     <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="s-nombre" placeholder="Ej: Fiesta de jubilación" oninput="autoFillCA('s-nombre','s-nombre-ca')"></div>
     <div class="fg"><label class="fl">Descripción</label><input type="text" class="fi" id="s-desc" placeholder="Breve descripción visible en la web" oninput="autoFillCA('s-desc','s-desc-ca')"></div>
 
@@ -1763,7 +1763,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="msub" id="promo-modal-sub">Crea un código de descuento en español y catalán</div>
     <input type="hidden" id="p-edit-id">
 
-    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🇪🇸 Castellano</div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">ES:Castellano</div>
     <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="p-nombre" placeholder="Ej: Oferta de verano" oninput="autoFillCA('p-nombre','p-nombre-ca')"></div>
     <div class="fg"><label class="fl">Descripción</label><input type="text" class="fi" id="p-desc" placeholder="Describe la oferta brevemente" oninput="autoFillCA('p-desc','p-desc-ca')"></div>
 
@@ -1799,7 +1799,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="fg"><label class="fl">Descripció curta</label><input type="text" class="fi" id="k-desc-ca" placeholder="Breu descripció visible a la targeta" onblur="autoFillES('k-desc-ca','k-desc')"></div>
     <div class="fg"><label class="fl">Contingut complet (CA) <span style="font-weight:400;color:var(--t3)">— apareix quan el client obre el kit</span></label><textarea class="fi" id="k-contenido-ca" rows="4" placeholder="Detalla tot el que inclou el kit, materials, edat recomanada, dificultat... Escriu amb salts de línia per a una millor presentació." style="resize:vertical;min-height:90px;font-family:inherit;font-size:13px;line-height:1.5" onblur="autoFillES('k-contenido-ca','k-contenido')"></textarea></div>
 
-    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🇪🇸 Castellano <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)">(se traduce automáticamente al salir de cada campo — puedes editarlo)</span></div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">ES:Castellano <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)">(se traduce automáticamente al salir de cada campo — puedes editarlo)</span></div>
     <div class="fg"><label class="fl">Nombre (ES)</label><input type="text" class="fi" id="k-nombre" placeholder="Se traducirá automáticamente al salir del campo catalán"></div>
     <div class="fg"><label class="fl">Descripción (ES)</label><input type="text" class="fi" id="k-desc" placeholder="Se traducirá automáticamente al salir del campo catalán"></div>
     <div class="fg"><label class="fl">Contenido completo (ES)</label><textarea class="fi" id="k-contenido" rows="3" placeholder="Se copia automáticamente — edítalo para traducirlo al castellano" style="resize:vertical;min-height:70px;font-family:inherit;font-size:13px;line-height:1.5"></textarea></div>
