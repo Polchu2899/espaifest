@@ -625,7 +625,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <button class="tar-tab" onclick="tarSwitch('especiales',this)">Días especiales</button>
           <button class="tar-tab" onclick="tarSwitch('extras',this)">Extras</button>
           <button class="tar-tab" onclick="tarSwitch('fechas-concretas',this);loadFechasConcretas()">Fechas concretas</button>
-          <button class="tar-tab" onclick="tarSwitch('extras-form',this)">Extras formulari</button>
+          <button class="tar-tab" onclick="tarSwitch('extras-form',this)">Càtering i extres</button>
           <button class="btn bp sm" onclick="saveTodasTarifas()" style="margin-left:auto;white-space:nowrap;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
             Guardar TODO
@@ -827,7 +827,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <!-- EXTRAS FORMULARI (bilingüe) -->
         <div class="tar-section" id="tar-extras-form">
           <div class="tar-save-bar">
-            <h3>Extras del formulari de reserva</h3>
+            <h3>Càtering i extres del formulari</h3>
             <button class="btn bp sm" onclick="saveTarifas('extras_form')">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
               Guardar cambios
@@ -6370,7 +6370,8 @@ function renderTarTabla(tipo) {
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData[tipo]||[]).map((row,i) => `
     <tr>
-      <td><input class="tar-inp wide" value="${row.turno}" oninput="window.tarifasData['${tipo}'][${i}].turno=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.turno}" oninput="window.tarifasData['${tipo}'][${i}].turno=this.value" placeholder="Turno CA" title="Nom en català"></td>
+      <td><input class="tar-inp" value="${row.turno_es||''}" oninput="window.tarifasData['${tipo}'][${i}].turno_es=this.value" placeholder="ES" title="Nombre en castellano" style="width:80px;font-size:11px;color:var(--t3)"></td>
       <td><input class="tar-inp wide" value="${row.horario}" oninput="window.tarifasData['${tipo}'][${i}].horario=this.value"></td>
       ${DIAS.map(d => {
         const val = row[d];
@@ -6410,7 +6411,8 @@ window.tarAddRow = function(tipo) {
   const t = document.getElementById(`tar-${px}-turno`).value.trim();
   const h = document.getElementById(`tar-${px}-hora`).value.trim();
   if(!t||!h){showToast('Rellena turno y horario');return;}
-  const row = {turno:t, horario:h};
+  const tes = document.getElementById(`tar-${px}-turno-es`)?.value.trim() || '';
+  const row = {turno:t, turno_es:tes||t, horario:h};
   DIAS.forEach(d => {
     const inp = document.getElementById(`tar-${px}-${d}`);
     const v = inp ? inp.value.trim() : '';
@@ -6430,7 +6432,8 @@ function renderTarTablaEspeciales() {
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData.especiales||[]).map((row,i) => `
     <tr>
-      <td><input class="tar-inp wide" value="${row.celebracion}" oninput="window.tarifasData.especiales[${i}].celebracion=this.value"></td>
+      <td><input class="tar-inp wide" value="${row.celebracion}" oninput="window.tarifasData.especiales[${i}].celebracion=this.value" placeholder="Nom CA" title="Nom en català"></td>
+      <td><input class="tar-inp" value="${row.celebracion_es||''}" oninput="window.tarifasData.especiales[${i}].celebracion_es=this.value" placeholder="ES" title="Nombre en castellano" style="width:90px;font-size:11px;color:var(--t3)"></td>
       <td><input class="tar-inp" value="${row.dia}" placeholder="DD/MM" oninput="window.tarifasData.especiales[${i}].dia=this.value"></td>
       <td><input class="tar-inp wide" value="${row.horario}" oninput="window.tarifasData.especiales[${i}].horario=this.value"></td>
       <td><input class="tar-inp" type="number" value="${row.precio}" oninput="window.tarifasData.especiales[${i}].precio=parseFloat(this.value)||0"></td>
@@ -6443,8 +6446,9 @@ window.tarAddEspecial = async function() {
   const dia   = document.getElementById('tar-es-dia').value.trim();
   const hora  = document.getElementById('tar-es-hora').value.trim();
   const prec  = parseFloat(document.getElementById('tar-es-precio').value)||0;
+  const nomEs = document.getElementById('tar-es-nom-es')?.value.trim() || '';
   if(!nom){showToast('Rellena el nombre de la celebración');return;}
-  window.tarifasData.especiales.push({celebracion:nom,dia,horario:hora,precio:prec});
+  window.tarifasData.especiales.push({celebracion:nom,celebracion_es:nomEs||nom,dia,horario:hora,precio:prec});
   renderTarTablaEspeciales();
   ['tar-es-nom','tar-es-dia','tar-es-hora','tar-es-precio'].forEach(id=>{document.getElementById(id).value='';});
   await saveTarifas('especiales');

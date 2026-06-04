@@ -3037,7 +3037,7 @@ function renderPreciosTablaSemana(tipo) {
       const esAlto = typeof v==='number' && v>=170;
       return `<td${esAlto?' class="prc-cell-hi"':''}>${v}€</td>`;
     }).join('');
-    return `<tr><td>${row.turno}</td><td style="white-space:nowrap">${row.horario}</td>${celdas}</tr>`;
+    return `<tr><td>${row.turno_es||row.turno}</td><td style="white-space:nowrap">${row.horario}</td>${celdas}</tr>`;
   }).join('');
   if(load) load.style.display='none';
   if(wrap) wrap.style.display='';
@@ -3050,7 +3050,7 @@ function renderPreciosEspeciales() {
   const filas = indexTarifas.especiales || [];
   grid.innerHTML = filas.map(r => `
     <div class="prc-esp-card">
-      <div class="prc-esp-name">${r.celebracion}</div>
+      <div class="prc-esp-name">${r.celebracion_es||r.celebracion}</div>
       <div class="prc-esp-meta">${r.dia ? r.dia+' · ':'' }${r.horario}</div>
       <div class="prc-esp-price"><sup>€</sup>${r.precio}</div>
     </div>`).join('');
@@ -3066,8 +3066,8 @@ function renderPreciosExtras() {
   grid.innerHTML = filas.map(r => `
     <div class="prc-extra-card">
       <div class="prc-extra-left">
-        <div class="prc-extra-concepto">${r.concepto}</div>
-        <div class="prc-extra-turno">${r.turno}</div>
+        <div class="prc-extra-concepto">${r.concepto_es||r.concepto}</div>
+        <div class="prc-extra-turno">${r.turno_es||r.turno}</div>
       </div>
       <div class="prc-extra-price">${r.precio}€</div>
     </div>`).join('');
@@ -3601,10 +3601,10 @@ function webLoadFranjasPorFecha(fechaStr) {
     }
     if(ocupado) {
       opt.disabled = true; opt.value = '';
-      opt.textContent = `${f.turno} · ${f.horario} — 🔴 Ocupado`;
+      opt.textContent = `${f.turno_es||f.turno} · ${f.horario} — 🔴 Ocupado`;
     } else {
-      opt.value = `${f.turno} (${f.horario})`;
-      opt.textContent = `${f.turno} · ${f.horario} — ${precio} €`;
+      opt.value = `${f.turno_es||f.turno} (${f.horario})`;
+      opt.textContent = `${f.turno_es||f.turno} · ${f.horario} — ${precio} €`;
       opt.dataset.precio = precio;
     }
     sel.appendChild(opt);
