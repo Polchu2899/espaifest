@@ -625,6 +625,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <button class="tar-tab" onclick="tarSwitch('especiales',this)">Días especiales</button>
           <button class="tar-tab" onclick="tarSwitch('extras',this)">Extras</button>
           <button class="tar-tab" onclick="tarSwitch('fechas-concretas',this);loadFechasConcretas()">Fechas concretas</button>
+          <button class="tar-tab" onclick="tarSwitch('extras-form',this)">Extras formulari</button>
           <button class="btn bp sm" onclick="saveTodasTarifas()" style="margin-left:auto;white-space:nowrap;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
             Guardar TODO
@@ -820,6 +821,41 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             <input class="fi tar-inp wide" id="tar-ex-turno" placeholder="Turno (ej: Mañana)">
             <input class="fi tar-inp" id="tar-ex-precio" placeholder="€" type="number">
             <button class="btn bg sm" onclick="tarAddExtra()">+ Añadir</button>
+          </div>
+        </div>
+
+        <!-- EXTRAS FORMULARI (bilingüe) -->
+        <div class="tar-section" id="tar-extras-form">
+          <div class="tar-save-bar">
+            <h3>Extras del formulari de reserva</h3>
+            <button class="btn bp sm" onclick="saveTarifas('extras_form')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Guardar cambios
+            </button>
+          </div>
+          <p class="tar-hint">Ítems que el cliente puede añadir al hacer la reserva (càtering, neteja…). Cada ítem debe tener nombre en catalán y castellano para las dos webs. Tipo: <strong>qty</strong> = selector de cantidad, <strong>check</strong> = checkbox simple.</p>
+          <div class="tar-table-wrap">
+            <table class="tar-table" id="tar-table-extras-form">
+              <thead><tr>
+                <th style="text-align:left">Nom CA</th>
+                <th style="text-align:left">Nombre ES</th>
+                <th style="text-align:left">Categoria CA</th>
+                <th style="text-align:left">Categoría ES</th>
+                <th>Precio €</th>
+                <th>Tipo</th>
+                <th></th>
+              </tr></thead>
+              <tbody id="tar-body-extras-form"></tbody>
+            </table>
+          </div>
+          <div class="tar-add-row" style="flex-wrap:wrap;gap:6px;">
+            <input class="fi tar-inp" id="tar-ef-nom-ca" placeholder="Nom CA (ej: Safata Dolça)" style="flex:1;min-width:130px">
+            <input class="fi tar-inp" id="tar-ef-nom-es" placeholder="Nombre ES (ej: Bandeja Dulce)" style="flex:1;min-width:130px">
+            <input class="fi tar-inp" id="tar-ef-cat-ca" placeholder="Categoria CA" style="flex:1;min-width:120px">
+            <input class="fi tar-inp" id="tar-ef-cat-es" placeholder="Categoría ES" style="flex:1;min-width:120px">
+            <input class="fi tar-inp" id="tar-ef-precio" placeholder="€" type="number" style="width:60px">
+            <select class="fi tar-inp" id="tar-ef-tipo" style="width:70px"><option value="qty">qty</option><option value="check">check</option></select>
+            <button class="btn bg sm" onclick="tarAddExtraForm()">+ Añadir</button>
           </div>
         </div>
       </div>
@@ -6239,6 +6275,17 @@ const TARIFAS_DEFAULT = {
     {concepto:'Hora extra', turno:'Tarde (15h–22h)', precio:25},
     {concepto:'Hora extra', turno:'Noche (22h–03h)', precio:40},
     {concepto:'Hora extra', turno:'Todo el día',     precio:30},
+  ],
+  extras_form: [
+    {nombre_ca:'Menú mini',              nombre_es:'Menú mini',              precio:8,  tipo:'qty',   categoria_ca:'Càtering · Menú / Snacks Infantil', categoria_es:'Catering · Menú / Snacks Infantil'},
+    {nombre_ca:'Menú Júnior',            nombre_es:'Menú Júnior',            precio:10, tipo:'qty',   categoria_ca:'Càtering · Menú / Snacks Infantil', categoria_es:'Catering · Menú / Snacks Infantil'},
+    {nombre_ca:'Mix Picoteo (infantil)',  nombre_es:'Mix Picoteo (infantil)', precio:12, tipo:'qty',   categoria_ca:'Càtering · Menú / Snacks Infantil', categoria_es:'Catering · Menú / Snacks Infantil'},
+    {nombre_ca:'Begudes Junior',         nombre_es:'Bebidas Junior',         precio:10, tipo:'qty',   categoria_ca:'Càtering · Menú / Snacks Infantil', categoria_es:'Catering · Menú / Snacks Infantil'},
+    {nombre_ca:'Safata Dolça',           nombre_es:'Bandeja Dulce',          precio:12, tipo:'qty',   categoria_ca:'Càtering · Snacks Adults',          categoria_es:'Catering · Snacks Adultos'},
+    {nombre_ca:'Safata Salada',          nombre_es:'Bandeja Salada',         precio:12, tipo:'qty',   categoria_ca:'Càtering · Snacks Adults',          categoria_es:'Catering · Snacks Adultos'},
+    {nombre_ca:'Mix Picoteo (adult)',    nombre_es:'Mix Picoteo (adulto)',   precio:12, tipo:'qty',   categoria_ca:'Càtering · Snacks Adults',          categoria_es:'Catering · Snacks Adultos'},
+    {nombre_ca:'Begudes FREDES Adults',  nombre_es:'Bebidas FRÍAS Adultos',  precio:18, tipo:'qty',   categoria_ca:'Càtering · Snacks Adults',          categoria_es:'Catering · Snacks Adultos'},
+    {nombre_ca:'Neteja matí-migdia',     nombre_es:'Limpieza mañana-mediodía',precio:30,tipo:'check', categoria_ca:'Neteja',                            categoria_es:'Limpieza'},
   ]
 };
 
@@ -6286,6 +6333,7 @@ window.loadTarifas = async function() {
         renderTarTabla('ampliados');
         renderTarTablaEspeciales();
         renderTarTablaExtras();
+        renderTarTablaExtrasForm();
         return;
       }
     }
@@ -6305,6 +6353,7 @@ window.loadTarifas = async function() {
   renderTarTabla('ampliados');
   renderTarTablaEspeciales();
   renderTarTablaExtras();
+  renderTarTablaExtrasForm();
 };
 
 // ── Switch de tabs ──
@@ -6352,6 +6401,7 @@ window.tarDelRow = function(tipo, i) {
   window.tarifasData[tipo].splice(i,1);
   if(tipo==='estandar'||tipo==='ampliados') renderTarTabla(tipo);
   else if(tipo==='especiales') renderTarTablaEspeciales();
+  else if(tipo==='extras_form') renderTarTablaExtrasForm();
   else renderTarTablaExtras();
 };
 
@@ -6722,6 +6772,36 @@ window.tarAddExtra = function() {
   ['tar-ex-concepto','tar-ex-turno','tar-ex-precio'].forEach(id=>{document.getElementById(id).value='';});
 };
 
+// ── Extras formulario (bilingüe) ──
+function renderTarTablaExtrasForm() {
+  const tbody = document.getElementById('tar-body-extras-form');
+  if(!tbody) return;
+  tbody.innerHTML = (window.tarifasData.extras_form||[]).map((row,i) => `
+    <tr>
+      <td><input class="tar-inp" value="${row.nombre_ca||''}" oninput="window.tarifasData.extras_form[${i}].nombre_ca=this.value" style="min-width:100px"></td>
+      <td><input class="tar-inp" value="${row.nombre_es||''}" oninput="window.tarifasData.extras_form[${i}].nombre_es=this.value" style="min-width:100px"></td>
+      <td><input class="tar-inp" value="${row.categoria_ca||''}" oninput="window.tarifasData.extras_form[${i}].categoria_ca=this.value" style="min-width:100px"></td>
+      <td><input class="tar-inp" value="${row.categoria_es||''}" oninput="window.tarifasData.extras_form[${i}].categoria_es=this.value" style="min-width:100px"></td>
+      <td><input class="tar-inp" type="number" value="${row.precio||0}" oninput="window.tarifasData.extras_form[${i}].precio=parseFloat(this.value)||0" style="width:60px"></td>
+      <td><select class="tar-inp" onchange="window.tarifasData.extras_form[${i}].tipo=this.value" style="width:65px"><option value="qty"${row.tipo==='qty'?' selected':''}>qty</option><option value="check"${row.tipo==='check'?' selected':''}>check</option></select></td>
+      <td><button class="tar-row-del" onclick="tarDelRow('extras_form',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
+    </tr>`).join('');
+}
+
+window.tarAddExtraForm = function() {
+  const nca = document.getElementById('tar-ef-nom-ca').value.trim();
+  const nes = document.getElementById('tar-ef-nom-es').value.trim();
+  const cca = document.getElementById('tar-ef-cat-ca').value.trim();
+  const ces = document.getElementById('tar-ef-cat-es').value.trim();
+  const pre = parseFloat(document.getElementById('tar-ef-precio').value)||0;
+  const tip = document.getElementById('tar-ef-tipo').value;
+  if(!nca && !nes){showToast('Rellena al menos un nombre');return;}
+  if(!window.tarifasData.extras_form) window.tarifasData.extras_form = [];
+  window.tarifasData.extras_form.push({nombre_ca:nca||nes, nombre_es:nes||nca, categoria_ca:cca||ces, categoria_es:ces||cca, precio:pre, tipo:tip});
+  renderTarTablaExtrasForm();
+  ['tar-ef-nom-ca','tar-ef-nom-es','tar-ef-cat-ca','tar-ef-cat-es','tar-ef-precio'].forEach(id=>{document.getElementById(id).value='';});
+};
+
 // ── Invalidar caché pública — escribe en PHP y también Firebase (fallback) ──
 async function bustPublicCache() {
   try {
@@ -6754,7 +6834,7 @@ window.saveTarifas = async function(tipo) {
 window.saveTodasTarifas = async function() {
   if(document.activeElement && document.activeElement.tagName==='INPUT') document.activeElement.blur();
   try {
-    const tipos = ['estandar','ampliados','especiales','extras'];
+    const tipos = ['estandar','ampliados','especiales','extras','extras_form'];
     await Promise.all(tipos.map(t => setDoc(doc(db,'tarifas',t), { filas: window.tarifasData[t], updatedAt: serverTimestamp() })));
     // PHP sync fire-and-forget
     const allData = {};
