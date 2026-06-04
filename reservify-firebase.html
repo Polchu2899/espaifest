@@ -625,7 +625,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <button class="tar-tab" onclick="tarSwitch('especiales',this)">Días especiales</button>
           <button class="tar-tab" onclick="tarSwitch('extras',this)">Extras</button>
           <button class="tar-tab" onclick="tarSwitch('fechas-concretas',this);loadFechasConcretas()">Fechas concretas</button>
-          <button class="tar-tab" onclick="tarSwitch('extras-form',this)">Càtering i extres</button>
+          <button class="tar-tab" onclick="tarSwitch('extras-form',this)">Catering y extras</button>
           <button class="btn bp sm" onclick="saveTodasTarifas()" style="margin-left:auto;white-space:nowrap;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
             Guardar TODO
@@ -827,19 +827,19 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <!-- EXTRAS FORMULARI (bilingüe) -->
         <div class="tar-section" id="tar-extras-form">
           <div class="tar-save-bar">
-            <h3>Càtering i extres del formulari</h3>
+            <h3>Catering y extras del formulario</h3>
             <button class="btn bp sm" onclick="saveTarifas('extras_form')">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
               Guardar cambios
             </button>
           </div>
-          <p class="tar-hint">Ítems que el cliente puede añadir al hacer la reserva (càtering, neteja…). Cada ítem debe tener nombre en catalán y castellano para las dos webs. Tipo: <strong>qty</strong> = selector de cantidad, <strong>check</strong> = checkbox simple.</p>
+          <p class="tar-hint">Ítems que el cliente puede añadir al hacer la reserva (catering, limpieza…). Cada ítem debe tener nombre en catalán y castellano para las dos webs. Tipo: <strong>qty</strong> = selector de cantidad, <strong>check</strong> = checkbox simple.</p>
           <div class="tar-table-wrap">
             <table class="tar-table" id="tar-table-extras-form">
               <thead><tr>
-                <th style="text-align:left">Nom CA</th>
+                <th style="text-align:left">Nombre CA</th>
                 <th style="text-align:left">Nombre ES</th>
-                <th style="text-align:left">Categoria CA</th>
+                <th style="text-align:left">Categoría CA</th>
                 <th style="text-align:left">Categoría ES</th>
                 <th>Precio €</th>
                 <th>Tipo</th>
@@ -849,9 +849,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             </table>
           </div>
           <div class="tar-add-row" style="flex-wrap:wrap;gap:6px;">
-            <input class="fi tar-inp" id="tar-ef-nom-ca" placeholder="Nom CA (ej: Safata Dolça)" style="flex:1;min-width:130px">
+            <input class="fi tar-inp" id="tar-ef-nom-ca" placeholder="Nombre CA (ej: Safata Dolça)" style="flex:1;min-width:130px">
             <input class="fi tar-inp" id="tar-ef-nom-es" placeholder="Nombre ES (ej: Bandeja Dulce)" style="flex:1;min-width:130px">
-            <input class="fi tar-inp" id="tar-ef-cat-ca" placeholder="Categoria CA" style="flex:1;min-width:120px">
+            <input class="fi tar-inp" id="tar-ef-cat-ca" placeholder="Categoría CA" style="flex:1;min-width:120px">
             <input class="fi tar-inp" id="tar-ef-cat-es" placeholder="Categoría ES" style="flex:1;min-width:120px">
             <input class="fi tar-inp" id="tar-ef-precio" placeholder="€" type="number" style="width:60px">
             <select class="fi tar-inp" id="tar-ef-tipo" style="width:70px"><option value="qty">qty</option><option value="check">check</option></select>
@@ -6370,7 +6370,7 @@ function renderTarTabla(tipo) {
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData[tipo]||[]).map((row,i) => `
     <tr>
-      <td><input class="tar-inp wide" value="${row.turno}" oninput="window.tarifasData['${tipo}'][${i}].turno=this.value" placeholder="Turno CA" title="Nom en català"></td>
+      <td><input class="tar-inp wide" value="${row.turno}" oninput="window.tarifasData['${tipo}'][${i}].turno=this.value" placeholder="Turno CA" title="Nombre en catalán"></td>
       <td><input class="tar-inp" value="${row.turno_es||''}" oninput="window.tarifasData['${tipo}'][${i}].turno_es=this.value" placeholder="ES" title="Nombre en castellano" style="width:80px;font-size:11px;color:var(--t3)"></td>
       <td><input class="tar-inp wide" value="${row.horario}" oninput="window.tarifasData['${tipo}'][${i}].horario=this.value"></td>
       ${DIAS.map(d => {
@@ -6432,7 +6432,7 @@ function renderTarTablaEspeciales() {
   if(!tbody) return;
   tbody.innerHTML = (window.tarifasData.especiales||[]).map((row,i) => `
     <tr>
-      <td><input class="tar-inp wide" value="${row.celebracion}" oninput="window.tarifasData.especiales[${i}].celebracion=this.value" placeholder="Nom CA" title="Nom en català"></td>
+      <td><input class="tar-inp wide" value="${row.celebracion}" oninput="window.tarifasData.especiales[${i}].celebracion=this.value" placeholder="Nombre CA" title="Nombre en catalán"></td>
       <td><input class="tar-inp" value="${row.celebracion_es||''}" oninput="window.tarifasData.especiales[${i}].celebracion_es=this.value" placeholder="ES" title="Nombre en castellano" style="width:90px;font-size:11px;color:var(--t3)"></td>
       <td><input class="tar-inp" value="${row.dia}" placeholder="DD/MM" oninput="window.tarifasData.especiales[${i}].dia=this.value"></td>
       <td><input class="tar-inp wide" value="${row.horario}" oninput="window.tarifasData.especiales[${i}].horario=this.value"></td>
