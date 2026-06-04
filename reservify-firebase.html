@@ -645,7 +645,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div class="tar-table-wrap">
             <table class="tar-table" id="tar-table-estandar">
               <thead><tr>
-                <th>Turno</th><th>Horario</th>
+                <th>Turno CA</th><th>ES</th><th>Horario</th>
                 <th>Lu</th><th>Ma</th><th>Mi</th><th>Ju</th><th>Vi</th><th>Sá</th><th>Do</th>
                 <th></th>
               </tr></thead>
@@ -653,7 +653,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             </table>
           </div>
           <div class="tar-add-row" style="flex-wrap:wrap;gap:6px;">
-            <input class="fi tar-inp wide" id="tar-e-turno" placeholder="Turno (ej: Mañana)" style="flex:2;min-width:110px;">
+            <input class="fi tar-inp" id="tar-e-turno" placeholder="🐱 Turno CA (ej: Matí)" style="flex:1;min-width:100px;">
+            <input class="fi tar-inp" id="tar-e-turno-es" placeholder="🇪🇸 Turno ES (ej: Mañana)" style="flex:1;min-width:100px;">
             <input class="fi tar-inp wide" id="tar-e-hora" placeholder="Horario (ej: 10h–14h)" style="flex:2;min-width:110px;">
             <input class="fi tar-inp" id="tar-e-lu" placeholder="Lu €" type="number" style="flex:1;min-width:58px;">
             <input class="fi tar-inp" id="tar-e-ma" placeholder="Ma €" type="number" style="flex:1;min-width:58px;">
@@ -679,7 +680,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div class="tar-table-wrap">
             <table class="tar-table" id="tar-table-ampliados">
               <thead><tr>
-                <th>Turno</th><th>Horario</th>
+                <th>Turno CA</th><th>ES</th><th>Horario</th>
                 <th>Lu</th><th>Ma</th><th>Mi</th><th>Ju</th><th>Vi</th><th>Sá</th><th>Do</th>
                 <th></th>
               </tr></thead>
@@ -687,7 +688,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             </table>
           </div>
           <div class="tar-add-row" style="flex-wrap:wrap;gap:6px;">
-            <input class="fi tar-inp wide" id="tar-a-turno" placeholder="Turno" style="flex:2;min-width:110px;">
+            <input class="fi tar-inp" id="tar-a-turno" placeholder="🐱 Turno CA" style="flex:1;min-width:100px;">
+            <input class="fi tar-inp" id="tar-a-turno-es" placeholder="🇪🇸 Turno ES" style="flex:1;min-width:100px;">
             <input class="fi tar-inp wide" id="tar-a-hora" placeholder="Horario" style="flex:2;min-width:110px;">
             <input class="fi tar-inp" id="tar-a-lu" placeholder="Lu €" type="number" style="flex:1;min-width:58px;">
             <input class="fi tar-inp" id="tar-a-ma" placeholder="Ma €" type="number" style="flex:1;min-width:58px;">
@@ -713,7 +715,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div class="tar-table-wrap">
             <table class="tar-table" id="tar-table-especiales">
               <thead><tr>
-                <th style="text-align:left">Celebración</th>
+                <th style="text-align:left">Celebración CA</th>
+                <th style="text-align:left">ES</th>
                 <th style="text-align:left">Día / Mes</th>
                 <th style="text-align:left">Horario</th>
                 <th>Precio (€)</th>
@@ -722,8 +725,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
               <tbody id="tar-body-especiales"></tbody>
             </table>
           </div>
-          <div class="tar-add-row">
-            <input class="fi tar-inp wide" id="tar-es-nom" placeholder="Celebración">
+          <div class="tar-add-row" style="flex-wrap:wrap;gap:6px;">
+            <input class="fi tar-inp" id="tar-es-nom" placeholder="🐱 Nombre CA" style="flex:1;min-width:110px;">
+            <input class="fi tar-inp" id="tar-es-nom-es" placeholder="🇪🇸 Nombre ES" style="flex:1;min-width:110px;">
             <input class="fi tar-inp" id="tar-es-dia" placeholder="DD/MM">
             <input class="fi tar-inp wide" id="tar-es-hora" placeholder="Horario">
             <input class="fi tar-inp" id="tar-es-precio" placeholder="€" type="number">
@@ -740,9 +744,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
           <div style="background:var(--s1);border:1px solid var(--b2);border-radius:10px;padding:16px;margin-bottom:16px">
             <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">Añadir / editar fecha especial</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px">
               <div><label class="fl">Fecha *</label><input type="date" class="fi" id="fc-fecha" onchange="fcOnFechaChange()" style="margin-top:4px"></div>
-              <div><label class="fl">Celebración *</label><input type="text" class="fi" id="fc-nom" placeholder="Ej: Nochebuena" style="margin-top:4px"></div>
+              <div><label class="fl">🐱 Celebración CA *</label><input type="text" class="fi" id="fc-nom" placeholder="Ej: Nit de Nadal" style="margin-top:4px"></div>
+              <div><label class="fl">🇪🇸 Celebración ES</label><input type="text" class="fi" id="fc-nom-es" placeholder="Ej: Nochebuena" style="margin-top:4px"></div>
               <div><label class="fl">Precio base (€)</label><input type="number" class="fi" id="fc-precio" placeholder="150" style="margin-top:4px"></div>
             </div>
             <div style="margin-bottom:12px">
@@ -6421,7 +6426,7 @@ window.tarAddRow = function(tipo) {
   window.tarifasData[tipo].push(row);
   renderTarTabla(tipo);
   // Limpiar todos los campos
-  [`tar-${px}-turno`,`tar-${px}-hora`,...DIAS.map(d=>`tar-${px}-${d}`)].forEach(id=>{
+  [`tar-${px}-turno`,`tar-${px}-turno-es`,`tar-${px}-hora`,...DIAS.map(d=>`tar-${px}-${d}`)].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
 };
@@ -6450,7 +6455,7 @@ window.tarAddEspecial = async function() {
   if(!nom){showToast('Rellena el nombre de la celebración');return;}
   window.tarifasData.especiales.push({celebracion:nom,celebracion_es:nomEs||nom,dia,horario:hora,precio:prec});
   renderTarTablaEspeciales();
-  ['tar-es-nom','tar-es-dia','tar-es-hora','tar-es-precio'].forEach(id=>{document.getElementById(id).value='';});
+  ['tar-es-nom','tar-es-nom-es','tar-es-dia','tar-es-hora','tar-es-precio'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   await saveTarifas('especiales');
 };
 
@@ -6509,6 +6514,7 @@ window.loadFechasConcretas = async function() {
 window.saveFechaConcreta = async function() {
   const fecha   = document.getElementById('fc-fecha')?.value;
   const nom     = document.getElementById('fc-nom')?.value.trim();
+  const nomEs   = document.getElementById('fc-nom-es')?.value.trim() || '';
   const precio  = parseFloat(document.getElementById('fc-precio')?.value);
   const blqDia  = !!document.getElementById('fc-blq-dia')?.checked;
 
@@ -6531,6 +6537,7 @@ window.saveFechaConcreta = async function() {
       fecha,
       esDiaEspecial: true,
       celebracion:   nom,
+      celebracion_es: nomEs || nom,
       precioEsp:     isNaN(precio) ? null : precio,
       horarioEsp:    franjas.length ? (franjas[0].horario || null) : null,
       franjasCustom: franjas.length ? franjas : null,
