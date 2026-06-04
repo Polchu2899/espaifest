@@ -3485,21 +3485,25 @@ function webLoadFranjasPorFecha(fechaStr) {
   sel.appendChild(opt0);
 
   // Franjas personalizadas de fecha concreta (sistema nuevo)
+  const _NOMS_STD = ['mañana','matí','mati','tarde','tarda','noche','nit','tarda-nit','dia complet','día completo','tot el dia','todo el día'];
   if(info.franjasCustom?.length) {
-    info.franjasCustom.forEach(f => {
+    const sorted = [...info.franjasCustom].sort((a,b) => (a.inicio||'99').localeCompare(b.inicio||'99'));
+    sorted.forEach(f => {
       const hor = f.horario || (f.inicio && f.fin ? `${f.inicio}–${f.fin}` : '');
       if(!hor) return;
       const opt = document.createElement('option');
-      opt.dataset.esDiaEsp = '1';
       const bloq = f.bloqueada || esHorarioBloq(hor);
-      const nom = f.nombre || info.celebracion || '⭐ Especial';
+      const nom = f.nombre || info.celebracion || 'Especial';
+      const esEspecial = !_NOMS_STD.includes((f.nombre||'').trim().toLowerCase());
+      if(esEspecial) opt.dataset.esDiaEsp = '1';
       const pre = f.precio ?? info.precioEsp ?? null;
+      const prefix = esEspecial ? '⭐ ' : '';
       if(bloq) {
         opt.disabled = true; opt.value = '';
-        opt.textContent = `⭐ ${nom} · ${hor} — 🔴 Ocupado`;
+        opt.textContent = `${prefix}${nom} · ${hor} — 🔴 Ocupado`;
       } else {
         opt.value = hor;
-        opt.textContent = `⭐ ${nom} · ${hor}${pre != null ? ' — '+pre+' €' : ''}`;
+        opt.textContent = `${prefix}${nom} · ${hor}${pre != null ? ' — '+pre+' €' : ''}`;
         if(pre != null) opt.dataset.precio = pre;
       }
       sel.appendChild(opt);
@@ -3668,7 +3672,7 @@ function aplicarCodigoPromo(codigo) {
     if (feedback) {
       feedback.innerHTML = `✓ Código aplicado: <strong>-${match.descuento}%</strong> — ${match.nombre || match.nombre_ca || 'Promoción'}`;
       feedback.style.color = 'oklch(52% .22 150)';
-      feedback.style.background = 'oklch(52% .28 355/.08)';
+      feedback.style.background = 'oklch(52% .22 150/.08)';
       feedback.style.display = 'block';
     }
   } else {
@@ -3917,6 +3921,38 @@ async function enviarReserva() {
         createdAt:  window._fsServerTimestamp()
       });
     } catch(err) { console.warn('Firestore error:', err.message); }
+
+    // ── Bloquear en calendario_publico (mismo día) ─────────────
+    try {
+      const snapCal = await getDocs(query(
+        collection(_db, 'reservas'),
+        where('fecha', '==', f),
+        where('estado', 'in', ['Confirmada', 'Pendiente'])
+      ));
+      const reservasHoy = snapCal.docs.map(d => ({ id: d.id, ...d.data() }));
+      const rangosOcupados = reservasHoy.map(r => {
+        const h = parseHorarioWeb(r.horario);
+        if(!h) return null;
+        let { ini, fin } = h;
+        const extra = (r.horaExtra || '').toLowerCase();
+        if(extra.includes('antes')) ini -= 60;
+        if(extra.includes('después') || extra.includes('despues')) fin += 60;
+        return { ini, fin };
+      }).filter(Boolean);
+
+      const franjasM = [{ ini:10*60, fin:14*60 }, { ini:11*60, fin:15*60 }];
+      const franjasT = [{ ini:16*60+30, fin:20*60+30 }];
+      const franjasN = [{ ini:21*60+15, fin:25*60+30 }];
+      const mananaOcupada = franjasM.some(fm => rangosOcupados.some(rc => rc.ini < fm.fin && fm.ini < rc.fin));
+      const tardeOcupada  = franjasT.some(ft => rangosOcupados.some(rc => rc.ini < ft.fin && ft.ini < rc.fin));
+      const nocheOcupada  = franjasN.some(fn => rangosOcupados.some(rc => rc.ini < fn.fin && fn.ini < rc.fin));
+      const diaOcupado    = mananaOcupada && tardeOcupada;
+      const rangos = rangosOcupados.map(rc => ({ ini: rc.ini, fin: rc.fin }));
+
+      await setDoc(doc(_db, 'calendario_publico', f), {
+        fecha: f, mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, rangos, updatedAt: serverTimestamp()
+      }, { merge: true });
+    } catch(err) { console.warn('Error bloqueando calendario:', err.message); }
   }
 
   // ── Email al CLIENTE ─────────────────────────────────────────
@@ -4053,7 +4089,7 @@ function showToast(msg) {
 
 // ══ BLOG — FIREBASE ══════════════════════════════════════
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, getDocs, getDoc, addDoc, query, orderBy, where, limit, serverTimestamp, onSnapshot, doc, runTransaction }
+import { getFirestore, collection, getDocs, getDoc, addDoc, setDoc, query, orderBy, where, limit, serverTimestamp, onSnapshot, doc, runTransaction }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const _fbConfig = {

@@ -2795,7 +2795,7 @@ window.saveReserva = async () => {
       const snapCal = await getDocs(query(
         collection(db,'reservas'),
         where('fecha','==',fecha),
-        where('estado','==','Confirmada')
+        where('estado','in',['Confirmada','Pendiente'])
       ));
       const confirmadasHoy = snapCal.docs.map(d => ({ id: d.id, ...d.data() }));
 
@@ -3152,14 +3152,14 @@ window.confirmarReserva = async (id) => {
   await updateDoc(doc(db,'reservas',id), { estado:'Confirmada', vista: true });
   // 2. Calcular turnos ocupados ese día considerando rangos reales (con horas extra)
   if (reserva.fecha) {
-    // Reservas ya confirmadas ese día (sin contar la actual)
-    const otrasConfirmadas = allReservas.filter(r =>
+    // Reservas activas ese día (Confirmada o Pendiente, sin contar la actual)
+    const otrasActivas = allReservas.filter(r =>
       r.id !== id &&
       r.fecha === reserva.fecha &&
-      (r.estado||'').toLowerCase() === 'confirmada'
+      ['confirmada','pendiente'].includes((r.estado||'').toLowerCase())
     );
     // Incluir la actual como confirmada para calcular bien
-    const todasConfirmadas = [...otrasConfirmadas, {...reserva, estado:'Confirmada'}];
+    const todasConfirmadas = [...otrasActivas, {...reserva, estado:'Confirmada'}];
     const { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, rangos } = calcOcupacion(todasConfirmadas);
     const _calConf = { fecha: reserva.fecha, mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado };
     await setDoc(doc(db, 'calendario_publico', reserva.fecha), { ..._calConf, updatedAt: serverTimestamp() });
@@ -3202,7 +3202,7 @@ window.cancelarReserva = async (id) => {
     const confirmadasHoy = allReservas.filter(r =>
       r.id !== id &&
       r.fecha === reserva.fecha &&
-      (r.estado||'').toLowerCase() === 'confirmada'
+      ['confirmada','pendiente'].includes((r.estado||'').toLowerCase())
     );
     if (confirmadasHoy.length === 0) {
       await deleteDoc(doc(db, 'calendario_publico', reserva.fecha));
@@ -3241,7 +3241,7 @@ window.eliminarReserva = async (id) => {
       ));
       const confirmadasRestantes = snapRest.docs
         .map(d => ({ id: d.id, ...d.data() }))
-        .filter(r => (r.estado||'').toLowerCase() === 'confirmada');
+        .filter(r => ['confirmada','pendiente'].includes((r.estado||'').toLowerCase()));
 
       if(confirmadasRestantes.length > 0) {
         const { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, rangos } = calcOcupacion(confirmadasRestantes);
@@ -3678,7 +3678,7 @@ window.saveRecurrente = async function() {
       try {
         // Usar allReservas en memoria — sin getDocs extra
         const confirmadasDia = allReservas.filter(function(r) {
-          return r.fecha === fecha && (r.estado||'').toLowerCase() === 'confirmada';
+          return r.fecha === fecha && ['confirmada','pendiente'].includes((r.estado||'').toLowerCase());
         });
         const nuevaRec = { horario: horarioLimpio||horario, horaExtra:'Sin horas extra', estado:'Confirmada' };
         const ocupacion = calcOcupacion([...confirmadasDia, nuevaRec]);
