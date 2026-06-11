@@ -2045,6 +2045,8 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
       <button class="prc-tab on" onclick="prcSwitch('estandar',this)" role="tab">Torns 4h</button>
       <button class="prc-tab" onclick="prcSwitch('ampliados',this)" role="tab">Dia complet</button>
       <button class="prc-tab" onclick="prcSwitch('especiales',this)" role="tab">Dies especials</button>
+      <button class="prc-tab" onclick="prcSwitch('festiu',this)" role="tab">Festiu</button>
+      <button class="prc-tab" onclick="prcSwitch('vigilia',this)" role="tab">Vigília Festiu</button>
       <button class="prc-tab" onclick="prcSwitch('extras',this)" role="tab">Extres</button>
     </div>
 
@@ -2083,6 +2085,42 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
     <div class="prc-panel" id="prc-especiales" data-a="up">
       <div class="prc-loading" id="prc-load-especiales">Carregant tarifes...</div>
       <div class="prc-esp-grid" id="prc-grid-especiales" style="display:none"></div>
+    </div>
+
+    <!-- Panel Festiu -->
+    <div class="prc-panel" id="prc-festiu" data-a="up">
+      <div style="margin-bottom:14px;padding:10px 16px;background:oklch(87% .19 90/.18);border-radius:10px;font-size:.8rem;color:var(--tx1);border:1px solid oklch(75% .18 90/.3);">
+        📅 S'aplica als dies: <strong>15 d'agost · 6 de desembre · 8 de desembre</strong>
+      </div>
+      <div class="prc-loading" id="prc-load-festiu">Carregant tarifes...</div>
+      <div class="prc-table-wrap" id="prc-wrap-festiu" style="display:none">
+        <table class="prc-table" id="prc-tbl-festiu">
+          <thead><tr>
+            <th style="text-align:left">TORN</th>
+            <th style="text-align:left">HORARI</th>
+            <th>PREU</th>
+          </tr></thead>
+          <tbody id="prc-body-festiu"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Panel Vigília Festiu -->
+    <div class="prc-panel" id="prc-vigilia" data-a="up">
+      <div style="margin-bottom:14px;padding:10px 16px;background:oklch(87% .19 90/.18);border-radius:10px;font-size:.8rem;color:var(--tx1);border:1px solid oklch(75% .18 90/.3);">
+        📅 S'aplica als dies: <strong>14 d'agost · 5 de desembre · 7 de desembre</strong>
+      </div>
+      <div class="prc-loading" id="prc-load-vigilia">Carregant tarifes...</div>
+      <div class="prc-table-wrap" id="prc-wrap-vigilia" style="display:none">
+        <table class="prc-table" id="prc-tbl-vigilia">
+          <thead><tr>
+            <th style="text-align:left">TORN</th>
+            <th style="text-align:left">HORARI</th>
+            <th>PREU</th>
+          </tr></thead>
+          <tbody id="prc-body-vigilia"></tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Panel Extras -->
@@ -3019,7 +3057,20 @@ const TARIFAS_FB_DEFAULT = {
     {nombre_ca:'Amb bossa de snack',     nombre_es:'Con bolsa de snack',      precio:3,  tipo:'qty',   categoria_ca:'Càtering · Menú / Snacks Infantil', categoria_es:'Catering · Menú / Snacks Infantil'},
     {nombre_ca:'Només llaminadures',     nombre_es:'Solo chucherías',         precio:5,  tipo:'qty',   categoria_ca:'Càtering · Menú / Snacks Infantil', categoria_es:'Catering · Menú / Snacks Infantil'},
     {nombre_ca:'Neteja matí-migdia',     nombre_es:'Limpieza mañana-mediodía',precio:30,tipo:'check', categoria_ca:'Neteja',                            categoria_es:'Limpieza'},
-  ]
+  ],
+  festiu: [
+    {turno:'Matí',      turno_es:'Mañana',      horario:'10:00-14:00h', precio:130},
+    {turno:'Matí',      turno_es:'Mañana',      horario:'11:00-15:00h', precio:130},
+    {turno:'Tarda',     turno_es:'Tarde',        horario:'16:30-20:30h', precio:140},
+    {turno:'Tarda-Nit', turno_es:'Tarde-Noche',  horario:'19:30-23:30h', precio:185},
+  ],
+  vigilia: [
+    {turno:'Matí',      turno_es:'Mañana',      horario:'10:00-14:00h', precio:130},
+    {turno:'Matí',      turno_es:'Mañana',      horario:'11:00-15:00h', precio:130},
+    {turno:'Tarda',     turno_es:'Tarde',        horario:'16:30-20:30h', precio:140},
+    {turno:'Tarda-Nit', turno_es:'Tarde-Noche',  horario:'19:30-23:30h', precio:185},
+    {turno:'Nit',       turno_es:'Noche',         horario:'21:30-01:30h', precio:200},
+  ],
 };
 let indexTarifas = JSON.parse(JSON.stringify(TARIFAS_FB_DEFAULT));
 
@@ -3069,6 +3120,22 @@ function renderPreciosEspeciales() {
   grid.style.display='';
 }
 
+function renderPreciosTablaSimple(tipo) {
+  const tbody = document.getElementById('prc-body-'+tipo);
+  const load  = document.getElementById('prc-load-'+tipo);
+  const wrap  = document.getElementById('prc-wrap-'+tipo);
+  if(!tbody) return;
+  const filas = indexTarifas[tipo] || [];
+  tbody.innerHTML = filas.map(r => `
+    <tr>
+      <td>${r.turno}</td>
+      <td>${r.horario}</td>
+      <td><strong>${r.precio}€</strong></td>
+    </tr>`).join('');
+  if(load) load.style.display='none';
+  if(wrap) wrap.style.display='';
+}
+
 function renderPreciosExtras() {
   const grid = document.getElementById('prc-grid-extras');
   const load = document.getElementById('prc-load-extras');
@@ -3090,6 +3157,8 @@ function renderTodosPreciosIndex() {
   renderPreciosTablaSemana('estandar');
   renderPreciosTablaSemana('ampliados');
   renderPreciosEspeciales();
+  renderPreciosTablaSimple('festiu');
+  renderPreciosTablaSimple('vigilia');
   renderPreciosExtras();
   renderExtrasFormulario();
 }
@@ -3209,7 +3278,14 @@ function renderFranjas(ds) {
   document.getElementById('cf-grupo-tarde').style.display = '';
   document.getElementById('cf-grupo-diacomp').style.display = '';
 
-  const slots = getSlotsPorDia(diaSemanaIdx);
+  // Detecció automàtica de dies festius i vigílies
+  const _mmdd = ds.slice(5); // '08-15', '12-06', etc.
+  const _FESTIUS  = ['08-15','12-06','12-08'];
+  const _VIGILIES = ['08-14','12-05','12-07'];
+  const _mapSlots = arr => (arr||[]).map(f => ({label:f.horario,precio:f.precio,turno:f.turno,grupo:clasificarTurno(f.turno,f.horario)}));
+  const slots = _FESTIUS.includes(_mmdd)  ? _mapSlots(indexTarifas.festiu)
+              : _VIGILIES.includes(_mmdd) ? _mapSlots(indexTarifas.vigilia)
+              : getSlotsPorDia(diaSemanaIdx);
   const grupos = {manana:[],tarde:[],noche:[],diacomp:[]};
   slots.forEach(s => grupos[s.grupo]?.push(s));
 

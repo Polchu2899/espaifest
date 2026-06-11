@@ -624,6 +624,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <button class="tar-tab" onclick="tarSwitch('ampliados',this)">Turnos ampliados</button>
           <button class="tar-tab" onclick="tarSwitch('especiales',this)">Días especiales</button>
           <button class="tar-tab" onclick="tarSwitch('extras',this)">Extras</button>
+          <button class="tar-tab" onclick="tarSwitch('festiu',this)">Festivo</button>
+          <button class="tar-tab" onclick="tarSwitch('vigilia',this)">Víspera Festivo</button>
           <button class="tar-tab" onclick="tarSwitch('fechas-concretas',this);loadFechasConcretas()">Fechas concretas</button>
           <button class="tar-tab" onclick="tarSwitch('extras-form',this)">Catering y extras</button>
           <button class="btn bp sm" onclick="saveTodasTarifas()" style="margin-left:auto;white-space:nowrap;">
@@ -826,6 +828,68 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             <input class="fi tar-inp wide" id="tar-ex-turno" placeholder="Turno (ej: Mañana)">
             <input class="fi tar-inp" id="tar-ex-precio" placeholder="€" type="number">
             <button class="btn bg sm" onclick="tarAddExtra()">+ Añadir</button>
+          </div>
+        </div>
+
+        <!-- FESTIVO -->
+        <div class="tar-section" id="tar-festiu">
+          <div class="tar-save-bar">
+            <h3>Festivo <span style="font-weight:400;font-size:.8rem;color:var(--t2)">— 15 ag · 6 dic · 8 dic</span></h3>
+            <button class="btn bp sm" onclick="saveTarifas('festiu')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Guardar cambios
+            </button>
+          </div>
+          <p class="tar-hint">Precios para los días festivos (15 agosto, 6 y 8 diciembre). Turno CA y ES, horario y precio.</p>
+          <div class="tar-table-wrap">
+            <table class="tar-table" id="tar-table-festiu">
+              <thead><tr>
+                <th style="text-align:left">Turno CA</th>
+                <th style="text-align:left">Turno ES</th>
+                <th style="text-align:left">Horario</th>
+                <th>Precio €</th>
+                <th></th>
+              </tr></thead>
+              <tbody id="tar-body-festiu"></tbody>
+            </table>
+          </div>
+          <div class="tar-add-row">
+            <input class="fi tar-inp" id="tar-fst-turno-ca" placeholder="Turno CA (ej: Tarda-Nit)" style="flex:1;min-width:120px">
+            <input class="fi tar-inp" id="tar-fst-turno-es" placeholder="Turno ES (ej: Tarde-Noche)" style="flex:1;min-width:120px">
+            <input class="fi tar-inp" id="tar-fst-horario" placeholder="Horario (ej: 19:30-23:30h)" style="flex:1;min-width:140px">
+            <input class="fi tar-inp" id="tar-fst-precio" placeholder="€" type="number" style="width:70px">
+            <button class="btn bg sm" onclick="tarAddFestiu('festiu')">+ Añadir</button>
+          </div>
+        </div>
+
+        <!-- VÍSPERA FESTIVO -->
+        <div class="tar-section" id="tar-vigilia">
+          <div class="tar-save-bar">
+            <h3>Víspera Festivo <span style="font-weight:400;font-size:.8rem;color:var(--t2)">— 14 ag · 5 dic · 7 dic</span></h3>
+            <button class="btn bp sm" onclick="saveTarifas('vigilia')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Guardar cambios
+            </button>
+          </div>
+          <p class="tar-hint">Precios para las vísperas de festivo (14 agosto, 5 y 7 diciembre). Incluye el turno de noche extra 21:30-01:30h.</p>
+          <div class="tar-table-wrap">
+            <table class="tar-table" id="tar-table-vigilia">
+              <thead><tr>
+                <th style="text-align:left">Turno CA</th>
+                <th style="text-align:left">Turno ES</th>
+                <th style="text-align:left">Horario</th>
+                <th>Precio €</th>
+                <th></th>
+              </tr></thead>
+              <tbody id="tar-body-vigilia"></tbody>
+            </table>
+          </div>
+          <div class="tar-add-row">
+            <input class="fi tar-inp" id="tar-vig-turno-ca" placeholder="Turno CA (ej: Nit)" style="flex:1;min-width:120px">
+            <input class="fi tar-inp" id="tar-vig-turno-es" placeholder="Turno ES (ej: Noche)" style="flex:1;min-width:120px">
+            <input class="fi tar-inp" id="tar-vig-horario" placeholder="Horario (ej: 21:30-01:30h)" style="flex:1;min-width:140px">
+            <input class="fi tar-inp" id="tar-vig-precio" placeholder="€" type="number" style="width:70px">
+            <button class="btn bg sm" onclick="tarAddFestiu('vigilia')">+ Añadir</button>
           </div>
         </div>
 
@@ -6293,7 +6357,20 @@ const TARIFAS_DEFAULT = {
     {nombre_ca:'Amb bossa de snack',     nombre_es:'Con bolsa de snack',      precio:3,  tipo:'qty',   categoria_ca:'Càtering · Menú / Snacks Infantil', categoria_es:'Catering · Menú / Snacks Infantil'},
     {nombre_ca:'Només llaminadures',     nombre_es:'Solo chucherías',         precio:5,  tipo:'qty',   categoria_ca:'Càtering · Menú / Snacks Infantil', categoria_es:'Catering · Menú / Snacks Infantil'},
     {nombre_ca:'Neteja matí-migdia',     nombre_es:'Limpieza mañana-mediodía',precio:30,tipo:'check', categoria_ca:'Neteja',                            categoria_es:'Limpieza'},
-  ]
+  ],
+  festiu: [
+    {turno:'Matí',      turno_es:'Mañana',      horario:'10:00-14:00h', precio:130},
+    {turno:'Matí',      turno_es:'Mañana',      horario:'11:00-15:00h', precio:130},
+    {turno:'Tarda',     turno_es:'Tarde',        horario:'16:30-20:30h', precio:140},
+    {turno:'Tarda-Nit', turno_es:'Tarde-Noche',  horario:'19:30-23:30h', precio:185},
+  ],
+  vigilia: [
+    {turno:'Matí',      turno_es:'Mañana',      horario:'10:00-14:00h', precio:130},
+    {turno:'Matí',      turno_es:'Mañana',      horario:'11:00-15:00h', precio:130},
+    {turno:'Tarda',     turno_es:'Tarde',        horario:'16:30-20:30h', precio:140},
+    {turno:'Tarda-Nit', turno_es:'Tarde-Noche',  horario:'19:30-23:30h', precio:185},
+    {turno:'Nit',       turno_es:'Noche',         horario:'21:30-01:30h', precio:200},
+  ],
 };
 
 let tarifasData = JSON.parse(JSON.stringify(TARIFAS_DEFAULT));
@@ -6360,6 +6437,8 @@ window.loadTarifas = async function() {
   renderTarTabla('ampliados');
   renderTarTablaEspeciales();
   renderTarTablaExtras();
+  renderTarTablaFestiu('festiu');
+  renderTarTablaFestiu('vigilia');
   renderTarTablaExtrasForm();
 };
 
@@ -6410,6 +6489,7 @@ window.tarDelRow = function(tipo, i) {
   if(tipo==='estandar'||tipo==='ampliados') renderTarTabla(tipo);
   else if(tipo==='especiales') renderTarTablaEspeciales();
   else if(tipo==='extras_form') renderTarTablaExtrasForm();
+  else if(tipo==='festiu'||tipo==='vigilia') renderTarTablaFestiu(tipo);
   else renderTarTablaExtras();
 };
 
@@ -6785,6 +6865,33 @@ window.tarAddExtra = function() {
   ['tar-ex-concepto','tar-ex-turno','tar-ex-precio'].forEach(id=>{document.getElementById(id).value='';});
 };
 
+// ── Festiu / Vigília ──
+function renderTarTablaFestiu(tipo) {
+  const tbody = document.getElementById('tar-body-'+tipo);
+  if(!tbody) return;
+  tbody.innerHTML = (window.tarifasData[tipo]||[]).map((row,i) => `
+    <tr>
+      <td><input class="tar-inp" value="${row.turno||''}" oninput="window.tarifasData['${tipo}'][${i}].turno=this.value" style="min-width:90px"></td>
+      <td><input class="tar-inp" value="${row.turno_es||''}" oninput="window.tarifasData['${tipo}'][${i}].turno_es=this.value" style="min-width:90px"></td>
+      <td><input class="tar-inp" value="${row.horario||''}" oninput="window.tarifasData['${tipo}'][${i}].horario=this.value" style="min-width:120px"></td>
+      <td><input class="tar-inp" type="number" value="${row.precio||0}" oninput="window.tarifasData['${tipo}'][${i}].precio=parseFloat(this.value)||0" style="width:70px"></td>
+      <td><button class="tar-row-del" onclick="tarDelRow('${tipo}',${i})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></td>
+    </tr>`).join('');
+}
+
+window.tarAddFestiu = function(tipo) {
+  const px  = tipo === 'festiu' ? 'fst' : 'vig';
+  const tca = document.getElementById('tar-'+px+'-turno-ca')?.value.trim() || '';
+  const tes = document.getElementById('tar-'+px+'-turno-es')?.value.trim() || '';
+  const hor = document.getElementById('tar-'+px+'-horario')?.value.trim() || '';
+  const pre = parseFloat(document.getElementById('tar-'+px+'-precio')?.value) || 0;
+  if(!hor) { showToast('El horario es obligatorio'); return; }
+  if(!window.tarifasData[tipo]) window.tarifasData[tipo] = [];
+  window.tarifasData[tipo].push({turno:tca||tes, turno_es:tes||tca, horario:hor, precio:pre});
+  renderTarTablaFestiu(tipo);
+  ['turno-ca','turno-es','horario','precio'].forEach(f => { const el = document.getElementById('tar-'+px+'-'+f); if(el) el.value=''; });
+};
+
 // ── Extras formulario (bilingüe) ──
 function renderTarTablaExtrasForm() {
   const tbody = document.getElementById('tar-body-extras-form');
@@ -6847,7 +6954,7 @@ window.saveTarifas = async function(tipo) {
 window.saveTodasTarifas = async function() {
   if(document.activeElement && document.activeElement.tagName==='INPUT') document.activeElement.blur();
   try {
-    const tipos = ['estandar','ampliados','especiales','extras','extras_form'];
+    const tipos = ['estandar','ampliados','especiales','extras','extras_form','festiu','vigilia'];
     await Promise.all(tipos.map(t => setDoc(doc(db,'tarifas',t), { filas: window.tarifasData[t], updatedAt: serverTimestamp() })));
     // PHP sync fire-and-forget
     const allData = {};
