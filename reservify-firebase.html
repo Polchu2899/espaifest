@@ -3023,6 +3023,12 @@ const FRANJAS_RANGOS = {
   '21:15h-01:30h':    { ini: 21*60+15,    fin: 25*60+30,    turno: 'noche'  },
   '21:15–01:30':      { ini: 21*60+15,    fin: 25*60+30,    turno: 'noche'  },
   '21:15-01:30':      { ini: 21*60+15,    fin: 25*60+30,    turno: 'noche'  },
+  // Noche 21:30 (festiu/vigilia)
+  '21:30h–01:30h':    { ini: 21*60+30,    fin: 25*60+30,    turno: 'noche'  },
+  '21:30h-01:30h':    { ini: 21*60+30,    fin: 25*60+30,    turno: 'noche'  },
+  '21:30–01:30':      { ini: 21*60+30,    fin: 25*60+30,    turno: 'noche'  },
+  '21:30-01:30':      { ini: 21*60+30,    fin: 25*60+30,    turno: 'noche'  },
+  '21:30-01:30h':     { ini: 21*60+30,    fin: 25*60+30,    turno: 'noche'  },
   // Tarde-Noche
   '16:30h–01:30h':    { ini: 16*60+30,    fin: 25*60+30,    turno: 'noche'  },
   '16:30h-01:30h':    { ini: 16*60+30,    fin: 25*60+30,    turno: 'noche'  },
@@ -3033,7 +3039,13 @@ const FRANJAS_RANGOS = {
   '10h-20h':          { ini: 10*60,       fin: 20*60,       turno: 'diacomp'},
   '10:00–20:00':      { ini: 10*60,       fin: 20*60,       turno: 'diacomp'},
   '10:00-20:00':      { ini: 10*60,       fin: 20*60,       turno: 'diacomp'},
+  '10:00-20:00h':     { ini: 10*60,       fin: 20*60,       turno: 'diacomp'},
   'Todo el día':      { ini: 10*60,       fin: 20*60,       turno: 'diacomp'},
+  // Variantes con h-sufijo usadas en TARIFAS festiu/vigilia
+  '10:00-14:00h':     { ini: 10*60,       fin: 14*60,       turno: 'manana' },
+  '11:00-15:00h':     { ini: 11*60,       fin: 15*60,       turno: 'manana' },
+  '16:30-20:30h':     { ini: 16*60+30,    fin: 20*60+30,    turno: 'tarde'  },
+  '19:30-23:30h':     { ini: 19*60+30,    fin: 23*60+30,    turno: 'noche'  },
 };
 
 function getHorario(r) {
@@ -3131,13 +3143,14 @@ function calcOcupacion(reservasConfirmadas) {
   const franjasTarde = [
     { ini: 16*60+30, fin: 20*60+30 }, // 16:30h–20:30h
   ];
-  // Representativo noche: SOLO 21:15h–01:30h.
+  // Referencias noche: 21:15 (estándar) y 21:30 (festiu/vigilia).
   // 16:30-20:30 termina a las 20:30 y NO solapa con 21:15 (gap 45 min) → pueden coexistir.
   // 10:00-20:00 termina a las 20:00 y tampoco solapa → pueden coexistir.
   // El 19:30-23:30 SÍ solapa con 21:15 (y con 16:30-20:30) → si se reserva, bloquea noche.
   // El 16:30-01:30 SÍ solapa → bloquea noche.
   const franjasNoche = [
-    { ini: 21*60+15, fin: 25*60+30 }, // 21:15h–01:30h — punto de referencia noche
+    { ini: 21*60+15, fin: 25*60+30 }, // 21:15h–01:30h — noche estándar (Vi/Sa)
+    { ini: 21*60+30, fin: 25*60+30 }, // 21:30h–01:30h — noche festiu/vigilia
   ];
 
   const mananaOcupada = franjasManana.some(f =>
@@ -3742,7 +3755,7 @@ window.saveRecurrente = async function() {
   if(!recFechas.length) { showToast('Añade al menos una fecha'); return; }
 
   // Detectar fechas con conflicto antes de guardar
-  const rangoRec = FRANJAS_RANGOS[horario];
+  const rangoRec = buscarRangoHorario(horario);
   const fechasConflicto = rangoRec ? recFechas.filter(function(f) {
     const conf = (allReservas||[]).filter(function(r) {
       return r.fecha === f && (r.estado||'').toLowerCase() === 'confirmada';
