@@ -3165,8 +3165,21 @@ function calcOcupacion(reservasConfirmadas) {
   // Un día está completamente bloqueado si mañana y tarde están ambas ocupadas
   // (cubre "Todo el día", o dos reservas independientes que llenan el día)
   const diaOcupado = mananaOcupada && tardeOcupada;
-  // Rangos reales ocupados (para comprobación precisa slot a slot en la web)
-  const rangos = rangosConfirmados.map(rc => ({ ini: rc.ini, fin: rc.fin }));
+  // Rangos para bloqueo slot-a-slot en la web. Cuando hay hora extra se añade
+  // 1h de buffer de preparación sobre el rango ya extendido por getRangoReal,
+  // para bloquear el slot adyacente. Los flags de turno usan rangosConfirmados
+  // (sin buffer) para no marcar el día completo erróneamente.
+  const rangos = reservasConfirmadas.map(r => {
+    const rango = getRangoReal(r);
+    if (!rango) return null;
+    const extra = (r.horaExtra || '').toLowerCase();
+    const extAntes   = extra.includes('antes');
+    const extDespues = extra.includes('después') || extra.includes('despues');
+    return {
+      ini: extAntes   ? rango.ini - 60 : rango.ini,
+      fin: extDespues ? rango.fin + 60 : rango.fin
+    };
+  }).filter(Boolean);
 
   return { mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, rangos };
 }
@@ -7014,10 +7027,20 @@ window.loadFranjasPorFecha = function(fechaStr) {
     return;
   }
 
-  // Rangos ya ocupados ese día (reservas no canceladas)
+  // Rangos ya ocupados ese día (con buffer de preparación cuando hay hora extra)
   const rangosOcupados = (allReservas||[])
     .filter(r => r.fecha === fechaStr && (r.estado||'').toLowerCase() !== 'cancelada')
-    .map(r => getRangoReal(r))
+    .map(r => {
+      const rango = getRangoReal(r);
+      if (!rango) return null;
+      const extra = (r.horaExtra || '').toLowerCase();
+      const extAntes   = extra.includes('antes');
+      const extDespues = extra.includes('después') || extra.includes('despues');
+      return {
+        ini: extAntes   ? rango.ini - 60 : rango.ini,
+        fin: extDespues ? rango.fin + 60 : rango.fin
+      };
+    })
     .filter(Boolean);
 
   // Datos del día especial concreto guardados en Firebase

@@ -4082,7 +4082,8 @@ async function enviarReserva() {
         where('estado', 'in', ['Confirmada', 'Pendiente'])
       ));
       const reservasHoy = snapCal.docs.map(d => ({ id: d.id, ...d.data() }));
-      const rangosOcupados = reservasHoy.map(r => {
+      // Rangos reales (con hora extra) para calcular los flags del día
+      const rangosReales = reservasHoy.map(r => {
         const h = parseHorarioWeb(r.horario);
         if(!h) return null;
         let { ini, fin } = h;
@@ -4091,15 +4092,24 @@ async function enviarReserva() {
         if(extra.includes('después') || extra.includes('despues')) fin += 60;
         return { ini, fin };
       }).filter(Boolean);
+      // Rangos con buffer de preparación (1h adicional) para bloqueo slot a slot
+      const rangos = reservasHoy.map(r => {
+        const h = parseHorarioWeb(r.horario);
+        if(!h) return null;
+        let { ini, fin } = h;
+        const extra = (r.horaExtra || '').toLowerCase();
+        if(extra.includes('antes'))   ini -= 120;
+        if(extra.includes('después') || extra.includes('despues')) fin += 120;
+        return { ini, fin };
+      }).filter(Boolean);
 
       const franjasM = [{ ini:10*60, fin:14*60 }, { ini:11*60, fin:15*60 }];
       const franjasT = [{ ini:16*60+30, fin:20*60+30 }];
       const franjasN = [{ ini:21*60+15, fin:25*60+30 }];
-      const mananaOcupada = franjasM.some(fm => rangosOcupados.some(rc => rc.ini < fm.fin && fm.ini < rc.fin));
-      const tardeOcupada  = franjasT.some(ft => rangosOcupados.some(rc => rc.ini < ft.fin && ft.ini < rc.fin));
-      const nocheOcupada  = franjasN.some(fn => rangosOcupados.some(rc => rc.ini < fn.fin && fn.ini < rc.fin));
+      const mananaOcupada = franjasM.some(fm => rangosReales.some(rc => rc.ini < fm.fin && fm.ini < rc.fin));
+      const tardeOcupada  = franjasT.some(ft => rangosReales.some(rc => rc.ini < ft.fin && ft.ini < rc.fin));
+      const nocheOcupada  = franjasN.some(fn => rangosReales.some(rc => rc.ini < fn.fin && fn.ini < rc.fin));
       const diaOcupado    = mananaOcupada && tardeOcupada;
-      const rangos = rangosOcupados.map(rc => ({ ini: rc.ini, fin: rc.fin }));
 
       await setDoc(doc(_db, 'calendario_publico', f), {
         fecha: f, mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, rangos, updatedAt: serverTimestamp()
