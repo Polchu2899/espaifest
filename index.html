@@ -970,7 +970,7 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   .cal-head{padding:12px 14px;}
   .cal-day-hdr{padding:6px 2px;font-size:.62rem;letter-spacing:0;}
   .cal-day{padding:6px 2px;font-size:.78rem;min-height:40px;gap:2px;}
-  .dot-occ,.dot-free,.dot-partial,.dot-esp{width:5px;height:5px;}
+  .dot-occ,.dot-free,.dot-partial,.dot-esp,.dot-festiu,.dot-vigilia{width:5px;height:5px;}
   .cal-legend{padding:10px 14px;gap:10px;font-size:.72rem;}
   .cal-note{padding:10px 14px;font-size:.78rem;}
   .cal-franjas{padding:12px;}
@@ -1510,6 +1510,14 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
 [data-theme="light"] .cal-day.partial{background:oklch(83% .22 90/.30);box-shadow:inset 0 3px 0 oklch(70% .26 90/.7);}
 [data-theme="light"] .cal-day.dia-especial{background:oklch(62% .20 150/.18);border-color:oklch(62% .20 150/.4);}
 [data-theme="light"] .cal-day.dia-especial:hover{background:oklch(62% .20 150/.28);}
+.cal-day.dia-festiu{background:oklch(62% .20 150/.15);border-color:oklch(62% .20 150/.35);cursor:pointer;}
+.cal-day.dia-festiu:hover{background:oklch(62% .20 150/.25);}
+.cal-day.dia-vigilia{background:oklch(72% .16 150/.13);border-color:oklch(62% .20 150/.25);cursor:pointer;}
+.cal-day.dia-vigilia:hover{background:oklch(72% .16 150/.22);}
+.dot-festiu{width:8px;height:8px;border-radius:50%;background:oklch(62% .20 150);box-shadow:0 0 5px oklch(62% .20 150);}
+.dot-vigilia{width:8px;height:8px;border-radius:50%;background:oklch(72% .16 150);box-shadow:0 0 5px oklch(72% .16 150);}
+[data-theme="light"] .cal-day.dia-festiu{background:oklch(62% .20 150/.18);border-color:oklch(62% .20 150/.4);}
+[data-theme="light"] .cal-day.dia-vigilia{background:oklch(72% .16 150/.15);border-color:oklch(62% .20 150/.3);}
 
 /* ══ MODAL BLOG POST ════════════════════════════════════ */
 .blog-modal-ov{
@@ -2326,6 +2334,10 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
           </div>
           <div class="eq-item">
             <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Congelador</span>
+          </div>
+          <div class="eq-item">
+            <svg viewBox="0 0 24 24" stroke="var(--cy)"><polyline points="20 6 9 17 4 12"/></svg>
             <span>Utensilis bàsics</span>
           </div>
         </div>
@@ -2446,10 +2458,10 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
               <li style="font-size:.74rem;color:var(--tx2);display:flex;align-items:baseline;gap:5px;line-height:1.4;"><span style="color:oklch(55% .18 90);font-weight:700;flex-shrink:0;">·</span>2 ampolles de batut de xocolata (1L)</li>
             </ul>
           </div>
-          <div class="eq-item" data-xnm="Amb bossa de snack" style="flex-direction:column;align-items:flex-start;gap:6px;padding:10px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
-            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:700;font-size:.88rem;">Amb bossa de snack</span><span class="eq-pill" style="background:oklch(87% .19 90/.2);color:oklch(40% .15 90);font-size:.7rem;padding:3px 10px;">3,00 €/ud.</span></div>
+          <div class="eq-item" data-xnm="Bossa de llaminadures amb snack" style="flex-direction:column;align-items:flex-start;gap:6px;padding:10px 0;border-bottom:1px solid oklch(50% 0 0/.08);">
+            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;"><span style="font-weight:700;font-size:.88rem;">Bossa de llaminadures amb snack</span><span class="eq-pill" style="background:oklch(87% .19 90/.2);color:oklch(40% .15 90);font-size:.7rem;padding:3px 10px;">3,00 €/ud.</span></div>
             <ul style="list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column;gap:3px;">
-              <li style="font-size:.74rem;color:var(--tx2);display:flex;align-items:baseline;gap:5px;line-height:1.4;"><span style="color:oklch(55% .18 90);font-weight:700;flex-shrink:0;">·</span>Bossa de snacks variats</li>
+              <li style="font-size:.74rem;color:var(--tx2);display:flex;align-items:baseline;gap:5px;line-height:1.4;"><span style="color:oklch(55% .18 90);font-weight:700;flex-shrink:0;">·</span>Bossa de llaminadures amb bosseta de snack</li>
             </ul>
           </div>
           <div class="eq-item" data-xnm="Només llaminadures" style="flex-direction:column;align-items:flex-start;gap:6px;padding:10px 0;">
@@ -3054,25 +3066,32 @@ const TARIFAS_FB_DEFAULT = {
     {nombre_ca:'Safata Salada',          nombre_es:'Bandeja Salada',         precio:12, tipo:'qty',   categoria_ca:'Càtering · Snacks Adults',          categoria_es:'Catering · Snacks Adultos'},
     {nombre_ca:'Mix Picoteo (adult)',    nombre_es:'Mix Picoteo (adulto)',   precio:12, tipo:'qty',   categoria_ca:'Càtering · Snacks Adults',          categoria_es:'Catering · Snacks Adultos'},
     {nombre_ca:'Begudes FREDES Adults',  nombre_es:'Bebidas FRÍAS Adultos',  precio:18, tipo:'qty',   categoria_ca:'Càtering · Snacks Adults',          categoria_es:'Catering · Snacks Adultos'},
-    {nombre_ca:'Amb bossa de snack',     nombre_es:'Con bolsa de snack',      precio:3,  tipo:'qty',   categoria_ca:'Càtering · Menú / Snacks Infantil', categoria_es:'Catering · Menú / Snacks Infantil'},
+    {nombre_ca:'Bossa de llaminadures amb snack', nombre_es:'Bolsa de chuches con snack', precio:3, tipo:'qty', categoria_ca:'Càtering · Menú / Snacks Infantil', categoria_es:'Catering · Menú / Snacks Infantil'},
     {nombre_ca:'Només llaminadures',     nombre_es:'Solo chucherías',         precio:5,  tipo:'qty',   categoria_ca:'Càtering · Menú / Snacks Infantil', categoria_es:'Catering · Menú / Snacks Infantil'},
     {nombre_ca:'Neteja matí-migdia',     nombre_es:'Limpieza mañana-mediodía',precio:30,tipo:'check', categoria_ca:'Neteja',                            categoria_es:'Limpieza'},
   ],
   festiu: [
-    {turno:'Matí',      turno_es:'Mañana',      horario:'10:00-14:00h', precio:130},
-    {turno:'Matí',      turno_es:'Mañana',      horario:'11:00-15:00h', precio:130},
-    {turno:'Tarda',     turno_es:'Tarde',        horario:'16:30-20:30h', precio:140},
-    {turno:'Tarda-Nit', turno_es:'Tarde-Noche',  horario:'19:30-23:30h', precio:185},
+    {turno:'Matí',        turno_es:'Mañana',      horario:'10:00-14:00h', precio:130},
+    {turno:'Matí',        turno_es:'Mañana',      horario:'11:00-15:00h', precio:130},
+    {turno:'Tarda',       turno_es:'Tarde',        horario:'16:30-20:30h', precio:140},
+    {turno:'Tarda-Nit',   turno_es:'Tarde-Noche',  horario:'19:30-23:30h', precio:185},
+    {turno:'Dia Complet', turno_es:'Día Completo', horario:'10:00-20:00h', precio:270},
+    {turno:'Nit',         turno_es:'Noche',         horario:'21:30-01:30h', precio:200},
   ],
   vigilia: [
-    {turno:'Matí',      turno_es:'Mañana',      horario:'10:00-14:00h', precio:130},
-    {turno:'Matí',      turno_es:'Mañana',      horario:'11:00-15:00h', precio:130},
-    {turno:'Tarda',     turno_es:'Tarde',        horario:'16:30-20:30h', precio:140},
-    {turno:'Tarda-Nit', turno_es:'Tarde-Noche',  horario:'19:30-23:30h', precio:185},
-    {turno:'Nit',       turno_es:'Noche',         horario:'21:30-01:30h', precio:200},
+    {turno:'Matí',        turno_es:'Mañana',      horario:'10:00-14:00h', precio:85},
+    {turno:'Matí',        turno_es:'Mañana',      horario:'11:00-15:00h', precio:85},
+    {turno:'Tarda',       turno_es:'Tarde',        horario:'16:30-20:30h', precio:85},
+    {turno:'Tarda-Nit',   turno_es:'Tarde-Noche',  horario:'19:30-23:30h', precio:185},
+    {turno:'Nit',         turno_es:'Noche',         horario:'21:30-01:30h', precio:200},
+    {turno:'Dia Complet', turno_es:'Día Completo', horario:'10:00-20:00h', precio:150},
   ],
 };
 let indexTarifas = JSON.parse(JSON.stringify(TARIFAS_FB_DEFAULT));
+
+// Dates fixes festiu/víspera (MM-DD) per a detecció automàtica al calendari i renderFranjas
+const _FESTIUS_CAL  = ['01-05','03-26','03-29','05-01','05-17','06-24','08-15','09-11','10-12','11-01','12-06','12-08'];
+const _VIGILIES_CAL = ['03-25','03-28','04-30','05-16','08-14','09-10','10-11','12-05','12-07'];
 
 // Tab switch
 function prcSwitch(tipo, btn) {
@@ -3301,12 +3320,23 @@ function renderFranjas(ds) {
 
   // Detecció automàtica de dies festius i vigílies
   const _mmdd = ds.slice(5); // '08-15', '12-06', etc.
-  const _FESTIUS  = ['08-15','12-06','12-08'];
-  const _VIGILIES = ['08-14','12-05','12-07'];
   const _mapSlots = arr => (arr||[]).map(f => ({label:f.horario,precio:f.precio,turno:f.turno,grupo:clasificarTurno(f.turno,f.horario)}));
-  const slots = _FESTIUS.includes(_mmdd)  ? _mapSlots(indexTarifas.festiu)
-              : _VIGILIES.includes(_mmdd) ? _mapSlots(indexTarifas.vigilia)
-              : getSlotsPorDia(diaSemanaIdx);
+  let slots;
+  if(_FESTIUS_CAL.includes(_mmdd)) {
+    const festSlots = _mapSlots(indexTarifas.festiu);
+    // Torn de nit (21:30) només si cau en divendres (idx 4 = divendres en Mo=0)
+    slots = diaSemanaIdx === 4 ? festSlots : festSlots.filter(s => s.grupo !== 'noche');
+  } else if(_VIGILIES_CAL.includes(_mmdd)) {
+    if(diaSemanaIdx === 4) {
+      slots = getSlotsPorDia(4); // Víspera en divendres → tarifa normal divendres
+    } else if(diaSemanaIdx <= 3) {
+      slots = _mapSlots(indexTarifas.vigilia); // Dl-Dj → tarifa víspera
+    } else {
+      slots = getSlotsPorDia(diaSemanaIdx); // Ds/Dg → tarifa normal
+    }
+  } else {
+    slots = getSlotsPorDia(diaSemanaIdx);
+  }
   const grupos = {manana:[],tarde:[],noche:[],diacomp:[]};
   slots.forEach(s => grupos[s.grupo]?.push(s));
 
@@ -3510,11 +3540,14 @@ function renderCal() {
       if(sr) return _rEfect.some(rc => seSuperponen(sr, rc));
       return false;
     };
+    const mmdd = ds.slice(5);
+    const isFestiu  = _FESTIUS_CAL.includes(mmdd);
+    const isVigilia = _VIGILIES_CAL.includes(mmdd);
     const isFullOcc = _diaOc ||
       (slotsDisp.length > 0 && slotsDisp.every(s => _esSlotBloq(s.label)));
     const isPartial = !isFullOcc && (info.mananaOcupada || info.tardeOcupada || info.nocheOcupada);
     const isDiaEsp  = info.esDiaEspecial && !isFullOcc;
-    const noHayFranjas = !isPast && slotsDisp.length === 0 && !isDiaEsp;
+    const noHayFranjas = !isPast && slotsDisp.length === 0 && !isDiaEsp && !isFestiu && !isVigilia;
     const isToday = ds===todayStr;
     const isSel   = ds===calSelected;
 
@@ -3522,6 +3555,8 @@ function renderCal() {
     if(isPast || noHayFranjas) cls+=' empty';
     else if(isFullOcc)  cls+=' occupied';
     else if(isDiaEsp)   cls+=' dia-especial';
+    else if(isFestiu)   cls+=' dia-festiu';
+    else if(isVigilia)  cls+=' dia-vigilia';
     else if(isPartial)  cls+=' partial';
     else if(isSel)      cls+=' selected';
     else if(isToday)    cls+=' today';
@@ -3530,6 +3565,8 @@ function renderCal() {
     if(!isPast && !noHayFranjas){
       if(isFullOcc)       dot='<div class="dot-occ"></div>';
       else if(isDiaEsp)   dot='<div class="dot-esp"></div>';
+      else if(isFestiu)   dot='<div class="dot-festiu"></div>';
+      else if(isVigilia)  dot='<div class="dot-vigilia"></div>';
       else if(isPartial)  dot='<div class="dot-partial"></div>';
       else                dot='<div class="dot-free"></div>';
     }
