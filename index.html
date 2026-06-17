@@ -801,6 +801,8 @@ section{padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem);}
 .colt-code-row{display:flex;align-items:center;gap:5px;}
 .promo-footer.col-foot{flex-direction:column;align-items:flex-start;gap:8px;}
 .colt-note{font-size:.7rem;color:var(--tx3);font-style:italic;}
+.colt-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.colt-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 .pc{border-radius:22px;padding:32px 26px;background:var(--s1);border:1px solid var(--bd);position:relative;overflow:hidden;transition:transform .3s var(--ease-b),box-shadow .3s;}
 .pc::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;}
 .pc-1::before{background:linear-gradient(90deg,var(--cp),var(--co));}
@@ -2536,8 +2538,9 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
 
         <!-- Family Card -->
         <div class="promo-card">
+          <div class="colt-icon" style="background:oklch(66% .24 355/.12);color:oklch(50% .24 355)"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
           <div class="promo-pct">10%</div>
-          <div class="promo-name">💖 Family Card</div>
+          <div class="promo-name">Family Card</div>
           <div class="promo-desc">Per al teu 2n fill/a, marit o muller en el <strong>mateix any natural</strong>. En fer la reserva et demanarem el llibre de família. No cal sol·licitar cap targeta prèviament.</div>
           <div class="promo-footer">
             <div>
@@ -2553,8 +2556,9 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
 
         <!-- Família Nombrosa / Monoparental -->
         <div class="promo-card">
+          <div class="colt-icon" style="background:oklch(68% .22 38/.12);color:oklch(50% .22 38)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
           <div class="promo-pct">10%</div>
-          <div class="promo-name">👨‍👩‍👧‍👦 Família Nombrosa &amp; Monoparental</div>
+          <div class="promo-name">Família Nombrosa &amp; Monoparental</div>
           <div class="promo-desc">Per celebrar l'aniversari dels teus fills a EspaiFest. Envia'ns o mostra'ns el <strong>carnet acreditatiu</strong> (família nombrosa o monoparental) abans del dia de l'event.</div>
           <div class="promo-footer col-foot">
             <div class="colt-codes">
@@ -2579,6 +2583,7 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
 
         <!-- Col·lectiu SEAT -->
         <div class="promo-card">
+          <div class="colt-icon" style="background:oklch(72% .14 190/.15);color:oklch(38% .14 190)"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
           <div class="colt-mpct">
             <div class="colt-mpct-col">
               <div class="promo-pct">15%</div>
@@ -2589,7 +2594,7 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
               <div class="colt-day-lbl">Dv – Dg</div>
             </div>
           </div>
-          <div class="promo-name">🏭 Col·lectiu SEAT</div>
+          <div class="promo-name">Col·lectiu SEAT</div>
           <div class="promo-desc">Treballadors/es de SEAT: <strong>15%</strong> de dilluns a dijous (no festius ni vigílies), <strong>10%</strong> de divendres a diumenge o festius entre setmana. Presenta el carnet acreditatiu de SEAT per email o WhatsApp.</div>
           <div class="promo-footer col-foot">
             <div class="colt-codes">
@@ -2614,6 +2619,7 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
 
         <!-- AMPA Escola Mare de Déu de Montserrat / AFA Josep Pla -->
         <div class="promo-card">
+          <div class="colt-icon" style="background:oklch(55% .28 310/.12);color:oklch(42% .28 310)"><svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
           <div class="colt-mpct">
             <div class="colt-mpct-col">
               <div class="promo-pct">10%</div>
@@ -2624,7 +2630,7 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
               <div class="colt-day-lbl">Dv – Dg</div>
             </div>
           </div>
-          <div class="promo-name">🏫 AMPA Escola Montserrat &amp; AFA Josep Pla</div>
+          <div class="promo-name">AMPA Escola Montserrat &amp; AFA Josep Pla</div>
           <div class="promo-desc">Socis/àcies de l'AMPA de l'Escola Mare de Déu de Montserrat (Castellví de Rosanes) i de l'AFA Josep Pla (St. Andreu de la Barca). Presenta el carnet de soci per email o WhatsApp. <strong>Sense descompte en festius.</strong></div>
           <div class="promo-footer col-foot">
             <div class="colt-codes">
@@ -2649,6 +2655,7 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
 
         <!-- AMPA Llars d'Infants Martorell / AFA Escoles -->
         <div class="promo-card">
+          <div class="colt-icon" style="background:oklch(78% .18 80/.15);color:oklch(48% .18 80)"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
           <div class="colt-mpct">
             <div class="colt-mpct-col">
               <div class="promo-pct">10%</div>
@@ -2659,7 +2666,7 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
               <div class="colt-day-lbl">Dv – Dg</div>
             </div>
           </div>
-          <div class="promo-name">🎒 AMPA Llars d'Infants &amp; AFA Escoles Martorell</div>
+          <div class="promo-name">AMPA Llars d'Infants &amp; AFA Escoles Martorell</div>
           <div class="promo-desc">Socis/àcies de les AMPA de les Llars d'Infants de Martorell i de les escoles associades. Presenta el carnet de soci per email o WhatsApp. <strong>Sense descompte en festius.</strong></div>
           <div class="promo-footer col-foot">
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
