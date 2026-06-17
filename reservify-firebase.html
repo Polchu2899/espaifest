@@ -2173,7 +2173,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       </div>
     </div>
     <div class="fg"><label class="fl">Código promocional</label>
-      <select class="fsi" id="er-codigo-promo">
+      <select class="fsi" id="er-codigo-promo" onchange="recalcularExtrasPanel()">
         <option value="">— Sin descuento —</option>
         <option value="FAMILY_CARD">FAMILY_CARD · Family Card (−10%)</option>
         <option value="FAMNUM">FAMNUM · Família Nombrosa (−10%)</option>
@@ -2919,6 +2919,7 @@ window.saveReserva = async () => {
     numReserva,
     codigoPromo: codigoPromo || '',
     descuentoPromo: descuentoPromo || 0,
+    importeBase: window._rImporteBase || importe,
     origen: 'panel', vista: false,
     estado: 'Pendiente',
     createdAt: serverTimestamp()
@@ -2946,6 +2947,7 @@ window.saveReserva = async () => {
       await setDoc(doc(db,'calendario_publico', fecha), {
         fecha, mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado, rangos, updatedAt: serverTimestamp()
       });
+      adminCalData[fecha] = { ...(adminCalData[fecha]||{}), mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado };
     } catch(e) { console.warn('Error bloqueando calendario:', e); }
   }
 
@@ -3425,6 +3427,12 @@ window.eliminarReserva = async (id) => {
         await setDoc(doc(db,'calendario_publico', fechaReserva), { ..._calElim, updatedAt: serverTimestamp() });
         _syncCalPHP(fechaReserva, _calElim);
         console.log('[eliminar] calendario recalculado →', {mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado});
+        adminCalData[fechaReserva] = { ...(adminCalData[fechaReserva]||{}), mananaOcupada, tardeOcupada, nocheOcupada, diaOcupado };
+      } else {
+        // Sin reservas restantes — limpiar ocupación en memoria
+        if(adminCalData[fechaReserva]) {
+          adminCalData[fechaReserva] = { ...adminCalData[fechaReserva], mananaOcupada: false, tardeOcupada: false, nocheOcupada: false, diaOcupado: false };
+        }
       }
       bustPublicCache().catch(()=>{});
     } catch(e) {
@@ -5603,8 +5611,15 @@ function recalcularExtrasPanel() {
   const el = document.getElementById('er-extras-total');
   if(el) el.textContent = `Subtotal extras: ${fmtMoney(total)}`;
   const imp = document.getElementById('er-importe');
-  if(imp) imp.value = Math.max(0, window._erBaseImporte + total).toFixed(2);
+  if(imp) {
+    const _eCodigo = document.getElementById('er-codigo-promo')?.value || '';
+    const _ePct    = CODIGOS_RESERVIFY[_eCodigo]?.descuento || 0;
+    const _eSubt   = window._erBaseImporte + total;
+    const _eDesc   = _ePct > 0 ? Math.round(_eSubt * _ePct) / 100 : 0;
+    imp.value = Math.max(0, _eSubt - _eDesc).toFixed(2);
+  }
 }
+window.recalcularExtrasPanel = recalcularExtrasPanel;
 
 // ── EDITAR RESERVA ────────────────────────────────────────────
 window.abrirEditarReserva = function(id) {
@@ -5645,7 +5660,14 @@ window.abrirEditarReserva = function(id) {
       });
     });
   }
-  window._erBaseImporte = (parseFloat(r.importe) || 0) - _oldExtrasTotal;
+  const _importeConExtras = parseFloat(r.importe) || 0;
+  const _pctOld = r.descuentoPromo || 0;
+  const _importeSinDesc = r.importeBase
+    ? r.importeBase - _oldExtrasTotal
+    : _pctOld > 0
+      ? +( (_importeConExtras - _oldExtrasTotal) / (1 - _pctOld / 100) ).toFixed(2)
+      : _importeConExtras - _oldExtrasTotal;
+  window._erBaseImporte = _importeSinDesc;
   recalcularExtrasPanel();
   document.getElementById('er-cobrado').value = r.cobrado  || r.senal || 0;
 
@@ -5709,6 +5731,7 @@ window.guardarEdicionReserva = async function() {
     estadoPago,
     codigoPromo,
     descuentoPromo,
+    importeBase: descuentoPromo > 0 ? +(importe / (1 - descuentoPromo / 100)).toFixed(2) : importe,
     metodoPago: document.getElementById('er-pago').value,
     estado:     document.getElementById('er-estado').value,
     updatedAt:  serverTimestamp(),
@@ -7414,8 +7437,9 @@ window.calcPrecioAuto = function() {
 
   const promoCodigo = document.getElementById('r-codigo-promo')?.value || '';
   const promoPct    = CODIGOS_RESERVIFY[promoCodigo]?.descuento || 0;
-  const descuento   = promoPct > 0 ? Math.round((base + hexPrecio + extrasPrecio) * promoPct) / 100 : 0;
-  const total = base + hexPrecio + extrasPrecio - descuento;
+  window._rImporteBase = base + hexPrecio + extrasPrecio;
+  const descuento   = promoPct > 0 ? Math.round(window._rImporteBase * promoPct) / 100 : 0;
+  const total = window._rImporteBase - descuento;
 
   prev.classList.add('visible');
   const promoLabel = promoPct > 0 ? ` <span style="color:var(--green);font-weight:700;font-size:.78rem">−${promoPct}% promo</span>` : '';
