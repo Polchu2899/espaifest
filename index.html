@@ -791,6 +791,16 @@ section{padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem);}
 .promo-copy{background:none;border:none;cursor:pointer;color:var(--tx3);transition:color .15s;padding:4px;}
 .promo-copy:hover{color:var(--co);}
 .promo-copy svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+/* ─── COL·LECTIUS / DESCOMPTES ─── */
+#descuentos{background:var(--s1);}
+.colt-mpct{display:flex;gap:14px;margin-bottom:8px;}
+.colt-mpct-col{text-align:center;}
+.colt-mpct-col .promo-pct{font-size:2rem;margin-bottom:2px;}
+.colt-day-lbl{font-size:.68rem;font-weight:700;letter-spacing:.05em;color:var(--tx3);text-transform:uppercase;}
+.colt-codes{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+.colt-code-row{display:flex;align-items:center;gap:5px;}
+.promo-footer.col-foot{flex-direction:column;align-items:flex-start;gap:8px;}
+.colt-note{font-size:.7rem;color:var(--tx3);font-style:italic;}
 .pc{border-radius:22px;padding:32px 26px;background:var(--s1);border:1px solid var(--bd);position:relative;overflow:hidden;transition:transform .3s var(--ease-b),box-shadow .3s;}
 .pc::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;}
 .pc-1::before{background:linear-gradient(90deg,var(--cp),var(--co));}
@@ -1728,6 +1738,7 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
     <span class="mob-group-lbl">Preus i informació</span>
     <a href="#precios"    onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(68% .22 38/.12)">💰</span>Preus</a>
     <a href="#fidelizacion" onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(87% .19 90/.15)">⭐</span>Fidelització</a>
+    <a href="#descuentos" onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(55% .28 310/.1)">🏷️</span>Descomptes</a>
     <a href="#calendario" onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(73% .14 190/.12)">📅</span>Calendari</a>
     <a href="#blog"       onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(66% .24 355/.1)">✍️</span>Blog</a>
     <a href="#reservas"   onclick="closeMobMenu()"><span class="mob-ico" style="background:oklch(68% .22 38/.18)">📋</span>Fer una reserva</a>
@@ -2512,6 +2523,159 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
   </div>
 </section>
 
+<!-- ══ COL·LECTIUS I DESCOMPTES (estàtic) ══════════════════ -->
+<section id="descuentos">
+  <div class="container">
+    <div style="padding:80px 0">
+      <div class="tc" data-a="up">
+        <div class="eyebrow ew-p" style="justify-content:center"><div class="ew-dot"></div><span>Descomptes permanents</span></div>
+        <h2 class="sec-h2" data-blur="top">Col·lectius amb avantatges especials</h2>
+        <p class="sec-lead">Programes de descompte estables per a famílies i col·lectius. Aplica el teu codi en reservar i gaudiràs del teu descompte al moment.</p>
+      </div>
+      <div class="promo-grid" data-a="up">
+
+        <!-- Family Card -->
+        <div class="promo-card">
+          <div class="promo-pct">10%</div>
+          <div class="promo-name">💖 Family Card</div>
+          <div class="promo-desc">Per al teu 2n fill/a, marit o muller en el <strong>mateix any natural</strong>. En fer la reserva et demanarem el llibre de família. No cal sol·licitar cap targeta prèviament.</div>
+          <div class="promo-footer">
+            <div>
+              <div class="promo-valido">Codi de descompte</div>
+              <div class="colt-code-row" style="margin-top:4px">
+                <span class="promo-code" id="pc-fc">FAMILY_CARD</span>
+                <button class="promo-copy" onclick="copiarCodigo('FAMILY_CARD','fc')" title="Copiar codi"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+              </div>
+            </div>
+            <span class="promo-valido" style="text-align:right">Únicament<br>reserva sala</span>
+          </div>
+        </div>
+
+        <!-- Família Nombrosa / Monoparental -->
+        <div class="promo-card">
+          <div class="promo-pct">10%</div>
+          <div class="promo-name">👨‍👩‍👧‍👦 Família Nombrosa &amp; Monoparental</div>
+          <div class="promo-desc">Per celebrar l'aniversari dels teus fills a EspaiFest. Envia'ns o mostra'ns el <strong>carnet acreditatiu</strong> (família nombrosa o monoparental) abans del dia de l'event.</div>
+          <div class="promo-footer col-foot">
+            <div class="colt-codes">
+              <div>
+                <div class="promo-valido">Família nombrosa</div>
+                <div class="colt-code-row" style="margin-top:3px">
+                  <span class="promo-code" id="pc-famnum">FAMNUM</span>
+                  <button class="promo-copy" onclick="copiarCodigo('FAMNUM','famnum')" title="Copiar"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+                </div>
+              </div>
+              <div>
+                <div class="promo-valido">Família monoparental</div>
+                <div class="colt-code-row" style="margin-top:3px">
+                  <span class="promo-code" id="pc-fammono">FAMMONO</span>
+                  <button class="promo-copy" onclick="copiarCodigo('FAMMONO','fammono')" title="Copiar"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+                </div>
+              </div>
+            </div>
+            <span class="colt-note">Únicament reserva sala</span>
+          </div>
+        </div>
+
+        <!-- Col·lectiu SEAT -->
+        <div class="promo-card">
+          <div class="colt-mpct">
+            <div class="colt-mpct-col">
+              <div class="promo-pct">15%</div>
+              <div class="colt-day-lbl">Dl – Dj</div>
+            </div>
+            <div class="colt-mpct-col">
+              <div class="promo-pct">10%</div>
+              <div class="colt-day-lbl">Dv – Dg</div>
+            </div>
+          </div>
+          <div class="promo-name">🏭 Col·lectiu SEAT</div>
+          <div class="promo-desc">Treballadors/es de SEAT: <strong>15%</strong> de dilluns a dijous (no festius ni vigílies), <strong>10%</strong> de divendres a diumenge o festius entre setmana. Presenta el carnet acreditatiu de SEAT per email o WhatsApp.</div>
+          <div class="promo-footer col-foot">
+            <div class="colt-codes">
+              <div>
+                <div class="promo-valido">Dl – Dj (15%)</div>
+                <div class="colt-code-row" style="margin-top:3px">
+                  <span class="promo-code" id="pc-seat15">SEAT_15</span>
+                  <button class="promo-copy" onclick="copiarCodigo('SEAT_15','seat15')" title="Copiar"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+                </div>
+              </div>
+              <div>
+                <div class="promo-valido">Dv – Dg / Festius (10%)</div>
+                <div class="colt-code-row" style="margin-top:3px">
+                  <span class="promo-code" id="pc-seat10">SEAT_10</span>
+                  <button class="promo-copy" onclick="copiarCodigo('SEAT_10','seat10')" title="Copiar"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+                </div>
+              </div>
+            </div>
+            <span class="colt-note">Únicament reserva sala · La reserva ha d'anar al teu nom</span>
+          </div>
+        </div>
+
+        <!-- AMPA Escola Mare de Déu de Montserrat / AFA Josep Pla -->
+        <div class="promo-card">
+          <div class="colt-mpct">
+            <div class="colt-mpct-col">
+              <div class="promo-pct">10%</div>
+              <div class="colt-day-lbl">Dl – Dj</div>
+            </div>
+            <div class="colt-mpct-col">
+              <div class="promo-pct">5%</div>
+              <div class="colt-day-lbl">Dv – Dg</div>
+            </div>
+          </div>
+          <div class="promo-name">🏫 AMPA Escola Montserrat &amp; AFA Josep Pla</div>
+          <div class="promo-desc">Socis/àcies de l'AMPA de l'Escola Mare de Déu de Montserrat (Castellví de Rosanes) i de l'AFA Josep Pla (St. Andreu de la Barca). Presenta el carnet de soci per email o WhatsApp. <strong>Sense descompte en festius.</strong></div>
+          <div class="promo-footer col-foot">
+            <div class="colt-codes">
+              <div>
+                <div class="promo-valido">Dl – Dj (10%)</div>
+                <div class="colt-code-row" style="margin-top:3px">
+                  <span class="promo-code" id="pc-ampa10">AMPAESCOLA_10</span>
+                  <button class="promo-copy" onclick="copiarCodigo('AMPAESCOLA_10','ampa10')" title="Copiar"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+                </div>
+              </div>
+              <div>
+                <div class="promo-valido">Dv – Dg (5%)</div>
+                <div class="colt-code-row" style="margin-top:3px">
+                  <span class="promo-code" id="pc-ampa5">AMPAESCOLA_5</span>
+                  <button class="promo-copy" onclick="copiarCodigo('AMPAESCOLA_5','ampa5')" title="Copiar"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+                </div>
+              </div>
+            </div>
+            <span class="colt-note">Únicament reserva sala · Sense descompte en festius</span>
+          </div>
+        </div>
+
+        <!-- AMPA Llars d'Infants Martorell / AFA Escoles -->
+        <div class="promo-card">
+          <div class="colt-mpct">
+            <div class="colt-mpct-col">
+              <div class="promo-pct">10%</div>
+              <div class="colt-day-lbl">Dl – Dj</div>
+            </div>
+            <div class="colt-mpct-col">
+              <div class="promo-pct">5%</div>
+              <div class="colt-day-lbl">Dv – Dg</div>
+            </div>
+          </div>
+          <div class="promo-name">🎒 AMPA Llars d'Infants &amp; AFA Escoles Martorell</div>
+          <div class="promo-desc">Socis/àcies de les AMPA de les Llars d'Infants de Martorell i de les escoles associades. Presenta el carnet de soci per email o WhatsApp. <strong>Sense descompte en festius.</strong></div>
+          <div class="promo-footer col-foot">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span class="promo-valido">Codi:</span>
+              <span class="promo-code" style="color:var(--cp);border-color:oklch(55% .28 310/.25);background:oklch(55% .28 310/.08)">Consulta per escola</span>
+            </div>
+            <span class="colt-note">Únicament reserva sala · Sense descompte en festius</span>
+          </div>
+        </div>
+
+      </div>
+      <p class="promo-valido tc" style="margin-top:32px;font-style:italic">Tots els descomptes s'apliquen únicament en la reserva de la sala. Els serveis extres s'abonen en la seva totalitat. No acumulables entre ells ni amb altres ofertes.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ══ PROMOCIONES (Firestore dinámico) ══════════════════ -->
 <section id="promociones-web">
   <div class="container">
@@ -2743,6 +2907,7 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
       <a href="#precios">Preus</a>
       <a href="#galeria">Galeria</a>
       <a href="#fidelizacion">Fidelització</a>
+      <a href="#descuentos">Descomptes</a>
       <a href="#calendario">Calendari</a>
       <a href="#blog">Blog</a>
       <a href="#calendario">Reservar</a>
