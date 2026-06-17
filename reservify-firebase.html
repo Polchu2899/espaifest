@@ -1538,6 +1538,21 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       </div>
     </div>
 
+    <div class="fg">
+      <label class="fl">Código promocional</label>
+      <select class="fsi" id="r-codigo-promo" onchange="calcPrecioAuto()">
+        <option value="">— Sin descuento —</option>
+        <option value="FAMILY_CARD">FAMILY_CARD · Family Card (−10%)</option>
+        <option value="FAMNUM">FAMNUM · Família Nombrosa (−10%)</option>
+        <option value="FAMMONO">FAMMONO · Família Monoparental (−10%)</option>
+        <option value="SEAT_15">SEAT_15 · SEAT Lunes–Jueves (−15%)</option>
+        <option value="SEAT_10">SEAT_10 · SEAT Viernes–Dom/Festivos (−10%)</option>
+        <option value="AMPAESCOLA_10">AMPAESCOLA_10 · AMPA Escola Montserrat Lun–Jue (−10%)</option>
+        <option value="AMPAESCOLA_5">AMPAESCOLA_5 · AMPA Escola Montserrat Vie–Dom (−5%)</option>
+        <option value="AMPALLARS_10">AMPALLARS_10 · AMPA Llars Martorell Lun–Jue (−10%)</option>
+        <option value="AMPALLARS_5">AMPALLARS_5 · AMPA Llars Martorell Vie–Dom (−5%)</option>
+      </select>
+    </div>
     <div class="fr2">
       <div class="fg"><label class="fl">Método de pago</label>
         <select class="fsi" id="r-pago">
@@ -1929,6 +1944,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <!-- Extras y pago -->
       <div class="det-field full" style="grid-column:1/-1;font:700 .65rem var(--t2);text-transform:uppercase;letter-spacing:.08em;padding-bottom:4px;border-bottom:1px solid var(--b2);margin-bottom:4px;margin-top:8px;">Extras y pago</div>
       <div class="det-field full"><div class="det-label">Extras seleccionados</div><div class="det-value" id="det-extras" style="white-space:pre-wrap">—</div></div>
+      <div class="det-field" id="det-promo-field" style="display:none"><div class="det-label">Descuento aplicado</div><div class="det-value" id="det-promo" style="color:var(--green);font-weight:700">—</div></div>
       <div class="det-field"><div class="det-label">Método pago</div><div class="det-value" id="det-pago">—</div></div>
       <div class="det-field"><div class="det-label">Importe total</div><div class="det-value" id="det-importe" style="font-size:1.1rem;font-weight:800;color:var(--teal)">—</div></div>
       <div class="det-field"><div class="det-label">Señal cobrada</div><div class="det-value" id="det-senal" style="color:var(--green);font-weight:700">—</div></div>
@@ -2155,6 +2171,20 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </div>
         <div id="er-extras-total" style="font:600 .82rem 'Plus Jakarta Sans',sans-serif;color:var(--teal);padding-top:8px;border-top:1px solid var(--b2);">Subtotal extras: 0,00 €</div>
       </div>
+    </div>
+    <div class="fg"><label class="fl">Código promocional</label>
+      <select class="fsi" id="er-codigo-promo">
+        <option value="">— Sin descuento —</option>
+        <option value="FAMILY_CARD">FAMILY_CARD · Family Card (−10%)</option>
+        <option value="FAMNUM">FAMNUM · Família Nombrosa (−10%)</option>
+        <option value="FAMMONO">FAMMONO · Família Monoparental (−10%)</option>
+        <option value="SEAT_15">SEAT_15 · SEAT Lunes–Jueves (−15%)</option>
+        <option value="SEAT_10">SEAT_10 · SEAT Viernes–Dom/Festivos (−10%)</option>
+        <option value="AMPAESCOLA_10">AMPAESCOLA_10 · AMPA Escola Montserrat Lun–Jue (−10%)</option>
+        <option value="AMPAESCOLA_5">AMPAESCOLA_5 · AMPA Escola Montserrat Vie–Dom (−5%)</option>
+        <option value="AMPALLARS_10">AMPALLARS_10 · AMPA Llars Martorell Lun–Jue (−10%)</option>
+        <option value="AMPALLARS_5">AMPALLARS_5 · AMPA Llars Martorell Vie–Dom (−5%)</option>
+      </select>
     </div>
     <div class="fg"><label class="fl">Notas</label><textarea class="fi" id="er-notas" style="min-height:60px;resize:vertical" placeholder="Observaciones..."></textarea></div>
 
@@ -2838,6 +2868,8 @@ window.saveReserva = async () => {
   const importe  = parseFloat(document.getElementById('r-importe').value) || 85;
   const senal    = parseFloat(document.getElementById('r-senal').value) || 0;
   const notas    = document.getElementById('r-notas').value.trim();
+  const codigoPromo   = document.getElementById('r-codigo-promo')?.value || '';
+  const descuentoPromo = codigoPromo ? (CODIGOS_RESERVIFY[codigoPromo]?.descuento || 0) : 0;
   const bloquear = document.getElementById('r-bloquear').checked;
   const enviarEmail = document.getElementById('r-enviar-email').checked;
   const emailLang   = document.querySelector('input[name="r-email-lang"]:checked')?.value || 'es';
@@ -2885,6 +2917,8 @@ window.saveReserva = async () => {
     importe, senal,
     notas: notas || '',
     numReserva,
+    codigoPromo: codigoPromo || '',
+    descuentoPromo: descuentoPromo || 0,
     origen: 'panel', vista: false,
     estado: 'Pendiente',
     createdAt: serverTimestamp()
@@ -3219,6 +3253,17 @@ window.openDet = function(id) {
   document.getElementById('det-horaext').textContent       = r.horaExtra || r.horaext || '—';
   document.getElementById('det-estado').innerHTML          = estadoBadge(r.estado);
   document.getElementById('det-extras').textContent        = r.extras || '—';
+  const _promoField = document.getElementById('det-promo-field');
+  const _promoVal   = document.getElementById('det-promo');
+  if(_promoField && _promoVal) {
+    if(r.codigoPromo) {
+      const pct = r.descuentoPromo || CODIGOS_RESERVIFY[r.codigoPromo]?.descuento || 0;
+      _promoVal.textContent = `${r.codigoPromo}  −${pct}%`;
+      _promoField.style.display = '';
+    } else {
+      _promoField.style.display = 'none';
+    }
+  }
   document.getElementById('det-pago').textContent          = r.metodoPago || '—';
   document.getElementById('det-importe').textContent       = fmtMoney(r.importe || 85);
   document.getElementById('det-senal').textContent    = r.senal ? fmtMoney(r.senal) : (r.senal50 ? fmtMoney(r.senal50) : (r.cobrado ? fmtMoney(r.cobrado) : '—'));
@@ -5581,6 +5626,8 @@ window.abrirEditarReserva = function(id) {
   document.getElementById('er-fecha').value   = r.fecha    || '';
   document.getElementById('er-horario').value = r.horario  || '';
   document.getElementById('er-notas').value   = r.notas    || r.comentarios || '';
+  const erPromo = document.getElementById('er-codigo-promo');
+  if(erPromo) erPromo.value = r.codigoPromo || '';
 
   // Parse extras string → pre-fill qty selectors
   document.querySelectorAll('#er-extras-panel .er-ext-qty').forEach(inp => { inp.value = 0; });
@@ -5633,6 +5680,8 @@ window.guardarEdicionReserva = async function() {
 
   const importe  = parseFloat(document.getElementById('er-importe').value) || 0;
   const cobrado  = parseFloat(document.getElementById('er-cobrado').value) || 0;
+  const codigoPromo    = document.getElementById('er-codigo-promo')?.value || '';
+  const descuentoPromo = codigoPromo ? (CODIGOS_RESERVIFY[codigoPromo]?.descuento || 0) : 0;
   const pendiente = Math.max(0, importe - cobrado);
   const estadoPago = cobrado >= importe && cobrado > 0 ? 'cobrado' : cobrado > 0 ? 'parcial' : 'pendiente';
 
@@ -5658,6 +5707,8 @@ window.guardarEdicionReserva = async function() {
     cobrado,
     pendiente,
     estadoPago,
+    codigoPromo,
+    descuentoPromo,
     metodoPago: document.getElementById('er-pago').value,
     estado:     document.getElementById('er-estado').value,
     updatedAt:  serverTimestamp(),
@@ -7316,6 +7367,18 @@ function ajustarHoraExtReservify(slotVal) {
   }
 }
 
+const CODIGOS_RESERVIFY = {
+  'FAMILY_CARD':   { descuento:10, nombre:'Family Card' },
+  'FAMNUM':        { descuento:10, nombre:'Família Nombrosa' },
+  'FAMMONO':       { descuento:10, nombre:'Família Monoparental' },
+  'SEAT_15':       { descuento:15, nombre:'SEAT (Lun–Jue)' },
+  'SEAT_10':       { descuento:10, nombre:'SEAT (Vie–Dom/Festivos)' },
+  'AMPAESCOLA_10': { descuento:10, nombre:'AMPA Escola Montserrat (Lun–Jue)' },
+  'AMPAESCOLA_5':  { descuento: 5, nombre:'AMPA Escola Montserrat (Vie–Dom)' },
+  'AMPALLARS_10':  { descuento:10, nombre:'AMPA Llars Martorell (Lun–Jue)' },
+  'AMPALLARS_5':   { descuento: 5, nombre:'AMPA Llars Martorell (Vie–Dom)' },
+};
+
 // Calcula y muestra el precio automáticamente
 window.calcPrecioAuto = function() {
   const sel   = document.getElementById('r-horario');
@@ -7349,12 +7412,16 @@ window.calcPrecioAuto = function() {
     + Array.from(document.querySelectorAll('.r-extra-cb:checked'))
       .reduce((s, cb) => s + (parseFloat(cb.value.split('|')[1]) || 0), 0);
 
-  const total = base + hexPrecio + extrasPrecio;
+  const promoCodigo = document.getElementById('r-codigo-promo')?.value || '';
+  const promoPct    = CODIGOS_RESERVIFY[promoCodigo]?.descuento || 0;
+  const descuento   = promoPct > 0 ? Math.round((base + hexPrecio + extrasPrecio) * promoPct) / 100 : 0;
+  const total = base + hexPrecio + extrasPrecio - descuento;
 
   prev.classList.add('visible');
-  prevV.textContent = total + ' €';
-  prevL.innerHTML = esp ? `<span class="dia-esp-badge">Horario especial</span> Precio fijo` : 'Precio estimado';
-  if(imp) imp.value = total;
+  const promoLabel = promoPct > 0 ? ` <span style="color:var(--green);font-weight:700;font-size:.78rem">−${promoPct}% promo</span>` : '';
+  prevV.textContent = total.toFixed(2) + ' €';
+  prevL.innerHTML = (esp ? `<span class="dia-esp-badge">Horario especial</span> Precio fijo` : 'Precio estimado') + promoLabel;
+  if(imp) imp.value = total.toFixed(2);
 };
 
 // Login con Enter

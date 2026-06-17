@@ -2685,9 +2685,21 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
           <div class="promo-name">AMPA Llars d'Infants &amp; AFA Escoles Martorell</div>
           <div class="promo-desc">Socis/àcies de les AMPA de les Llars d'Infants de Martorell i de les escoles associades. Envia'ns per email o WhatsApp el carnet que t'acrediti com a soci/a de l'AMPA <em>(no vàlids altres tipus d'acreditació)</em>. <strong>Sense descompte en festius.</strong></div>
           <div class="promo-footer col-foot">
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <span class="promo-valido">Codi:</span>
-              <span class="promo-code" style="color:var(--cp);border-color:oklch(55% .28 310/.25);background:oklch(55% .28 310/.08)">Consulta per escola</span>
+            <div class="colt-codes">
+              <div>
+                <div class="promo-valido">Dl – Dj (10%)</div>
+                <div class="colt-code-row" style="margin-top:3px">
+                  <span class="promo-code" id="pc-llars10">AMPALLARS_10</span>
+                  <button class="promo-copy" onclick="copiarCodigo('AMPALLARS_10','llars10')" title="Copiar"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+                </div>
+              </div>
+              <div>
+                <div class="promo-valido">Dv – Dg (5%)</div>
+                <div class="colt-code-row" style="margin-top:3px">
+                  <span class="promo-code" id="pc-llars5">AMPALLARS_5</span>
+                  <button class="promo-copy" onclick="copiarCodigo('AMPALLARS_5','llars5')" title="Copiar"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+                </div>
+              </div>
             </div>
             <span class="colt-note">Únicament reserva sala · Sense descompte en festius</span>
           </div>
@@ -4034,6 +4046,8 @@ const _CODIGOS_ESTATICOS = [
   { codigo:'SEAT_10',       descuento:10, nombre_ca:'Col·lectiu SEAT (Dv–Dg)',         nombre:'Colectivo SEAT (Vi–Do)' },
   { codigo:'AMPAESCOLA_10', descuento:10, nombre_ca:'AMPA Escola Montserrat (Dl–Dj)',  nombre:'AMPA Escuela Montserrat (Lu–Ju)' },
   { codigo:'AMPAESCOLA_5',  descuento: 5, nombre_ca:'AMPA Escola Montserrat (Dv–Dg)',  nombre:'AMPA Escuela Montserrat (Vi–Do)' },
+  { codigo:'AMPALLARS_10', descuento:10, nombre_ca:'AMPA Llars Martorell (Dl–Dj)',    nombre:'AMPA Llars Martorell (Lu–Ju)' },
+  { codigo:'AMPALLARS_5',  descuento: 5, nombre_ca:'AMPA Llars Martorell (Dv–Dg)',    nombre:'AMPA Llars Martorell (Vi–Do)' },
 ];
 
 let _promoAplicada = null;
