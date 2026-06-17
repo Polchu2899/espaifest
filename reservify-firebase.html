@@ -5615,7 +5615,7 @@ function recalcularExtrasPanel() {
     const _eCodigo = document.getElementById('er-codigo-promo')?.value || '';
     const _ePct    = CODIGOS_RESERVIFY[_eCodigo]?.descuento || 0;
     const _eSubt   = window._erBaseImporte + total;
-    const _eDesc   = _ePct > 0 ? Math.round(_eSubt * _ePct) / 100 : 0;
+    const _eDesc   = _ePct > 0 ? Math.round(window._erBaseImporte * _ePct) / 100 : 0;
     imp.value = Math.max(0, _eSubt - _eDesc).toFixed(2);
   }
 }
@@ -5731,7 +5731,7 @@ window.guardarEdicionReserva = async function() {
     estadoPago,
     codigoPromo,
     descuentoPromo,
-    importeBase: descuentoPromo > 0 ? +(importe / (1 - descuentoPromo / 100)).toFixed(2) : importe,
+    importeBase: window._erBaseImporte + [...document.querySelectorAll('#er-extras-panel .er-ext-qty')].reduce((s,i)=>s+(parseInt(i.value)||0)*(parseFloat(i.dataset.precio)||0),0),
     metodoPago: document.getElementById('er-pago').value,
     estado:     document.getElementById('er-estado').value,
     updatedAt:  serverTimestamp(),
@@ -7438,7 +7438,7 @@ window.calcPrecioAuto = function() {
   const promoCodigo = document.getElementById('r-codigo-promo')?.value || '';
   const promoPct    = CODIGOS_RESERVIFY[promoCodigo]?.descuento || 0;
   window._rImporteBase = base + hexPrecio + extrasPrecio;
-  const descuento   = promoPct > 0 ? Math.round(window._rImporteBase * promoPct) / 100 : 0;
+  const descuento   = promoPct > 0 ? Math.round((base + hexPrecio) * promoPct) / 100 : 0;
   const total = window._rImporteBase - descuento;
 
   prev.classList.add('visible');

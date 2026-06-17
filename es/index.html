@@ -4075,7 +4075,7 @@ function calcularTotal() {
 
   const subtotal = pSala + pHora + pExtras;
   const descuentoEur = (_promoAplicada && _promoAplicada.descuento > 0)
-    ? Math.round(subtotal * _promoAplicada.descuento) / 100
+    ? Math.round((pSala + pHora) * _promoAplicada.descuento) / 100
     : 0;
   const total = subtotal - descuentoEur;
 
@@ -4212,7 +4212,7 @@ async function enviarReserva() {
     if(_pm) _promoAplicada = _pm;
   }
   const promoDescuentoPct = _promoAplicada ? (_promoAplicada.descuento || 0) : 0;
-  const promoDescuentoEur = promoDescuentoPct > 0 ? Math.round(subtotalEstimado * promoDescuentoPct) / 100 : 0;
+  const promoDescuentoEur = promoDescuentoPct > 0 ? Math.round((precioSala + horaExtPrecio) * promoDescuentoPct) / 100 : 0;
   const totalEstimado = subtotalEstimado - promoDescuentoEur;
   const senalPago     = totalEstimado * 0.5;
 
