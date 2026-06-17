@@ -1685,6 +1685,7 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
     <a href="#manualidades" id="nav-link-manualidades" style="display:none">Manualidades</a>
     <a href="#precios">Precios</a>
     <a href="#fidelizacion">Fidelización</a>
+    <a href="#descuentos">Descuentos</a>
     <a href="#equipamiento">Equipamiento</a>
     <a href="#catering">Catering</a>
     <a href="#galeria">Galería</a>
@@ -3996,10 +3997,20 @@ function ajustarHoraExtWeb() {
   }
 }
 
+const _CODIGOS_ESTATICOS = [
+  { codigo:'FAMILY_CARD',   descuento:10, nombre_ca:'Family Card',                     nombre:'Family Card' },
+  { codigo:'FAMNUM',        descuento:10, nombre_ca:'Família Nombrosa',                nombre:'Familia Numerosa' },
+  { codigo:'FAMMONO',       descuento:10, nombre_ca:'Família Monoparental',             nombre:'Familia Monoparental' },
+  { codigo:'SEAT_15',       descuento:15, nombre_ca:'Col·lectiu SEAT (Dl–Dj)',         nombre:'Colectivo SEAT (Lu–Ju)' },
+  { codigo:'SEAT_10',       descuento:10, nombre_ca:'Col·lectiu SEAT (Dv–Dg)',         nombre:'Colectivo SEAT (Vi–Do)' },
+  { codigo:'AMPAESCOLA_10', descuento:10, nombre_ca:'AMPA Escola Montserrat (Dl–Dj)',  nombre:'AMPA Escuela Montserrat (Lu–Ju)' },
+  { codigo:'AMPAESCOLA_5',  descuento: 5, nombre_ca:'AMPA Escola Montserrat (Dv–Dg)',  nombre:'AMPA Escuela Montserrat (Vi–Do)' },
+];
+
 let _promoAplicada = null;
 
 function aplicarCodigoPromo(codigo) {
-  const promos = window._promocionesActivas || [];
+  const promos = [...(window._promocionesActivas || []), ..._CODIGOS_ESTATICOS];
   const feedback = document.getElementById('promo-feedback');
   const codigoUp = (codigo || '').trim().toUpperCase();
   const match = codigoUp ? promos.find(p => (p.codigo || '').toUpperCase() === codigoUp) : null;
@@ -4183,7 +4194,7 @@ async function enviarReserva() {
   // ── Cálculo totales ──────────────────────────────────────────
   const subtotalEstimado = precioSala + horaExtPrecio + extrasPrecio;
   if(promo && !_promoAplicada) {
-    const _pm = (window._promocionesActivas||[]).find(p=>(p.codigo||'').toUpperCase()===promo);
+    const _pm = [...(window._promocionesActivas||[]), ..._CODIGOS_ESTATICOS].find(p=>(p.codigo||'').toUpperCase()===promo);
     if(_pm) _promoAplicada = _pm;
   }
   const promoDescuentoPct = _promoAplicada ? (_promoAplicada.descuento || 0) : 0;
