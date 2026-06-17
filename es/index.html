@@ -855,10 +855,17 @@ section{padding:clamp(3.5rem,8vw,6rem) clamp(1rem,4vw,3rem);}
 .fid-perks{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
 .fid-perk{display:flex;align-items:center;gap:10px;font-size:.88rem;color:var(--tx2);}
 .fid-perk svg{stroke:var(--co);flex-shrink:0;}
-.fid-stamps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:8px 0 4px;}
-.fid-stamp{aspect-ratio:1;border:2px dashed oklch(68% .12 280/.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.05rem;font-weight:700;color:var(--tx3);}
-.fid-stamp-free{border-style:solid;border-color:oklch(72% .18 160);background:oklch(72% .18 160/.12);color:oklch(45% .18 160);font-size:.72rem;font-weight:800;letter-spacing:.03em;}
-.fid-stamp-caption{text-align:center;font-size:.72rem;color:var(--tx3);margin-top:8px;}
+.fid-tbl{width:100%;border-radius:12px;overflow:hidden;border:1px solid var(--bd);margin-top:16px;}
+.fid-th{display:grid;grid-template-columns:72px 1fr;background:oklch(25% .15 260);}
+.fid-th span{padding:7px 10px;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;}
+.fid-th span:first-child{border-right:1px solid rgba(255,255,255,.2);}
+.fid-tr{display:grid;grid-template-columns:72px 1fr;border-top:1px solid var(--bd);}
+.fid-td-l{padding:10px;font-size:.78rem;font-weight:700;color:var(--tx2);background:oklch(50% .1 260/.07);border-right:1px solid var(--bd);display:flex;align-items:center;}
+.fid-td-r{padding:8px 12px;background:var(--s0);display:flex;align-items:center;}
+.fid-seal-ic{width:32px;height:32px;border-radius:50%;border:1.5px dashed oklch(60% .1 260/.35);}
+.fid-tr-free .fid-td-l{color:oklch(42% .2 160);font-weight:800;background:oklch(72% .18 160/.12);border-right-color:oklch(72% .18 160/.25);}
+.fid-tr-free .fid-td-r{background:oklch(72% .18 160/.06);}
+.fid-free-lbl{font-size:.73rem;font-weight:800;color:oklch(42% .2 160);letter-spacing:.03em;}
 
 /* ═══ RESERVAS ═══════════════════════════════════ */
 #reservas{background:var(--s0);}
@@ -2192,15 +2199,15 @@ body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
         <div class="fid-logo-area">
           <img src="https://i.ibb.co/Xk4s9wBQ/Dise-o-sin-t-tulo.png" alt="Logo EspaiFest">
         </div>
-        <div class="fid-stamps">
-          <div class="fid-stamp">1</div>
-          <div class="fid-stamp">2</div>
-          <div class="fid-stamp">3</div>
-          <div class="fid-stamp">4</div>
-          <div class="fid-stamp">5</div>
-          <div class="fid-stamp fid-stamp-free">GRATIS</div>
+        <div class="fid-tbl">
+          <div class="fid-th"><span>Fecha</span><span>Sello EspaiFest</span></div>
+          <div class="fid-tr"><span class="fid-td-l">Día 1</span><span class="fid-td-r"><span class="fid-seal-ic"></span></span></div>
+          <div class="fid-tr"><span class="fid-td-l">Día 2</span><span class="fid-td-r"><span class="fid-seal-ic"></span></span></div>
+          <div class="fid-tr"><span class="fid-td-l">Día 3</span><span class="fid-td-r"><span class="fid-seal-ic"></span></span></div>
+          <div class="fid-tr"><span class="fid-td-l">Día 4</span><span class="fid-td-r"><span class="fid-seal-ic"></span></span></div>
+          <div class="fid-tr"><span class="fid-td-l">Día 5</span><span class="fid-td-r"><span class="fid-seal-ic"></span></span></div>
+          <div class="fid-tr fid-tr-free"><span class="fid-td-l">6.º evento</span><span class="fid-td-r"><span class="fid-free-lbl">RESERVA GRATUITA</span></span></div>
         </div>
-        <p class="fid-stamp-caption">6 eventos · 1 reserva gratis</p>
       </div>
       <div class="fid-info">
         <h3>Tarjeta Fidelización</h3>
