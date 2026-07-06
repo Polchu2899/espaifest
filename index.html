@@ -5117,15 +5117,10 @@ async function loadServiciosWeb() {
 
 // ── PROMOCIONES DESDE FIRESTORE ───────────────────────────────
 async function loadPromocionesWeb() {
-  const _CK = 'espaifest_promo_v1', _CT = 2*3600*1000; // 2h — son time-sensitive
   try {
     let rawDocs;
-    try { const h=localStorage.getItem(_CK); if(h){const c=JSON.parse(h);if(Date.now()-c.ts<_CT) rawDocs=c.d;} } catch(_){}
-    if(!rawDocs) {
-      const snap = await getDocs(collection(_db,'promociones'));
-      rawDocs = snap.docs.map(d=>({id:d.id,...d.data()}));
-      try { localStorage.setItem(_CK, JSON.stringify({ts:Date.now(),d:rawDocs})); } catch(_){}
-    }
+    const snap = await getDocs(collection(_db,'promociones'));
+    rawDocs = snap.docs.map(d=>({id:d.id,...d.data()}));
     if(!rawDocs.length) return;
     const hoy = new Date().toISOString().split('T')[0];
     const activas = rawDocs
