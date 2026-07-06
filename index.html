@@ -1040,8 +1040,18 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
   .ft-grid{grid-template-columns:1fr 1fr;gap:28px;}
 }
 
-/* Nav compacte amb links: laptops (1280-1600px) */
-@media(min-width:1280px) and (max-width:1600px){
+/* Nav compacte amb links: laptops petits 1280-1440px */
+@media(min-width:1280px) and (max-width:1440px){
+  nav{height:110px;padding:0 10px;}
+  .n-logo img{height:96px;width:auto;}
+  .hero{padding-top:110px;}
+  .n-links a{padding:2px 5px!important;font-size:.6rem!important;}
+  .lang-btn{padding:2px 6px!important;font-size:.55rem!important;}
+  .theme-btn{width:28px!important;height:28px!important;}
+  .n-cta{padding:5px 12px!important;font-size:.62rem!important;}
+}
+/* Nav amb links: laptops grans 1440-1600px */
+@media(min-width:1440px) and (max-width:1600px){
   nav{height:180px;}
   .n-logo img{height:170px;width:auto;}
   .hero{padding-top:180px;}
@@ -1062,7 +1072,8 @@ footer{background:var(--s1);border-top:1px solid var(--bd);padding:clamp(2.5rem,
 #promo-banner.visible{display:block;}
 body.banner-on nav{top:var(--banner-h,44px);}
 body.banner-on .hero{padding-top:calc(260px + var(--banner-h,44px));}
-@media(min-width:1280px) and (max-width:1600px){body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}}
+@media(min-width:1280px) and (max-width:1440px){body.banner-on .hero{padding-top:calc(110px + var(--banner-h,44px));}}
+@media(min-width:1440px) and (max-width:1600px){body.banner-on .hero{padding-top:calc(180px + var(--banner-h,44px));}}
 @media(max-width:1024px){body.banner-on .hero{padding-top:calc(90px + var(--banner-h,44px));}}
 @media(max-width:768px){body.banner-on .hero{padding-top:calc(110px + var(--banner-h,44px));}}
 .promo-banner-inner{
@@ -5449,7 +5460,10 @@ document.addEventListener('keydown', e => {
   window.addEventListener('scroll',function(){
     nav.classList.toggle('visible',window.scrollY>200);
   },{passive:true});
+  var isScrolling=false;
   function smoothScroll(amount){
+    if(isScrolling)return;
+    isScrolling=true;
     var start=window.scrollY;
     var end=Math.max(0,start+amount);
     var dur=500;var t0=null;
@@ -5459,11 +5473,12 @@ document.addEventListener('keydown', e => {
       var p=Math.min((ts-t0)/dur,1);
       window.scrollTo(0,start+(end-start)*ease(p));
       if(p<1)requestAnimationFrame(step);
+      else isScrolling=false;
     }
     requestAnimationFrame(step);
   }
-  document.getElementById('sn-up').addEventListener('click',function(){smoothScroll(-350);});
-  document.getElementById('sn-down').addEventListener('click',function(){smoothScroll(350);});
+  document.getElementById('sn-up').addEventListener('click',function(){smoothScroll(-window.innerHeight*0.75);});
+  document.getElementById('sn-down').addEventListener('click',function(){smoothScroll(window.innerHeight*0.75);});
 })();
 </script>
 </body>
