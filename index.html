@@ -5135,7 +5135,7 @@ async function loadPromocionesWeb() {
     if(!rawDocs.length) return;
     const hoy = new Date().toISOString().split('T')[0];
     const activas = rawDocs
-      .filter(p => p.hasta && p.hasta >= hoy && (!p.desde || p.desde <= hoy))
+      .filter(p => (!p.hasta || p.hasta >= hoy) && (!p.desde || p.desde <= hoy))
       .sort((a,b) => (b.descuento||0) - (a.descuento||0)); // la más grande primero
 
     window._promocionesActivas = activas;
