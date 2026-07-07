@@ -1842,13 +1842,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="msub" id="promo-modal-sub">Crea un código de descuento en español y catalán</div>
     <input type="hidden" id="p-edit-id">
 
-    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">ES:Castellano</div>
-    <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fi" id="p-nombre" placeholder="Ej: Oferta de verano" oninput="autoFillCA('p-nombre','p-nombre-ca')"></div>
-    <div class="fg"><label class="fl">Descripción</label><input type="text" class="fi" id="p-desc" placeholder="Describe la oferta brevemente" oninput="autoFillCA('p-desc','p-desc-ca')"></div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🟡 Català <span style="font-weight:400;text-transform:none;letter-spacing:0">(llengua principal)</span></div>
+    <div class="fg"><label class="fl">Nom *</label><input type="text" class="fi" id="p-nombre-ca" placeholder="Ex: Oferta d'estiu" onblur="autoFillES('p-nombre-ca','p-nombre')"></div>
+    <div class="fg"><label class="fl">Descripció</label><input type="text" class="fi" id="p-desc-ca" placeholder="Descriu l'oferta breument" onblur="autoFillES('p-desc-ca','p-desc')"></div>
 
-    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">🟡 Catalán <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)">(opcional)</span></div>
-    <div class="fg"><label class="fl">Nom (CA)</label><input type="text" class="fi" id="p-nombre-ca" placeholder="Ej: Oferta d'estiu"></div>
-    <div class="fg"><label class="fl">Descripció (CA)</label><input type="text" class="fi" id="p-desc-ca" placeholder="Descriu l'oferta breument"></div>
+    <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">ES: Castellano <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)">(es tradueix automàticament en sortir del camp català — pots editar-lo)</span></div>
+    <div class="fg"><label class="fl">Nombre (ES)</label><input type="text" class="fi" id="p-nombre" placeholder="Se traduce automáticamente"></div>
+    <div class="fg"><label class="fl">Descripción (ES)</label><input type="text" class="fi" id="p-desc" placeholder="Se traduce automáticamente"></div>
 
     <div style="font:700 .68rem/1 var(--t2);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b2);">Detalles</div>
     <div class="fr2">
@@ -4167,7 +4167,7 @@ window.autoFillCA = function(esId, caId) {
 };
 // Marcar campo CA como modificado manualmente para no sobreescribir
 // Marca CA como modificado manualmente (para servicios y promos: ES→CA)
-['s-nombre-ca','s-desc-ca','p-nombre-ca','p-desc-ca'].forEach(id => {
+['s-nombre-ca','s-desc-ca','p-nombre','p-desc'].forEach(id => {
   const el = document.getElementById(id);
   if(el) el.addEventListener('input', () => { el.dataset.modified = '1'; });
 });
@@ -4245,16 +4245,16 @@ async function loadPromos() {
 
 window.savePromo = async () => {
   const editId      = document.getElementById('p-edit-id').value;
-  const nombre      = document.getElementById('p-nombre').value.trim();
-  const descripcion = document.getElementById('p-desc').value.trim();
-  const nombre_ca   = document.getElementById('p-nombre-ca').value.trim() || nombre;
-  const desc_ca     = document.getElementById('p-desc-ca').value.trim()   || descripcion;
+  const nombre_ca   = document.getElementById('p-nombre-ca').value.trim();
+  const desc_ca     = document.getElementById('p-desc-ca').value.trim();
+  const nombre      = document.getElementById('p-nombre').value.trim()      || nombre_ca;
+  const descripcion = document.getElementById('p-desc').value.trim()        || desc_ca;
   const descuento   = parseInt(document.getElementById('p-pct').value)||10;
   const codigo      = document.getElementById('p-code').value.toUpperCase().trim();
   const desde       = document.getElementById('p-desde').value;
   const hasta       = document.getElementById('p-hasta').value;
 
-  if(!nombre || !codigo || !hasta) { showToast('Rellena nombre, código y fecha de fin'); return; }
+  if(!nombre_ca || !codigo || !hasta) { showToast('Omple el nom en català, el codi i la data de fi'); return; }
 
   const data = {
     nombre, descripcion, descuento, codigo, desde, hasta,
