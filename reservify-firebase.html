@@ -4946,12 +4946,12 @@ function normalizarTel(t) {
 
 function parsearFecha(s) {
   if(!s) return '';
-  s = s.trim().split(' ')[0];
+  s = s.trim().split(' ')[0].split('T')[0]; // soporta "DD/MM/YYYY HH:MM" y "YYYY-MM-DDTHH:MM:SS"
   const m1 = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
   if(m1) return `${m1[3]}-${m1[2]}-${m1[1]}`;
   const m2 = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if(m2) return s;
-  return s;
+  return '';
 }
 
 function mapEstadoPago(ep) {
@@ -5137,8 +5137,10 @@ window.importarBookly = async function() {
       // Escritura paralela dentro del lote
       await Promise.all(lote.map(async r => {
         try {
-          // createdAt como Timestamp real de Firestore (usa fechaRegistro del XLS o ahora)
-          const tsReg = r.fechaRegistro ? new Date(r.fechaRegistro) : new Date();
+          // createdAt: usa fechaRegistro del XLS solo si es una fecha pasada válida
+          const _tsReg = r.fechaRegistro ? new Date(r.fechaRegistro) : null;
+          const _ahora = new Date();
+          const tsReg = (_tsReg && !isNaN(_tsReg.getTime()) && _tsReg <= _ahora) ? _tsReg : _ahora;
           const docData = { ...r, createdAt: Timestamp.fromDate(tsReg), vista: true };
           const docIdExistente = xlsRefToDocId[r.referencia];
           if(modoActualizar && docIdExistente) {
@@ -7872,12 +7874,16 @@ window.repararFechasReservas = async function() {
     for(const d of snap.docs) {
       const data = d.data();
       const ca = data.createdAt;
+      const ahoraMilis = Date.now();
       // Tiene createdAt válido (Timestamp real o {seconds,nanoseconds})
       const tieneTs = ca && (typeof ca.toMillis === 'function' || typeof ca.seconds === 'number');
-      // Tiene createdAt como string ISO válido
+      const tsMilis  = tieneTs ? (ca.toMillis ? ca.toMillis() : ca.seconds * 1000) : 0;
+      // Tiene createdAt como string ISO válido y en el pasado
       const tieneStr = ca && typeof ca === 'string' && !isNaN(new Date(ca).getTime());
-      if(tieneTs || tieneStr) { omitidas++; continue; }
-      // Sin fecha válida → usar fecha del evento a las 10:00 como aproximación
+      const strMilis = tieneStr ? new Date(ca).getTime() : 0;
+      // Si la fecha es válida Y está en el pasado → no tocar
+      if((tieneTs && tsMilis <= ahoraMilis) || (tieneStr && strMilis <= ahoraMilis)) { omitidas++; continue; }
+      // Sin fecha válida O fecha en el futuro (dato incorrecto de Bookly) → usar fecha del evento
       const fechaEvento = data.fecha || new Date().toISOString().split('T')[0];
       const fechaAprox = new Date(fechaEvento + 'T10:00:00');
       await updateDoc(doc(db, 'reservas', d.id), { createdAt: fechaAprox });
